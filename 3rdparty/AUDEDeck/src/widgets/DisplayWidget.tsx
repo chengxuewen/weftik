@@ -1,0 +1,1 @@
+export { DisplayWidget } from "@audesys/studio-core";

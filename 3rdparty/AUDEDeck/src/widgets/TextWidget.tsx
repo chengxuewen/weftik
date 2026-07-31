@@ -1,0 +1,1 @@
+export { TextWidget } from "@audesys/studio-core";

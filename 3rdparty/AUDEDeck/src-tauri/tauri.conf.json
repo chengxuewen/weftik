@@ -1,0 +1,42 @@
+{
+  "productName": "AUDESYS AUDEDeck",
+  "version": "0.1.0",
+  "identifier": "com.audesys.audeck",
+  "build": {
+    "devUrl": "http://localhost:1421",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "AUDESYS AUDEDeck",
+        "fullscreen": true,
+        "decorations": false,
+        "alwaysOnTop": false,
+        "resizable": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    },
+    "linux": {
+      "appimage": {},
+      "deb": {}
+    }
+  }
+}
