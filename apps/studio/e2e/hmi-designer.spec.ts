@@ -12,7 +12,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-const URL = 'http://127.0.0.1:3100';
+const URL = process.env.THEIA_URL || 'http://127.0.0.1:4000';
 
 // ─── Helpers ────────────────────────────────────────────────────
 

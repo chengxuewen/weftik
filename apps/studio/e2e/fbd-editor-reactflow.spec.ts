@@ -25,7 +25,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-const URL = process.env.THEIA_URL || 'http://127.0.0.1:3100';
+const URL = process.env.THEIA_URL || 'http://127.0.0.1:4000';
 const WORKSPACE = process.env.FBD_E2E_WORKSPACE || path.join(os.homedir(), 'fbd-e2e-workspace');
 const QUICK_INPUT = '.quick-input-widget input, .quick-input-field input';
 const QUICK_ROW = '.quick-input-list .monaco-list-row, .quick-input-list-row';
