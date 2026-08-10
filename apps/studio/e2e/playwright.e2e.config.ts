@@ -11,6 +11,7 @@ export default defineConfig({
     'hmi-designer.spec.ts',
     'codesys-workflow.spec.ts',
     'fbd-editor-reactflow.spec.ts',
+    'project-wizard.spec.ts',
   ],
   timeout: 60_000,
   retries: 1,

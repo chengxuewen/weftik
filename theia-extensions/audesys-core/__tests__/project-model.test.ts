@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-    PROJECT_YAML_NAME, validateProjectName,
+    PROJECT_YAML_NAME, DEFAULT_PROJECTS_DIR, validateProjectName,
     projectTemplateFiles, projectYaml, parseProjectYaml,
 } from '../src/browser/project-model';
 
@@ -71,5 +71,11 @@ describe('parseProjectYaml', () => {
         expect(parseProjectYaml('version: "1.0"\n')).toBeNull();
         expect(parseProjectYaml('# no fields here\n')).toBeNull();
         expect(parseProjectYaml('')).toBeNull();
+    });
+});
+
+describe('DEFAULT_PROJECTS_DIR', () => {
+    it('points at the default projects folder', () => {
+        expect(DEFAULT_PROJECTS_DIR).toMatch(/^~\/AUDESYS-Projects\/$/);
     });
 });
