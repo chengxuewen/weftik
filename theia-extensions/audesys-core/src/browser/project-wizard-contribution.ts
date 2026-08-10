@@ -150,7 +150,7 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
             const defaultUri = await this.defaultProjectsUri();
             const choice = await this.quickInput.showQuickPick(
                 [
-                    { label: defaultUri.path.toString(), detail: 'Default projects folder', id: 'default' },
+                    { label: DEFAULT_PROJECTS_DIR, detail: defaultUri.path.toString(), id: 'default' },
                     { label: 'Browse…', detail: 'Choose another location', id: 'browse' },
                 ],
                 { placeholder: 'Where to create the project?' },
