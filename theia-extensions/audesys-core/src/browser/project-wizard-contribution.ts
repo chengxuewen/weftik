@@ -12,17 +12,17 @@ import { BinaryBuffer } from '@theia/core/lib/common/buffer';
 import { validateProjectName, projectTemplateFiles } from './project-model';
 
 export namespace ProjectWizardCommands {
-    export const CATEGORY = 'IEC 61131-3';
+    export const CATEGORY = 'AUDESYS';
 
     export const NEW_PROJECT: Command = {
         id: 'audesys.new.project',
-        label: 'New IEC Project\u2026',
+        label: 'New AUDESYS Project…',
         category: CATEGORY,
     };
 }
 
 /**
- * New IEC Project wizard (A-工程管理).
+ * New AUDESYS Project wizard (A-工程管理).
  * Creates the standard directory convention (Programs/FBs/Functions/GVL) plus a
  * lightweight `project.yaml` manifest at the workspace root. The workspace root
  * IS the project root (Theia "Open Folder" mode) — the project name only feeds
@@ -42,11 +42,10 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
     }
 
     registerMenus(menus: MenuModelRegistry): void {
-        menus.registerSubmenu(CommonMenus.FILE_NEW, 'IEC 61131-3');
-        const menu = [...CommonMenus.FILE_NEW, 'IEC 61131-3'];
-        menus.registerMenuAction(menu, {
+        // Project-level command → File top-level (aligns with CODESYS/TwinCAT: File > New Project)
+        menus.registerMenuAction(CommonMenus.FILE, {
             commandId: ProjectWizardCommands.NEW_PROJECT.id,
-            label: 'New IEC Project\u2026',
+            label: 'New AUDESYS Project…',
             order: '0',
         });
     }
@@ -76,20 +75,20 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
                 created.push(file.path);
             }
             if (created.length > 0) {
-                this.messageService.info(`IEC project "${name}" created: ${created.join(', ')}`);
+                this.messageService.info(`AUDESYS project "${name}" created: ${created.join(', ')}`);
             }
             if (skipped.length > 0) {
                 this.messageService.warn(`Skipped existing files (not overwritten): ${skipped.join(', ')}`);
             }
         } catch (e) {
-            this.messageService.error(`Failed to create IEC project: ${String(e)}`);
+            this.messageService.error(`Failed to create AUDESYS project: ${String(e)}`);
         }
     }
 
     protected async pickName(): Promise<string | undefined> {
         return this.quickInput.input({
-            title: 'New IEC Project',
-            prompt: 'Name of the IEC project (used in project.yaml)',
+            title: 'New AUDESYS Project',
+            prompt: 'Name of the AUDESYS project (used in project.yaml)',
             placeHolder: 'e.g. my-project',
             validateInput: async (value) => {
                 const trimmed = value.trim();
