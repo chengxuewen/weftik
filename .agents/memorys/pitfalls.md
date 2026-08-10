@@ -1027,3 +1027,17 @@
 - **验证**: 重建后 `grep -c 'New AUDESYS Project' bundle.js` = 1，File 菜单出现
 - **禁止**: 改 theia-extensions 源码后只验证 lib/ 不重建 bundle — lib/ 是 tsc 产物，bundle 是 theia build 产物，两者独立；运行中的应用必须重启才能加载新 bundle
 - **关联**: edit-safety Rule 13（扩展修改后必须验证编译产物）延伸至 bundle 层
+
+### Theia URI 不解析 `~/` shell 波浪号 — 默认目录字面量导致文件对话框
+- **问题**: New AUDESYS Project 选默认位置后，`new URI('~/AUDESYS-Projects/')` 无法解析，createFolder 失败，触发 M2 降级弹出 "Select project location" 文件对话框 + 通知
+- **原因**: `~/` 是 shell 语法，Theia URI/FileService 不识别。`DEFAULT_PROJECTS_DIR = '~/AUDESYS-Projects/'` 是字面字符串，`new URI()` 按字面解析（file://~/...）
+- **方案**: 用 `EnvVariablesServer.getHomeDirUri()`（返回真实 home 目录 URI）运行时解析默认父目录：`new URI(await envServer.getHomeDirUri()).resolve('AUDESYS-Projects')`；常量只存目录名（`AUDESYS-Projects`）不存 `~/`
+- **验证**: MCP 驱动后位置选项显示完整路径 `/Users/cxw/AUDESYS-Projects`（非 `~/...`），创建成功 + 自动打开
+- **禁止**: 不要在 Theia 前端用 `~/` 作文件路径 — 必须经 EnvVariablesServer 解析 home
+
+### E2E 依赖 studio 共享状态 — Theia 恢复上次 workspace 污染 "无 workspace" 测试
+- **问题**: 无 workspace 创建工程的 E2E 反复超时，实际是 studio 启动时恢复了上次 workspace（ld-e2e-workspace），测试走 "有 workspace" 分支（不弹位置选择框），定位位置选项超时
+- **原因**: Theia 记住最近 workspace，重启后自动恢复；E2E 假设 studio 无 workspace 是错的（共享同一 studio 进程 + 上次测试残留）
+- **方案**: E2E 测试开头显式 `closeWorkspace()`（File > Close Workspace）确保无 workspace 起点；核心断言聚焦 URL 指向新工程目录（不依赖 POU 树文件显示，后者是独立 bug）
+- **验证**: closeWorkspace 后 E2E 通过（15.9s），URL 包含 `AUDESYS-Projects/<name>`
+- **禁止**: 不要假设共享 studio 进程的 workspace 状态 — E2E 必须显式设置前置状态（关闭/打开 workspace）
