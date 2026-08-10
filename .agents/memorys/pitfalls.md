@@ -1005,6 +1005,17 @@
 - **方案**: 编辑 JSDoc 注释块时确保 `*/` 闭合；方法"不存在"时报错先检查方法前注释是否把签名吞掉
 - **验证**: 补 `*/` 后 tsc 0 errors + vitest 144/144
 - **禁止**: 编辑 `/** */` 注释块时允许丢失闭合符 — 会无声删除后面的代码
+- **关联**: edit-safety Rule 13（扩展修改后必须验证编译产物）延伸至 bundle 层
+
+## POU 树 0 files bug (2026-08-10) — pre-existing，未修复
+
+### 打开工程后 POU 树显示 0 files
+- **问题**: 打开工程（URL 指向工程目录）后，侧栏 POU 树显示 "Program Organization 0 files / No IEC files yet"，即使工程目录真实存在 project.yaml + Programs/Main.st + GVL/Globals.gvl
+- **复现**: 正常 Open Folder 打开工程 + New AUDESYS Project 自动打开 workspace 都复现；pou-tree-model 单测 9/9 通过（模型逻辑正确）→ 是运行时问题（collectFiles 扫不到 或 refresh 未触发）
+- **原因（未定位）**: init() 监听 onWorkspaceChanged/onDidFilesChange → scheduleRefresh，但 workspace 打开后 refresh 未正确扫到文件；可能 reload 时序问题（workspaceService.open 触发整页 reload，reload 后 init 的 refresh 时机早于文件就绪）
+- **影响**: 核心 H1 门禁（无 workspace 创建工程 + 自动打开）已验证通过，POU 树文件扫描是独立 pre-existing bug，不阻塞本次修复
+- **待办**: 单独调查 collectFiles/refresh 为何在 workspace 打开后不刷新；E2E 断言已改为 URL 指向新工程（核心），不依赖 POU 树文件显示
+- **验证**: `npx vitest run __tests__/pou-tree-model.test.ts` 9/9 pass（模型层）；运行时要单独 debug
 
 ## New AUDESYS Project 菜单项不可见 (2026-08-10)
 
