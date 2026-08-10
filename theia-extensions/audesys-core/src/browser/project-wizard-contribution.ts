@@ -10,6 +10,7 @@ import { FileDialogService } from '@theia/filesystem/lib/browser/file-dialog/fil
 import { WorkspaceService } from '@theia/workspace/lib/browser/workspace-service';
 import { MessageService } from '@theia/core/lib/common/message-service';
 import { BinaryBuffer } from '@theia/core/lib/common/buffer';
+import { EnvVariablesServer } from '@theia/core/lib/common/env-variables/env-variables-protocol';
 import { validateProjectName, projectTemplateFiles, DEFAULT_PROJECTS_DIR } from './project-model';
 
 export namespace ProjectWizardCommands {
@@ -40,6 +41,7 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
     @inject(MessageService) protected readonly messageService!: MessageService;
     @inject(QuickInputService) protected readonly quickInput!: QuickInputService;
     @inject(FileDialogService) protected readonly fileDialogService!: FileDialogService;
+    @inject(EnvVariablesServer) protected readonly envServer!: EnvVariablesServer;
 
     registerCommands(registry: CommandRegistry): void {
         registry.registerCommand(ProjectWizardCommands.NEW_PROJECT, {
@@ -145,10 +147,10 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
     /** Dialog to choose the parent directory for a new project. */
     protected async pickParentDir(forceDialog = false): Promise<URI | undefined> {
         if (!forceDialog) {
-            // Ask which location: use the default or browse.
+            const defaultUri = await this.defaultProjectsUri();
             const choice = await this.quickInput.showQuickPick(
                 [
-                    { label: DEFAULT_PROJECTS_DIR, detail: 'Default projects folder', id: 'default' },
+                    { label: defaultUri.path.toString(), detail: 'Default projects folder', id: 'default' },
                     { label: 'Browse…', detail: 'Choose another location', id: 'browse' },
                 ],
                 { placeholder: 'Where to create the project?' },
@@ -157,7 +159,7 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
                 return undefined;
             }
             if (choice.id === 'default') {
-                return new URI(DEFAULT_PROJECTS_DIR);
+                return defaultUri;
             }
         }
         const selection = await this.fileDialogService.showOpenDialog({
@@ -171,6 +173,12 @@ export class ProjectWizardContribution implements CommandContribution, MenuContr
         }
         const uri = Array.isArray(selection) ? selection[0] : selection;
         return uri as URI;
+    }
+
+    /** The default projects parent dir: {home}/AUDESYS-Projects/. */
+    protected async defaultProjectsUri(): Promise<URI> {
+        const home = await this.envServer.getHomeDirUri();
+        return new URI(home).resolve(DEFAULT_PROJECTS_DIR);
     }
 
     protected async pickName(): Promise<string | undefined> {

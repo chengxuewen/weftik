@@ -9,8 +9,11 @@
 /** The manifest file living at the workspace/project root. */
 export const PROJECT_YAML_NAME = 'project.yaml';
 
-/** Default parent directory for brand-new projects (CODESYS-style default location). */
-export const DEFAULT_PROJECTS_DIR = '~/AUDESYS-Projects/';
+/**
+ * Default project directory name under the user's home (CODESYS-style default).
+ * Resolved against the home dir at wizard runtime via EnvVariablesServer.
+ */
+export const DEFAULT_PROJECTS_DIR = 'AUDESYS-Projects';
 
 /** A file to be created within a new project, relative to the project root. */
 export interface ProjectFile {
