@@ -718,3 +718,24 @@
 - **理由**: 172h 会话实证图形化设计器（LD/FBD 的连线/布局/命中/交互）是 AI 最弱、最易不及预期的域；ST/IL 编辑器（Monaco, D71 ✅）与编译器管线（D108 ✅）已就绪；工程管理是所有语言共底座（gap-analysis P0）；DAP 调试适配器（12 命令）已就绪；M1 是官方 3D 打印机里程碑。
 - **Phase A 逐项定案**: ①A1+A2 工程底座先行；②纯 POU 树（Programs/FBs/Functions/GVL，不含硬件树）；③全局+局部变量表 + 基本 IEC 类型；④ST 优先 IL 基础；⑤全量编译+错误定位；⑥单目标部署+Config Barrier；⑦DAP 断点+单步+变量；⑧控制逻辑 ST 为主+G-code 运动+仿真先行；⑨HMI 集成 AUDEDeck 第三方库（非 Studio 自建 YAML HMI）；⑩落 D113。
 - **参考**: .sisyphus/plans/text-first-iec-editor/plan.md，docs/modules/ld-editor/gap-analysis.md
+
+## D114: 工程组织模型 = Cargo 模型 for IEC 61131-3（目录 + 清单文件）
+- **日期**: 2026-08-07
+- **决定**: 工程组织采用"Cargo 模型 for IEC 61131-3"——文件夹即工程 + 薄清单文件（project.yaml）+ 锁文件 + 一 POU 一文本文件，四层解耦（逻辑/IO/任务/硬件）。明确否决：(a) 纯目录约定（无法表达目标控制器/任务/IO/库版本锁），(b) 单体工程文件 .project/.acd（CODESYS/TIA/Studio5000 用 20 年证明的 Git 灾难）。
+- **理由**: (1) Git/CI 合规——文本 diff/merge/review 免费获得（IEC 62443、21 CFR 11 变更追溯硬需求）；(2) AI 协同——只有纯文本文件 AI agent 能安全读写；(3) 行业演进方向——CODESYS FBS / TwinCAT 每 POU 文本 / Siemens TIA Openness 都在向目录+清单迁移；(4) 关注点分离——逻辑 ⊥ IO ⊥ 任务 ⊥ 硬件四层解耦。
+- **架构要点**: 清单（project.yaml）= 唯一真相源但不含代码；代码 = 独立文本文件；逻辑工程树是派生视图；图形语言用 PLCopen XML 或干净 JSON/YAML，绝不用厂商二进制；lock 文件（iecproj.lock）保证可复现构建。
+- **与 D113 关系**: 现有 A1-A6 目录约定（Programs/FBs/Functions/GVL）是雏形——已有一 POU 一文件 + 目录分组，只缺清单文件 + 更细分层（types/vars/config）。迁移路径平滑：保留现有文件，叠加清单作为工程身份入口。
+- **实现**: A7 New IEC Project wizard + project.yaml manifest（commit 1a63219）；设计文档 docs/modules/studio/iec-project-organization.md（commit adc132f）。
+- **参考**: .sisyphus/plans/text-first-iec-editor/plan.md，docs/modules/studio/iec-project-organization.md
+
+## D115: New AUDESYS Project 菜单放置 = File 顶层（对齐 CODESYS/TwinCAT）
+- **日期**: 2026-08-10
+- **决定**: 新建工程命令从 File ▸ IEC 61131-3 子菜单上浮到 File 顶层，命名从"New IEC Project"改为"New AUDESYS Project"，category 改为 AUDESYS。保留 IEC 61131-3 子菜单（8 个文件类型 + POU 向导仍在内）。
+- **理由**: (a) 主流工业 IDE 一致用 File 顶层新建工程——CODESYS File ▸ New Project、TwinCAT File ▸ New ▸ Project (New TwinCAT Project)、TIA Portal Project ▸ New；(b) 品牌命名——工程是 AUDESYS 全平台工程（6 种语言 + G-code + CNC），非仅 IEC 61131-3，"IEC Project"过窄；(c) TwinCAT "New TwinCAT Project"先例直接支持 AUDESYS 命名；(d) VS Code/Theia 官方模式（PR #12819/#13344）用 File ▸ New File... quickpick 而非带名子菜单，子菜单只放文件级命令。
+- **参考**: CODESYS helpme New Project command、Beckhoff InfoSys File▸New▸Project、Siemens TIA docs、Theia PR #12819/#13344；commit b9a939f
+
+## D116: 工程项目管理人工验证 = 预置示例工程 + G1-G6 工作流清单
+- **日期**: 2026-08-10
+- **决定**: 工程项目管理（A1-A7）暂无 E2E 覆盖（仅 9 个 project-model 单测），人工验证采用"预置示例工程 + 分功能域验证清单"：G1 新建工程向导 / G2 POU 树 / G3 变量表 / G4 编译 / G5 部署 / G6 调试。预置 3D 打印机骨架工程同时是将来 E2E 的 fixture。
+- **理由**: 单测验证模型正确，人工验证验证 UI 工作流；示例工程贴近"3D 打印机实践前提"且可复用为 E2E fixture。
+- **参考**: 会话讨论，apps/studio/e2e/ 现有 E2E（LD/FBD/HMI/shell，无工程管理覆盖）

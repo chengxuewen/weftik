@@ -1005,3 +1005,14 @@
 - **方案**: 编辑 JSDoc 注释块时确保 `*/` 闭合；方法"不存在"时报错先检查方法前注释是否把签名吞掉
 - **验证**: 补 `*/` 后 tsc 0 errors + vitest 144/144
 - **禁止**: 编辑 `/** */` 注释块时允许丢失闭合符 — 会无声删除后面的代码
+
+## New AUDESYS Project 菜单项不可见 (2026-08-10)
+
+### 新增菜单项找不到 — bundle 过期，运行中的 studio 用旧 bundle
+- **问题**: 用户 A7 提交后找不到 "New IEC Project" 菜单项（File ▸ IEC 61131-3 下没有）
+- **原因**: 源码注册正确 + lib 编译产物正确，但 `apps/studio/lib/frontend/bundle.js` 是旧的（tsc 只编译扩展 lib/，不重新打包 bundle）。运行中的 studio（port 3100）加载的是旧 bundle，新菜单项从未被打进去
+- **诊断**: `grep -c 'New IEC Project' apps/studio/lib/frontend/bundle.js` = 0；`ls -la bundle.js` 时间戳早于最新 lib 编译
+- **方案**: 杀 studio 进程 → `cd apps/studio && yarn build`（theia build + 3 门禁）→ 重启 → 验证 `grep -c '新命令' bundle.js` > 0
+- **验证**: 重建后 `grep -c 'New AUDESYS Project' bundle.js` = 1，File 菜单出现
+- **禁止**: 改 theia-extensions 源码后只验证 lib/ 不重建 bundle — lib/ 是 tsc 产物，bundle 是 theia build 产物，两者独立；运行中的应用必须重启才能加载新 bundle
+- **关联**: edit-safety Rule 13（扩展修改后必须验证编译产物）延伸至 bundle 层
