@@ -1,7 +1,7 @@
 /// <reference types="playwright" />
 import { test, expect } from '@playwright/test';
 
-const STUDIO_URL = 'http://127.0.0.1:3100';
+const STUDIO_URL = 'http://127.0.0.1:4000';
 
 test.describe('CODESYS Workflow E2E', () => {
 
