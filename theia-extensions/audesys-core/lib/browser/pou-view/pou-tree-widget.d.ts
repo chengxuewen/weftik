@@ -27,6 +27,7 @@ export declare class PouTreeWidget extends ReactWidget {
     protected init(): void;
     protected onAfterAttach(msg: Message): void;
     protected render(): React.ReactNode;
+    private renderProjectMeta;
     private renderToolbar;
     private renderError;
     private renderGroups;
@@ -45,6 +46,8 @@ export declare class PouTreeWidget extends ReactWidget {
     private refreshScheduled;
     private scheduleRefresh;
     private refresh;
+    /** Read project.yaml at the workspace root, if present → project metadata. */
+    private readProjectMeta;
     /** Recursively walk the workspace root collecting plain files. */
     private collectFiles;
     private setState;

@@ -9,6 +9,7 @@ import { WorkspaceService } from '@theia/workspace/lib/browser/workspace-service
 import { OpenerService } from '@theia/core/lib/browser/opener-service';
 import { classifyToGroups, extOf, PouFileEntry, PouGroupEntry } from '../pou-tree-model';
 import { findHighlightedFile, findPouGroupOf } from '../pou-highlight';
+import { parseProjectYaml, PROJECT_YAML_NAME, ProjectMeta } from '../project-model';
 
 interface PouWidgetState {
     groups: PouGroupEntry[];
@@ -16,6 +17,8 @@ interface PouWidgetState {
     loading: boolean;
     /** URI of the currently-active editor ('' when none). */
     activeUri: string;
+    /** Project metadata read from project.yaml at the workspace root (null when absent). */
+    meta: ProjectMeta | null;
 }
 
 /**
@@ -34,7 +37,7 @@ export class PouTreeWidget extends ReactWidget {
     @inject(EditorManager) protected readonly editorManager!: EditorManager;
 
     private expanded = new Set<string>();
-    private state: PouWidgetState = { groups: [], error: null, loading: false, activeUri: '' };
+    private state: PouWidgetState = { groups: [], error: null, loading: false, activeUri: '', meta: null };
     /** Derived in render(): the tree file matching the active editor (for scroll). */
     private highlightedUri: string | null = null;
     /** DOM nodes per file uri — used to scroll the highlighted file into view. */
@@ -68,9 +71,27 @@ export class PouTreeWidget extends ReactWidget {
         this.highlightedUri = findHighlightedFile(activeUri, groups)?.uri ?? null;
         return (
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                {this.renderProjectMeta()}
                 {this.renderToolbar(loading)}
                 {this.renderError(error)}
                 {this.renderGroups(groups)}
+            </div>
+        );
+    }
+
+    private renderProjectMeta(): React.ReactNode {
+        const { meta } = this.state;
+        if (!meta) {
+            return null;
+        }
+        return (
+            <div style={{
+                padding: '4px 8px', fontSize: 11, fontWeight: 600,
+                background: 'var(--theia-sideBarSectionHeader-background)',
+                borderBottom: '1px solid var(--theia-sideBar-sectionHeader-border, #383838)',
+                color: 'var(--theia-sideBarTitle-foreground)',
+            }}>
+                📦 {meta.name} <span style={{ color: 'var(--theia-descriptionForeground)', fontWeight: 400 }}>v{meta.version}</span>
             </div>
         );
     }
@@ -252,22 +273,32 @@ export class PouTreeWidget extends ReactWidget {
             this.refresh();
         }, 150);
     }
-
     private async refresh(): Promise<void> {
         const root = this.workspaceService.tryGetRoots()[0]?.resource;
         if (!root) {
-            this.setState({ groups: [], error: null, loading: false });
+            this.setState({ groups: [], error: null, loading: false, meta: null });
             this.expandGroupFor(this.state.activeUri);
             return;
         }
         this.setState({ loading: true });
         try {
             const files = await this.collectFiles(root);
-            this.setState({ groups: classifyToGroups(files), error: null, loading: false });
+            const meta = await this.readProjectMeta(root);
+            this.setState({ groups: classifyToGroups(files), error: null, loading: false, meta });
             this.expandGroupFor(this.state.activeUri);
         } catch (e) {
             this.setState({ groups: [], error: `Failed to scan workspace: ${String(e)}`, loading: false });
         }
+    }
+
+    /** Read project.yaml at the workspace root, if present → project metadata. */
+    private async readProjectMeta(root: URI): Promise<ProjectMeta | null> {
+        const manifestUri = root.resolve(PROJECT_YAML_NAME);
+        if (!(await this.fileService.exists(manifestUri))) {
+            return null;
+        }
+        const content = await this.fileService.readFile(manifestUri);
+        return parseProjectYaml(content.value.toString());
     }
 
     /** Recursively walk the workspace root collecting plain files. */

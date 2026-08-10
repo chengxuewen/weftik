@@ -7,6 +7,7 @@ import { IecNavigatorDecorator } from './iec-navigator-decorator';
 import { IecFileIconTheme } from './iec-icons';
 import { IecNewFileContribution } from './iec-new-file-contribution';
 import { PouWizardContribution } from './pou-wizard-contribution';
+import { ProjectWizardContribution } from './project-wizard-contribution';
 import { IecContextMenuContribution } from './iec-context-menu';
 import { OpenFolderMenuContribution } from './open-folder-menu';
 import { WindowTitleContribution } from './window-title-contribution';
@@ -31,6 +32,10 @@ export default new ContainerModule((bind) => {
     // New POU wizard (A1-4) — type + language → templated file in right dir
     bind(CommandContribution).to(PouWizardContribution).inSingletonScope();
     bind(MenuContribution).to(PouWizardContribution).inSingletonScope();
+
+    // New IEC Project wizard — standard dir convention + project.yaml manifest
+    bind(CommandContribution).to(ProjectWizardContribution).inSingletonScope();
+    bind(MenuContribution).to(ProjectWizardContribution).inSingletonScope();
 
     // Context menu: Compile / Deploy / Validate (right-click in navigator)
     bind(CommandContribution).to(IecContextMenuContribution).inSingletonScope();

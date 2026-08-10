@@ -57,6 +57,7 @@ const workspace_service_1 = require("@theia/workspace/lib/browser/workspace-serv
 const opener_service_1 = require("@theia/core/lib/browser/opener-service");
 const pou_tree_model_1 = require("../pou-tree-model");
 const pou_highlight_1 = require("../pou-highlight");
+const project_model_1 = require("../project-model");
 /**
  * POU tree widget — lists IEC 61131-3 files grouped by directory convention
  * (Programs / FBs / Functions / GVL) in the left sidebar. Clicking a file opens
@@ -66,7 +67,7 @@ let PouTreeWidget = PouTreeWidget_1 = class PouTreeWidget extends react_widget_1
     constructor() {
         super();
         this.expanded = new Set();
-        this.state = { groups: [], error: null, loading: false, activeUri: '' };
+        this.state = { groups: [], error: null, loading: false, activeUri: '', meta: null };
         /** Derived in render(): the tree file matching the active editor (for scroll). */
         this.highlightedUri = null;
         /** DOM nodes per file uri — used to scroll the highlighted file into view. */
@@ -94,9 +95,28 @@ let PouTreeWidget = PouTreeWidget_1 = class PouTreeWidget extends react_widget_1
         const { groups, loading, error, activeUri } = this.state;
         this.highlightedUri = (0, pou_highlight_1.findHighlightedFile)(activeUri, groups)?.uri ?? null;
         return (React.createElement("div", { style: { display: 'flex', flexDirection: 'column', height: '100%' } },
+            this.renderProjectMeta(),
             this.renderToolbar(loading),
             this.renderError(error),
             this.renderGroups(groups)));
+    }
+    renderProjectMeta() {
+        const { meta } = this.state;
+        if (!meta) {
+            return null;
+        }
+        return (React.createElement("div", { style: {
+                padding: '4px 8px', fontSize: 11, fontWeight: 600,
+                background: 'var(--theia-sideBarSectionHeader-background)',
+                borderBottom: '1px solid var(--theia-sideBar-sectionHeader-border, #383838)',
+                color: 'var(--theia-sideBarTitle-foreground)',
+            } },
+            "\uD83D\uDCE6 ",
+            meta.name,
+            " ",
+            React.createElement("span", { style: { color: 'var(--theia-descriptionForeground)', fontWeight: 400 } },
+                "v",
+                meta.version)));
     }
     renderToolbar(loading) {
         return (React.createElement("div", { style: {
@@ -227,19 +247,29 @@ let PouTreeWidget = PouTreeWidget_1 = class PouTreeWidget extends react_widget_1
     async refresh() {
         const root = this.workspaceService.tryGetRoots()[0]?.resource;
         if (!root) {
-            this.setState({ groups: [], error: null, loading: false });
+            this.setState({ groups: [], error: null, loading: false, meta: null });
             this.expandGroupFor(this.state.activeUri);
             return;
         }
         this.setState({ loading: true });
         try {
             const files = await this.collectFiles(root);
-            this.setState({ groups: (0, pou_tree_model_1.classifyToGroups)(files), error: null, loading: false });
+            const meta = await this.readProjectMeta(root);
+            this.setState({ groups: (0, pou_tree_model_1.classifyToGroups)(files), error: null, loading: false, meta });
             this.expandGroupFor(this.state.activeUri);
         }
         catch (e) {
             this.setState({ groups: [], error: `Failed to scan workspace: ${String(e)}`, loading: false });
         }
+    }
+    /** Read project.yaml at the workspace root, if present → project metadata. */
+    async readProjectMeta(root) {
+        const manifestUri = root.resolve(project_model_1.PROJECT_YAML_NAME);
+        if (!(await this.fileService.exists(manifestUri))) {
+            return null;
+        }
+        const content = await this.fileService.readFile(manifestUri);
+        return (0, project_model_1.parseProjectYaml)(content.value.toString());
     }
     /** Recursively walk the workspace root collecting plain files. */
     async collectFiles(root) {

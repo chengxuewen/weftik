@@ -9,6 +9,7 @@ const iec_navigator_decorator_1 = require("./iec-navigator-decorator");
 const iec_icons_1 = require("./iec-icons");
 const iec_new_file_contribution_1 = require("./iec-new-file-contribution");
 const pou_wizard_contribution_1 = require("./pou-wizard-contribution");
+const project_wizard_contribution_1 = require("./project-wizard-contribution");
 const iec_context_menu_1 = require("./iec-context-menu");
 const open_folder_menu_1 = require("./open-folder-menu");
 const window_title_contribution_1 = require("./window-title-contribution");
@@ -29,6 +30,9 @@ exports.default = new inversify_1.ContainerModule((bind) => {
     // New POU wizard (A1-4) — type + language → templated file in right dir
     bind(common_1.CommandContribution).to(pou_wizard_contribution_1.PouWizardContribution).inSingletonScope();
     bind(common_1.MenuContribution).to(pou_wizard_contribution_1.PouWizardContribution).inSingletonScope();
+    // New IEC Project wizard — standard dir convention + project.yaml manifest
+    bind(common_1.CommandContribution).to(project_wizard_contribution_1.ProjectWizardContribution).inSingletonScope();
+    bind(common_1.MenuContribution).to(project_wizard_contribution_1.ProjectWizardContribution).inSingletonScope();
     // Context menu: Compile / Deploy / Validate (right-click in navigator)
     bind(common_1.CommandContribution).to(iec_context_menu_1.IecContextMenuContribution).inSingletonScope();
     bind(common_1.MenuContribution).to(iec_context_menu_1.IecContextMenuContribution).inSingletonScope();
