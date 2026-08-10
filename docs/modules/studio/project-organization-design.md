@@ -49,4 +49,6 @@ Signal Browser、FBD 编辑器、Deploy 目标自动按上下文过滤。
 ## 交叉引用
 - Agent: `docs/modules/agent/agent-architecture-design.md`
 - Hub: `docs/modules/hub/hub-architecture-design.md`
+
+> 本文档描述 **部署拓扑**（Device/Cell/Factory）。源码级工程组织见 `iec-project-organization.md`（D114，Cargo 模型 for IEC）。
 - 架构 spec: §18 工程项目组织, §21 三级工程模型

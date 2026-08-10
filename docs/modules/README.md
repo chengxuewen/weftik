@@ -5,7 +5,7 @@
 | HAL 硬件抽象 | `hal/` | 19 份子文档 |
 | Runtime 运行时 | `runtime/` | 7 份子文档 |
 | CNC 数控系统 | `cnc/` | 5 份子文档 |
-| Studio IDE | `studio/` | 3 份子文档 |
+| Studio IDE | `studio/` | 4 份子文档 |
 | Compiler 编译器 | `compiler/` | 1 份子文档 |
 | Agent 车端管理 | `agent/` | 1 份子文档 |
 | Hub 统一平台 | `hub/` | 1 份子文档 |
