@@ -1,6 +1,7 @@
 # AUDESYS 项目状态
 
 ## 当前阶段
+- **工程项目管理（A7 + 无 workspace 创建）完成（2026-08-10）** — New AUDESYS Project 向导（D114 工程组织模型）：目录约定 + project.yaml 清单 + 一 POU 一文件。修复「无 workspace 无法建工程」：改为从零创建（默认 ~/AUDESYS-Projects/，EnvVariablesServer 解析 home）+ 自动打开 workspace。菜单上浮 File 顶层（D115）。E2E 门禁通过（15.9s）。详见 D114/D115/D116
 - **LD 编辑器拓扑 bug 修复完成（2026-08-05）** — D112 拓扑化后 3 个 bug 修复：(1) 拖动元素后连线消失（reorderElement 删线不重建串联）→ 新增 rewireRungSeries；(2) 跨 rung 误删连线（filter 含全局 rail id，rail 跨 rung 共享）→ 只按本 rung 元素 id 过滤；(3) 线圈放置失败（addCoil 保留自由放置位置校验，UI 拓扑路径不传 position 必抛错）→ 移除位置校验，coil 拓扑化追加。vitest 144/144。详见本项目 pitfalls.md
 - **LD/IL 编辑器改进完成** — 2026-07-31，Phase 1-2 完成：IL 编译器新增 S/R/NOT/MOD/定时器/计数器/边沿/双稳态 (33 助记符)、LD 并联分支 (| NO/NC→OR/ORN)、多输出、P/N 跳变触点、rung:group 视图、3 个 GLSP 操作 Handler。63 测试通过 (31 LD + 32 IL)。详见计划 .sisyphus/plans/ld-editor-improvements/
 - **FBD GLSP 迁移完成** — 2026-07-31，FBD 编辑器从 React+SVG 迁移到完整 Eclipse GLSP 架构。14 新文件、GPort 端口系统、5 种逻辑门 IView、36 测试全通过。详见 D107。
@@ -17,8 +18,8 @@
 - **HMI 设计器就绪** — 2026-07-19，可视化拖拽编辑器（react-rnd 自由布局画布）、7 种工业 widget（Gauge/Trend/Tank/Indicator/Button/Display/Text）、信号绑定对话框（controller_signal_snapshot 集成）、属性面板（位置/尺寸/标签/信号/类型专属配置）、Edit/Preview 模式切换、YAML 持久化（save_hmi_layout/load_hmi_layout）
 
 ## 仓库状态
-- **最新提交**: `c53a046` — `fix(ld-editor): tool placement works when clicking inside the rung (CODESYS-style)`（5 commits ahead of origin/main 未 push）
-- **提交历史**: 210+ commits on main (2026-07-08 至 2026-08-04)
+- **最新提交**: `2b3e668` — `docs(memory): lesson-review — Theia ~/ URI 不解析 + E2E workspace 状态污染`（与 origin/main 同步）
+- **提交历史**: 220+ commits on main (2026-07-08 至 2026-08-10)
 - **源代码**: 24 crates（crates/）+ 1 Tauri 应用（3rdparty/AUDEDeck/）。apps/studio/ 已弃用（D71 Theia 迁移）
 - **测试**: 799 `#[test]` 标注 + vitest 144 tests (LD React Flow) + 26 tests (FBD React Flow) + Rust (40 LD + 39 IL) + Playwright E2E 31 场景 (LD) + 10 场景 (FBD) |
 - **SDD 规范**: 239 项（openspec/specs/7 份）：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI(22) + Studio Theia(55)
@@ -50,6 +51,7 @@
 | Debug Panel (Theia) | ✅ 完成 | Theia Widget，8 源文件/7 测试，DI bindings 完整 |
 | HMI Designer (Theia) | ✅ 完成 | Theia Widget，HMI 可视化设计器迁移完成 |
 | Mode System | ✅ 完成 | 编辑器模式切换系统（6 语言 + HMI） |
+| 工程管理 (A1-A7) | ✅ 完成 | POU 树 + 变量表 + 类型 + 编译/部署/调试 + New AUDESYS Project 向导（D114 目录+project.yaml，无 workspace 从零创建 + 自动打开，D115） |
 | RuntimeClient | ✅ 完成 | UDS IPC 客户端（7 方法含 deploy_hmi_layout + 认证）|
 | Studio ↔ Controller 联调 | ✅ 完成 | deploy_program + load_hal_config + read_controller_signal |
 | Modbus RTU/TCP | ✅ 完成 | libmodbus FFI，8 测试 |
