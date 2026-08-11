@@ -46,5 +46,10 @@ if command -v npm &>/dev/null && [ -f crates/audesys-theia-bridge/package.json ]
   echo "  npm found — running napi-rs build (non-blocking)"
   (cd crates/audesys-theia-bridge && npm run build 2>&1 | tail -5) || echo "  napi-rs npm build SKIPPED (may need deps install)"
 fi
+
+# ── CLI 自检（CLI 是 qa 包装，坏了门禁应感知）──
+echo "[7/7] CLI 自检"
+python3 -m py_compile scripts/audesys_cli.py && ./audesys.sh version >/dev/null 2>&1 \
+  && echo "  CLI OK" || { echo "  CLI FAILED — audesys CLI 不可用"; exit 1; }
 echo ""
 echo "=== qa-fast PASSED ==="

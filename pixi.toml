@@ -11,6 +11,7 @@ flatbuffers = ">=24.3.25,<26"
 python = "3.12.*"
 pip = ">=24.0,<26"
 ripgrep = ">=14.1.0,<15"
+pyyaml = ">=6.0,<7"
 
 # Development tools (clippy, rustfmt, cargo-deny, cmake)
 [feature.dev.dependencies]
@@ -27,6 +28,7 @@ audit = "cargo deny check"
 
 # Testing tools (Phase 1 — coverage, nextest)
 [feature.test.dependencies]
+pytest = ">=8.0,<9"
 
 [feature.test.tasks]
 test = "cargo test --workspace"
@@ -54,3 +56,5 @@ default = { features = ["dev", "test"] }
 init = "scripts/pixi-init.sh"
 shell = "scripts/pixi-shell.sh"
 archive = "scripts/archive-source.sh"
+cli = "scripts/audesys_cli.py"
+cli-smoke = "python -m pytest scripts/qa/cli-smoke.py"
