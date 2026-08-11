@@ -201,6 +201,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         prog="audesys",
         description="AUDESYS 统一构建 CLI（单入口: build/test/qa/run/deploy/clean/config/status/version）",
+        epilog="常用参数:  run [-f] 前台实时输出日志 | qa <fast|full|deep> | config <show|validate>\n各子命令详细参数见: audesys <cmd> -h",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
