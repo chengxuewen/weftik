@@ -65,6 +65,7 @@
 ---
 
 ## 3. STH-GLSP — GLSP 图形编辑器集成 (14 项)
+> ⛔ **历史参考（D110）**：GLSP 已完全移除，LD/FBD 编辑器改 React Flow（weftik-ld-editor/fbd-editor）。本段 STH-GLSP 各项不再作为实现依据。
 
 > **参考**: Neuron Automation（logi.cals 基于 Theia+GLSP 的 IEC 61131-3 IDE）
 > **规模**: LD 单独 5000-9000 行（GModel 800-1500 + GLSP 操作 1200-2000 + 工具面板 400-600 + 布局引擎 1000-2000 + 属性视图 500-800 + Theia 集成 600-1000 + IEC 61131-3 特性 600-1000）

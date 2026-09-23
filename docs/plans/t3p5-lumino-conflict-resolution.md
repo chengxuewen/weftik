@@ -1,6 +1,6 @@
 # T3.5 Lumino Conflict Resolution — HMI Designer ReactWidget Migration
 
-**Status:** Design Spec  
+**Status:** ⛔ 已作废（D117：HMI Designer 已从仓库删除，本迁移方案不再执行）
 **Date:** 2026-07-21  
 **Scope:** T3.5 HMI Designer (Week 1 of 2-4 weeks)  
 **References:**

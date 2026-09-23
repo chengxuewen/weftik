@@ -12,10 +12,10 @@ Hardware Abstraction Layer (HAL)、Simulator、CNC 控制。Panel/HMI UI 由外�
 
 Theia migration complete (2026-07-21). 24 Rust crates, 6 IEC 61131-3 compilers
 (ST/IL/LD/FBD/SFC), G-code compiler, Runtime Engine (5-step cycle + hot-swap),
-Supervisor, IPC Server, Modbus/HART protocol adapters, Eclipse Theia Studio IDE
-(Monaco Editor + GLSP + napi-rs bridge, 6 language editors + HMI designer),
+Agent (supervisor), IPC Server, Modbus/HART protocol adapters, Eclipse Theia Studio IDE
+(Monaco Editor + React Flow + napi-rs bridge, 6 language editors),
 SimulationHarness, Prometheus metrics, DAP debug adapter.
-799+ `#[test]` annotations. 239 SDD specification items.
+799+ `#[test]` annotations. 296 SDD specification items (incl. historical-reference sections).
 
 Active development: CNC axis group + interpolation, amw-zenoh network transport,
 HMI push-mode SignalBridge.

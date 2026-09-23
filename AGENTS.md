@@ -26,7 +26,7 @@ Weftik/
 │   ├── reference/                # 41 篇竞品参考文档（12 大类别）
 │   ├── plans/                    # P0 实施计划文档
 ├── openspec/           # OpenSpec 变更管理与 SDD 规范目录
-│   ├── specs/                     # 4 份 SDD 规范文档（121 项）
+│   ├── specs/                     # 9 份 SDD 规范文档（296 项，含历史参考章节）
 │   └── changes/                   # 变更提案目录
 ├── SKILL.md            # 技能注册表（superpowers + 项目专属 + agents）
 ├── AGENTS.md           # 本文件 — 项目知识库入口
@@ -134,7 +134,7 @@ node lib/backend/main.js --port=3100  # 浏览器模式
 ```
 
 ## NOTES
-- **24 crates + Theia Studio** — 6 语言编辑器、HMI Designer、编译器、Runtime Engine、IPC Server、SimulationHarness、799+ 测试、239 SDD 规范项
+- **24 crates + Theia Studio** — 6 语言编辑器、HMI IPC 契约（0x16-0x18，Panel 属外部项目）、编译器、Runtime Engine、IPC Server、SimulationHarness、799+ 测试、296 SDD 规范项
 - **从 MODACS 分离** — 2026-07-08 首次提交。无 MODACS 代码共享
 - **.sisyphus/** 被 gitignore 排除 — 计划文件和证据不提交到仓库
 - **双 package.json** — 根目录用 npm，`.opencode/` 用独立包（插件系统）

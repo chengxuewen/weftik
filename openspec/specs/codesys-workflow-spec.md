@@ -5,6 +5,7 @@
 > **工作流**: 工程创建 → 文件创建 → LD 编辑 → 编译 → 部署 → 调试 → HMI 绑定
 > **关联决策**: D22, D25, D55, D56, D57, D68, D71
 > **关联规范**: studio-theia-spec.md (STH-001~050), hmi-spec.md (HMI-VAL/DPL/SIG)
+> **状态标注（D117）**：工作流 HMI 绑定段（WF-BINDING-001/002）已失效——HMI Designer 已删除，变量绑定/Preview 属外部 Panel 项目；旧关联的 hmi-designer-spec.md / HMI-VAL 系列亦已删除。本段仅作历史参考。
 
 ---
 
@@ -518,6 +519,7 @@ Theia Debug Panel Widget 显示调试会话状态。
 ---
 
 ## 7. WF-BINDING — HMI 变量绑定 (2 项)
+> ⛔ 本段全部失效 by D117（历史参考）：HMI Designer（含 Preview 模式）已从仓库删除，信号绑定与预览由外部 Panel 项目按 hmi-spec.md 契约实现。
 
 ### WF-BINDING-001: HMI Designer 中输入 LD 变量名
 

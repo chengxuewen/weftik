@@ -1,11 +1,11 @@
 # Weftik Studio Theia 架构
 
 > 更新日期：2026-07-22
-> 参考决策：D71
+> 参考决策：D71 · 修订：2026-09-23 按 D110（GLSP→React Flow）/ D117（HMI 设计器移除）对齐现状
 
 ## 架构概览
 
-Weftik Studio 基于 Eclipse Theia 1.73 构建，采用 Electron + Browser 双渲染模式。前端使用 Theia Workbench（Monaco Editor + GLSP 图形编辑器），后端通过 napi-rs 桥接 Rust Runtime。
+Weftik Studio 基于 Eclipse Theia 1.73 构建，采用 Electron + Browser 双渲染模式。前端使用 Theia Workbench（Monaco Editor + React Flow 图形编辑器，D110 取代早期 GLSP），后端通过 napi-rs 桥接 Rust Runtime。
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -31,8 +31,8 @@ Weftik Studio 基于 Eclipse Theia 1.73 构建，采用 Electron + Browser 双�
 │  └──────────────────────────────────────────────────────────┘  │
 ├────────────────────────────────────────────────────────────────┤
 │  Rust Runtime (独立进程 / worker_thread)                        │
-│  · Controller (5-step RT cycle)  · Supervisor (进程编排)       │
-│  · IPC Server (UDS 17 methods)   · Compilers (6 langs + CNC)   │
+│  · Controller (5-step RT cycle)  · Agent (进程编排)           │
+│  · IPC Server (UDS 24 methods, 0x01-0x18)  · Compilers (6 langs + CNC)    │
 │  · Modbus/HART adapters          · DAP Debug Adapter            │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -47,16 +47,15 @@ apps/studio-theia/            # Theia 应用主目录
 ├── e2e/                      # Playwright 端到端测试
 └── electron-builder.yml      # Electron 打包配置
 
-theia-extensions/             # 10 个 Theia 扩展
+theia-extensions/             # 9 个 Theia 扩展（hmi-designer 已随 D117 删；ld/fbd-glsp 已随 D110 改 *-editor）
 ├── weftik-core/             # 核心扩展：菜单、主题、命令面板
 ├── weftik-backend/          # 后端服务：JSON-RPC 代理 + RBAC + 审计
 ├── weftik-st-editor/        # ST Monaco Editor（Monarch tokenizer + completion）
 ├── weftik-il-editor/        # IL Monaco Editor
 ├── weftik-gcode-editor/     # G-code Monaco Editor
 ├── weftik-sfc-editor/       # SFC Monaco Editor（文本模式）
-├── weftik-ld-glsp/          # LD GLSP 图形编辑器（GModel + Server + 工具面板）
-├── weftik-fbd-glsp/         # FBD GLSP 图形编辑器
-├── weftik-hmi-designer/     # HMI 设计器（ReactWidget 包装）
+├── weftik-ld-editor/        # LD React Flow 编辑器（D110，原 weftik-ld-glsp 已删）
+├── weftik-fbd-editor/       # FBD React Flow 编辑器（D110，原 weftik-fbd-glsp 已删）
 ├── weftik-debug/            # 调试面板（DAP adapter 适配 Theia Debug API）
 └── workshop-playground/      # 开发 workshop
 

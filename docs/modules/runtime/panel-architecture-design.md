@@ -5,9 +5,9 @@
 **生成日期**: 2026-07-19
 **修订日期**: 2026-07-21
 
-> ℹ️ Studio 迁移通知：Weftik Studio 已从 Tauri+React 迁移到 Eclipse Theia（详见 docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md）。AUDEDeck 不受影响——仍基于 Tauri + PWA 独立运行，由 3rdparty/AUDEDeck/ 提供。Widget 复用 @weftik/deck-core。
+> ℹ️ 2026-07 时点记录：Studio 已迁 Theia（D71）。⛔ D117 后本文正文中的 `AUDEDeck`、`packages/studio-core/` 均为**逻辑组件名**，指外部 Panel 项目的对应实现，不再代表本仓库路径（旧文中「3rdparty/AUDEDeck/ 提供」所述应用已删除；「@weftik/deck-core」为从未落地的命名草案，实际包曾为 studio-core）。
 
-**依赖决策**: D64 (Role::HMI), D65 (AUDEDeck 独立进程), D66 (Transport 层), D68 (HMI 布局部署), D62 (SignalBridge Hybrid), D63 (周期边界批量), D17 (Config Barrier)
+**依赖决策**: D64 (Role::HMI), D65 (Panel 独立进程原则，⛔归属关系已由 D117 取代), D66 (Transport 层), D68 (HMI 布局部署), D62 (SignalBridge Hybrid), D63 (周期边界批量), D17 (Config Barrier)
 **参考**: `docs/modules/runtime/ipc-security-design.md`, `docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md`
 **设计目标**: AUDEDeck 作为独立操作员进程运行 HMI 布局，区别于 Studio 设计器
 |           Studio IDE                 │      │       AUDEDeck          │
