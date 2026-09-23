@@ -61,7 +61,7 @@
 - 端口/功能：移植自 LinuxCNC/OpenPLC/ROS2/dora-rs 功能以 HAL 原语对接，非协议桥接
 - 延迟声明必须带前提条件（内核、消息大小、硬件）和典型范围，必须配套验证方法
 
-## Studio IDE 技术栈约定
+## Studio IDE 技术栈约定（历史：D71 前 Tauri 时代，现状见下方「(更新)」节）
 - **框架**: Tauri (Rust 后端) + React + TypeScript
 - **样式**: Tailwind CSS（内置跨浏览器 normalize）
 - **测试**: CI/CD 同时验证 macOS/Windows/Linux 三平台 Playwright E2E 测试

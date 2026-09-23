@@ -654,7 +654,7 @@
 - **原因**: yarn workspaces hoist 改变了依赖解析路径，`@testing-library/jest-dom` 的 peer dependency `@testing-library/dom` 未被正确解析
 - **方案**: 暂时禁用 HMI designer（从 apps/studio/package.json 移除），待 vitest 依赖问题解决后重新启用
 - **验证**: `cd theia-extensions/weftik-hmi-designer && npx vitest run` 应全部通过
-- **状态**: 待修复（D106）
+- **状态**: ⛔ 已作废（D117：设计器整体删除，本 vitest 问题不再修复；关联 D106 条目已标终态）
 - **方案**: 每次 edit 后 Read 验证文件内容；同一文件 3 次以上 edit 使用 Write 整体重写
 - **验证**: `grep -c '重复关键字' file.ts` 检查无意外重复计数 > 1
 

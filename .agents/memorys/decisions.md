@@ -340,12 +340,14 @@
 - **参考**: D25, `crates/weftik-gcode-compiler/`, `docs/modules/cnc/gcode-compiler-design.md`
 
 ## D58: Studio 插件架构 = PluginRegistry + CommandRegistry + PlatformAdapter + PanelSystem
+> ⚠️ **部分被 D71 取代** — PluginRegistry/CommandRegistry/PanelSystem 由 Theia Extension System 替代；见 D71 「取代决策」
 - **日期**: 2026-07-19
 - **决定**: Weftik Studio 采用四层插件架构。参考 VS Code Extension API（activate/deactivate 模式、25 种 activationEvents、20+ 种 Contribution Points），但 P1 仅实现核心：PluginRegistry (Manifest Scan + Lifecycle)、CommandRegistry (37 命令 7 命名空间)、PanelSystem (PanelDescriptor 布局引擎)、PlatformAdapter (PC/Web 双模式)。
 - **理由**: VS Code 的插件架构经过 10 年验证，是最成熟的 IDE 扩展模型。Weftik 不需要重造轮子——直接采用 activate/deactivate 模式、activationEvents 延迟加载、commands 统一入口。Tauri 不支持运行时动态加载，因此 P1 使用静态 JSON manifests + lazy import 组件。
 - **参考**: docs/modules/studio/plugin-architecture-design.md, docs/reference/vscode.md
 
 ## D59: Studio PC/Web 双模式 = PlatformAdapter 抽象层
+> ⚠️ **部分被 D71 取代** — IPlatformAdapter 由 Theia Backend Service 替代；见 D71 「取代决策」
 - **日期**: 2026-07-19
 - **决定**: 通过 IPlatformAdapter 接口将 Tauri 特定 API（invoke、fs、dialog）抽象为统一接口。PC 模式封装 Tauri API，Web 模式使用浏览器 API（fetch + IndexedDB + File API）。前端 React 组件零修改——仅替换 import 源。
 - **理由**: VS Code 的 IFileService/ICommandService 抽象模式已验证 Web 迁移可行性。当前 61 处 @tauri-apps/* 硬绑定是 Web 部署的主要阻碍。PlatformAdapter 作为唯一的适配点，替换后 100% 前端代码可复用。
@@ -366,12 +368,14 @@
 - **参考**: docs/modules/runtime/panel-architecture-design.md §3, docs/modules/studio/plugin-architecture-design.md
 
 ## D62: SignalBridge 默认 Hybrid 模式 = Push 优先 + Poll 降级
+> 🔄 **契约条款 (D117)** — 主体 AUDEDeck 已移交外部 Panel 项目；Hybrid push+poll 机制保留为对外契约（见 openspec/specs/hmi-spec.md SignalBridge 段）
 - **日期**: 2026-07-19
 - **决定**: AUDEDeck 信号更新采用 Hybrid 策略：优先使用 IPC push 推送（Controller 端 SIGNAL_PUSH frame），降级使用 100ms poll 轮询（SIGNAL_SNAPSHOT）。Push 延迟 <50μs (UDS)，poll 作为 Controller 不支持推送时的兜底。
 - **理由**: Push 是低延迟的最佳方案，但不能假设所有 Controller 部署都支持 0x16 push frame（特别是远程 WebSocket 场景）。Hybrid 确保 Panel 在所有部署模式下都能工作。
 - **参考**: .sisyphus/plans/signal-bridge/design.md, docs/modules/runtime/panel-architecture-design.md §4
 
 ## D63: 订阅推送在周期边界批量发送
+> 🔄 **契约条款 (D117)** — 周期边界批量推送在 Runtime 侧保留，为外部 Panel 契约行为
 - **日期**: 2026-07-19
 - **决定**: Controller 端信号变化推送在 RT 周期边界（Config Barrier 边界）批量发送，不在信号变化时即时推送。同周期内同一信号多次变化，仅推送最终值。
 - **理由**: 避免 RT 线程中逐信号推送造成抖动。与 Config Barrier (D17) 设计哲学一致——所有变更在周期边界批量应用。
@@ -538,6 +542,7 @@
 - **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §46, `.sisyphus/plans/m1-3d-printer-platform/`
 
 ## D92: LD/FBD GLSP 迁移 = Route C（LD 先行→FBD 跟进）
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除，LD/FBD 改 React Flow；本条仅作历史参考
 - **日期**: 2026-07-27
 - **决定**: LD 编辑器从当前 React+SVG 自定义方案迁移到完整 Eclipse GLSP 架构，采用 Route C（LD 先行→FBD 跟进）。迁移目标：前端 GLSP Client（Sprotty）通过 JSON-RPC/WebSocket 连接 GLSP Server（Node.js），Server 通过 napi-rs 桥接 Rust 编译器。GLSP Theia 集成（@eclipse-glsp/theia-integration）自动处理 .ld 文件打开、dirty state、save、undo/redo，替换当前 LdEditorWidget（929 行 React+SVG）和 LdOperationHandler 直接调用模式。FBD 编辑器复用相同模式。
 - **理由**: (a) 当前 React+SVG 方案与 Theia+GLSP 生态系统不集成，缺少 GLSP 提供的图模型管理、Command Framework、Undo/Redo、脏状态等开箱即用能力；(b) Eclipse GLSP 已被 Neuron Automation 验证可用于 IEC 61131-3 工业编程；(c) 调研发现当前扩展中 sprotty-theia 是死依赖（GLSP 2.x 已废弃）、@eclipse-glsp/* 依赖声明但未安装、LdSprottyDiagramWidget 从未实例化、server/index.ts 是死代码——说明迁移意图已存在但从未落地，现在是系统化执行的最佳时机；(d) 复用已有 ld-views.tsx 中的 SVG 视图组件作为 GLSP IView，降低迁移风险。
@@ -545,6 +550,7 @@
 - **参考**: .sisyphus/plans/glsp-migration/plan.md（Phase 0 基础设施验证 + Phase 1 LD 客户端 + Phase 2 服务端 + Phase 3 FBD 复制）
 
 ## D93: LdGModelState → GLSP DefaultModelState 迁移
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除；本条仅作历史参考
 - **日期**: 2026-07-27
 - **决定**: LD GLSP 迁移中，当前前端 singleton 的 `LdGModelState`（118行，JSON 快照 undo/redo）替换为 GLSP 服务端 `DefaultModelState` + `JsonModelState<T>`。GLSP 自带 `UndoRedoHandler`，基于操作命令（非快照）实现 undo/redo，不需要额外的 undo 栈管理。
 - **理由**: (a) GLSP 2.x 架构要求 ModelState 在服务端管理源模型；(b) `DefaultModelState` 已集成 undo/redo、dirty state、model update；(c) JSON 快照方案在 GLSP 命令式框架中冗余且可能导致双系统冲突
@@ -571,6 +577,7 @@
 - **验证**: `npm ls @theia/core` 只显示一个版本；`find node_modules -name core -path '*/@theia/*' -type d | grep -v '^node_modules/@theia/core$'` 为空
 
 ## D97: Bundle Symbol 去重 = 删除扩展本地 node_modules
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除；本条仅作历史参考
 - **日期**: 2026-07-28
 - **决定**: 删除所有扩展的 `node_modules/`，让所有依赖通过 `apps/studio/node_modules/` 解析（Theia 官方标准模式）。`preserveSymlinks=true` 保留（file: link 解析需要）。`@weftik/theia-bridge` 添加到 studio 的 dependencies。
 - **理由**: 扩展本地 node_modules 含 @theia、@eclipse-glsp、inversify 物理副本，esbuild 将不同路径视为不同模块 → Symbol 重复 → DI 静默失效。删除后 `Symbol("FrontendApplicationContribution")` = 1，LD/FBD 图标正常显示。
@@ -587,6 +594,7 @@
 - **参考**: @theia/core package.json 的 frontend vs frontendElectron 字段
 
 ## D99: GLSP 模块隔离 — sprotty vs @eclipse-glsp/sprotty
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除；本条仅作历史参考
 - **日期**: 2026-07-30
 - **决定**: configureModelElement 和视图类（SGraphView, PolylineEdgeView）从 @eclipse-glsp/sprotty 导入以确保 DI Symbol 一致；features（selectFeature, moveFeature 等）从 sprotty 导入以避免 DEFAULT_FEATURES 未定义错误
 - **理由**: @eclipse-glsp/sprotty 是 GLSP 对 sprotty 的 fork，使用不同的 DI Symbol（ViewRegistration, ActionDispatcher 等）。从 sprotty 导入视图会导致注册在错误 Symbol 上，ViewRegistry 不可见。但 @eclipse-glsp/sprotty 的 features 通过 CJS __exportStar 重导出，esbuild 打包后 DEFAULT_FEATURES 可能为 undefined
@@ -600,6 +608,7 @@
 - **参考**: docs/reference/neuron-smart-engineer.md, docs/reference/theia-projects.md
 
 ## D101: GLSP 客户端导入规范
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除；本条仅作历史参考
 - 日期: 2026-07-30
 - 决定: LD/FBD 编辑器客户端代码只能从 @eclipse-glsp/client 导入，禁止直接从 sprotty 导入
 - 理由: @eclipse-glsp/sprotty (GLSP fork) 与 sprotty (上游) 使用不同 DI Symbol 体系。官方 node-json-theia 模板验证了此模式
@@ -611,12 +620,14 @@
 - 理由: LD/FBD/SFC 图形编辑器依赖 GLSP+Theia 生态，需要系统化参考文档指导开发
 
 ## D103: 构建时移除扩展 node_modules symlink
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除（另见 D105 Yarn Workspaces 已取代两步构建）；本条仅作历史参考
 - 日期: 2026-07-30
 - 决定: 构建前端 bundle 前必须先移除扩展 node_modules symlink，构建后恢复。构建两步法: `rm theia-extensions/*/node_modules && npm run build && ln -sf ../../apps/studio/node_modules theia-extensions/*/node_modules`
 - 理由: esbuild 将 symlink 路径和直接路径视为不同模块 → Symbol 重复 → DI 静默失效。D97 回归确认此问题
 - 验证: `for s in OpenHandler FrontendApplicationContribution OpenerService; do echo "$s: $(grep -c "Symbol(\"$s\")" bundle.js)"; done` 全部 = 1
 
 ## D104: LD GLSP OpenHandler 注册策略 — OpenerService.addHandler()
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除；本条仅作历史参考
 - 日期: 2026-07-30
 - 决定: LD .ld 文件的 OpenHandler 不依赖 GLSP 框架的 toService() 绑定，改用 FrontendApplicationContribution.onStart() + OpenerService.addHandler() 手动注册
 - 理由: inversify 6.2.2 + Theia 1.73 环境下 toService() 绑定不被 ContainerBasedContributionProvider 收集。addHandler() 是 Theia 官方 API，不受缓存影响
@@ -631,6 +642,7 @@
 - 参考: .sisyphus/plans/theia-yarn-workspaces-migration/
 
 ## D106: HMI Designer 暂时禁用
+> ⛔ **终态 by D117 (2026-09)** — 设计器已整体删除，不再重新启用；本条「禁用」表述作废
 - 日期: 2026-07-31
 - 决定: 从 apps/studio/package.json 移除 weftik-hmi-designer 及相关依赖（echarts, echarts-for-react, react-rnd）
 - 理由: yarn workspaces 迁移后 vitest 依赖解析失败（@testing-library/dom 缺失），先禁用 HMI 功能以确保核心构建稳定
@@ -638,6 +650,7 @@
 - 参考: theia-extensions/weftik-hmi-designer/
 
 ## D107: FBD GLSP 迁移 = 完整 GLSP 架构（参照 LD）
+> ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除；本条仅作历史参考
 - 日期: 2026-07-31
 - 决定: FBD 编辑器从 React+SVG 迁移到完整 Eclipse GLSP 架构，采用 GPort 端口系统实现 pin-level 连接
 - 理由: (a) D92 Route C 已确认 LD 先行→FBD 跟进；(b) GModel 层已完整；(c) LD GLSP 基础设施可复用
@@ -752,7 +765,7 @@
 - **日期**: 2026-09-23
 - **决定**: 删除 `3rdparty/AUDEDeck/`（43 文件）、`theia-extensions/weftik-hmi-designer/`、`packages/studio-core/`、napi `deploy/save/load_hmi_layout`、`openspec/specs/hmi-designer-spec.md`、HMI-VAL 规范段。**保留为对外契约**：IPC 0x16 SIGNAL_PUSH / 0x17 DEPLOY_HMI_LAYOUT / 0x18 GET_HMI_LAYOUT、`RuntimeEngine::{deploy,get}_hmi_layout`（Config Barrier 内存储）、`RuntimeClient` 对应方法、`Role::Hmi` RBAC。Panel/UI 实现由外部项目主导（用户决策 2026-09-23：本项目专注平台侧）。契约验收依据迁至 `openspec/specs/hmi-spec.md`；`docs/modules/runtime/panel-architecture-design.md` 降为契约参考文档。
 - **理由**: UI 主导权移交外部项目；Studio 侧三块均为死代码（D106 已摸出 designer、studio-core 零外部消费者）；先删后改名（改名前移除 ≈ 27.5k 行 weftik 引用面）。
-- **取代**: D60、D61、D65、D67 全量；D66/D68/D69 降级为契约条款。
+- **取代**: D60、D61、D65、D67 全量；D66/D68/D69 降级为契约条款；D62/D63 保留为 Panel 契约条款（主体改为外部项目）；D106 终态确认（删除而非禁用）。
 - **参考**: .sisyphus/plans/weftik-rename/plan.md §三决策 1 + §四 Phase -1；提交 2958f54
 
 ## D118: 品牌改名 AUDESYS → Weftik（全栈命名空间 + 单主线公开仓）

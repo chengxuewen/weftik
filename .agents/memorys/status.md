@@ -6,10 +6,10 @@
 - **工程项目管理（A7 + 无 workspace 创建）完成（2026-08-10）** — New Weftik Project 向导（D114 工程组织模型）：目录约定 + project.yaml 清单 + 一 POU 一文件。修复「无 workspace 无法建工程」：改为从零创建（默认 ~/Weftik-Projects/，EnvVariablesServer 解析 home）+ 自动打开 workspace。菜单上浮 File 顶层（D115）。E2E 门禁通过（15.9s）。详见 D114/D115/D116
 - **LD 编辑器拓扑 bug 修复完成（2026-08-05）** — D112 拓扑化后 3 个 bug 修复：(1) 拖动元素后连线消失（reorderElement 删线不重建串联）→ 新增 rewireRungSeries；(2) 跨 rung 误删连线（filter 含全局 rail id，rail 跨 rung 共享）→ 只按本 rung 元素 id 过滤；(3) 线圈放置失败（addCoil 保留自由放置位置校验，UI 拓扑路径不传 position 必抛错）→ 移除位置校验，coil 拓扑化追加。vitest 144/144。详见本项目 pitfalls.md
 - **LD/IL 编辑器改进完成** — 2026-07-31，Phase 1-2 完成：IL 编译器新增 S/R/NOT/MOD/定时器/计数器/边沿/双稳态 (33 助记符)、LD 并联分支 (| NO/NC→OR/ORN)、多输出、P/N 跳变触点、rung:group 视图、3 个 GLSP 操作 Handler。63 测试通过 (31 LD + 32 IL)。详见计划 .sisyphus/plans/ld-editor-improvements/
-- **FBD GLSP 迁移完成** — 2026-07-31，FBD 编辑器从 React+SVG 迁移到完整 Eclipse GLSP 架构。14 新文件、GPort 端口系统、5 种逻辑门 IView、36 测试全通过。详见 D107。
+- **FBD GLSP 迁移完成** — 2026-07-31，FBD 编辑器从 React+SVG 迁移到完整 Eclipse GLSP 架构。14 新文件、GPort 端口系统、5 种逻辑门 IView、36 测试全通过。详见 D107。⛔ GLSP 后于 D110 整体移除改 React Flow
 - **Yarn Workspaces 迁移完成** — 2026-07-31，Studio 从 npm + file: link + 两步构建迁移到 Theia 官方 Yarn Workspaces monorepo。消除 `build-glsp.sh` 两步构建 workaround，Symbol 重复问题永久解决。构建流程：`yarn install && npx theia build`。
-- **HMI Designer 暂时禁用** — 2026-07-31，因 vitest 依赖解析问题（@testing-library/dom 缺失），从 apps/studio/package.json 移除 weftik-hmi-designer。待依赖问题解决后重新启用。
-- **Theia 迁移完成** — 2026-07-21，Studio IDE 从 Tauri+React 迁移到 Eclipse Theia+Monaco Editor+GLSP+napi-rs。6 语言编辑器就绪：ST Monaco ✅、IL Monaco ✅、G-code Monaco ✅、LD GLSP 编辑器 ✅、FBD GLSP 编辑器 ✅、SFC 编辑器 ✅。Signal Browser ✅、Scope View ✅、Debug Panel ✅、HMI Designer (Theia) ✅、Mode System ✅。AUDEDeck 不受影响（D65 保持有效）。
+- **HMI Designer 暂时禁用** — 2026-07-31，因 vitest 依赖解析问题从 apps/studio/package.json 移除 weftik-hmi-designer。⛔ 终态 by D117：设计器已整体删除，不再重新启用
+- **Theia 迁移完成** — 2026-07-21，Studio IDE 从 Tauri+React 迁移到 Eclipse Theia+Monaco Editor+GLSP+napi-rs。6 语言编辑器就绪：ST Monaco ✅、IL Monaco ✅、G-code Monaco ✅、LD GLSP 编辑器 ✅、FBD GLSP 编辑器 ✅、SFC 编辑器 ✅。Signal Browser ✅、Scope View ✅、Debug Panel ✅、HMI Designer (Theia) ✅、Mode System ✅。⛔ 后续变更：LD/FBD GLSP 编辑器已被 D110 移除改 React Flow；HMI Designer 与 AUDEDeck 已被 D117 删除（D65 已取代）
 - **Studio ↔ Runtime 集成完成** — RuntimeClient 库（UDS IPC 客户端，6 方法+认证）、Studio napi-rs bridge 命令（deploy_program/load_hal_config/read_controller_signal）
 - **协议适配器就绪** — Modbus RTU/TCP（8 测试）、HART（6 测试）
 - **仿真器就绪** — SimulationHarness + 故障注入引擎 + 场景录制/回放 + VirtualModbusTcpDevice + VirtualHARTDevice
@@ -22,9 +22,9 @@
 ## 仓库状态
 - **最新提交**: 改名链 — `44f2546` feat(rename)! 代码面 / docs 面随后；本地领先 origin 未 push（门禁全绿后才推）
 - **提交历史**: 399+ commits on main (2026-07-08 起，公开仓自 v0.1.0 发布后继续)
-- **源代码**: 24 crates（crates/）。apps/studio/ 已弃用（D71 Theia 迁移）；AUDEDeck 已移除（D117）
+- **源代码**: 24 crates（crates/）。apps/studio/ 已由 Tauri 应用改建为 Theia 应用（D71）；AUDEDeck 已移除（D117）
 - **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形死循环 8 + ST→IR 控制流 17）；vitest 144 (LD) + 26 (FBD)；Playwright E2E LD/FBD（改名后待重跑验证）
-- **SDD 规范**: openspec/specs/：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI 契约(13，设计器段已随 D117 删除) + Studio Theia(55) + 编辑器规范若干
+- **SDD 规范**: openspec/specs/：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI 契约(13，设计器段已随 D117 删除) + Studio Theia(54) + 编辑器规范若干（codesys-workflow 30 + ld 系 37）
 - **CI**: 本地 qa-fast 5 门禁（test/clippy/fmt/deny/unwrap）；GitHub workflows 已删（D-c：暂不要 CI，Gitee origin 下从未触发）
 - **依赖**: `@colbymchenry/codegraph` (devDependency) + Rust toolchain stable
 
@@ -39,8 +39,8 @@
 | SFC 编译器 | ✅ 完成 | 19 步进 → HalProgram |
 | Runtime Engine | ✅ 完成 | 5 步周期，Config Barrier，Hot-swap，信号注册表 |
 | Supervisor | ✅ 完成 | 子进程编排，指数退避，3 重试 |
-| IPC Server | ✅ 完成 | UDS 10 方法（0x01-0x17），HMAC 认证，5 角色 RBAC |
-| Studio IDE | ✅ Theia 迁移完成 | D71: Tauri+React → Eclipse Theia+Monaco+GLSP+napi-rs，迁移完成（2026-07-21） |
+| IPC Server | ✅ 完成 | UDS 24 方法（0x01-0x18），HMAC 认证，5 角色 RBAC |
+| Studio IDE | ✅ Theia 迁移完成 | D71: Tauri+React → Eclipse Theia+Monaco+React Flow(D110)+napi-rs，迁移完成（2026-07-21） |
 | Studio Theia 迁移 | ✅ 10/11 扩展集成 (apps/studio/) | 2026-07-23: core, debug, hmi-designer, backend, st-editor, il-editor, gcode-editor, sfc-editor, ld-glsp, fbd-glsp 全部可用。Electron+browser 双端正常（3层token+38API polyfill）。theia-bridge 21/30 函数真实实现（6编译器+7控制器+3模拟+2项目管理）。0测试。待办: 9 debug stub + widget 复用
 || LD 编辑器 | ✅ React Flow（D110） | React Flow 编辑器替换 GLSP，40×40 网格、触点/线圈、rung 容器、E2E 13 场景 |
 || FBD 编辑器 | 🔄 React Flow 迁移（D110） | GLSP 已移除，React Flow 迁移进行中 |
@@ -51,7 +51,7 @@
 | Signal Browser | ✅ 完成 | Theia Widget，信号注册表浏览/搜索 |
 | Scope View | ✅ 完成 | Theia Widget，信号实时波形示波器 |
 | Debug Panel (Theia) | ✅ 完成 | Theia Widget，8 源文件/7 测试，DI bindings 完整 |
-| HMI Designer (Theia) | ✅ 完成 | Theia Widget，HMI 可视化设计器迁移完成 |
+| HMI Designer (Theia) | ⛔ 已移除（D117） | 2026-09 随 UI 移除链删除（曾于 2026-07 完成 Theia Widget 迁移） |
 | Mode System | ✅ 完成 | 编辑器模式切换系统（6 语言 + HMI） |
 | 工程管理 (A1-A7) | ✅ 完成 | POU 树 + 变量表 + 类型 + 编译/部署/调试 + New Weftik Project 向导（D114 目录+project.yaml，无 workspace 从零创建 + 自动打开，D115） |
 | RuntimeClient | ✅ 完成 | UDS IPC 客户端（7 方法含 deploy_hmi_layout + 认证）|
@@ -102,7 +102,7 @@
 | Studio 设计文档 | 🟡 设计完成 | `docs/modules/studio/` 2 份设计文档（plugin-architecture-design + theia-architecture） |
 | Panel 契约参考文档 | 📦 移交降参考（D117） | `docs/modules/runtime/panel-architecture-design.md` 保留为实现参考；Panel 实现属外部项目 |
 | 竞品参考文档 | ✅ 完成 | `docs/reference/` 41 篇（12 大类） |
-| SDD 规范 | ✅ 完成 | `openspec/specs/` 7 份规范，239 项（新增 HMI 管道规范） |
+| SDD 规范 | ✅ 完成 | `openspec/specs/` 9 份规范，296 项（含历史参考章节，见各文件状态标注） |
 | 架构文档 | ✅ 完成 | `docs/architecture.md` 2,110 行，七章 |
 | 文档审计 | ✅ 完成 | 两次审计：50+32 项发现，77 项修复 |
 | 实施规划 | ✅ 完成 | D31-D55 已记录，P0 团队审查通过 |
