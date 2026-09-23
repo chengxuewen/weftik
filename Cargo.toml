@@ -26,7 +26,6 @@ members = [
   "crates/weftik-amw-zenoh",
   "crates/weftik-theia-bridge",
 ]
-exclude = ["apps/studio/src-tauri"]
 [workspace.package]
 version = "0.1.0"
 edition = "2024"

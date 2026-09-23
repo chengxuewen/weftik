@@ -1,5 +1,5 @@
 // WeftikModeManager — Edit/Debug/Commissioning mode state machine
-// Adapted from apps/studio/src/core/ShellMode.ts to Theia's DI + PreferenceService
+// Mode concept adapted from the original Tauri Studio ShellMode (file removed with the D71 migration)
 
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { Emitter, Event } from '@theia/core/lib/common/event';

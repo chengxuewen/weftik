@@ -88,7 +88,7 @@ function convert(projectYaml) {
       "weftik.projectLanguage": language
     },
     extensions: {
-      recommendations: ["weftik-core", "weftik-st-editor", "weftik-hmi-designer"]
+      recommendations: ["weftik-core", "weftik-st-editor", "weftik-ld-editor", "weftik-fbd-editor"]
     }
   };
 }
