@@ -61,20 +61,20 @@ gate "unwrap budget" bash qa/check-unwrap-budget.sh
 # ─── Step 6: E2E Integration ───
 echo ""
 echo "Step 6: E2E Integration Tests"
-gate "E2E tests" cargo test -p audesys-controller --test integration_e2e_test
+gate "E2E tests" cargo test -p weftik-controller --test integration_e2e_test
 
 # ─── Step 7: Fault Injection ───
 echo ""
 echo "Step 7: Fault Injection Tests"
-gate "Fault tests" cargo test -p audesys-controller -- fault
+gate "Fault tests" cargo test -p weftik-controller -- fault
 
 # ─── Step 8: MCAP (if crate exists) ───
 echo ""
 echo "Step 8: MCAP Tests"
-if grep -q '"audesys-agent"' Cargo.toml 2>/dev/null; then
-    gate "MCAP tests" cargo test -p audesys-agent -- mcap
+if grep -q '"weftik-agent"' Cargo.toml 2>/dev/null; then
+    gate "MCAP tests" cargo test -p weftik-agent -- mcap
 else
-    echo -e "  [MCAP tests] ${YELLOW}SKIP (audesys-agent not yet created)${NC}"
+    echo -e "  [MCAP tests] ${YELLOW}SKIP (weftik-agent not yet created)${NC}"
 fi
 
 # ─── Step 9: SDD Traceability ───

@@ -1,0 +1,18 @@
+[package]
+name = "weftik-hal-binding-gen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "ST → HAL IR binding generator — IEC 61131-3 Structured Text to register VM compiler"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+thiserror = "2"
+
+[dev-dependencies]
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+
+[lints]
+workspace = true

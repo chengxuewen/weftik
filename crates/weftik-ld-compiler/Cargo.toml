@@ -1,0 +1,11 @@
+[package]
+name = "weftik-ld-compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik IEC 61131-3 LD (Ladder Diagram) → IL text compiler"
+
+[dev-dependencies]
+weftik-il-compiler = { path = "../weftik-il-compiler" }
+weftik-hal-ir = { path = "../weftik-hal-ir" }

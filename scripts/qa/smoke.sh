@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke.sh — AUDESYS smoke test suite (D72)
+# smoke.sh — Weftik smoke test suite (D72)
 # Runs in <120s. MUST pass before qa-fast.
 # Usage: bash scripts/qa/smoke.sh
 set -euo pipefail
@@ -7,12 +7,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$SCRIPT_DIR/../.."
 
-echo "=== AUDESYS smoke ==="
+echo "=== Weftik smoke ==="
 echo ""
 
 # S1: Rust core crate fast tests (hal-core + hal-vm + runtime-engine + ipc-server)
 echo "[S1] cargo test core crates"
-cargo test -p audesys-hal-core -p audesys-runtime-common -p audesys-controller -p audesys-supervisor \
+cargo test -p weftik-hal-core -p weftik-runtime-common -p weftik-controller -p weftik-supervisor \
   -- --test-threads=4 -q 2>&1 | tail -3
 echo ""
 
@@ -20,7 +20,7 @@ echo ""
 # Uncomment after Phase 1 napi-rs bridge is ready:
 # echo "[S2] napi-rs compile_st smoke"
 # node -e "
-# const { compile_st } = require('./crates/audesys-theia-bridge');
+# const { compile_st } = require('./crates/weftik-theia-bridge');
 # const result = compile_st('PROGRAM main END_PROGRAM');
 # if (!result || !result.instructions || result.instructions.length === 0) {
 #   process.exit(1);

@@ -1,5 +1,5 @@
 {
-  "name": "AUDESYS",
+  "name": "weftik",
   "private": true,
   "workspaces": [
     "apps/studio",

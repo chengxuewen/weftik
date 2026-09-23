@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# unwrap-budget.sh — AUDESYS unwrap/expect/println ratchet (D36)
+# unwrap-budget.sh — Weftik unwrap/expect/println ratchet (D36)
 # Phase 0: budget = 0 (zero tolerance)
 # Phase 1+: ratchet decreases over time
 set -euo pipefail

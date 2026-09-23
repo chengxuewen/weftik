@@ -13,9 +13,9 @@
     }
   ],
   "settings": {
-    "workbench.colorTheme": "AUDESYS Dark",
+    "workbench.colorTheme": "Weftik Dark",
     "editor.tabSize": 4,
-    "audesys.projectName": "AUDESYS Studio",
-    "audesys.projectVersion": "0.1.0"
+    "weftik.projectName": "Weftik Studio",
+    "weftik.projectVersion": "0.1.0"
   }
 }

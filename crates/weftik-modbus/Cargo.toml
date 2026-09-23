@@ -1,0 +1,16 @@
+[package]
+name = "weftik-modbus"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Modbus RTU/TCP protocol adapter for Weftik HAL — bridges Modbus registers to HalTransport Signals"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-modbus-sys = { path = "../weftik-modbus-sys" }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+thiserror = "2"
+
+[dev-dependencies]
+weftik-amw-inproc = { path = "../weftik-amw-inproc" }

@@ -1,4 +1,4 @@
-// AUDESYS Studio — Smoke tests (Playwright E2E)
+// Weftik Studio — Smoke tests (Playwright E2E)
 //
 // Updated for Shell architecture: NavBar tools + ModeSelector + Toolbar + EditorSlot + BottomSlot.
 // Old class names (.app-toolbar, .fo-btn, .status-bar, .debug-panel) replaced with Shell BEM classes.

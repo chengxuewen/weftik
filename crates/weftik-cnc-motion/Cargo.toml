@@ -1,0 +1,11 @@
+[package]
+name = "weftik-cnc-motion"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik CNC motion planner — trapezoidal velocity profile generator"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-hal-ir = { path = "../weftik-hal-ir" }

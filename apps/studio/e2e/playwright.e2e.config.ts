@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Playwright E2E Browser Test config
+// Weftik Studio Theia — Playwright E2E Browser Test config
 // Runs against a pre-started Theia instance. No webServer.
 import { defineConfig, devices } from '@playwright/test';
 

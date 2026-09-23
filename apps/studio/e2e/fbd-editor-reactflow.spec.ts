@@ -1,8 +1,8 @@
 /// <reference types="playwright" />
 /**
- * AUDESYS FBD Editor — React Flow E2E Test Suite
+ * Weftik FBD Editor — React Flow E2E Test Suite
  *
- * Tests the React Flow based FBD editor (audesys-fbd-editor, D110 pattern,
+ * Tests the React Flow based FBD editor (weftik-fbd-editor, D110 pattern,
  * mirrored from ld-editor-reactflow.spec.ts).
  *
  * Selector conventions (sdd-tester, shared with LD suite):

@@ -1,6 +1,6 @@
-appId: com.audesys.studio
-productName: AUDESYS Studio
-artifactName: audesys-studio-${version}-${os}-${arch}.${ext}
+appId: com.weftik.studio
+productName: Weftik Studio
+artifactName: weftik-studio-${version}-${os}-${arch}.${ext}
 
 directories:
   output: release
@@ -23,8 +23,8 @@ mac:
   entitlementsInherit: build/entitlements.mac.plist
 
 dmg:
-  title: AUDESYS Studio ${version}
-  artifactName: audesys-studio-${version}-macOS-${arch}.dmg
+  title: Weftik Studio ${version}
+  artifactName: weftik-studio-${version}-macOS-${arch}.dmg
   contents:
     - x: 410
       y: 150
@@ -37,7 +37,7 @@ dmg:
 win:
   target:
     - nsis
-  artifactName: audesys-studio-${version}-win-${arch}.${ext}
+  artifactName: weftik-studio-${version}-win-${arch}.${ext}
 
 nsis:
   oneClick: false
@@ -50,8 +50,8 @@ linux:
   target:
     - AppImage
   category: Development
-  artifactName: audesys-studio-${version}-linux-${arch}.AppImage
-  maintainer: audesys@example.com
+  artifactName: weftik-studio-${version}-linux-${arch}.AppImage
+  maintainer: weftik@example.com
 
 
 electronDownload:

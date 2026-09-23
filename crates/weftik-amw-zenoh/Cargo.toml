@@ -1,0 +1,11 @@
+[package]
+name = "weftik-amw-zenoh"
+version.workspace = true
+edition.workspace = true
+description = "Weftik HAL network transport via Zenoh — skeleton for Phase 2 network HAL"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+
+
+

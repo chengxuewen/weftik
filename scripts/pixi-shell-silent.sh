@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pixi-shell-silent.sh — Activate pixi environment WITHOUT banner output.
-# Source this in CLI薄壳 (audesys.sh) so command stdout stays clean.
+# Source this in CLI薄壳 (weftik.sh) so command stdout stays clean.
 # Same activation as pixi-shell.sh, minus the info echoes.
 set -euo pipefail
 

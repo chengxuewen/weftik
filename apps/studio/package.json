@@ -1,16 +1,16 @@
 {
   "private": true,
-  "name": "audesys-studio",
-  "productName": "AUDESYS Studio",
+  "name": "weftik-studio",
+  "productName": "Weftik Studio",
   "version": "0.1.0",
-  "description": "AUDESYS Studio IDE — Industrial Control Development Environment based on Eclipse Theia",
+  "description": "Weftik Studio IDE — Industrial Control Development Environment based on Eclipse Theia",
   "main": "lib/backend/electron-main.js",
   "license": "Apache-2.0",
   "theia": {
     "target": "browser",
     "frontend": {
       "config": {
-        "applicationName": "AUDESYS Studio",
+        "applicationName": "Weftik Studio",
         "defaultTheme": "dark"
       }
     },
@@ -41,15 +41,15 @@
     "@theia/terminal": "1.73.0",
     "@theia/test": "1.73.0",
     "@theia/workspace": "1.73.0",
-    "audesys-backend": "0.1.0",
-    "audesys-core": "0.1.0",
-    "audesys-debug": "0.1.0",
-    "audesys-gcode-editor": "0.1.0",
-    "audesys-il-editor": "0.1.0",
-    "audesys-ld-editor": "0.1.0",
-    "audesys-fbd-editor": "0.1.0",
-    "audesys-st-editor": "0.1.0",
-    "@audesys/theia-bridge": "file:../../crates/audesys-theia-bridge"
+    "weftik-backend": "0.1.0",
+    "weftik-core": "0.1.0",
+    "weftik-debug": "0.1.0",
+    "weftik-gcode-editor": "0.1.0",
+    "weftik-il-editor": "0.1.0",
+    "weftik-ld-editor": "0.1.0",
+    "weftik-fbd-editor": "0.1.0",
+    "weftik-st-editor": "0.1.0",
+    "@weftik/theia-bridge": "file:../../crates/weftik-theia-bridge"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

@@ -1,0 +1,11 @@
+[package]
+name = "weftik-cnc-axis-group"
+version = "0.1.0"
+edition = "2021"
+description = "Weftik CNC axis group — homing, soft limits, backlash, alarm management via HalProgram"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+
+[dev-dependencies]

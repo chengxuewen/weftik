@@ -1,5 +1,5 @@
 #!/bin/bash
-# AUDESYS Studio 构建后门禁检查 (post-build gates)
+# Weftik Studio 构建后门禁检查 (post-build gates)
 # 用法: 在 apps/studio/ 下运行 `bash check-gates.sh`
 # 门禁:
 #   1. workspace 链接: 扩展必须通过 yarn workspaces symlink 解析 (非物理副本)

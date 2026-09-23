@@ -1,8 +1,0 @@
-[package]
-name = "audesys-amw-inproc"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-
-[dependencies]
-audesys-hal-core = { path = "../audesys-hal-core" }

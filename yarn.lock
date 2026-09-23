@@ -18,10 +18,10 @@
     "@csstools/css-tokenizer" "^3.0.3"
     lru-cache "^10.4.3"
 
-"@audesys/studio-core@file:packages/studio-core":
+"@weftik/studio-core@file:packages/studio-core":
   version "0.0.0"
 
-"@audesys/theia-bridge@file:crates/audesys-theia-bridge":
+"@weftik/theia-bridge@file:crates/weftik-theia-bridge":
   version "0.1.0"
 
 "@babel/code-frame@^7.29.7":

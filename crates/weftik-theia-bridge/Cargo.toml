@@ -1,0 +1,29 @@
+[package]
+name = "weftik-theia-bridge"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3", features = ["napi4", "serde-json"] }
+napi-derive = "3"
+serde_json = "1"
+bincode = "1"
+serde = { version = "1", features = ["derive"] }
+weftik-hal-binding-gen = { path = "../weftik-hal-binding-gen" }
+weftik-il-compiler = { path = "../weftik-il-compiler" }
+weftik-ld-compiler = { path = "../weftik-ld-compiler" }
+weftik-fbd-compiler = { path = "../weftik-fbd-compiler" }
+weftik-sfc-compiler = { path = "../weftik-sfc-compiler" }
+weftik-gcode-compiler = { path = "../weftik-gcode-compiler" }
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+weftik-runtime-client = { path = "../weftik-runtime-client" }
+weftik-runtime-common = { path = "../weftik-runtime-common" }
+weftik-runtime = { path = "../weftik-runtime" }
+
+[build-dependencies]
+napi-build = "2"

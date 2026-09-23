@@ -1,0 +1,12 @@
+[package]
+name = "weftik-gcode-compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik G-code (ISO 6983 / RS274) compiler targeting HAL IR"
+
+[dependencies]
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-cnc-motion = { path = "../weftik-cnc-motion" }

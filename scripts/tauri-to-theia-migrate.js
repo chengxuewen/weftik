@@ -66,7 +66,7 @@ function parseYaml(text) {
 // ---- convert project.yaml → workspace.json ----
 function convert(projectYaml) {
   const cfg = parseYaml(projectYaml);
-  const name = cfg.name || cfg.project_name || "AUDESYS Project";
+  const name = cfg.name || cfg.project_name || "Weftik Project";
   const srcDirs = cfg.source_dirs || cfg.src_dirs || [];
   const language = cfg.language || "ST";
   const folders = [{ path: "." }];
@@ -80,15 +80,15 @@ function convert(projectYaml) {
   return {
     folders,
     settings: {
-      "workbench.colorTheme": "AUDESYS Dark",
+      "workbench.colorTheme": "Weftik Dark",
       "editor.tabSize": 4,
       "editor.insertSpaces": true,
       "files.associations": { "*.st": "iecst", "*.il": "iecil", "*.ld": "iecdl" },
-      "audesys.projectName": name,
-      "audesys.projectLanguage": language
+      "weftik.projectName": name,
+      "weftik.projectLanguage": language
     },
     extensions: {
-      recommendations: ["audesys-core", "audesys-st-editor", "audesys-hmi-designer"]
+      recommendations: ["weftik-core", "weftik-st-editor", "weftik-hmi-designer"]
     }
   };
 }
@@ -108,10 +108,10 @@ try {
           { path: "hmi", name: "HMI Layouts" }
         ],
         settings: {
-          "workbench.colorTheme": "AUDESYS Dark",
+          "workbench.colorTheme": "Weftik Dark",
           "editor.tabSize": 4,
-          "audesys.projectName": tc.productName || "AUDESYS Studio",
-          "audesys.projectVersion": tc.version || "0.1.0"
+          "weftik.projectName": tc.productName || "Weftik Studio",
+          "weftik.projectVersion": tc.version || "0.1.0"
         }
       };
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
@@ -146,10 +146,10 @@ try {
           { path: "hmi", name: "HMI Layouts" }
         ],
         settings: {
-          "workbench.colorTheme": "AUDESYS Dark",
+          "workbench.colorTheme": "Weftik Dark",
           "editor.tabSize": 4,
-          "audesys.projectName": tc.productName || "AUDESYS Studio",
-          "audesys.projectVersion": tc.version || "0.1.0"
+          "weftik.projectName": tc.productName || "Weftik Studio",
+          "weftik.projectVersion": tc.version || "0.1.0"
         }
       };
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });

@@ -1,0 +1,474 @@
+//! Weftik Theia Bridge — napi-rs bindings for Studio ↔ Rust compiler/runtime.
+//!
+//! Exposes ~25 functions mapping from the original 34 Tauri commands
+//! to napi-rs (Node.js native addon) for Theia backend consumption.
+//!
+//! ## Function mapping
+//!
+//! | Category     | Count | Status     |
+//! |-------------|-------|------------|
+//! | Compilers    | 6     | all real  |
+//! | Controller   | 8     | 5 IPC + 3 lifecycle |
+//! | Debug        | 9     | all stub   |
+//! | Simulation   | 3     | all real   |
+//! | Project      | 2     | all real   |
+//! | HMI/Config   | 3     | save/load/deploy real |
+
+use napi_derive::napi;
+use weftik_hal_binding_gen::compile;
+use weftik_il_compiler::il_compile;
+use weftik_ld_compiler::ld_compile;
+use weftik_fbd_compiler::fbd_compile;
+use weftik_sfc_compiler::sfc_compile;
+use weftik_gcode_compiler::gcode_compile;
+use weftik_runtime_client::RuntimeClient;
+use weftik_runtime::simulation::SimulationHarness;
+use weftik_runtime_common::types::Role;
+use std::fs;
+use std::os::unix::net::UnixStream;
+use std::process::{Child, Command};
+use std::sync::Mutex;
+use std::time::Instant;
+use std::{thread, time::Duration};
+
+// ── Controller process state ────────────────────────────────────────────
+
+struct ControllerHandle {
+    child: Child,
+    started_at: Instant,
+}
+
+static CONTROLLER: Mutex<Option<ControllerHandle>> = Mutex::new(None);
+// ponytail: separate mutex for socket path avoids holding controller lock during cleanup.
+static SOCKET_PATH: Mutex<Option<String>> = Mutex::new(None);
+static SIM: Mutex<Option<SimulationHarness>> = Mutex::new(None);
+// ── Helpers ──────────────────────────────────────────────────────────────
+
+fn to_json<T: serde::Serialize>(value: &T) -> napi::Result<String> {
+    serde_json::to_string(value).map_err(|e| napi::Error::from_reason(format!("serialize: {e}")))
+}
+
+// Convert JSON HalProgram (from compiler output) to bincode for Controller deployment.
+fn json_to_bincode(json: &str) -> napi::Result<Vec<u8>> {
+    let program: weftik_hal_ir::program::HalProgram = serde_json::from_str(json)
+        .map_err(|e| napi::Error::from_reason(format!("deserialize: {e}")))?;
+    bincode::serialize(&program)
+        .map_err(|e| napi::Error::from_reason(format!("bincode: {e}")))
+}
+/// Create a one-shot controller connection, authenticate, run `f`, disconnect.
+/// `role_str`: "operator" | "engineer" | "supervisor" | "auditor" | "system"
+fn with_controller<F>(
+    socket_path: &str,
+    secret: &str,
+    role: Role,
+    f: F,
+) -> napi::Result<String>
+where
+    F: FnOnce(&mut RuntimeClient) -> Result<String, String>,
+{
+    let mut client = RuntimeClient::connect(socket_path, secret.as_bytes())
+        .map_err(|e| napi::Error::from_reason(format!("connect: {e}")))?;
+    client
+        .authenticate(role)
+        .map_err(|e| napi::Error::from_reason(format!("auth: {e}")))?;
+    let result = f(&mut client).map_err(|e| napi::Error::from_reason(e))?;
+    Ok(result)
+}
+
+#[allow(dead_code)]
+fn parse_role(s: &str) -> napi::Result<Role> {
+    match s.to_lowercase().as_str() {
+        "operator" => Ok(Role::Operator),
+        "engineer" => Ok(Role::Engineer),
+        "supervisor" => Ok(Role::Supervisor),
+        "auditor" => Ok(Role::Auditor),
+        "hmi" => Ok(Role::Hmi),
+        "system" => Ok(Role::System),
+        other => Err(napi::Error::from_reason(format!("unknown role: {other}"))),
+    }
+}
+
+/// Stub helper — signal a "not yet implemented" function.
+fn stub(name: &str) -> napi::Result<String> {
+    Err(napi::Error::from_reason(format!(
+        "not implemented: {name} is a stub for a future phase"
+    )))
+}
+
+// ── PHASE 1 CORE — Compilers ─────────────────────────────────────────────
+
+/// Compile IEC 61131-3 Structured Text source into a HalProgram JSON string.
+///
+/// Returns the serialized `HalProgram` on success, or a JSON diagnostic array
+/// on compile error.
+#[napi]
+pub fn compile_st(source: String) -> napi::Result<String> {
+    let program = compile(&source).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    to_json(&program)
+}
+
+/// Compile IEC 61131-3 Instruction List source into a HalProgram JSON string.
+#[napi]
+pub fn compile_il(source: String) -> napi::Result<String> {
+    let program = il_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
+    to_json(&program)
+}
+
+/// Compile IEC 61131-3 Ladder Diagram source into a HalProgram JSON string.
+///
+/// LD is compiled via IL: LD source → IL text → HalProgram.
+#[napi]
+pub fn compile_ld(source: String) -> napi::Result<String> {
+    let il = ld_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
+    let program = il_compile(&il).map_err(|e| napi::Error::from_reason(e))?;
+    to_json(&program)
+}
+
+/// Compile IEC 61131-3 Function Block Diagram source into HalProgram JSON.
+///
+/// Compiles FBD text (CFC format) via IL: FBD source → IL text → HalProgram.
+#[napi]
+pub fn compile_fbd(source: String) -> napi::Result<String> {
+    let il = fbd_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
+    let program = il_compile(&il).map_err(|e| napi::Error::from_reason(e))?;
+    to_json(&program)
+}
+
+/// Compile IEC 61131-3 Sequential Function Chart source into HalProgram JSON.
+///
+/// Compiles SFC text via IL: SFC source → IL text → HalProgram.
+#[napi]
+pub fn compile_sfc(source: String) -> napi::Result<String> {
+    let il = sfc_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
+    let program = il_compile(&il).map_err(|e| napi::Error::from_reason(e))?;
+    to_json(&program)
+}
+
+/// Compile G-code (RS274/NGC subset) source into a HalProgram JSON string.
+///
+/// Returns the serialized `HalProgram` on success.
+#[napi]
+pub fn compile_gcode(source: String) -> napi::Result<String> {
+    let program = gcode_compile(&source).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    to_json(&program)
+}
+
+// ── PHASE 1 CORE — Controller IPC ────────────────────────────────────────
+
+/// Read a signal value from a running Controller via one-shot UDS connection.
+///
+/// Merges the old `read_controller_signal` + `controller_read_signal` Tauri
+/// commands. Returns the HalValue as a JSON string.
+#[napi]
+pub fn read_signal(
+    socket_path: String,
+    secret: String,
+    signal_name: String,
+) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Operator, |client| {
+        let value = client.read_signal(&signal_name)?;
+        serde_json::to_string(&value).map_err(|e| format!("serialize: {e}"))
+    })
+}
+
+/// Snapshot all signals matching `pattern` from the Controller.
+///
+/// Returns a JSON array of `{name, value}` objects.
+#[napi]
+pub fn signal_snapshot(
+    socket_path: String,
+    secret: String,
+    pattern: String,
+) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Operator, |client| {
+        let signals = client.signal_snapshot(&pattern)?;
+        serde_json::to_string(&signals).map_err(|e| format!("serialize: {e}"))
+    })
+}
+
+/// Deploy a compiled program (HalProgram JSON) to a running Controller.
+///
+/// Merges the old `deploy_program` + `run_program` Tauri commands.
+/// The program is loaded via IPC method 0x07 (LOAD_PROGRAM).
+#[napi]
+pub fn deploy_program(
+    socket_path: String,
+    secret: String,
+    program_json: String,
+) -> napi::Result<String> {
+    let program_bincode = json_to_bincode(&program_json)?;
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.load_program(&program_bincode)
+    })
+}
+
+/// Query the Controller health status via UDS method 0x05 (HEALTH_QUERY).
+///
+/// Merges the old `health_query` + `fetch_controller_metrics` Tauri commands.
+/// Returns a health-report JSON string. Timeout: 2s.
+#[napi]
+pub fn health_query(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Operator, |client| {
+        client.health_query()
+    })
+}
+
+// ── PHASE 1 CORE — Controller Lifecycle ─────────────────────────────────
+
+/// Start the Weftik Controller as a child process.
+///
+/// Spawns the binary at `binary_path`, then polls for the UDS socket at
+/// `socket_path` to become available (100ms interval, 10s timeout).
+/// Returns JSON: `{"pid": 12345, "socket": "/tmp/...", "status": "running"}`
+#[napi]
+pub fn controller_start(socket_path: String, binary_path: String) -> napi::Result<String> {
+    let mut guard = CONTROLLER.lock().unwrap();
+    if guard.is_some() {
+        return Err(napi::Error::from_reason(
+            "controller already running. Call controller_stop() first.",
+        ));
+    }
+
+    if !std::path::Path::new(&binary_path).exists() {
+        return Err(napi::Error::from_reason(format!("binary not found: {binary_path}")));
+    }
+
+    let mut child = Command::new(&binary_path)
+        .spawn()
+        .map_err(|e| napi::Error::from_reason(format!("spawn failed: {e}")))?;
+
+    let pid = child.id();
+    let started_at = Instant::now();
+    let deadline = started_at + Duration::from_secs(10);
+    let poll_interval = Duration::from_millis(100);
+
+    // Poll for UDS socket to appear
+    loop {
+        if Instant::now() >= deadline {
+            // Timeout: kill spawned process, don't leave orphans
+            let _ = child.kill();
+            let _ = child.wait();
+            return Err(napi::Error::from_reason(
+                "controller start timeout: UDS socket not ready after 10s",
+            ));
+        }
+        if UnixStream::connect(&socket_path).is_ok() {
+            break;
+        }
+        thread::sleep(poll_interval);
+    }
+
+    // Socket is ready — store state
+    *SOCKET_PATH.lock().unwrap() = Some(socket_path.clone());
+    *guard = Some(ControllerHandle { child, started_at });
+
+    to_json(&serde_json::json!({
+        "pid": pid,
+        "socket": &socket_path,
+        "status": "running"
+    }))
+}
+
+/// Stop the running Controller process.
+///
+/// Sends SIGKILL to the child process and cleans up the UDS socket file.
+/// Returns JSON: `{"status": "stopped"}`
+///
+/// ponytail: SIGTERM-first graceful shutdown is not implemented — the
+/// Controller is a local dev process, not a production server. Add SIGTERM
+/// when the Controller has a signal handler for in-flight program save.
+#[napi]
+pub fn controller_stop() -> napi::Result<String> {
+    let mut guard = CONTROLLER.lock().unwrap();
+    let mut h = guard
+        .take()
+        .ok_or_else(|| napi::Error::from_reason("no controller running"))?;
+    drop(guard);
+
+    // Kill child process
+    let _ = h.child.kill();
+    let _ = h.child.wait();
+
+    // Clean up UDS socket file
+    let mut socket_guard = SOCKET_PATH.lock().unwrap();
+    if let Some(ref path) = *socket_guard {
+        let _ = fs::remove_file(path);
+    }
+    *socket_guard = None;
+
+    Ok(serde_json::json!({"status": "stopped"}).to_string())
+}
+
+/// Check whether the Controller process is alive.
+///
+/// Attempts a UDS connection to the stored socket path.
+/// Returns JSON: `{"alive": true, "pid": 12345, "uptime_sec": 120}`
+#[napi]
+pub fn controller_health() -> napi::Result<String> {
+    let guard = CONTROLLER.lock().unwrap();
+    let socket_guard = SOCKET_PATH.lock().unwrap();
+
+    let (alive, pid, uptime_sec) = match (&*guard, &*socket_guard) {
+        (Some(h), Some(path)) => {
+            let socket_ok = UnixStream::connect(path).is_ok();
+            (socket_ok, Some(h.child.id()), h.started_at.elapsed().as_secs())
+        }
+        (Some(h), None) => {
+            // Socket path lost but we still have the handle
+            (false, Some(h.child.id()), h.started_at.elapsed().as_secs())
+        }
+        (None, _) => (false, None, 0),
+    };
+
+    to_json(&serde_json::json!({
+        "alive": alive,
+        "pid": pid,
+        "uptime_sec": uptime_sec
+    }))
+}
+
+// ── PHASE 1 AUXILIARY — Deploy ───────────────────────────────────────────
+
+
+/// Load a HAL configuration (YAML) to a running Controller via IPC method 0x08.
+#[napi]
+pub fn load_hal_config(
+    socket_path: String,
+    secret: String,
+    yaml: String,
+    ) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.load_hal_config(yaml.as_bytes())
+    })
+}
+
+// ── Debug ───────────────────────────────────────────────────────────────
+
+/// Connect to Controller for debugging (authenticate as Engineer).
+#[napi]
+pub fn debug_connect(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |_client| {
+        Ok("connected".to_string())
+    })
+}
+
+/// Disconnect — controller connection closed automatically.
+#[napi]
+pub fn debug_disconnect() -> napi::Result<String> {
+    Ok("disconnected".to_string())
+}
+
+/// Pause cycle execution.
+#[napi]
+pub fn debug_pause(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.pause()
+    })
+}
+
+/// Resume cycle execution.
+#[napi]
+pub fn debug_resume(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.resume()
+    })
+}
+
+/// Single-step one cycle.
+#[napi]
+pub fn debug_step(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.step_cycle()
+    })
+}
+
+/// Read VM register values (r0–r13).
+#[napi]
+pub fn debug_get_registers(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.debug_state()
+    })
+}
+
+/// Set a breakpoint at the given instruction pointer.
+#[napi]
+pub fn debug_add_breakpoint(socket_path: String, secret: String, ip: u32) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.set_breakpoint(ip)
+    })
+}
+
+/// Clear a breakpoint at the given instruction pointer.
+#[napi]
+pub fn debug_remove_breakpoint(socket_path: String, secret: String, ip: u32) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.clear_breakpoint(ip)
+    })
+}
+
+/// List all active breakpoints.
+#[napi]
+pub fn debug_get_breakpoints(socket_path: String, secret: String) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| {
+        client.list_breakpoints()
+    })
+}
+
+/// Get full debug state as a JSON string from the Controller.
+#[napi]
+pub fn debug_get_state() -> napi::Result<String> {
+    stub("debug_get_state")
+}
+
+// ── Simulation ────────────────────────────────────────────────────────
+
+/// Create a new simulation environment with the given cycle interval (ms).
+#[napi]
+pub fn sim_create(cycle_ms: i64) -> napi::Result<String> {
+    let mut guard = SIM.lock().unwrap();
+    if guard.is_some() {
+        return Err(napi::Error::from_reason(
+            "simulation already active. Call sim_destroy() first.",
+        ));
+    }
+    let sim = SimulationHarness::new(cycle_ms as u64);
+    *guard = Some(sim);
+    Ok(serde_json::json!({"status": "created", "cycle_ms": cycle_ms}).to_string())
+}
+
+/// Destroy the current simulation environment.
+#[napi]
+pub fn sim_destroy() -> napi::Result<String> {
+    let mut guard = SIM.lock().unwrap();
+    let _ = guard.take();
+    Ok(serde_json::json!({"status": "destroyed"}).to_string())
+}
+
+/// Step one simulation cycle. Returns signal states as JSON array.
+#[napi]
+pub fn sim_step() -> napi::Result<String> {
+    let mut guard = SIM.lock().unwrap();
+    let sim = guard.as_mut()
+        .ok_or_else(|| napi::Error::from_reason("no simulation active. Call sim_create() first."))?;
+    sim.run_cycles(1);
+    let snap = sim.signal_snapshot();
+    to_json(&snap)
+}
+
+// ── Project management ─────────────────────────────────────────────────
+
+/// Open a project by reading its .weftik-project.yaml file.
+#[napi]
+pub fn open_project(project_path: String) -> napi::Result<String> {
+    let yaml_path = std::path::Path::new(&project_path).join(".weftik-project.yaml");
+    fs::read_to_string(&yaml_path)
+        .map_err(|e| napi::Error::from_reason(format!("read project: {e}")))
+}
+
+/// Read a project source file by path.
+#[napi]
+pub fn read_project_file(file_path: String) -> napi::Result<String> {
+    fs::read_to_string(&file_path)
+        .map_err(|e| napi::Error::from_reason(format!("read file: {e}")))
+}
+

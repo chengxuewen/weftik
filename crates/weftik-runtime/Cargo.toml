@@ -1,0 +1,35 @@
+[package]
+name = "weftik-runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik Runtime — real-time execution engine — hard real-time HAL execution engine"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-amw-inproc = { path = "../weftik-amw-inproc" }
+weftik-runtime-common = { path = "../weftik-runtime-common" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+libc = "0.2"
+hmac = "0.12"
+sha2 = "0.10"
+rand = "0.8"
+weftik-modbus = { path = "../weftik-modbus" }
+weftik-hart = { path = "../weftik-hart" }
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+bincode = "1"
+[[bin]]
+name = "weftik-runtime"
+path = "src/main.rs"
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+weftik-hal-binding-gen = { path = "../weftik-hal-binding-gen" }
+weftik-ld-compiler = { path = "../weftik-ld-compiler" }
+weftik-il-compiler = { path = "../weftik-il-compiler" }
+
+[[bench]]
+name = "perf_benchmarks"
+harness = false

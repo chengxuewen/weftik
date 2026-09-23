@@ -8,13 +8,13 @@
  * the Monarch tokenizer registration.
  *
  * IMPORTANT: The frontend module module itself does NOT call
- * createAudESYSConfigMonarchLanguage(). That must be done after
+ * createWeftikConfigMonarchLanguage(). That must be done after
  * Monaco is loaded. For a full extension, you'd use a
  * FrontendApplicationContribution or a MonacoContribution.
  * For this workshop, the tokenizer is a reference example.
  */
 import frontendModule from './workshop-playground-frontend-module';
-import { createAudESYSConfigMonarchLanguage } from './audesys-config-language';
+import { createWeftikConfigMonarchLanguage } from './weftik-config-language';
 export default frontendModule;
-export { createAudESYSConfigMonarchLanguage };
+export { createWeftikConfigMonarchLanguage };
 //# sourceMappingURL=index.d.ts.map

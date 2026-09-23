@@ -1,4 +1,4 @@
-// AUDESYS Studio — Responsive UI & HMI Tests
+// Weftik Studio — Responsive UI & HMI Tests
 // Updated for Shell architecture: NavBar tools + ModeSelector + Toolbar + EditorSlot + BottomSlot.
 // Old class names (.app-toolbar, .app-panel--output) replaced with Shell BEM equivalents.
 // Mode cycling replaced with NavBar tool activation.

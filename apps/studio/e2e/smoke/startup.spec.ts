@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Startup Smoke Tests
+// Weftik Studio Theia — Startup Smoke Tests
 // Verifies the core Theia workbench renders without critical failures.
 
 import { test, expect } from '@playwright/test';

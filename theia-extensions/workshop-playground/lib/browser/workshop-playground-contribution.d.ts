@@ -1,7 +1,7 @@
 import { CommandContribution, CommandRegistry, MenuContribution, MenuModelRegistry } from '@theia/core';
 import { MessageService } from '@theia/core';
 /**
- * AUDESYS Workshop: Hello World Command
+ * Weftik Workshop: Hello World Command
  *
  * Demonstrates:
  *   - Command definition with id + label

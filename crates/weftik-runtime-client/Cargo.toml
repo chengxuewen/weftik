@@ -1,0 +1,18 @@
+[package]
+name = "weftik-runtime-client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik Controller IPC client — sync UDS client for Controller wire protocol"
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }
+weftik-runtime-common = { path = "../weftik-runtime-common" }
+hmac = "0.12"
+sha2 = "0.10"
+rand = "0.8"
+
+[dev-dependencies]
+serde_json = "1"
+weftik-hal-binding-gen = { path = "../weftik-hal-binding-gen" }

@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Startup Smoke Tests (Browser)
+// Weftik Studio Theia — Startup Smoke Tests (Browser)
 // Updated for Theia 1.73 actual DOM selectors.
 import { test, expect } from '@playwright/test';
 

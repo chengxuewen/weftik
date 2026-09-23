@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# qa-deep.sh — AUDESYS deep QA gate (D30)
+# qa-deep.sh — Weftik deep QA gate (D30)
 # Runs: Miri UB detection + loom concurrency + cargo-mutants mutation testing
 # Usage: bash scripts/qa-deep.sh
 # NOT for PR CI — runs pre-release only (D30/D36)
@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$SCRIPT_DIR/../.."
 
-echo "=== AUDESYS qa-deep ==="
+echo "=== Weftik qa-deep ==="
 echo ""
 
 # Step 1: Miri UB detection (hal-core only — pure logic, no FFI)
@@ -17,9 +17,9 @@ MIRI_FAILED=0
 
 # Find crates that can run under Miri (pure Rust, no FFI/napi-rs)
 MIRI_CRATES=(
-  "audesys-hal-core"
-  "audesys-hal-vm"
-  "audesys-config-barrier"
+  "weftik-hal-core"
+  "weftik-hal-vm"
+  "weftik-config-barrier"
 )
 
 if command -v cargo-miri &>/dev/null; then
@@ -66,11 +66,11 @@ MUTATION_FAILED=0
 if command -v cargo-mutants &>/dev/null; then
   # Target specific crates, exclude benchmarks and examples
   MUTANT_CRATES=(
-    "audesys-hal-core"
-    "audesys-hal-vm"
-    "audesys-runtime-engine"
-    "audesys-ipc-server"
-    "audesys-config-barrier"
+    "weftik-hal-core"
+    "weftik-hal-vm"
+    "weftik-runtime-engine"
+    "weftik-ipc-server"
+    "weftik-config-barrier"
   )
   
   MISSED=0

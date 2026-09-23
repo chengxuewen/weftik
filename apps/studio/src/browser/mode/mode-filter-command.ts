@@ -1,7 +1,7 @@
 // ModeFilteredCommand — utility to gate command execution by current StudioMode
 
 import { Command } from '@theia/core/lib/common';
-import { StudioMode, AudesysModeManager } from './audesys-mode-manager';
+import { StudioMode, WeftikModeManager } from './weftik-mode-manager';
 
 /**
  * Creates a Theia command handler that only executes when the current
@@ -14,7 +14,7 @@ import { StudioMode, AudesysModeManager } from './audesys-mode-manager';
  *   ));
  */
 export function createModeFilteredHandler(
-    modeManager: AudesysModeManager,
+    modeManager: WeftikModeManager,
     command: Command,
     allowedModes: StudioMode[],
     execute: () => void,

@@ -1,6 +1,6 @@
 /// <reference types="playwright" />
-// AUDESYS Studio — New AUDESYS Project without pre-opened workspace (H1 core gate)
-// Verifies: no workspace → New AUDESYS Project → create project dir → auto-opens
+// Weftik Studio — New Weftik Project without pre-opened workspace (H1 core gate)
+// Verifies: no workspace → New Weftik Project → create project dir → auto-opens
 // workspace (URL points at the new project dir).
 import { test, expect, Page } from '@playwright/test';
 
@@ -19,7 +19,7 @@ async function closeWorkspace(page: Page): Promise<void> {
   }
 }
 
-test.describe('New AUDESYS Project (no workspace)', () => {
+test.describe('New Weftik Project (no workspace)', () => {
   test('G1a: creates project and auto-opens workspace when none is open', async ({ page }) => {
     await page.goto(STUDIO_URL);
     await page.waitForSelector('#theia-app-shell', { state: 'visible', timeout: 20_000 });
@@ -29,7 +29,7 @@ test.describe('New AUDESYS Project (no workspace)', () => {
     await page.keyboard.press('F1');
     await page.waitForTimeout(800);
     const input = page.locator('.quick-input-field input, .monaco-inputbox input, .quick-input input');
-    await input.fill('>New AUDESYS Project');
+    await input.fill('>New Weftik Project');
     await page.waitForTimeout(500);
     await page.keyboard.press('Enter');
     await page.waitForTimeout(600);
@@ -38,7 +38,7 @@ test.describe('New AUDESYS Project (no workspace)', () => {
     await page.keyboard.press('Enter');
     await page.waitForTimeout(600);
 
-    const defaultRow = page.locator(QUICK_ROW, { hasText: 'AUDESYS-Projects' }).first();
+    const defaultRow = page.locator(QUICK_ROW, { hasText: 'Weftik-Projects' }).first();
     await defaultRow.click();
     await page.waitForTimeout(3000);
 
@@ -48,6 +48,6 @@ test.describe('New AUDESYS Project (no workspace)', () => {
       await page.waitForTimeout(2000);
     }
 
-    expect(page.url()).toContain(`AUDESYS-Projects/${PROJECT_NAME}`);
+    expect(page.url()).toContain(`Weftik-Projects/${PROJECT_NAME}`);
   });
 });

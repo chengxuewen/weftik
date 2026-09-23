@@ -1,0 +1,14 @@
+[package]
+name = "weftik-agent"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik Agent — 车端管理代理。Weftik Runtime Supervisor — process orchestration and monitoring"
+
+[dependencies]
+weftik-runtime-common = { path = "../weftik-runtime-common" }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+libc = "0.2"
+

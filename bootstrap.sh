@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bootstrap.sh — First-time setup for AUDESYS development
+# bootstrap.sh — First-time setup for Weftik development
 # Usage: source bootstrap.sh
 #
 # This is the user-facing entry point. Run once per machine:
@@ -11,7 +11,7 @@ set -euo pipefail
 BOOTSTRAP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 echo "================================================"
-echo "  AUDESYS Development Environment Bootstrap"
+echo "  Weftik Development Environment Bootstrap"
 echo "================================================"
 echo ""
 
@@ -27,7 +27,7 @@ source "${BOOTSTRAP_DIR}/scripts/pixi-shell.sh"
 
 echo ""
 echo "================================================"
-echo "  AUDESYS environment ready!"
+echo "  Weftik environment ready!"
 echo "================================================"
 echo ""
 echo "Next time, just run:  source pixi.sh"

@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Playwright Smoke Test config
+// Weftik Studio Theia — Playwright Smoke Test config
 // Verifies Theia application starts and renders core UI correctly.
 
 import { defineConfig, devices } from '@playwright/test';

@@ -1,5 +1,5 @@
 /**
- * AUDESYS 模型分层配置体系
+ * Weftik 模型分层配置体系
  *
  * 五层模型映射: premium-max / premium / fast / vision / lite
  * 通过 New API 网关别名实现模型动态切换，项目配置零修改。

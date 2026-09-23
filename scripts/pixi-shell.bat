@@ -6,9 +6,9 @@ set "SCRIPT_DIR=%~dp0"
 set "PROJECT_ROOT=%SCRIPT_DIR%.."
 set "PIXI_BIN=%USERPROFILE%\.pixi\bin\pixi.exe"
 
-echo Activating AUDESYS pixi environment...
+echo Activating Weftik pixi environment...
 "%PIXI_BIN%" shell-hook --manifest-path "%PROJECT_ROOT%\pixi.toml" > "%TEMP%\pixi-hook.bat"
 call "%TEMP%\pixi-hook.bat"
 del "%TEMP%\pixi-hook.bat"
 echo.
-echo AUDESYS environment active. Deactivate with: exit
+echo Weftik environment active. Deactivate with: exit

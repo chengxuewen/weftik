@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Expanded E2E Tests
+// Weftik Studio Theia — Expanded E2E Tests
 // Tests against Theia 1.73 actual DOM selectors.
 import { test, expect } from '@playwright/test';
 

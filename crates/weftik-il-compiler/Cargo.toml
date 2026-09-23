@@ -1,0 +1,11 @@
+[package]
+name = "weftik-il-compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik IEC 61131-3 IL (Instruction List) compiler targeting HAL IR"
+
+[dependencies]
+weftik-hal-ir = { path = "../weftik-hal-ir" }
+weftik-hal-core = { path = "../weftik-hal-core" }

@@ -1,0 +1,8 @@
+[package]
+name = "weftik-amw-inproc"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+weftik-hal-core = { path = "../weftik-hal-core" }

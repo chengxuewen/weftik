@@ -1,5 +1,5 @@
 @echo off
-REM pixi-init.bat — Windows bootstrap for AUDESYS pixi environment
+REM pixi-init.bat — Windows bootstrap for Weftik pixi environment
 setlocal enabledelayedexpansion
 
 set "SCRIPT_DIR=%~dp0"
@@ -7,7 +7,7 @@ set "PROJECT_ROOT=%SCRIPT_DIR%.."
 set "PIXI_VERSION=0.67.2"
 set "PIXI_BIN=%USERPROFILE%\.pixi\bin\pixi.exe"
 
-echo === AUDESYS pixi environment setup (Windows) ===
+echo === Weftik pixi environment setup (Windows) ===
 echo Project root: %PROJECT_ROOT%
 
 REM Check if pixi is installed
@@ -29,6 +29,6 @@ if errorlevel 1 (
 )
 
 echo.
-echo === AUDESYS pixi environment ready ===
+echo === Weftik pixi environment ready ===
 echo Activate with: pixi.bat
 echo Or run tasks:  pixi run build ^| pixi run test ^| pixi run lint

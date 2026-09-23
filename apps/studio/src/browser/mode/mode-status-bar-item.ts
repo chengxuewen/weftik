@@ -2,7 +2,7 @@
 
 import { injectable, inject } from '@theia/core/shared/inversify';
 import { StatusBar, StatusBarAlignment } from '@theia/core/lib/browser/status-bar/status-bar';
-import { AudesysModeManager, StudioMode, STUDIO_MODES } from './audesys-mode-manager';
+import { WeftikModeManager, StudioMode, STUDIO_MODES } from './weftik-mode-manager';
 
 interface ModeUIConfig {
     mode: StudioMode;
@@ -17,7 +17,7 @@ const MODE_CONFIGS: ModeUIConfig[] = [
 ];
 
 const ACTIVE_COLOR = 'var(--theia-activityBar-activeBorder)';
-const ENTRY_PREFIX = 'audesys-mode-';
+const ENTRY_PREFIX = 'weftik-mode-';
 
 /**
  * Renders three clickable mode indicators in the left status bar:
@@ -29,8 +29,8 @@ export class ModeStatusBarItem {
     @inject(StatusBar)
     private readonly statusBar!: StatusBar;
 
-    @inject(AudesysModeManager)
-    private readonly modeManager!: AudesysModeManager;
+    @inject(WeftikModeManager)
+    private readonly modeManager!: WeftikModeManager;
 
     /** Render status bar entries and subscribe to mode changes. */
     show(): void {
@@ -52,7 +52,7 @@ export class ModeStatusBarItem {
             text: `${cfg.icon} ${cfg.label}`,
             alignment: StatusBarAlignment.LEFT,
             priority: 100,
-            command: `audesys.mode.switch.${cfg.mode}`,
+            command: `weftik.mode.switch.${cfg.mode}`,
             tooltip: `Switch to ${cfg.label} mode`,
             color: active ? ACTIVE_COLOR : undefined,
         });

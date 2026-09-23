@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Playwright Electron Smoke Test config
+// Weftik Studio Theia — Playwright Electron Smoke Test config
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({

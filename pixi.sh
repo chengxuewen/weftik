@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# pixi.sh — Source this file to activate AUDESYS pixi environment
+# pixi.sh — Source this file to activate Weftik pixi environment
 # Usage: source pixi.sh
 
 set -euo pipefail

@@ -124,14 +124,14 @@ apps/studio-theia-test/
 test-*
 
 # napi-rs bridge artifacts
-crates/audesys-theia-bridge/node_modules/
-crates/audesys-theia-bridge/*.node
-crates/audesys-theia-bridge/index.d.ts
-crates/audesys-theia-bridge/index.js
-crates/audesys-theia-bridge/node_modules/
-crates/audesys-theia-bridge/*.node
-crates/audesys-theia-bridge/index.d.ts
-crates/audesys-theia-bridge/index.js
+crates/weftik-theia-bridge/node_modules/
+crates/weftik-theia-bridge/*.node
+crates/weftik-theia-bridge/index.d.ts
+crates/weftik-theia-bridge/index.js
+crates/weftik-theia-bridge/node_modules/
+crates/weftik-theia-bridge/*.node
+crates/weftik-theia-bridge/index.d.ts
+crates/weftik-theia-bridge/index.js
 
 # Audit logs
 

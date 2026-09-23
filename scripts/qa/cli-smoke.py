@@ -1,4 +1,4 @@
-"""audesys CLI 冒烟测试 — mock cargo/pixi，不真跑全链。
+"""weftik CLI 冒烟测试 — mock cargo/pixi，不真跑全链。
 
 覆盖（D75: AI 生成代码须带测试）:
 - 各子命令 argparse 可解析（--help 不抛）
@@ -17,12 +17,12 @@ from unittest.mock import patch
 
 import pytest
 
-# 按文件路径加载 audesys_cli（绕过 pytest import-mode，避免 "scripts/qa" 成为 rootdir 前缀）
+# 按文件路径加载 weftik_cli（绕过 pytest import-mode，避免 "scripts/qa" 成为 rootdir 前缀）
 _SCRIPTS_DIR = Path(__file__).resolve().parents[1]
-_spec = importlib.util.spec_from_file_location("audesys_cli", _SCRIPTS_DIR / "audesys_cli.py")
+_spec = importlib.util.spec_from_file_location("weftik_cli", _SCRIPTS_DIR / "weftik_cli.py")
 assert _spec is not None and _spec.loader is not None
 cli = importlib.util.module_from_spec(_spec)
-sys.modules["audesys_cli"] = cli
+sys.modules["weftik_cli"] = cli
 _spec.loader.exec_module(cli)
 
 
@@ -45,7 +45,7 @@ _spec.loader.exec_module(cli)
     ],
 )
 def _build_parser():
-    parser = argparse.ArgumentParser(prog="audesys")
+    parser = argparse.ArgumentParser(prog="weftik")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("build")
     sub.add_parser("test")

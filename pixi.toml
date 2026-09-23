@@ -1,5 +1,5 @@
 [workspace]
-name = "AUDESYS"
+name = "weftik"
 channels = ["conda-forge"]
 platforms = ["osx-64", "osx-arm64", "linux-64", "linux-aarch64", "win-64"]
 version = "0.1.0"
@@ -56,5 +56,5 @@ default = { features = ["dev", "test"] }
 init = "scripts/pixi-init.sh"
 shell = "scripts/pixi-shell.sh"
 archive = "scripts/archive-source.sh"
-cli = "scripts/audesys_cli.py"
+cli = "scripts/weftik_cli.py"
 cli-smoke = "python -m pytest scripts/qa/cli-smoke.py"

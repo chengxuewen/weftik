@@ -1,0 +1,10 @@
+[package]
+name = "weftik-hal-flatbuffers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+flatbuffers = "25"
+weftik-hal-core = { path = "../weftik-hal-core" }
+

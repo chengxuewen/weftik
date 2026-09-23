@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# qa-fast.sh — AUDESYS Phase 0 fast QA gate (D30/D36)
+# qa-fast.sh — Weftik Phase 0 fast QA gate (D30/D36)
 # Runs: cargo test + cargo clippy + cargo fmt check + cargo deny + unwrap-budget + napi-rs check
 # Usage: bash scripts/qa-fast.sh
 set -euo pipefail
@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$SCRIPT_DIR/.."
 
-echo "=== AUDESYS qa-fast ==="
+echo "=== Weftik qa-fast ==="
 echo ""
 
 echo "[0/6] smoke"
@@ -38,18 +38,18 @@ bash scripts/qa/unwrap-budget.sh
 
 # ── napi-rs bridge check ──
 echo "[6/7] napi-rs bridge check"
-cargo check -p audesys-theia-bridge --quiet 2>&1 | tail -3
+cargo check -p weftik-theia-bridge --quiet 2>&1 | tail -3
 echo "  Rust compile check OK"
 # ponytail: npm run build requires Node.js env; skip in Rust-only CI,
 # full napi-rs build happens in dedicated qa-theia workflow
-if command -v npm &>/dev/null && [ -f crates/audesys-theia-bridge/package.json ]; then
+if command -v npm &>/dev/null && [ -f crates/weftik-theia-bridge/package.json ]; then
   echo "  npm found — running napi-rs build (non-blocking)"
-  (cd crates/audesys-theia-bridge && npm run build 2>&1 | tail -5) || echo "  napi-rs npm build SKIPPED (may need deps install)"
+  (cd crates/weftik-theia-bridge && npm run build 2>&1 | tail -5) || echo "  napi-rs npm build SKIPPED (may need deps install)"
 fi
 
 # ── CLI 自检（CLI 是 qa 包装，坏了门禁应感知）──
 echo "[7/7] CLI 自检"
-python3 -m py_compile scripts/audesys_cli.py && ./audesys.sh version >/dev/null 2>&1 \
-  && echo "  CLI OK" || { echo "  CLI FAILED — audesys CLI 不可用"; exit 1; }
+python3 -m py_compile scripts/weftik_cli.py && ./weftik.sh version >/dev/null 2>&1 \
+  && echo "  CLI OK" || { echo "  CLI FAILED — weftik CLI 不可用"; exit 1; }
 echo ""
 echo "=== qa-fast PASSED ==="

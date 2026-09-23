@@ -1,37 +1,37 @@
 [workspace]
 resolver = "3"
 members = [
-  "crates/audesys-hal-core",
-  "crates/audesys-runtime-common",
-  "crates/audesys-amw-inproc",
-  "crates/audesys-hal-flatbuffers",
-  "crates/audesys-hal-ir",
-  "crates/audesys-modbus-sys",
-  "crates/audesys-modbus",
-  "crates/audesys-hart",
-  "crates/audesys-runtime",
-  "crates/audesys-agent",
-  "crates/audesys-runtime-client",
-  "crates/audesys-hal-binding-gen",
-  "crates/audesys-dap-adapter",
-  "crates/audesys-il-compiler",
-  "crates/audesys-ld-compiler",
-  "crates/audesys-ld-layout",
-  "crates/audesys-ld-semantics",
-  "crates/audesys-sfc-compiler",
-  "crates/audesys-fbd-compiler",
-  "crates/audesys-gcode-compiler",
-  "crates/audesys-cnc-motion",
-  "crates/audesys-cnc-axis-group",
-  "crates/audesys-amw-zenoh",
-  "crates/audesys-theia-bridge",
+  "crates/weftik-hal-core",
+  "crates/weftik-runtime-common",
+  "crates/weftik-amw-inproc",
+  "crates/weftik-hal-flatbuffers",
+  "crates/weftik-hal-ir",
+  "crates/weftik-modbus-sys",
+  "crates/weftik-modbus",
+  "crates/weftik-hart",
+  "crates/weftik-runtime",
+  "crates/weftik-agent",
+  "crates/weftik-runtime-client",
+  "crates/weftik-hal-binding-gen",
+  "crates/weftik-dap-adapter",
+  "crates/weftik-il-compiler",
+  "crates/weftik-ld-compiler",
+  "crates/weftik-ld-layout",
+  "crates/weftik-ld-semantics",
+  "crates/weftik-sfc-compiler",
+  "crates/weftik-fbd-compiler",
+  "crates/weftik-gcode-compiler",
+  "crates/weftik-cnc-motion",
+  "crates/weftik-cnc-axis-group",
+  "crates/weftik-amw-zenoh",
+  "crates/weftik-theia-bridge",
 ]
 exclude = ["apps/studio/src-tauri"]
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0"
-repository = "https://github.com/AUDESYS/AUDESYS"
+repository = "https://gitee.com/chengxuewen/weftik"
 
 [workspace.lints.rust]
 unsafe_code = "deny"

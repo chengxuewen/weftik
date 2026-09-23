@@ -1,16 +1,16 @@
 {
   "private": true,
-  "name": "audesys-studio",
-  "productName": "AUDESYS Studio",
+  "name": "weftik-studio",
+  "productName": "Weftik Studio",
   "version": "0.1.0",
-  "description": "AUDESYS Studio IDE \u2014 Industrial Control Development Environment based on Eclipse Theia",
+  "description": "Weftik Studio IDE \u2014 Industrial Control Development Environment based on Eclipse Theia",
   "main": "lib/backend/electron-main.js",
   "license": "Apache-2.0",
   "theia": {
     "target": "electron",
     "frontend": {
       "config": {
-        "applicationName": "AUDESYS Studio",
+        "applicationName": "Weftik Studio",
         "defaultTheme": "dark",
         "electron": {
           "windowOptions": {
@@ -60,9 +60,9 @@
     "@theia/process": "1.73.0",
     "@theia/terminal": "1.73.0",
     "@theia/workspace": "1.73.0",
-    "audesys-core": "file:../../theia-extensions/audesys-core",
-    "audesys-debug": "file:../../theia-extensions/audesys-debug",
-    "audesys-hmi-designer": "file:../../theia-extensions/audesys-hmi-designer",
+    "weftik-core": "file:../../theia-extensions/weftik-core",
+    "weftik-debug": "file:../../theia-extensions/weftik-debug",
+    "weftik-hmi-designer": "file:../../theia-extensions/weftik-hmi-designer",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.5",
     "react-rnd": "^10.5.3"

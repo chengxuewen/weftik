@@ -37,29 +37,29 @@ echo ""
 
 # ─── Rust: P0 cores ───
 echo "Step 1: Rust — P0 Compiler Cores"
-gate "LD compiler (31)"    cmd_timeout 30 cargo test -p audesys-ld-compiler --lib -q
-gate "IL compiler (32)"    cmd_timeout 30 cargo test -p audesys-il-compiler --lib -q
-gate "Agent (3)"           cmd_timeout 30 cargo test -p audesys-agent -q
-gate "LD→Runtime pipeline" cmd_timeout 30 cargo test -p audesys-runtime --test pipeline_test -q
+gate "LD compiler (31)"    cmd_timeout 30 cargo test -p weftik-ld-compiler --lib -q
+gate "IL compiler (32)"    cmd_timeout 30 cargo test -p weftik-il-compiler --lib -q
+gate "Agent (3)"           cmd_timeout 30 cargo test -p weftik-agent -q
+gate "LD→Runtime pipeline" cmd_timeout 30 cargo test -p weftik-runtime --test pipeline_test -q
 # ponytail: --lib only; integration tests (compile_test, full_pipeline_test) hang on test_g1_basic
-gate "G-code compiler lib" cmd_timeout 30 cargo test -p audesys-gcode-compiler --lib -q
+gate "G-code compiler lib" cmd_timeout 30 cargo test -p weftik-gcode-compiler --lib -q
 
 # ─── Rust: FBD + SFC ───
 echo ""
 echo "Step 2: Rust — FBD + SFC Compilers"
-gate "FBD compiler (21)"   cmd_timeout 30 cargo test -p audesys-fbd-compiler --lib -q
-gate "SFC compiler (19)"   cmd_timeout 30 cargo test -p audesys-sfc-compiler --lib -q
+gate "FBD compiler (21)"   cmd_timeout 30 cargo test -p weftik-fbd-compiler --lib -q
+gate "SFC compiler (19)"   cmd_timeout 30 cargo test -p weftik-sfc-compiler --lib -q
 
 # ─── Rust: Runtime engine (smoke subset) ───
 echo ""
 echo "Step 3: Rust — Runtime Engine (smoke)"
-gate "Engine core"         cmd_timeout 30 cargo test -p audesys-runtime --lib -q
+gate "Engine core"         cmd_timeout 30 cargo test -p weftik-runtime --lib -q
 
 # ─── Rust: HAL + AMW ───
 echo ""
 echo "Step 4: Rust — HAL + AMW Core"
-gate "HAL IR"              cmd_timeout 30 cargo test -p audesys-hal-ir --lib -q
-gate "amw-inproc"          cmd_timeout 30 cargo test -p audesys-amw-inproc --lib -q
+gate "HAL IR"              cmd_timeout 30 cargo test -p weftik-hal-ir --lib -q
+gate "amw-inproc"          cmd_timeout 30 cargo test -p weftik-amw-inproc --lib -q
 
 # ─── Vitest: documented status (known pre-existing failures) ───
 echo ""

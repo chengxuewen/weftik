@@ -1,8 +1,8 @@
 /// <reference types="playwright" />
 /**
- * AUDESYS LD Editor — React Flow E2E Test Suite
+ * Weftik LD Editor — React Flow E2E Test Suite
  *
- * Tests the React Flow based LD editor (audesys-ld-editor, D110).
+ * Tests the React Flow based LD editor (weftik-ld-editor, D110).
  *
  * Selector conventions (sdd-tester):
  *   - node type:  `.react-flow__node-<type>`  (NOT [data-type])

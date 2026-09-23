@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# qa-full.sh — AUDESYS full QA gate (D30/D73)
+# qa-full.sh — Weftik full QA gate (D30/D73)
 # Runs: smoke + qa-fast + criterion bench + llvm-cov coverage + vitest + playwright + SDD trace
 # Usage: bash scripts/qa-full.sh
 # Note: Requires cargo-llvm-cov installed (cargo install cargo-llvm-cov)
@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$SCRIPT_DIR/.."
 
-echo "=== AUDESYS qa-full ==="
+echo "=== Weftik qa-full ==="
 echo ""
 
 # Step 0: Smoke (D72)

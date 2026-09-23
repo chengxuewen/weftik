@@ -34,236 +34,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
 
 [[package]]
-name = "audesys-agent"
-version = "0.1.0"
-dependencies = [
- "audesys-runtime-common",
- "libc",
- "serde",
- "serde_yaml",
-]
-
-[[package]]
-name = "audesys-amw-inproc"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
-]
-
-[[package]]
-name = "audesys-amw-zenoh"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
-]
-
-[[package]]
-name = "audesys-cnc-axis-group"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
- "audesys-hal-ir",
-]
-
-[[package]]
-name = "audesys-cnc-motion"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
- "audesys-hal-ir",
-]
-
-[[package]]
-name = "audesys-dap-adapter"
-version = "0.1.0"
-dependencies = [
- "audesys-runtime-client",
- "audesys-runtime-common",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "audesys-fbd-compiler"
-version = "0.1.0"
-
-[[package]]
-name = "audesys-gcode-compiler"
-version = "0.1.0"
-dependencies = [
- "audesys-cnc-motion",
- "audesys-hal-core",
- "audesys-hal-ir",
-]
-
-[[package]]
-name = "audesys-hal-binding-gen"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
- "audesys-hal-ir",
- "thiserror",
-]
-
-[[package]]
-name = "audesys-hal-core"
-version = "0.1.0"
-dependencies = [
- "audesys-amw-inproc",
- "mockall",
- "serde",
-]
-
-[[package]]
-name = "audesys-hal-flatbuffers"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
- "flatbuffers",
-]
-
-[[package]]
-name = "audesys-hal-ir"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
- "bincode",
- "serde",
-]
-
-[[package]]
-name = "audesys-hart"
-version = "0.1.0"
-dependencies = [
- "audesys-amw-inproc",
- "audesys-hal-core",
- "hart-protocol",
- "heapless",
- "serde",
- "serde_yaml",
- "serialport",
- "thiserror",
-]
-
-[[package]]
-name = "audesys-il-compiler"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-core",
- "audesys-hal-ir",
-]
-
-[[package]]
-name = "audesys-ld-compiler"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-ir",
- "audesys-il-compiler",
-]
-
-[[package]]
-name = "audesys-ld-layout"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "audesys-ld-semantics"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "audesys-modbus"
-version = "0.1.0"
-dependencies = [
- "audesys-amw-inproc",
- "audesys-hal-core",
- "audesys-modbus-sys",
- "serde",
- "serde_yaml",
- "thiserror",
-]
-
-[[package]]
-name = "audesys-modbus-sys"
-version = "0.1.0"
-dependencies = [
- "pkg-config",
-]
-
-[[package]]
-name = "audesys-runtime"
-version = "0.1.0"
-dependencies = [
- "audesys-amw-inproc",
- "audesys-hal-binding-gen",
- "audesys-hal-core",
- "audesys-hal-ir",
- "audesys-hart",
- "audesys-il-compiler",
- "audesys-ld-compiler",
- "audesys-modbus",
- "audesys-runtime-common",
- "bincode",
- "criterion",
- "hmac",
- "libc",
- "rand",
- "serde",
- "serde_json",
- "serde_yaml",
- "sha2",
-]
-
-[[package]]
-name = "audesys-runtime-client"
-version = "0.1.0"
-dependencies = [
- "audesys-hal-binding-gen",
- "audesys-hal-core",
- "audesys-runtime-common",
- "hmac",
- "rand",
- "serde_json",
- "sha2",
-]
-
-[[package]]
-name = "audesys-runtime-common"
-version = "0.1.0"
-
-[[package]]
-name = "audesys-sfc-compiler"
-version = "0.1.0"
-
-[[package]]
-name = "audesys-theia-bridge"
-version = "0.1.0"
-dependencies = [
- "audesys-fbd-compiler",
- "audesys-gcode-compiler",
- "audesys-hal-binding-gen",
- "audesys-hal-ir",
- "audesys-il-compiler",
- "audesys-ld-compiler",
- "audesys-runtime",
- "audesys-runtime-client",
- "audesys-runtime-common",
- "audesys-sfc-compiler",
- "bincode",
- "napi",
- "napi-build",
- "napi-derive",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1390,6 +1160,236 @@ checksum = "8622dcb61c0bcc9fffa6938bed81210af2da9a7e4a1a834b2e37a59b6dfb6141"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "weftik-agent"
+version = "0.1.0"
+dependencies = [
+ "libc",
+ "serde",
+ "serde_yaml",
+ "weftik-runtime-common",
+]
+
+[[package]]
+name = "weftik-amw-inproc"
+version = "0.1.0"
+dependencies = [
+ "weftik-hal-core",
+]
+
+[[package]]
+name = "weftik-amw-zenoh"
+version = "0.1.0"
+dependencies = [
+ "weftik-hal-core",
+]
+
+[[package]]
+name = "weftik-cnc-axis-group"
+version = "0.1.0"
+dependencies = [
+ "weftik-hal-core",
+ "weftik-hal-ir",
+]
+
+[[package]]
+name = "weftik-cnc-motion"
+version = "0.1.0"
+dependencies = [
+ "weftik-hal-core",
+ "weftik-hal-ir",
+]
+
+[[package]]
+name = "weftik-dap-adapter"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "weftik-runtime-client",
+ "weftik-runtime-common",
+]
+
+[[package]]
+name = "weftik-fbd-compiler"
+version = "0.1.0"
+
+[[package]]
+name = "weftik-gcode-compiler"
+version = "0.1.0"
+dependencies = [
+ "weftik-cnc-motion",
+ "weftik-hal-core",
+ "weftik-hal-ir",
+]
+
+[[package]]
+name = "weftik-hal-binding-gen"
+version = "0.1.0"
+dependencies = [
+ "thiserror",
+ "weftik-hal-core",
+ "weftik-hal-ir",
+]
+
+[[package]]
+name = "weftik-hal-core"
+version = "0.1.0"
+dependencies = [
+ "mockall",
+ "serde",
+ "weftik-amw-inproc",
+]
+
+[[package]]
+name = "weftik-hal-flatbuffers"
+version = "0.1.0"
+dependencies = [
+ "flatbuffers",
+ "weftik-hal-core",
+]
+
+[[package]]
+name = "weftik-hal-ir"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+ "weftik-hal-core",
+]
+
+[[package]]
+name = "weftik-hart"
+version = "0.1.0"
+dependencies = [
+ "hart-protocol",
+ "heapless",
+ "serde",
+ "serde_yaml",
+ "serialport",
+ "thiserror",
+ "weftik-amw-inproc",
+ "weftik-hal-core",
+]
+
+[[package]]
+name = "weftik-il-compiler"
+version = "0.1.0"
+dependencies = [
+ "weftik-hal-core",
+ "weftik-hal-ir",
+]
+
+[[package]]
+name = "weftik-ld-compiler"
+version = "0.1.0"
+dependencies = [
+ "weftik-hal-ir",
+ "weftik-il-compiler",
+]
+
+[[package]]
+name = "weftik-ld-layout"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "weftik-ld-semantics"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "weftik-modbus"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_yaml",
+ "thiserror",
+ "weftik-amw-inproc",
+ "weftik-hal-core",
+ "weftik-modbus-sys",
+]
+
+[[package]]
+name = "weftik-modbus-sys"
+version = "0.1.0"
+dependencies = [
+ "pkg-config",
+]
+
+[[package]]
+name = "weftik-runtime"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "criterion",
+ "hmac",
+ "libc",
+ "rand",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "sha2",
+ "weftik-amw-inproc",
+ "weftik-hal-binding-gen",
+ "weftik-hal-core",
+ "weftik-hal-ir",
+ "weftik-hart",
+ "weftik-il-compiler",
+ "weftik-ld-compiler",
+ "weftik-modbus",
+ "weftik-runtime-common",
+]
+
+[[package]]
+name = "weftik-runtime-client"
+version = "0.1.0"
+dependencies = [
+ "hmac",
+ "rand",
+ "serde_json",
+ "sha2",
+ "weftik-hal-binding-gen",
+ "weftik-hal-core",
+ "weftik-runtime-common",
+]
+
+[[package]]
+name = "weftik-runtime-common"
+version = "0.1.0"
+
+[[package]]
+name = "weftik-sfc-compiler"
+version = "0.1.0"
+
+[[package]]
+name = "weftik-theia-bridge"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+ "weftik-fbd-compiler",
+ "weftik-gcode-compiler",
+ "weftik-hal-binding-gen",
+ "weftik-hal-ir",
+ "weftik-il-compiler",
+ "weftik-ld-compiler",
+ "weftik-runtime",
+ "weftik-runtime-client",
+ "weftik-runtime-common",
+ "weftik-sfc-compiler",
 ]
 
 [[package]]

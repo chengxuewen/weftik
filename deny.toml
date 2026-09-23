@@ -1,4 +1,4 @@
-# deny.toml — AUDESYS dependency audit (cargo-deny 0.20+)
+# deny.toml — Weftik dependency audit (cargo-deny 0.20+)
 
 [advisories]
 version = 2

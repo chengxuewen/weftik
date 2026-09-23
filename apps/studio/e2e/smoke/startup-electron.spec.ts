@@ -1,4 +1,4 @@
-// AUDESYS Studio Theia — Startup Smoke Tests (Electron)
+// Weftik Studio Theia — Startup Smoke Tests (Electron)
 // Uses Playwright's Electron launcher to test the Electron app directly.
 
 import { _electron as electron, test, expect } from '@playwright/test';

@@ -17,7 +17,7 @@ importers:
 
   apps/runtime-panel:
     dependencies:
-      '@audesys/studio-core':
+      '@weftik/studio-core':
         specifier: workspace:*
         version: link:../../packages/studio-core
       '@tauri-apps/api':

@@ -1,0 +1,13 @@
+[package]
+name = "weftik-dap-adapter"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Weftik DAP (Debug Adapter Protocol) adapter — enables VS Code remote debugging"
+
+[dependencies]
+weftik-runtime-client = { path = "../weftik-runtime-client" }
+weftik-runtime-common = { path = "../weftik-runtime-common" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

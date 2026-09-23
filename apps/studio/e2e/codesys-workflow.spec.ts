@@ -10,7 +10,7 @@ test.describe('CODESYS Workflow E2E', () => {
     page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
     await page.goto(STUDIO_URL);
     await page.waitForTimeout(10000);
-    await expect(page).toHaveTitle('AUDESYS Studio');
+    await expect(page).toHaveTitle('Weftik Studio');
     expect(errors.filter(e => !e.includes('favicon.ico') && !e.includes('setTheme'))).toHaveLength(0);
   });
 

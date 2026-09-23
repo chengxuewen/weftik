@@ -10,24 +10,24 @@ import {
     CommandRegistry,
     Command,
 } from '@theia/core/lib/common';
-import { AudesysModeManager } from './audesys-mode-manager';
+import { WeftikModeManager } from './weftik-mode-manager';
 import { ModeStatusBarItem } from './mode-status-bar-item';
 
 export namespace ModeCommands {
     export const CATEGORY = 'Mode';
 
     export const SWITCH_EDIT: Command = {
-        id: 'audesys.mode.switch.edit',
+        id: 'weftik.mode.switch.edit',
         label: 'Switch to Edit Mode',
         category: CATEGORY,
     };
     export const SWITCH_DEBUG: Command = {
-        id: 'audesys.mode.switch.debug',
+        id: 'weftik.mode.switch.debug',
         label: 'Switch to Debug Mode',
         category: CATEGORY,
     };
     export const SWITCH_COMMISSIONING: Command = {
-        id: 'audesys.mode.switch.commissioning',
+        id: 'weftik.mode.switch.commissioning',
         label: 'Switch to Commissioning Mode',
         category: CATEGORY,
     };
@@ -35,14 +35,14 @@ export namespace ModeCommands {
 
 /**
  * Frontend application contribution that:
- *  1. Initializes the AudesysModeManager from persisted preference on startup.
+ *  1. Initializes the WeftikModeManager from persisted preference on startup.
  *  2. Renders mode indicator entries in the status bar.
  *  3. Registers mode-switch commands (Edit / Debug / Commissioning).
  */
 @injectable()
 export class ModeContribution implements FrontendApplicationContribution, CommandContribution {
-    @inject(AudesysModeManager)
-    private readonly modeManager!: AudesysModeManager;
+    @inject(WeftikModeManager)
+    private readonly modeManager!: WeftikModeManager;
 
     @inject(ModeStatusBarItem)
     private readonly statusBarItem!: ModeStatusBarItem;

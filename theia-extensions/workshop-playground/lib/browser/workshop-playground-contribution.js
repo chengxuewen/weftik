@@ -17,7 +17,7 @@ const inversify_1 = require("@theia/core/shared/inversify");
 const browser_1 = require("@theia/core/lib/browser");
 const core_1 = require("@theia/core");
 /**
- * AUDESYS Workshop: Hello World Command
+ * Weftik Workshop: Hello World Command
  *
  * Demonstrates:
  *   - Command definition with id + label
@@ -26,12 +26,12 @@ const core_1 = require("@theia/core");
  *   - @inject() for service injection
  */
 exports.HelloWorldCommand = {
-    id: 'audesys.workshop.helloWorld',
-    label: 'AudESYS: Hello World',
+    id: 'weftik.workshop.helloWorld',
+    label: 'Weftik: Hello World',
 };
 exports.AboutWorkshopCommand = {
-    id: 'audesys.workshop.about',
-    label: 'About AUDESYS Workshop',
+    id: 'weftik.workshop.about',
+    label: 'About Weftik Workshop',
 };
 /**
  * WorkshopPlaygroundCommandContribution
@@ -51,23 +51,23 @@ let WorkshopPlaygroundCommandContribution = class WorkshopPlaygroundCommandContr
     registerCommands(registry) {
         registry.registerCommand(exports.HelloWorldCommand, {
             execute: () => {
-                this.messageService.info('Hello from AUDESYS Workshop Playground! \n\n' +
+                this.messageService.info('Hello from Weftik Workshop Playground! \n\n' +
                     'This extension demonstrates:\n' +
                     '• inversify Dependency Injection\n' +
                     '• CommandContribution + MenuContribution\n' +
-                    '• Monarch tokenizer for .audesys files\n\n' +
+                    '• Monarch tokenizer for .weftik files\n\n' +
                     '👷 Built as part of the Theia Learning Workshop');
             },
         });
         registry.registerCommand(exports.AboutWorkshopCommand, {
             execute: () => {
-                this.messageService.info('AUDESYS Theia Workshop Playground\n\n' +
+                this.messageService.info('Weftik Theia Workshop Playground\n\n' +
                     'Version: 0.1.0 (learning exercise)\n' +
-                    'Purpose: Teach the AUDESYS team Eclipse Theia fundamentals\n' +
+                    'Purpose: Teach the Weftik team Eclipse Theia fundamentals\n' +
                     'Topics: DI, Contributions, GLSP, Monarch\n\n' +
                     'Projects:\n' +
-                    '- audeSYS Studio Theia (apps/studio-theia/)\n' +
-                    '- audeSYS Core Extension (theia-extensions/audesys-core/)\n' +
+                    '- Weftik Studio Theia (apps/studio-theia/)\n' +
+                    '- Weftik Core Extension (theia-extensions/weftik-core/)\n' +
                     '- Workshop Playground (theia-extensions/workshop-playground/)');
             },
         });
@@ -81,7 +81,7 @@ let WorkshopPlaygroundCommandContribution = class WorkshopPlaygroundCommandContr
     registerMenus(menus) {
         menus.registerMenuAction(browser_1.CommonMenus.HELP, {
             commandId: exports.AboutWorkshopCommand.id,
-            label: 'About AUDESYS Workshop',
+            label: 'About Weftik Workshop',
             order: 'a', // first in the menu
         });
     }
