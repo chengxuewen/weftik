@@ -140,6 +140,7 @@
 - **方案**: Phase 1 编译器输出仅在 SimulationHarness 下验证。运动规划器延后至 Phase 2（Runtime 协处理器），Phase 3 实现完整 S 曲线 + 前瞻
 
 ## AUDEDeck 性能陷阱（SCADA 竞品参考）
+> ⚠️ 2026-09 标注（D117）：AUDEDeck/Studio HMI UI 已移除，以下陷阱随移交作废；对**外部 Panel 项目**仍有参考价值。
 
 2026-07-19 基于 Ignition Perspective、FUXA、InTouch OMI、iFIX、KingView、Beckhoff ADS 等 8 家竞品的性能分析。
 

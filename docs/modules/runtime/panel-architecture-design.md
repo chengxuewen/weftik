@@ -1,4 +1,6 @@
-# AUDESYS AUDEDeck 架构设计
+# Panel 架构设计（契约参考 — 原 AUDESYS AUDEDeck）
+
+> ⛔ **D117 (2026-09-23)**：本文件是**契约方**文档。AUDEDeck 与 Studio HMI 设计器已从仓库移除；Panel 实现由**外部项目**维护，本文作为其实现参考。本仓库侧约束性契约见 `openspec/specs/hmi-spec.md`（IPC 0x16/0x17/0x18 + Config Barrier + Role::Hmi）。
 
 **生成日期**: 2026-07-19
 **修订日期**: 2026-07-21

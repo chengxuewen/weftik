@@ -352,12 +352,14 @@
 - **参考**: docs/modules/studio/plugin-architecture-design.md §3, docs/reference/vscode.md §2.5
 
 ## D60: Panel Widget 复用 = packages/studio-core 共享组件
+> ⛔ **superseded by D117 (2026-09)** — studio-core 与 AUDEDeck 已移除；widget 库由外部 Panel 项目自管
 - **日期**: 2026-07-19
 - **决定**: AUDEDeck 复用 Studio 的 7 种 HMI Widget 组件（Gauge/Trend/Tank/Indicator/Button/Display/Text），而非重写。Widget 提取到 `packages/studio-core/src/widgets/`，统一 WidgetProps 接口 `{ signalValue, ...rest }`。
 - **理由**: 7 种 widget 已实现且测试通过，重写带来双倍维护成本。Widget 已改为纯函数组件，signalValue 通过 prop 注入（而不内部调用 useHmiSignal），两端可注入不同的信号源。
 - **参考**: packages/studio-core/, apps/studio/src/components/widgets/
 
 ## D61: Panel Plugin 参考 Studio 接口但不继承
+> ⛔ **superseded by D117 (2026-09)** — Panel 插件体系随 UI 移交外部项目
 - **日期**: 2026-07-19
 - **决定**: Panel 的 Plugin System 参考 Studio 的 PluginRegistry 生命周期模式（activate/deactivate）和 Manifest 结构，但不作为子类/继承关系。
 - **理由**: Panel 插件上下文不同——核心能力是 SignalBridge（信号订阅/写入/快照），而 Studio 是 Tauri invoke（文件/调试/部署）。强行共享接口会引入不必要的抽象层，增加两端复杂度。
@@ -382,29 +384,34 @@
 - **参考**: docs/modules/runtime/ipc-security-design.md, docs/modules/runtime/panel-architecture-design.md §7.4
 
 ## D65: Panel 作为独立 Tauri 应用而非 Studio 面板
+> ⛔ **superseded by D117 (2026-09)** — 3rdparty/AUDEDeck/ 已从仓库移除；形态由外部项目自定
 - **日期**: 2026-07-19
 - **决定**: AUDEDeck 作为独立的 Tauri 应用（`3rdparty/AUDEDeck/`）部署，不嵌入 Studio IDE 窗口。支持全屏 kiosk 模式，独立进程可单独部署、升级、崩溃隔离。
 - **理由**: 操作员站全屏运行，不应嵌入 IDE chrome（工具栏、文件树、终端）。独立进程提供进程级隔离——Panel 崩溃不影响 Studio 开发，反之亦然。与 D65（应为 D58）Studio 插件架构是互补关系而非替代关系。
 - **参考**: docs/modules/runtime/panel-architecture-design.md, docs/reference/ignition.md
 
 ## D66: Transport 层统一接口 + 自动选择
+> 🔄 **部分移交 (D117)** — IPanelTransport 契约保留于 openspec/specs/hmi-spec.md；Uds/Ws/Sim 实现由外部 Panel 承担；本仓 RuntimeClient（Rust UDS）仍在位
 - **日期**: 2026-07-19
 - **决定**: Panel Transport 层定义统一接口 `IPanelTransport`（connect/readSignal/writeSignal/snapshot/subscribe），三种实现：UdsTransport（本地 UDS ~10μs）、WsTransport（远程 WebSocket ~5ms LAN）、SimTransport（SimulationHarness 进程内）。部署时根据配置自动选择。
 - **理由**: UDS/WS/Sim 三种模式接口一致，Panel 业务代码零变更。自动选择避免操作员手动配置传输模式。
 - **参考**: docs/modules/runtime/panel-architecture-design.md §5, crates/audeys-controller-client/src/lib.rs
 
 ## D69: HMI 布局版本管理 = YAML 文本 + Git diff 友好
+> ✅ 契约保留 (D117) — Controller 侧 YAML 持久化不变；布局创作工具（原 Studio 设计器）已移除
 - **日期**: 2026-07-19
 - **决定**: HMI 布局文件以 YAML 文本格式存储（`{project}/hmi/layout.yaml`），纳入 Git 版本管理。不采用二进制序列化或数据库存储。P2 升级为 FlatBuffers 编译（D24 运行时策略）。
 - **理由**: YAML 文本 Git-diffable，工程师可直接审查布局变更（"将 Tank-1 从 x=100 移动到 x=200"）。LabVIEW .vi 二进制格式不可 Git diff 的教训（pitfalls.md §LabVIEW 二进制格式）直接验证了文本格式的必要性。FlatBuffers 仅用于运行时加载，不用于源码管理。
 - **参考**: `apps/studio/src/hooks/useHmiLayout.ts:46-68` (exportYaml), `apps/studio/src-tauri/src/lib.rs:406-409` (save_hmi_layout)
 ## D68: HMI 布局部署协议 = 复用 deploy_program IPC 模式 + 新增 0x17
+> ✅ 契约保留 (D117) — 0x16/0x17/0x18 + Config Barrier 不变；部署发起方可为本仓 Studio 外部工具链
 - **日期**: 2026-07-19
 - **决定**: HMI 布局部署使用与 `deploy_program` (IPC method 0x10) 相同的模式：Studio 通过 ControllerClient 发送 HmiLayout → Controller 写入 Config Barrier → 下周期边界 Panel 获取新布局。新增 IPC method 0x17 (DEPLOY_HMI_LAYOUT)，不修改现有 0x10 语义。
 - **理由**: Config Barrier (D17) 已在周期边界批量应用变更，HMI 布局变更适用相同机制。0x10 的 HMAC 认证+RBAC (Role::Engineer) 可直接复用。新建 0x17 保持方法语义单一职责——0x10=程序部署，0x17=HMI 布局部署。
 - **参考**: `crates/audeys-ipc-server/src/`, `docs/modules/hal/config-barrier-design.md`, `docs/modules/runtime/panel-architecture-design.md`
 
 ## D67: HMI 调试信号注入 = sim_set_signal Tauri 命令复用
+> ⛔ **失效 by D117 (2026-09)** — HMI Builder/Preview 模式随设计器移除；SimHarness 本体保留
 - **日期**: 2026-07-19
 - **决定**: HMI Builder 的 Preview 模式信号注入复用现有 `sim_set_signal` Tauri 命令（第 331 行），通过 SimulationHarness 注入模拟信号值。不新建独立的 HMI 信号模拟系统。
 - **理由**: SimulationHarness 已有完整的信号写入/读取/步进能力，新建独立系统会重复建设。HMI Preview 本质上就是"注入信号 → 观察 widget 渲染"的测试循环，与 SimHarness 的 step/read 模式完全等价。
@@ -739,3 +746,11 @@
 - **决定**: 工程项目管理（A1-A7）暂无 E2E 覆盖（仅 9 个 project-model 单测），人工验证采用"预置示例工程 + 分功能域验证清单"：G1 新建工程向导 / G2 POU 树 / G3 变量表 / G4 编译 / G5 部署 / G6 调试。预置 3D 打印机骨架工程同时是将来 E2E 的 fixture。
 - **理由**: 单测验证模型正确，人工验证验证 UI 工作流；示例工程贴近"3D 打印机实践前提"且可复用为 E2E fixture。
 - **参考**: 会话讨论，apps/studio/e2e/ 现有 E2E（LD/FBD/HMI/shell，无工程管理覆盖）
+
+
+## D117: AUDEDeck + Studio HMI UI 移除；Runtime HMI 通道保留为对外契约
+- **日期**: 2026-09-23
+- **决定**: 删除 `3rdparty/AUDEDeck/`（43 文件）、`theia-extensions/audesys-hmi-designer/`、`packages/studio-core/`、napi `deploy/save/load_hmi_layout`、`openspec/specs/hmi-designer-spec.md`、HMI-VAL 规范段。**保留为对外契约**：IPC 0x16 SIGNAL_PUSH / 0x17 DEPLOY_HMI_LAYOUT / 0x18 GET_HMI_LAYOUT、`RuntimeEngine::{deploy,get}_hmi_layout`（Config Barrier 内存储）、`RuntimeClient` 对应方法、`Role::Hmi` RBAC。Panel/UI 实现由外部项目主导（用户决策 2026-09-23：本项目专注平台侧）。契约验收依据迁至 `openspec/specs/hmi-spec.md`；`docs/modules/runtime/panel-architecture-design.md` 降为契约参考文档。
+- **理由**: UI 主导权移交外部项目；Studio 侧三块均为死代码（D106 已摸出 designer、studio-core 零外部消费者）；先删后改名（改名前移除 ≈ 27.5k 行 audesys 引用面）。
+- **取代**: D60、D61、D65、D67 全量；D66/D68/D69 降级为契约条款。
+- **参考**: .sisyphus/plans/weftik-rename/plan.md §三决策 1 + §四 Phase -1；提交 2958f54
