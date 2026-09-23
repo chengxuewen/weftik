@@ -42,7 +42,7 @@
       - [5.1 核心循环](#51-核心循环)
       - [5.2 硬件抽象层](#52-硬件抽象层)
       - [5.3 关键实时技术](#53-关键实时技术)
-    - [6. Panel 模块](#6-panel-模块)
+    - [6. HMI 对外契约](#6-hmi-对外契约panel-实现属外部项目)
     - [7. Gateway 模块](#7-gateway-模块)
     - [8. Remote 模块](#8-remote-模块)
       - [8.1 核心功能设计](#81-核心功能设计)
@@ -130,7 +130,7 @@
 
 AUDESYS 借鉴了 Android Studio 的"**IDE + Runtime + Emulator + Debug Bridge**"分层模型，将其应用于工业自动化领域。通过统一的 **HAL 硬件抽象系统**（受 LinuxCNC HAL 和 dora-rs 数据流范式启发）、**Runtime 多进程套件**、**Simulator 设备仿真器**和**工业调试桥**，提供一条龙开发体验——编写软 PLC 梯形图逻辑、搭建机器人控制图、开发测控上位机、调试数控设备 G-code，均在同一平台内完成。
 
-AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS Runtime（PC 应用套件）、AUDESYS HAL（硬件抽象层协议）、AUDESYS Simulator（设备模拟器）、AUDESYS Debug（调试桥）和 AUDEDeck（可视化 HMI 组件库）。Runtime 套件包含 Controller、Gateway、Remote、Edge、Supervisor 五个核心组件，HMI 可视化由 AUDEDeck 提供（3rdparty/AUDEDeck/）。
+AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS Runtime（PC 应用套件）、AUDESYS HAL（硬件抽象层协议）、AUDESYS Simulator（设备模拟器）、AUDESYS Debug（调试桥）。Runtime 套件包含 Controller、Gateway、Remote、Edge、Supervisor 五个核心组件，HMI UI 由外部 Panel 项目实现（本仓库保留 IPC 契约 0x16/0x17/0x18，D117）。
 
 技术栈方面，实时控制路径采用 Rust/C/C++（子毫秒确定性），进程管理使用 Node.js，协议网关使用 Python。
 
@@ -138,10 +138,10 @@ AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS R
 
 | 场景 | 核心需求 | AUDESYS 对应模块 |
 |------|----------|-------------------|
-| **工业控制** | 实时 I/O、确定性时序、多轴联动 | Controller + HAL + Studio + AUDEDeck |
-| **软 PLC** | IEC 61131-3 运行时、梯形图/ST 编辑器 | Controller + HAL + Studio + AUDEDeck |
-| **测控与数据采集** | 高速采样、信号处理、虚拟仪器面板 | Controller + HAL + Studio + AUDEDeck |
-| **上位机（HMI/SCADA）** | 触摸屏交互、报警管理、趋势图 | AUDEDeck + Studio |
+| **工业控制** | 实时 I/O、确定性时序、多轴联动 | Controller + HAL + Studio + 外部 Panel |
+| **软 PLC** | IEC 61131-3 运行时、梯形图/ST 编辑器 | Controller + HAL + Studio + 外部 Panel |
+| **测控与数据采集** | 高速采样、信号处理、虚拟仪器面板 | Controller + HAL + Studio + 外部 Panel |
+| **上位机（HMI/SCADA）** | 触摸屏交互、报警管理、趋势图 | 外部 Panel + Studio |
 | **机器人控制** | 多节点协作、运动规划、传感器融合 | Controller + Link（参考 dora-rs） |
 | **数控加工** | G-code 解析、轨迹插补、刀具补偿 | Controller + HAL（参考 LinuxCNC） |
 
@@ -150,11 +150,10 @@ AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS R
 
 | 产品 | 描述 | 技术栈 | 状态 |
 |------|------|--------|------|
-| AUDESYS Studio | 统一编辑器/IDE | TypeScript + Eclipse Theia (Electron) + Monaco Editor + GLSP (LD/FBD 已完成) + napi-rs | ✅ 已实现（Theia 迁移完成） |
+| AUDESYS Studio | 统一编辑器/IDE | TypeScript + Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + napi-rs | ✅ 已实现（Theia 迁移完成） |
 | AUDESYS HAL | 硬件抽象层协议 | Rust + FlatBuffers | 🟡 详细设计完成 |
 | AUDESYS Simulator | 设备模拟器 | Rust + SimulationHarness | 🟡 Inproc MVP |
 | AUDESYS Debug | 调试桥 | Rust + DAP | ✅ DAP 已实现 |
-| AUDEDeck | 可视化 HMI 组件库与运行时面板 | TypeScript + React + @audesys/deck-core | 🟡 开发中 |
 
 ### 术语速查
 
@@ -164,7 +163,7 @@ AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS R
 | **Runtime** | PC 应用套件，多进程实时控制系统 |
 | **Runtime Supervisor** | 进程/参数/配置/更新管理器（Node.js） |
 | **Runtime Controller** | 实时控制模块（Rust + HAL Core + amw_inproc），旧名 Act |
-| **AUDEDeck** | HMI 可视化组件库与运行时面板（3rdparty/AUDEDeck/），由 @audesys/deck-core 提供 7 种工业 widget
+| **Panel** | HMI 操作员界面，由外部项目实现（D117），本仓库保留 Runtime IPC 契约 |
 | **Runtime Gateway** | 外部通信应用（MES/ERP/云对接） |
 | **Runtime Remote** | 远程访问（WebRTC 浏览器 B/S 架构） |
 | **Runtime Edge** | 边缘采集（7×24 独立运行） |
@@ -370,7 +369,7 @@ HAL 分 8 个 Phase 实施。详见 `docs/modules/hal/implementation-roadmap.md`
 3. [进程职责矩阵](#3-进程职责矩阵)
 4. [Supervisor 模块](#4-supervisor-模块)
 5. [Controller 模块](#5-controller-模块)
-6. [AUDEDeck 集成](#6-audeck-集成)
+6. [HMI 对外契约](#6-hmi-对外契约panel-实现属外部项目)
 7. [Gateway 模块](#7-gateway-模块)
 8. [Remote 模块](#8-remote-模块)
 9. [Edge 模块](#9-edge-模块)
@@ -389,26 +388,25 @@ HAL 分 8 个 Phase 实施。详见 `docs/modules/hal/implementation-roadmap.md`
 | **R2** | Runtime I/O 线程 | StreamChannel 消费端，amw_inproc 对接 |
 | **R3** | Supervisor 进程管理 | 生命周期管理、崩溃恢复、配置分发 |
 | **R4** | Gateway 协议适配 | 外部通信适配层 |
-**R5** | AUDEDeck 集成 | @audesys/deck-core 集成，ISignalProvider 接口 + IPC 通信 |
+**R5** | HMI 对外契约 | 契约保留（0x16/0x17/0x18），UI 实现属外部项目（D117） |
 | **R6** | Remote WebRTC | 远程访问 WebRTC 通道 |
 
 > **详细设计文档**：
-> - Panel 架构（AUDEDeck 集成）：`docs/modules/runtime/panel-architecture-design.md`
+> - Panel 契约参考（实现属外部项目）：`docs/modules/runtime/panel-architecture-design.md`
 > - 审计日志：`docs/modules/runtime/audit-logging-design.md`
 > - IPC 安全：`docs/modules/runtime/ipc-security-design.md`
 > - 可观测性：`docs/modules/runtime/observability-design.md`
 > - 硬件需求：`docs/modules/runtime/hardware-requirements.md`
 > - 升级策略：`docs/modules/runtime/upgrade-strategy.md`
-> - Panel 架构（AUDEDeck 集成）：`docs/modules/runtime/panel-architecture-design.md`
 ### 1. Runtime 套件概览
 
-AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态。Runtime 套件是一个**多进程实时控制系统**，由五个核心模块组成；HMI 可视化由 AUDEDeck（3rdparty/AUDEDeck/）通过 @audesys/deck-core 提供：
+AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态。Runtime 套件是一个**多进程实时控制系统**，由五个核心模块组成。HMI UI 由外部项目实现（D117），本仓库保留 IPC 契约（0x16/0x17/0x18）。
 
 | 模块 | 产品名 | 职责 | 技术栈 |
 |------|--------|------|--------|
 | **Supervisor** | AUDESYS Supervisor | 进程/参数/配置/更新管理器 | Node.js (`child_process.fork`) + UDS JSON-RPC |
 | **Controller** | AUDESYS Controller | 实时控制（PLC/CNC/运动控制） | Rust + HAL Core + amw_inproc（子毫秒确定性控制） |
-| **AUDEDeck** | AUDEDeck（3rdparty/AUDEDeck/） | HMI 可视化组件库与运行时面板（@audesys/deck-core，7 种工业 widget） | TypeScript + React |
+| **Panel (外部)** | 外部 Panel 项目 | HMI 操作员界面（Runtime IPC 契约保留，实现属外部项目） | 外部项目自定 |
 | **Gateway** | AUDESYS Gateway | 外部通信（MES/ERP/云对接） | Node.js + Link SDK |
 | **Remote** | AUDESYS Remote | 远程访问（WebRTC 浏览器 B/S） | 屏幕采集 + GPU 编码 + WebRTC |
 | **Edge** | AUDESYS Edge | 边缘采集（7×24 独立运行） | 独立进程 + 轻量 Web 配置 |
@@ -417,7 +415,7 @@ AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态�
 ┌──────────────────────────────────────────────────────────────┐
 │                     Runtime 套件全景                          │
 │                                                              │
-│    用户层    │  AUDEDeck(本地HMI)  Remote(远程Web)  Edge(采集)   │
+│    用户层    │  Panel(外部HMI)  Remote(远程Web)  Edge(采集)  │
 │    ─────────┼──────────────────────────────────────────────  │
 │    控制层    │  Controller (实时控制, RT)                     │
 │    ─────────┼──────────────────────────────────────────────  │
@@ -431,7 +429,7 @@ AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态�
 └──────────────────────────────────────────────────────────────┘
 ```
 
-> **命名变更说明**: 旧名 Act -> 新名 **Controller**；HMI 可视化由 AUDEDeck（3rdparty/AUDEDeck/）提供，不再作为 Runtime 套件内置模块。新增 Gateway/Remote/Edge/Supervisor 四个模块。
+> **命名变更说明**: 旧名 Act -> 新名 **Controller**；HMI UI 已移交外部项目（D117），本仓库保留 Runtime IPC 契约。新增 Gateway/Remote/Edge/Supervisor 四个模块。
 
 ---
 
@@ -616,45 +614,20 @@ Controller 的硬件抽象由 [HAL 系统](#一hal-系统) 统一管理，详见
 
 ---
 
-### 6. AUDEDeck 集成
+### 6. HMI 对外契约（Panel 实现属外部项目）
 
+Runtime 通过以下 IPC 方法为外部 Panel 项目提供 HMI 部署与信号推送能力（D117）：
 
+| IPC 方法 | 方向 | 说明 |
+|----------|------|------|
+| 0x16 SIGNAL_PUSH | Runtime → Panel | RT 周期边界批量推送信号变化 |
+| 0x17 DEPLOY_HMI_LAYOUT | Studio → Runtime | HMI 布局经 Config Barrier 在下一周期边界生效 |
+| 0x18 GET_HMI_LAYOUT | Panel → Runtime | Panel 获取当前 HMI 布局 |
 
-| 属性 | 值 |
+RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法。`Role::Hmi` 在 IPC RBAC 中限定 writeSignal 权限。
 
-|------|-----|
-
-| **产品名** | AUDEDeck（3rdparty/AUDEDeck/） |
-
-| **职责** | HMI 可视化组件库与运行时面板 |
-
-| **技术** | TypeScript + React + @audesys/deck-core |
-
-| **渲染目标** | 本地显示器（DRM/KMS）或虚拟 framebuffer（无头模式） |
-
-| **提供内容** | 7 种工业 widget（Gauge/Trend/Tank/Indicator/Button/Display/Text）、HMI Designer、AUDEDeck（3rdparty）集成 |
-
-
-
-**AUDESYS 与 AUDEDeck 的关系**:
-
-
-
-1. **AUDESYS 不维护 Panel 实现** — Panel 和 HMI Designer 由 AUDEDeck（3rdparty/AUDEDeck/）提供
-
-2. **依赖关系**: AUDESYS 通过 @audesys/deck-core 获取 widget 组件库
-
-3. **通信方式**: 通过 ISignalProvider 接口 + IPC 协议（0x16 SIGNAL_PUSH / 0x17 DEPLOY_HMI_LAYOUT / 0x18 SUBSCRIBE_SIGNALS）与 AUDEDeck 通信
-
-4. **故障隔离**: AUDEDeck 崩溃不影响 Controller
-
-5. **资源隔离**: UI 内存泄漏不影响实时控制
-
-6. **独立生命周期**: 可重启 AUDEDeck 而不中断控制
-
-
-
-> AUDEDeck 架构决策（D60-D66）：独立运行时面板、5 层架构、4 个内置插件、PC/Web 双形态、SignalBridge Hybrid 模式（Push 优先 + Poll 降级）。详细设计见 `docs/modules/runtime/panel-architecture-design.md`（描述 Panel 的架构设计，由 AUDEDeck 实现）。
+> AUDEDeck（3rdparty/AUDEDeck/）与 Studio HMI 设计器已于 2026-09 根据 D117 移除。Panel/UI 实现由外部项目主导。
+> 详细设计见 `docs/modules/runtime/panel-architecture-design.md`；验收规范见 `openspec/specs/hmi-spec.md`。
 ---
 
 ### 7. Gateway 模块
@@ -899,13 +872,13 @@ Web 模式:
 
 > ✅ **迁移完成** — Studio 已从 Tauri+React 迁移到 Eclipse Theia（D71, 2026-07-21）。详见 `docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md`
 
-> ✅ **当前 Theia 状态**: 11 扩展集成完成（core, debug, hmi-designer, backend, st-editor, il-editor, gcode-editor, sfc-editor, ld-glsp, fbd-glsp, workshop-playground）。Electron + 浏览器双端可用（3层token + 38 API polyfill）。theia-bridge 21/30 函数真实实现（6编译器+7控制器+3模拟+2项目管理）。LD/FBD 已完成 GLSP 2.7.0 迁移（GPort 端口系统、IView 渲染、port-to-port edge）。待办: 9 debug stub + widget 复用。
+> ✅ **当前 Theia 状态**: 11 扩展集成完成（core, debug, backend, st-editor, il-editor, gcode-editor, sfc-editor, ld-glsp, fbd-glsp, workshop-playground）。Electron + 浏览器双端可用（3层token + 38 API polyfill）。theia-bridge 21/30 函数真实实现（6编译器+7控制器+3模拟+2项目管理）。LD/FBD 已迁移至 React Flow（D110）。待办: 9 debug stub。
 
 ### 1. 产品定位
 
 **AUDESYS Studio** 是统一编辑器/IDE，受 UE（项目类型驱动）、VS Code（插件扩展）、TIA Portal（工业组态）启发。它通过可视化编辑器配置设备模板、流程逻辑和 HMI 界面，一键打包为桌面应用或部署为 Web 服务。
 
-**技术栈**: Eclipse Theia (Electron) + Monaco Editor + Eclipse GLSP (LD/FBD 已完成 2.7.0 迁移) + Rust napi-rs
+**技术栈**: Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + Rust napi-rs
 
 #### 创建端 vs 运行端
 
@@ -947,14 +920,14 @@ AUDESYS
 | **Theia 骨架** | `apps/studio/` — Electron + Theia 1.73.0 应用 | ✅ 已完成 |
 | **napi-rs 绑定层** | `crates/audesys-theia-bridge/` — ~25 函数，编译为 `.node` 原生二进制 | ✅ 已完成 |
 | **Theia Backend Service** | `theia-extensions/audesys-backend/` — JSON-RPC 代理 + RBAC + 审计 | ✅ 已完成 |
-| **10 Theia 扩展** | `theia-extensions/` — core/backend/st/il/gcode/sfc/ld-glsp/fbd-glsp/hmi/debug | ✅ 已完成（LD/FBD 已完成 GLSP 2.7.0 迁移） |
+| **10 Theia 扩展** | `theia-extensions/` — core/backend/st/il/gcode/sfc/ld/fbd/debug | ✅ 已完成（LD/FBD 已迁移至 React Flow，D110） |
 
 #### 关键发现
 
 ```
 设计完成度:  ████████████████████████░░  ~90% (文档)
 代码实现度:  ██████████████████████░░  ~85%
-Studio 代码:  ████████████████████░░░░  ~85% (Theia 扩展 + napi-rs bridge，含 HMI 设计器)
+Studio 代码:  ████████████████████░░░░  ~85% (Theia 扩展 + napi-rs bridge)
 Theia 迁移:   ████████████████████████░░  ~90% (骨架+桥接+扩展完成，面板+测试+打包进行中)
 RBAC 代码:   ██████████████░░░░░░░░░░░░░░  ~60% (HMAC + 5 角色)
 ```
@@ -971,10 +944,10 @@ RBAC 代码:   ██████████████░░░░░░░�
 │  ┌──────────────────────────────────────────────────────────────┐   │
 │  │  Theia Frontend (Electron Renderer / Browser)                │   │
 │  │  ┌─────────┐ ┌──────────┐ ┌────────────┐ ┌───────────┐     │   │
-│  │  │ Monaco  │ │ GLSP       │ │ Custom     │ │ Theia     │     │   │
+│  │  │ Monaco  │ │ React Flow │ │ Custom     │ │ Theia     │     │   │
 │  │  │ Editor  │ │ (LD/FBD)   │ │ React      │ │ Widgets   │     │   │
-│  │  │ (ST/IL/ │ │ 已完成     │ │ Widgets    │ │ (Tree,    │     │   │
-│  │  │ G-code) │ │ 2.7.0      │ │ (HMI/Scope)│ │  Panel)   │     │   │
+│  │  │ (ST/IL/ │ │ D110       │ │ Widgets    │ │ (Tree,    │     │   │
+│  │  │ G-code) │ │            │ │ (Scope)    │ │  Panel)   │     │   │
 │  │  └─────────┘ └──────────┘ └────────────┘ └───────────┘     │   │
 │  └──────────────────────┬───────────────────────────────────┘     │   │
 │                         │ JSON-RPC (WebSocket)                   │   │
@@ -1064,122 +1037,30 @@ RBAC 代码:   ██████████████░░░░░░░�
 | **Data Designer** | data | 数据模型设计（表结构/字段） | Drizzle schema | 📄 设计 |
 | **Debug** | debug | MCAP 回放 + RPC 调试 + Topic 监控 | 已有 Debug SPA | ✅ 已实现 |
 | **ST/IL/G-code** | text | 文本编程语言 | **Monaco Editor**（Theia 内置）+ Monarch tokenizer | ✅ Theia 扩展已完成 |
-| **LD** | graph | 梯形图编程 | **Eclipse GLSP** 2.7.0 (GModel + Server + IView + port-to-port edge) | ✅ GLSP 迁移完成 |
-| **FBD** | graph | 功能块图编程 | **Eclipse GLSP** 2.7.0 (GPort 端口系统 + 5 种逻辑门 IView + FB 动态 pin) | ✅ GLSP 迁移完成 |
+| **LD** | graph | 梯形图编程 | **React Flow** (@xyflow/react, D110，替代 GLSP) | ✅ React Flow 迁移完成 |
+| **FBD** | graph | 功能块图编程 | **React Flow** (@xyflow/react, D110，替代 GLSP) | ✅ React Flow 迁移完成 |
 | **SFC** | text | 顺序功能图编程 | **Monaco Editor**（Theia 内置）+ Monarch tokenizer | ✅ Theia 扩展已完成 |
 
-> **已实现编辑器（Theia 扩展）**: ST/IL/G-code/SFC (Monaco Editor + Monarch tokenizer)、LD/FBD (Eclipse GLSP 2.7.0 完整架构)、HMI 可视化设计器 (react-rnd + SVG widget 通过 ReactWidget 桥接)。
-> **Theia 迁移状态**: 骨架、napi-rs 桥接、11 个扩展均已完成。ST/IL/G-code/SFC 使用 Monaco Editor + Monarch tokenizer，LD/FBD 使用完整 Eclipse GLSP 架构（GPort 端口系统、IView 渲染、port-to-port edge）。HMI 设计器通过 ReactWidget 桥接。
+> **已实现编辑器（Theia 扩展）**: ST/IL/G-code/SFC (Monaco Editor + Monarch tokenizer)、LD/FBD (React Flow，D110)。
+> **Theia 迁移状态**: 骨架、napi-rs 桥接、11 个扩展均已完成。ST/IL/G-code/SFC 使用 Monaco Editor + Monarch tokenizer，LD/FBD 使用 React Flow（D110 替代 GLSP）。
 > **愿景编辑器**: Flow Designer (DAG 流程, @xyflow/react)、Data Designer (数据模型, Drizzle schema)、App Builder (无代码)。
 > **编译器策略**: 6 种编译器（ST/IL/LD/FBD/SFC/G-code），ST/G-code 直接编译到 HalProgram，LD/FBD/SFC 经 IL 中间层。详见 `docs/modules/compiler/compiler-pipeline-design.md`（D108）。
-> **GLSP 迁移状态**: LD/FBD 已完成 GLSP 2.7.0 迁移（2026-07-31）。GPort 端口系统、IView 渲染、port-to-port edge、36 测试全通过。详见 D92/D99/D107。
+> **LD/FBD 编辑器**: 已迁移至 React Flow（D110 替代 GLSP）。
 
 ---
 
-### 15. HMI 设计→调试→部署管道
+### 15. HMI 部署管道（契约）
 
-> 🔄 **Theia 迁移**: HMI 设计器将包装为 Theia ReactWidget 自定义编辑器。react-rnd 画布 + 7 种 widget 保留，通过 ReactWidget 桥接 Theia Editor Area。
+HMI UI 由外部 Panel 项目实现（D117），本仓库保留 Runtime 侧部署契约：
 
-HMI 管道覆盖从 Studio 可视化编辑到 AUDEDeck 上屏运行的全生命周期。
+| 环节 | 说明 |
+|------|------|
+| 部署 | Studio 经 IPC 0x17 (DEPLOY_HMI_LAYOUT) 发送 HMI 布局 → Controller 写入 Config Barrier → 下一周期边界生效 |
+| 获取 | Panel 经 IPC 0x18 (GET_HMI_LAYOUT) 读取当前布局 |
+| 推送 | Controller 经 IPC 0x16 (SIGNAL_PUSH) 在周期边界批量推送信号变化 |
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    HMI Pipeline                                   │
-│                                                                  │
-│  设计 (Design)           调试 (Debug)          部署 (Deploy)       │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     │
-│  │ HmiCanvas    │ ──→ │ Preview模式  │ ──→ │ YAML导出     │     │
-│  │ 拖拽式布局   │     │ 信号注入 ❌   │     │ deploy_hmi   │     │
-│  │ 7种 widget   │     │ 布局验证 ❌   │     │   _layout ❌  │     │
-│  │ 信号绑定     │     │ 性能监控 ❌   │     │ SignalBridge │     │
-│  │ YAML持久化   │     │              │     │   ❌         │     │
-│  └──────────────┘     └──────────────┘     └──────────────┘     │
-│        ✅                   🔴                    🔴              │
-│                                                                  │
-│  开发 (Development)                                              │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │ useHmiLayout hook (CRUD) → useHmiSignal (500ms poll)     │    │
-│  │ theia-bridge (napi-rs): save_hmi_layout / load_hmi_layout  │    │
-│  │ controller_signal_snapshot → SignalBindingDialog         │    │
-│  │ Edit/Preview 模式切换                                    │    │
-│  └─────────────────────────────────────────────────────────┘    │
-│        🟡 可用（无模板系统/批量编辑/版本历史）                       │
-└──────────────────────────────────────────────────────────────────┘
-```
-
-#### 15.1 设计（Design）— ✅ 完成
-
-| 组件 | 文件 | 功能 |
-|------|------|------|
-| **HmiCanvas** | `HmiCanvas.tsx` (156行) | react-rnd 自由布局画布，拖拽/缩放/选中/Delete 删除、Edit/Preview 双模式 |
-| **WidgetPalette** | `WidgetPalette.tsx` (71行) | 7 种 widget 预设列表，点击添加到画布随机位置 |
-| **PropertyPanel** | `PropertyPanel.tsx` (187行) | 选中 widget 的属性编辑：位置(X/Y/W/H)、标签、信号绑定、类型专属配置、删除 |
-| **SignalBindingDialog** | `SignalBindingDialog.tsx` (118行) | 模态框搜索可用 HAL 信号 → `controller_signal_snapshot` (theia-bridge)
-| **HmiToolbar** | `HmiToolbar.tsx` (47行) | Save/Load/Clear + Edit/Preview 切换按钮 |
-| **useHmiLayout hook** | `useHmiLayout.ts` (210行) | 不可变 CRUD + YAML export/import + signal bind/unbind |
-| **useHmiSignal hook** | `useHmiSignal.ts` (46行) | 500ms 定时器轮询 `controller_read_signal` (theia-bridge)
-
-#### 15.2 7 种工业 Widget
-
-所有 widget 遵循 `WidgetProps = { signalValue, ...rest }` 纯函数接口，SVG 渲染，不感知信号来源（poll/push/static）。
-
-| Widget | 文件 | 渲染 | 信号类型 |
-|--------|------|------|----------|
-| **Gauge** | `GaugeWidget.tsx` (73行) | SVG 圆弧+指针 | F64（min/max 范围映射） |
-| **Trend** | `TrendWidget.tsx` | Canvas 折线图 | F64 数组（历史缓冲） |
-| **Tank** | `TankWidget.tsx` | SVG 矩形+填充 | F64（0-100% 百分比） |
-| **Indicator** | `IndicatorWidget.tsx` | SVG 圆形灯 | Bool（on/off 颜色切换） |
-| **Button** | `ButtonWidget.tsx` (38行) | SVG 圆角矩形 | Bool（toggle 状态） |
-| **Display** | `DisplayWidget.tsx` | SVG 数值显示 | 任意（toString） |
-| **Text** | `TextWidget.tsx` | SVG 文本标签 | String（直接显示） |
-#### 15.3 调试（Debug）— 🔴 严重不足
-
-| 缺口 | 影响 | 优先级 |
-|------|------|:----:|
-| **信号值注入** | Preview 模式下无法模拟信号变化，必须连接真实 Controller。`sim_set_signal` (theia-bridge) 存在但未集成到 HMI Builder | 🔴 |
-| **布局验证** | 无 widget 重叠检测、无信号绑定有效性校验、无 widget 数量上限 | 🟠 |
-| **渲染性能监控** | 无 FPS 计数器、无 widget 渲染耗时统计 | 🟡 |
-| **错误可见性** | `useHmiSignal` catch 分支 `setValue(null)` 静默吞异常，操作员无感知 | 🔴 |
-| **断点调试** | DAP 调试适配器（12 命令）不支持 HMI 信号断点 | 🟡 |
-| **布局 diff** | 无法对比两次保存之间的布局变化 | 🟡 |
-
-#### 15.4 部署（Deploy）— 🔴 几乎为空
-
-| 缺口 | 现状 | 优先级 |
-|------|------|:----:|
-| **deploy_hmi_layout IPC** | 不存在。Controller 无接收 HMI 布局的 IPC 方法。现有 `deploy_program` (0x10) 仅支持 IEC 程序部署 | 🔴 |
-| **AUDEDeck 集成** | `docs/modules/runtime/panel-architecture-design.md` 设计了 SignalBridge，但仅设计未实现 | 🔴 |
-| **热切换** | HMI 布局不支持运行时热切换。Config Barrier (D17) 机制存在但未接入 HMI | 🟠 |
-| **远程部署** | ControllerClient 仅支持本地 UDS (~10μs)，无 WebSocket 传输层 | 🟡 |
-| **YAML→FlatBuffers** | HMI 布局目前仅 YAML 文本，未编译为 FlatBuffers 二进制（与 D24 配置策略不一致） | 🟡 |
-
-#### 15.5 目标部署路由
-
-```
-Studio IDE                         Controller            AUDEDeck
-Studio IDE                         Controller            AUDEDeck
-┌──────────┐     deploy_hmi_layout  ┌──────────┐     push (0x16)   ┌──────────┐
-│ HMI      │ ────────────────────→ │ HMI      │ ───────────────→ │ AUDEDeck │
-│ Designer │     IPC method 0x17    │ Registry │     SIGNAL_PUSH  │ (HMI)    │
-│          │                        │          │                  │          │
-│ YAML     │                        │ YAML→    │                  │ Widget   │
-│ Export   │                        │ FlatBuff │                  │ Renderer │
-└──────────┘                        └──────────┘                  └──────────┘
-```
-
-> **参考**: deploy_program (0x10) 模式 — Studio 发送 HalProgram JSON → Controller 写入 Config Barrier → 下周期边界生效。HMI 部署复用相同模式。
-
-#### 15.6 测试覆盖
-
-| 测试文件 | 覆盖范围 |
-|----------|----------|
-| `PropertyPanel.test.tsx` | 属性面板渲染、字段编辑、信号绑定 |
-| `HmiCanvas.test.tsx` | 画布渲染、widget 添加/选中/删除 |
-| `SignalBindingDialog.test.tsx` | 信号搜索、选择、取消 |
-| `WidgetPalette.test.tsx` | widget 预设列表渲染、点击添加 |
-| `HmiToolbar.test.tsx` | Save/Load/Clear 按钮交互 |
-
-
+> 复用 deploy_program (0x10) 模式 — 与程序部署相同，全部经 Config Barrier 批量生效。
+> 详细设计见 `docs/modules/runtime/panel-architecture-design.md`；验收规范见 `openspec/specs/hmi-spec.md`。
 ### 6. RBAC 权限模型
 
 #### 四层权限
@@ -1296,7 +1177,7 @@ Studio IDE                         Controller            AUDEDeck
 AUDESYS 将传统工业控制项目拆分为两层：
 
 - **Firmware Project（固件项目）** — 定义控制器的运行时配置：硬件接口、通信协议、周期参数。固件项目定义 HAL 信号接口（如 `sensor.temp.pt100`），配置 Modbus/HART 适配器，声明组件和线程调度。
-- **Engineering Project（工程项目）** — ST 源代码和 HMI 设计，仅能消费固件暴露的信号。编译时通过 `expects_signals` 验证信号契约。
+- **Engineering Project（工程项目）** — ST 源代码（含 HMI 布局契约），仅能消费固件暴露的信号。编译时通过 `expects_signals` 验证信号契约。
 
 核心规则：**固件项目定义硬件接口，工程项目只能消费固件暴露的信号——不能新增信号或适配器。**
 
@@ -1438,19 +1319,17 @@ interface PluginContext {
 
 PC 模式通过 `PlatformAdapter.invoke()` 调用 Tauri 后端（→ Theia Backend napi-rs bridge）；Web 模式通过 `fetch('/api/invoke')` 调用 HTTP API。
 
-#### 8.3 Panel System
+#### 8.3 Panel System（契约，实现属外部项目）
 
-面板由 Plugin 通过 `PanelDescriptor` 注册，PanelSystem 统一管理布局和生命周期：
+Runtime 暴露 HMI 契约，UI 实现由外部 Panel 项目承担（D117）：
 
-```typescript
-interface PanelDescriptor {
-  id: string;
-  title: string;
-  icon: string;
-  defaultPosition: 'sidebar.left' | 'sidebar.right' | 'editor' | 'panel.bottom' | 'statusbar';
-  factory: () => Promise<ComponentType<PanelProps>>;  // lazy import
-}
-```
+| IPC 方法 | 方向 | 用途 |
+|----------|------|------|
+| 0x16 SIGNAL_PUSH | Runtime → Panel | 信号变化推送（RT 周期边界批量） |
+| 0x17 DEPLOY_HMI_LAYOUT | Studio → Runtime | HMI 布局部署（经 Config Barrier） |
+| 0x18 GET_HMI_LAYOUT | Panel → Runtime | 获取当前 HMI 布局 |
+
+RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法，`Role::Hmi` 限定 writeSignal 权限。Panel 布局文件以 YAML 存储，由外部项目负责渲染。
 
 #### 8.4 PlatformAdapter — PC/Web 双模式
 
@@ -2081,60 +1960,25 @@ AUDESYS 以 G-code（RS274/NGC）编译器作为第 6 种源码语言，与现�
 - D55 in `.agents/memorys/decisions.md`
 - D10/D11/D17/D19 in `.agents/memorys/decisions.md`
 
-## 八、AUDEDeck 集成
+## 八、HMI 与 Panel 契约（历史：原 AUDEDeck 章节）
 
-AUDESYS AUDEDeck 是独立于 Studio IDE 的操作员界面应用，全屏运行 HMI 布局并实时
-展示现场设备信号。Widget 由 @audesys/deck-core 提供，
-通过 SignalBridge (ISignalProvider) 实现 <50ms 的信号推送延迟，支持 PC (Tauri + UDS) 和 Web (PWA + WebSocket)
-双形态部署。新增 3 个 IPC 方法（0x16/0x17/0x18）支持信号订阅推送。
+Runtime 通过三个 IPC 方法为外部 Panel 项目提供 HMI 部署与信号推送能力：
 
-详见 `docs/modules/runtime/panel-architecture-design.md`
+| IPC 方法 | 方向 | 说明 |
+|----------|------|------|
+| 0x16 SIGNAL_PUSH | Runtime → Panel | RT 周期边界批量推送信号变化 |
+| 0x17 DEPLOY_HMI_LAYOUT | Studio → Runtime | HMI 布局经 Config Barrier 在下一周期边界生效 |
+| 0x18 GET_HMI_LAYOUT | Panel → Runtime | Panel 获取当前 HMI 布局 |
 
-```
-┌──────────────────────────────────────┐
-│ AUDEDeck Shell (全屏 kiosk)           │
-├──────────────────────────────────────┤
-│ Plugin System (4 内置插件)           │
-│ OperatorLogin│Alarm│Trend│Nav        │
-├──────────────────────────────────────┤
-│ Widget Renderer                      │
-│ Widget 由 @audesys/deck-core 提供    │
-├──────────────────────────────────────┤
-│ Signal Bridge (ISignalProvider)       │
-│ IPC 0x16/0x17/0x18                   │
-├──────────────────────────────────────┤
-│ Transport (UDS│WS│Sim)              │
-└──────────────────────────────────────┘
-```
+RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法。`Role::Hmi` 在 IPC RBAC 中限定 writeSignal 权限。
 
-### 部署拓扑
+> 原 AUDEDeck（3rdparty/AUDEDeck/）与 Studio HMI 设计器已于 2026-09 根据 D117 移除。Panel/UI 实现由外部项目主导。
+> 详细设计见 `docs/modules/runtime/panel-architecture-design.md`；验收规范见 `openspec/specs/hmi-spec.md`。
 
-| 模式 | 通信 | 延迟 | 部署形态 |
-|------|------|------|---------|
-| 本地操作员站 | UDS → Controller | ~10μs | Tauri 独立进程 |
-| 远程浏览器 | WSS → Controller | ~5ms LAN | Web PWA |
-| 仿真/开发 | 进程内直接调用 | ~0μs | SimulationHarness |
-
-### 核心设计决策
-
-- **D62**: SignalBridge 默认 Hybrid 模式 — 优先 IPC push (<50μs)，降级 100ms poll
-- **D63**: 订阅推送在周期边界批量发送，避免 RT 线程抖动
-- **D64**: 新增 Role::HMI，writeSignal 权限限定按钮绑定信号
-- **D66**: Transport 层统一 `IPanelTransport` 接口，UDS/WS/Sim 自动选择
-
-### 与 Studio 的关系
-
-| 维度 | Studio (设计器) | AUDEDeck (操作员) |
-|------|----------------|----------------------|
-| 用户角色 | 工程师 | 操作员 (Role::HMI) |
-| HMI 布局 | 编辑/保存/删除 | 只读加载 |
-| 信号连接 | Tauri invoke 轮询 (500ms) | SignalBridge 订阅推送 (<50ms) |
-| 进程 | 单窗口 IDE | 全屏独立进程 |
-| 部署 | 开发者工作站 | 操作员站 (PC) 或 浏览器 (PWA) |
-
-### 参考
-
-- `docs/modules/runtime/panel-architecture-design.md` — AUDEDeck 集成架构设计
-- `.sisyphus/plans/signal-bridge/design.md` — SignalBridge 详细设计
-- `docs/modules/runtime/ipc-security-design.md` — IPC 安全设计
-- D60-D66 in `.agents/memorys/decisions.md`
+| 参考 | 链接 |
+|------|------|
+| Panel 契约参考 | `docs/modules/runtime/panel-architecture-design.md` |
+| HMI 验收规范 | `openspec/specs/hmi-spec.md` |
+| SignalBridge 设计 | `.sisyphus/plans/signal-bridge/design.md` |
+| IPC 安全设计 | `docs/modules/runtime/ipc-security-design.md` |
+| 架构决策 | D60-D66 in `.agents/memorys/decisions.md` |
