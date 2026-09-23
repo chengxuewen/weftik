@@ -1,4 +1,4 @@
-# AUDESYS 插补引擎设计
+# Weftik 插补引擎设计
 
 > 生成日期：2026-07-19
 > 依赖决策：D10 (通信原语 Signal/StreamChannel/RPC), D55 (G-code→HAL IR 编译策略)
@@ -54,7 +54,7 @@ G-code 源码
 
 ### 1.2 参考架构
 
-| 特性 | GRBL | LinuxCNC | Klipper | AUDESYS |
+| 特性 | GRBL | LinuxCNC | Klipper | Weftik |
 |------|------|------|------|------|
 | 插补位置 | 编译器 (arc→lines) | 解释器 (arc→canon) | Host (trapq) | 编译器 (arc→store) |
 | 曲面表达 | 弦段 (chord) | 弧原语 (canon PREP) | 步进采样 (itersolve) | 弦段 (chord) |

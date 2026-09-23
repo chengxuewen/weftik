@@ -639,15 +639,15 @@ iFIX 自诞生之初就强调开放：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 HMI/SCADA 运行时架构参考
 
-Proficy HMI/SCADA 的运行时架构为 AUDESYS Studio IDE 提供了重要参考：
+Proficy HMI/SCADA 的运行时架构为 Weftik Studio IDE 提供了重要参考：
 
-| 架构特性 | Proficy 实现 | 对 AUDESYS 的参考 |
+| 架构特性 | Proficy 实现 | 对 Weftik 的参考 |
 |---------|-------------|------------------|
-| Client/Server 架构 | SCADA 节点 + 客户端 | AUDESYS Runtime 的分布式架构参考 |
+| Client/Server 架构 | SCADA 节点 + 客户端 | Weftik Runtime 的分布式架构参考 |
 | SAC 扫描引擎 | 数据库链执行机制 | 实时数据扫描引擎设计 |
 | 按需数据访问 | 仅传输请求数据 | 网络带宽优化策略 |
 | 报警管理 | 分区/路由/升级 | 工业报警系统设计 |
@@ -655,7 +655,7 @@ Proficy HMI/SCADA 的运行时架构为 AUDESYS Studio IDE 提供了重要参考
 
 ### 7.2 IDE 设计参考
 
-iFIX WorkSpace 的设计理念对 AUDESYS Studio IDE 有参考价值：
+iFIX WorkSpace 的设计理念对 Weftik Studio IDE 有参考价值：
 
 **优点**：
 - 配置与运行在同一环境（WorkSpace 既是 IDE 也是运行时）
@@ -663,7 +663,7 @@ iFIX WorkSpace 的设计理念对 AUDESYS Studio IDE 有参考价值：
 - 丰富的预置对象（Dynamo）
 - 脚本扩展（VBA）提供灵活性
 
-**AUDESYS 可借鉴的设计**：
+**Weftik 可借鉴的设计**：
 - 采用"配置为主 + 脚本扩展"的开发模式
 - 内置丰富的工业符号库
 - 统一的项目浏览器（树形结构）
@@ -676,20 +676,20 @@ iFIX WorkSpace 的设计理念对 AUDESYS Studio IDE 有参考价值：
 
 ### 7.3 通信协议抽象层
 
-Proficy 使用 KEPServerEX/IGS 作为统一的通信层，这一设计理念值得 AUDESYS 参考：
+Proficy 使用 KEPServerEX/IGS 作为统一的通信层，这一设计理念值得 Weftik 参考：
 
 - **统一 OPC 层**：将所有设备协议统一为 OPC UA/DA 接口
 - **驱动插件化**：新设备驱动以插件形式添加
 - **协议转换**：在服务器层完成协议转换，上层应用无需关心设备细节
 
-**对 AUDESYS HAL 的参考**：
-- AUDESYS 的 HAL 抽象层可采用类似设计——统一通信接口，驱动插件化
-- 与 amw（AUDESYS Middleware）的传输抽象层可类比 KEPServerEX 的角色
+**对 Weftik HAL 的参考**：
+- Weftik 的 HAL 抽象层可采用类似设计——统一通信接口，驱动插件化
+- 与 amw（Weftik Middleware）的传输抽象层可类比 KEPServerEX 的角色
 - 支持多种协议（OPC UA, Modbus, MQTT）的统一接入
 
 ### 7.4 可视化与 HMI 设计
 
-iFIX 的 High Performance HMI 理念对 AUDESYS Studio 的可视化设计有直接影响：
+iFIX 的 High Performance HMI 理念对 Weftik Studio 的可视化设计有直接影响：
 
 **设计原则**：
 - 异常驱动显示（Abnormal Situation Display）
@@ -697,7 +697,7 @@ iFIX 的 High Performance HMI 理念对 AUDESYS Studio 的可视化设计有直�
 - 颜色语义化（灰度正常，彩色异常）
 - 层级导航结构
 
-**对 AUDESYS Studio 的参考**：
+**对 Weftik Studio 的参考**：
 - Studio IDE 是否内置 HMI 设计器？
 - 是否采用 High Performance HMI 设计原则？
 - 可视化模板库如何设计？
@@ -712,14 +712,14 @@ iFIX 的报警系统是工业 SCADA 报警设计的标杆：
 - 操作员确认流程
 - 审计和记录
 
-**对 AUDESYS 的参考**：
-- AUDESYS Runtime 是否需要内置报警系统？
+**对 Weftik 的参考**：
+- Weftik Runtime 是否需要内置报警系统？
 - 报警模型如何与 HAL 的 Signal/StreamChannel 原语集成？
 - 报警存储和查询策略
 
 ### 7.6 所有权变迁的教训
 
-Proficy HMI/SCADA 经历了多次所有权变更（Intellution → Emerson → GE → GE Vernova → Velotic），这对 AUDESYS 的长期战略有参考价值：
+Proficy HMI/SCADA 经历了多次所有权变更（Intellution → Emerson → GE → GE Vernova → Velotic），这对 Weftik 的长期战略有参考价值：
 
 **教训**：
 1. **品牌多次变更**：FIX → FIX32 → iFIX → Proficy HMI/SCADA → GE Vernova Proficy → Velotic Proficy
@@ -727,7 +727,7 @@ Proficy HMI/SCADA 经历了多次所有权变更（Intellution → Emerson → G
 3. **技术债务**：VBA 和 COM 技术栈已显老旧，但向后兼容性需求限制了现代化
 4. **独立 vs 依附**：Velotic 独立后可能更灵活，但失去 GE 品牌背书
 
-**对 AUDESYS 的参考**：
+**对 Weftik 的参考**：
 - 保持品牌一致性
 - 核心技术栈选择需考虑长期演进
 - 独立运营的商业模式设计
@@ -743,13 +743,13 @@ CODESYS 和 Proficy HMI/SCADA 代表工业控制领域的不同层级：
 | 核心能力 | 逻辑控制、运动控制 | 数据采集、可视化、报警 |
 | 用户 | PLC 程序员 | 操作员、工程师 |
 | 开发模式 | 编程语言（IEC 61131-3） | 配置 + 脚本（VBA） |
-| 与 AUDESYS 关系 | 参考 Runtime 设计 | 参考 Studio IDE 设计 |
+| 与 Weftik 关系 | 参考 Runtime 设计 | 参考 Studio IDE 设计 |
 
-AUDESYS 同时从两者中汲取设计灵感——CODESYS 提供底层运行时参考，Proficy 提供上层 IDE 和可视化参考。
+Weftik 同时从两者中汲取设计灵感——CODESYS 提供底层运行时参考，Proficy 提供上层 IDE 和可视化参考。
 
-### 7.8 对 AUDESYS Studio IDE 的具体建议
+### 7.8 对 Weftik Studio IDE 的具体建议
 
-综合 Proficy HMI/SCADA 和 CODESYS 的分析，对 AUDESYS Studio IDE 的建议：
+综合 Proficy HMI/SCADA 和 CODESYS 的分析，对 Weftik Studio IDE 的建议：
 
 1. **统一 IDE 设计**：效仿 iFIX WorkSpace 的"配置即运行"理念，但采用现代化技术栈
 2. **插件化架构**：参考 CODESYS 的插件系统和 iFIX 的 ActiveX 集成
@@ -774,7 +774,7 @@ AUDESYS 同时从两者中汲取设计灵感——CODESYS 提供底层运行时�
 
 ### 7.9 补充参考：武汉舜通 QTouch 跨平台组态软件
 
-作为补充参考，武汉舜通智能科技有限公司的 QTouch 组态软件与 AUDESYS 的相关性值得关注：
+作为补充参考，武汉舜通智能科技有限公司的 QTouch 组态软件与 Weftik 的相关性值得关注：
 
 **产品定位**：
 - 面向跨平台、自主可控、云网端边、人工智能的工业 SCADA 软件
@@ -789,7 +789,7 @@ AUDESYS 同时从两者中汲取设计灵感——CODESYS 提供底层运行时�
 - 支持嵌入式设备部署
 - 支持 JS 脚本开发环境
 
-**对 AUDESYS 的参考价值**：
+**对 Weftik 的参考价值**：
 - 国产化替代策略：QTouch 的国产芯片适配路线可参考
 - 跨平台技术选型：Qt 作为跨平台 UI 框架的可行性验证
 - 云端一体化设计：云网端边的架构设计思路
@@ -845,5 +845,5 @@ AUDESYS 同时从两者中汲取设计灵感——CODESYS 提供底层运行时�
 
 - 文档版本: 1.0
 - 生成日期: 2026-07-13
-- 作者: researcher-ide (AUDESYS Team)
+- 作者: researcher-ide (Weftik Team)
 - 审核状态: 草稿

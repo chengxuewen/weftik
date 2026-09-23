@@ -6,7 +6,6 @@
 //! 来源: docs/modules/runtime/observability-design.md
 
 use crate::metrics::RuntimeMetrics;
-use weftik_runtime_common::types::{HealthCheckRegistry, HealthStatus};
 use std::net::TcpListener;
 use std::sync::{
     Arc, RwLock,
@@ -14,6 +13,7 @@ use std::sync::{
 };
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
+use weftik_runtime_common::types::{HealthCheckRegistry, HealthStatus};
 
 fn prometheus_text(m: &RuntimeMetrics) -> String {
     use std::sync::atomic::Ordering;
@@ -169,9 +169,9 @@ impl HealthServer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use weftik_runtime_common::types::HealthCheck;
     use std::io::Read;
     use std::net::TcpStream;
+    use weftik_runtime_common::types::HealthCheck;
 
     // ——— test helpers ———
 

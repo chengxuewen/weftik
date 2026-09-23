@@ -793,7 +793,7 @@ GRBL 通过 **编译时配置**（config.h）启用/禁用功能：
 
 #### 与 Machinekit/LinuxCNC 的安全对比
 
-| 安全维度 | GRBL | Machinekit | AUDESYS 参考 |
+| 安全维度 | GRBL | Machinekit | Weftik 参考 |
 |---------|------|------------|-------------|
 | 网络安全 | 无 | 有（Machinetalk WebSocket） | 规划中（JSON-RPC） |
 | 访问控制 | 无 | 无 | 规划中（LockLevel） |
@@ -1027,7 +1027,7 @@ GRBL 将所有运行时配置存储在 EEPROM 中，无需重新烧录：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
@@ -1040,14 +1040,14 @@ GRBL 的 **中断驱动模型** 是资源受限嵌入式实时控制的典范：
      非实时                     硬实时
 ```
 
-**AUDESYS 参考**:
-- AUDESYS HAL 的 **RT 数据面**（< 1μs）可参考 GRBL 的纯中断驱动模式
+**Weftik 参考**:
+- Weftik HAL 的 **RT 数据面**（< 1μs）可参考 GRBL 的纯中断驱动模式
 - 资源受限场景（如嵌入式 MCU 运行 HAL 组件）可借鉴 GRBL 的内存最小化设计
-- AUDESYS 的 **AMW 抽象层** 在 MCU 上可提供类似 GRBL 的中断调度接口
+- Weftik 的 **AMW 抽象层** 在 MCU 上可提供类似 GRBL 的中断调度接口
 
 #### 2. Bresenham 步进算法
 
-GRBL 选择 Bresenham 而非 DDA 的决定基于硬件约束，对 AUDESYS 的步进控制有参考意义：
+GRBL 选择 Bresenham 而非 DDA 的决定基于硬件约束，对 Weftik 的步进控制有参考意义：
 
 | 场景 | 算法选择 | 原因 |
 |------|---------|------|
@@ -1055,7 +1055,7 @@ GRBL 选择 Bresenham 而非 DDA 的决定基于硬件约束，对 AUDESYS 的�
 | 32 位 MCU（有 FPU） | DDA | 浮点运算，平滑性更好 |
 | 资源不受限 | DDA + 前馈 | 最高精度和平滑性 |
 
-**AUDESYS 参考**: AUDESYS HAL 组件库可提供多种步进算法选项，根据目标平台自动选择最优算法。
+**Weftik 参考**: Weftik HAL 组件库可提供多种步进算法选项，根据目标平台自动选择最优算法。
 
 #### 3. 运动规划与执行分离
 
@@ -1068,17 +1068,17 @@ G-code 行 → 解析器 → 规划缓冲（16 blocks）→ 段缓冲 → 步进
 - 规划缓冲（Planner Buffer）：存储多个运动块，允许前瞻优化
 - 段缓冲（Segment Buffer）：将运动块分解为等速段，供步进 ISR 执行
 
-**AUDESYS 参考**:
-- AUDESYS **StreamChannel** 原语可参考此分层缓冲模型
+**Weftik 参考**:
+- Weftik **StreamChannel** 原语可参考此分层缓冲模型
 - RT 数据面（步进执行）与 I/O 通信面（规划）分离，降低实时要求
-- AUDESYS **amw** 的 **HalTransport** 抽象层可参考 GRBL 的 **步进模块** 设计
+- Weftik **amw** 的 **HalTransport** 抽象层可参考 GRBL 的 **步进模块** 设计
 
 #### 4. 极简配置存储（EEPROM）
 
 GRBL 使用 **EEPROM** 存储配置，通过串行 `$` 命令修改：
 
-**AUDESYS 参考**:
-- AUDESYS HAL 组件的 **静态配置** 可参考 GRBL 的 EEPROM 模型
+**Weftik 参考**:
+- Weftik HAL 组件的 **静态配置** 可参考 GRBL 的 EEPROM 模型
 - 组件参数通过 HalConfig 接口持久化
 - 运行时配置修改无需重新编译/烧录
 
@@ -1086,8 +1086,8 @@ GRBL 使用 **EEPROM** 存储配置，通过串行 `$` 命令修改：
 
 GRBL 的 **实时命令** 通过 volatile 标志位传递，任何状态可随时响应：
 
-**AUDESYS 参考**:
-- AUDESYS **RPC** 原语可参考 GRBL 的实时命令系统
+**Weftik 参考**:
+- Weftik **RPC** 原语可参考 GRBL 的实时命令系统
 - 控制命令（如重置/停止）可设计为低延迟通道
 - 状态查询通过 **Signal** 原语实现
 
@@ -1095,18 +1095,18 @@ GRBL 的 **实时命令** 通过 volatile 标志位传递，任何状态可随�
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| **G-code 解析器** | 双遍解析、模态组实现 | 高，AUDESYS 可集成 G-code 解析器作为 HAL 组件 |
-| **运动规划器** | 前瞻规划、梯形曲线、速度优化 | 高，AUDESYS StreamChannel 可集成此规划器 |
-| **Bresenham 步进** | 整数运算、多轴同步 | 中，AUDESYS HAL 组件库可包含此算法 |
+| **G-code 解析器** | 双遍解析、模态组实现 | 高，Weftik 可集成 G-code 解析器作为 HAL 组件 |
+| **运动规划器** | 前瞻规划、梯形曲线、速度优化 | 高，Weftik StreamChannel 可集成此规划器 |
+| **Bresenham 步进** | 整数运算、多轴同步 | 中，Weftik HAL 组件库可包含此算法 |
 | **AMASS 平滑** | 自适应多轴平滑算法 | 中，低频步进平滑的参考实现 |
-| **CPU 映射系统** | 硬件无关的引脚映射 | 高，AUDESYS HAL 驱动可参考此模式 |
-| **EEPROM 配置** | 掉电保持的配置存储 | 中，AUDESYS 组件配置的持久化参考 |
-| **实时命令** | volatile 标志位的实时命令系统 | 中，AUDESYS RPC 控制命令参考 |
-| **串行协议** | 行缓冲的串行通信协议 | 低，AUDESYS 有 JSON-RPC 协议 |
+| **CPU 映射系统** | 硬件无关的引脚映射 | 高，Weftik HAL 驱动可参考此模式 |
+| **EEPROM 配置** | 掉电保持的配置存储 | 中，Weftik 组件配置的持久化参考 |
+| **实时命令** | volatile 标志位的实时命令系统 | 中，Weftik RPC 控制命令参考 |
+| **串行协议** | 行缓冲的串行通信协议 | 低，Weftik 有 JSON-RPC 协议 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | GRBL | AUDESYS |
+| 维度 | GRBL | Weftik |
 |------|------|---------|
 | 核心定位 | 嵌入式 CNC 控制器 | 工业控制系统模拟平台 |
 | 目标平台 | 8 位 AVR MCU（32KB Flash） | 多平台（Linux/MCU/FPGA） |
@@ -1119,14 +1119,14 @@ GRBL 的 **实时命令** 通过 volatile 标志位传递，任何状态可随�
 
 **互补关系**：
 
-- GRBL 的 **极简设计** 为 AUDESYS 提供了 **"轻量级嵌入式控制器"** 的参考模式
-- AUDESYS 的 **HAL 抽象层** 可封装 GRBL 的运动规划算法为 HAL 组件
-- GRBL 的 **Bresenham + AMASS** 算法可作为 AUDESYS HAL 组件库的参考实现
-- AUDESYS 的 **Simulator** 功能可包含 GRBL 式的 CNC 场景仿真
+- GRBL 的 **极简设计** 为 Weftik 提供了 **"轻量级嵌入式控制器"** 的参考模式
+- Weftik 的 **HAL 抽象层** 可封装 GRBL 的运动规划算法为 HAL 组件
+- GRBL 的 **Bresenham + AMASS** 算法可作为 Weftik HAL 组件库的参考实现
+- Weftik 的 **Simulator** 功能可包含 GRBL 式的 CNC 场景仿真
 
-### 7.4 详细对比分析：AUDESYS HAL 与 GRBL 运动控制
+### 7.4 详细对比分析：Weftik HAL 与 GRBL 运动控制
 
-| 维度 | GRBL 运动控制 | AUDESYS HAL（设计） |
+| 维度 | GRBL 运动控制 | Weftik HAL（设计） |
 |------|-------------|-------------------|
 | 控制模型 | 中断驱动（ISR） | 分层调度（RT/I/O/控制面） |
 | 步进算法 | Bresenham + AMASS | 待实现（组件化） |
@@ -1141,7 +1141,7 @@ GRBL 的 **实时命令** 通过 volatile 标志位传递，任何状态可随�
 
 ### 7.5 嵌入式实时控制设计启示
 
-GRBL 在 **极度受限的资源**（32KB Flash、2KB RAM）下实现实时控制的经验对 AUDESYS 具有直接参考价值：
+GRBL 在 **极度受限的资源**（32KB Flash、2KB RAM）下实现实时控制的经验对 Weftik 具有直接参考价值：
 
 #### 最小化内存占用
 
@@ -1153,8 +1153,8 @@ GRBL 在 **极度受限的资源**（32KB Flash、2KB RAM）下实现实时控�
 // 无堆分配，无 malloc/free
 ```
 
-**AUDESYS 参考**:
-- AUDESYS HAL 组件在 MCU 上运行时，应优先使用静态内存分配
+**Weftik 参考**:
+- Weftik HAL 组件在 MCU 上运行时，应优先使用静态内存分配
 - 避免动态内存分配，减少堆碎片和栈溢出风险
 - 组件配置使用 **HalConfig** 接口而非运行时堆分配
 
@@ -1168,39 +1168,39 @@ GRBL 在 **极度受限的资源**（32KB Flash、2KB RAM）下实现实时控�
 // 4. Pin Change - 中
 ```
 
-**AUDESYS 参考**:
-- AUDESYS 的 **RT 线程** 在 MCU 上应使用最高优先级中断
+**Weftik 参考**:
+- Weftik 的 **RT 线程** 在 MCU 上应使用最高优先级中断
 - I/O 通信线程使用中等优先级
 - 控制面操作使用低优先级或主循环
 
 #### 确定性执行时间
 
-| 组件 | 执行时间（GRBL） | AUDESYS 对应 |
+| 组件 | 执行时间（GRBL） | Weftik 对应 |
 |------|----------------|------------|
 | 步进 ISR | ~5-25μs | < 1μs（RT 数据面） |
 | 规划计算 | 主循环，无时间要求 | ~10μs（I/O 通信面） |
 | G-code 解析 | 主循环，无时间要求 | ~100μs（控制面） |
 | 状态报告 | 主循环，无时间要求 | ~100μs（控制面） |
 
-### 7.6 对 AUDESYS HAL 设计的特定参考点
+### 7.6 对 Weftik HAL 设计的特定参考点
 
-1. **步进组件设计** — GRBL 的 Bresenham + AMASS 可作为 AUDESYS HAL 步进组件的参考实现
-2. **规划组件设计** — GRBL 的两遍重计算算法可作为 AUDESYS HAL 运动规划组件的参考
-3. **CPU 映射模式** — GRBL 的 cpu_map.h 模式可作为 AUDESYS HAL 驱动平台适配的参考
-4. **EEPROM 配置** — GRBL 的配置存储模式可作为 AUDESYS HAL 组件配置持久化的参考
-5. **实时命令模式** — GRBL 的 volatile 标志位模式可作为 AUDESYS HAL 实时控制的参考
-6. **G-code 解析器** — GRBL 的解析器可作为 AUDESYS HAL 的 G-code 组件参考实现
+1. **步进组件设计** — GRBL 的 Bresenham + AMASS 可作为 Weftik HAL 步进组件的参考实现
+2. **规划组件设计** — GRBL 的两遍重计算算法可作为 Weftik HAL 运动规划组件的参考
+3. **CPU 映射模式** — GRBL 的 cpu_map.h 模式可作为 Weftik HAL 驱动平台适配的参考
+4. **EEPROM 配置** — GRBL 的配置存储模式可作为 Weftik HAL 组件配置持久化的参考
+5. **实时命令模式** — GRBL 的 volatile 标志位模式可作为 Weftik HAL 实时控制的参考
+6. **G-code 解析器** — GRBL 的解析器可作为 Weftik HAL 的 G-code 组件参考实现
 
-### 7.7 GRBL 项目的教训与 AUDESYS 启示
+### 7.7 GRBL 项目的教训与 Weftik 启示
 
-| GRBL 的教训 | 对 AUDESYS 的启示 |
+| GRBL 的教训 | 对 Weftik 的启示 |
 |-----------|----------------|
 | **开发停滞**（2019 年后无新版本） | 避免单一维护者依赖，建立社区贡献机制 |
-| **EEPROM 限制**（仅 $ 命令配置） | AUDESYS HAL 配置更丰富（FlatBuffers + HalConfig） |
-| **无网络安全**（物理隔离假设） | AUDESYS 从设计之初考虑网络安全（Security Domain） |
-| **无闭环支持**（开环步进） | AUDESYS HAL 支持编码器/PID 闭环组件 |
-| **无远程架构**（仅串行） | AUDESYS 有 JSON-RPC + HalTransport 远程架构 |
-| **配置灵活性有限** | AUDESYS HAL 组件可动态创建/配置（instcomp 模式） |
+| **EEPROM 限制**（仅 $ 命令配置） | Weftik HAL 配置更丰富（FlatBuffers + HalConfig） |
+| **无网络安全**（物理隔离假设） | Weftik 从设计之初考虑网络安全（Security Domain） |
+| **无闭环支持**（开环步进） | Weftik HAL 支持编码器/PID 闭环组件 |
+| **无远程架构**（仅串行） | Weftik 有 JSON-RPC + HalTransport 远程架构 |
+| **配置灵活性有限** | Weftik HAL 组件可动态创建/配置（instcomp 模式） |
 
 ---
 

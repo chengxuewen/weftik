@@ -687,42 +687,42 @@ Siemens 是工业领域数字化双胞胎的**最大推动者和实践者**：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 全集成平台的设计理念
 
-Siemens TIA Portal 的"全集成"理念为 AUDESYS Studio IDE 提供了中长期的架构参考：
+Siemens TIA Portal 的"全集成"理念为 Weftik Studio IDE 提供了中长期的架构参考：
 
-| TIA Portal 设计 | AUDESYS Studio 参考点 |
+| TIA Portal 设计 | Weftik Studio 参考点 |
 |---------------|---------------------|
-| 单一项目数据库共享所有子工具 | AUDESYS Studio 是否需要一个统一的项目数据模型？ |
-| PLC/HMI/Drive/Safety 在同一 IDE 中 | AUDESYS Studio 应集成哪些模块（PLC 编程 + HMI 设计 + 仿真 + 硬件配置） |
-| 变量修改一处更新全局 | AUDESYS 的 HAL 配置/运行时数据的一致性管理 |
-| Multiuser Engineering | AUDESYS 多用户协作的版本控制策略 |
+| 单一项目数据库共享所有子工具 | Weftik Studio 是否需要一个统一的项目数据模型？ |
+| PLC/HMI/Drive/Safety 在同一 IDE 中 | Weftik Studio 应集成哪些模块（PLC 编程 + HMI 设计 + 仿真 + 硬件配置） |
+| 变量修改一处更新全局 | Weftik 的 HAL 配置/运行时数据的一致性管理 |
+| Multiuser Engineering | Weftik 多用户协作的版本控制策略 |
 
-**关键决策**：AUDESYS 在早期不应追求 Siemens 级的全集成规模（这需要数千人年的投入）。但可以参考 TIA 的设计方向，从**最小闭环**开始——即 Runtime 配置 + PLC 编程 + 基本仿真在同一个 IDE 中完成。
+**关键决策**：Weftik 在早期不应追求 Siemens 级的全集成规模（这需要数千人年的投入）。但可以参考 TIA 的设计方向，从**最小闭环**开始——即 Runtime 配置 + PLC 编程 + 基本仿真在同一个 IDE 中完成。
 
 ### 7.2 S7 / PROFINET 通信协议的设计参考
 
-Siemens 的 S7 通信和 PROFINET 协议为 AUDESYS 的通信层设计提供了多个可借鉴的点：
+Siemens 的 S7 通信和 PROFINET 协议为 Weftik 的通信层设计提供了多个可借鉴的点：
 
-| Siemens 通信特性 | AUDESYS HAL 参考点 |
+| Siemens 通信特性 | Weftik HAL 参考点 |
 |----------------|-----------------|
-| S7 协议的 TSAP 寻址方式 | AUDESYS Signal 命名策略——是否需要类似 TSAP 的通信端点标识？ |
-| PROFINET IRT 的时间槽调度 | AUDESYS RT 数据面的周期调度模型——是否需要"独占时段"保证实时？ |
-| I-Device 智能从站模型 | AUDESYS 的层级通信模式——一个运行时作为另一个运行时的数据来源 |
-| PROFIsafe 安全通信（黑通道） | AUDESYS Safety 模块的通信隔离策略 |
-| PROFINET DCP/LLDP 拓扑发现 | AUDESYS 设备发现协议的需求规格 |
+| S7 协议的 TSAP 寻址方式 | Weftik Signal 命名策略——是否需要类似 TSAP 的通信端点标识？ |
+| PROFINET IRT 的时间槽调度 | Weftik RT 数据面的周期调度模型——是否需要"独占时段"保证实时？ |
+| I-Device 智能从站模型 | Weftik 的层级通信模式——一个运行时作为另一个运行时的数据来源 |
+| PROFIsafe 安全通信（黑通道） | Weftik Safety 模块的通信隔离策略 |
+| PROFINET DCP/LLDP 拓扑发现 | Weftik 设备发现协议的需求规格 |
 
 **重点参考 - PROFINET IRT 的时间槽模型**：
 PROFINET IRT 的时间槽调度展示了"确定性"和"带宽利用率"之间如何在设计层面做出取舍：
 - 为 RT 预留时间槽保证了运动控制的确定性
 - 开放的 NRT 时段允许标准 IT 通信（Web、诊断、参数设置）
-- AUDESYS 的 RT 数据面（Signal/StreamChannel）和非实时控制面（RPC）的调度可参考此模型
+- Weftik 的 RT 数据面（Signal/StreamChannel）和非实时控制面（RPC）的调度可参考此模型
 
 ### 7.3 大型工业 IDE 的用户体验设计
 
-TIA Portal 作为目前工业领域功能最全面的 IDE，其 UX 设计可为 AUDESYS Studio 提供经验教训：
+TIA Portal 作为目前工业领域功能最全面的 IDE，其 UX 设计可为 Weftik Studio 提供经验教训：
 
 **成功的设计**：
 - **设备导向的工作流**：新项目 -> 添加设备 -> 配置硬件 -> 编程 -> 下载 -> 调试——符合工程师思维
@@ -731,14 +731,14 @@ TIA Portal 作为目前工业领域功能最全面的 IDE，其 UX 设计可为 
 - **详细诊断**：从 CPU 角度看七层诊断（模块、通道、网络、用户程序、系统诊断缓冲区）
 - **设置向导**：驱动配置可通过向导逐步完成
 
-**可改进的设计（AUDESYS 应避免）**：
+**可改进的设计（Weftik 应避免）**：
 - **启动速度**：TIA Portal 第一次完全启动可能需要几分钟（大型项目）
 - **资源消耗**：推荐 16GB+ RAM，打开大项目需要大量内存
 - **学习曲线**：功能过于丰富导致的 UX 过载
 - **版本兼容性**：不同 TIA Portal 版本之间项目不向下兼容
 - **错误信息**：有时错误信息不够直观
 
-**AUDESYS 的 IDE 设计原则建议**：
+**Weftik 的 IDE 设计原则建议**：
 1. 轻量级启动（核心功能 < 3 秒打开）
 2. 模块化加载（按需加载功能模块）
 3. 清晰的设备配置 -> 编程 -> 仿真 -> 部署工作流
@@ -747,9 +747,9 @@ TIA Portal 作为目前工业领域功能最全面的 IDE，其 UX 设计可为 
 
 ### 7.4 数字化双胞胎（仿真功能）的设计思路
 
-Siemens 在数字化双胞胎方面的大规模投入和实际应用，为 AUDESYS 的 Simulator 模块提供了清晰的目标和参考：
+Siemens 在数字化双胞胎方面的大规模投入和实际应用，为 Weftik 的 Simulator 模块提供了清晰的目标和参考：
 
-| Siemens 数字孪生能力 | AUDESYS Simulator 阶段参考 |
+| Siemens 数字孪生能力 | Weftik Simulator 阶段参考 |
 |--------------------|-------------------------|
 | PLCSIM Advanced（PLC 仿真） | Phase 2 基础运行时仿真 |
 | SIMIT（过程行为仿真） | Phase 3 工艺过程模拟 |
@@ -760,7 +760,7 @@ Siemens 在数字化双胞胎方面的大规模投入和实际应用，为 AUDES
 **关键理念 - 三层建模**：
 
 ```
-AUDESYS Simulator 参考架构（规划）：
+Weftik Simulator 参考架构（规划）：
 ┌─────────────────────────────┐
 │  控制层仿真（Runtime 仿真器）  │ ← 对应 PLCSIM Advanced
 │  - HAL 运行时实例            │
@@ -779,21 +779,21 @@ AUDESYS Simulator 参考架构（规划）：
 
 ### 7.5 其他参考点
 
-1. **TIA Portal Openness API**：为 AUDESYS Studio 的插件系统和 CI/CD 集成提供了设计方向——开放 API 是决定 IDE 生态活力的关键因素
-2. **TIA Portal Cloud / Cloud Connector**：展示了工业 IDE 走向云端化的路径，AUDESYS Studio 可考虑远期支持云工作流
-3. **S7-1500V（虚拟 PLC）**：容器化 PLC 作为 Edge App 的模式，为 AUDESYS Runtime 的部署方式提供了参考——软件定义控制
-4. **工程 Copilot（AI）**：Siemens 在自然语言生成 PLC 代码方面的探索，与 AUDESYS AI 辅助开发的定位一致
-5. **TIA Portal Multiuser Engineering**：多人实时协作编辑，AUDESYS Studio 可参考其基于版本服务器的工作流模型
+1. **TIA Portal Openness API**：为 Weftik Studio 的插件系统和 CI/CD 集成提供了设计方向——开放 API 是决定 IDE 生态活力的关键因素
+2. **TIA Portal Cloud / Cloud Connector**：展示了工业 IDE 走向云端化的路径，Weftik Studio 可考虑远期支持云工作流
+3. **S7-1500V（虚拟 PLC）**：容器化 PLC 作为 Edge App 的模式，为 Weftik Runtime 的部署方式提供了参考——软件定义控制
+4. **工程 Copilot（AI）**：Siemens 在自然语言生成 PLC 代码方面的探索，与 Weftik AI 辅助开发的定位一致
+5. **TIA Portal Multiuser Engineering**：多人实时协作编辑，Weftik Studio 可参考其基于版本服务器的工作流模型
 6. **标准化库策略**：TIA Portal 的 Global Libraries 和 Master Copies 机制，展示了工业标准化的实践方式
 7. **性能基准思维**：S7-1500 的 "1 ns/bit 指令时间" 和 "1ms 主循环" 展示了大型工业 PLC 的性能目标
 
-### 7.6 Siemens TIA Portal 对 AUDESYS 的整体启示
+### 7.6 Siemens TIA Portal 对 Weftik 的整体启示
 
-综合以上所有分析，Siemens TIA Portal 对 AUDESYS 的整体启示可以概括为以下三点：
+综合以上所有分析，Siemens TIA Portal 对 Weftik 的整体启示可以概括为以下三点：
 
-1. **全集成平台是工业自动化的方向**：TIA Portal 的"一个项目、所有组件"理念展示了全集成自动化的价值。AUDESYS 应以最小闭环为目标（Runtime 配置 + PLC 编程 + 仿真在同一个 IDE 中），逐步扩展为全集成平台。
-2. **大型工业 IDE 的 UX 设计经验**：TIA Portal 的成功（全球最大安装量）和失败（启动慢、学习曲线陡峭）都是宝贵的 UX 经验。AUDESYS Studio 应以轻量级启动、清晰工作流、原生 Git 支持为目标，避免 TIA Portal 的 UX 陷阱。
-3. **数字化双胞胎是工业自动化的未来**：Siemens 在 SIMIT/PLCSIM/NX MCD/DriveSim 上的大规模投入展示了虚拟调试的价值。AUDESYS 的 Simulator 模块应以三层建模（控制层 + 过程层 + 机械层）为架构参考。
+1. **全集成平台是工业自动化的方向**：TIA Portal 的"一个项目、所有组件"理念展示了全集成自动化的价值。Weftik 应以最小闭环为目标（Runtime 配置 + PLC 编程 + 仿真在同一个 IDE 中），逐步扩展为全集成平台。
+2. **大型工业 IDE 的 UX 设计经验**：TIA Portal 的成功（全球最大安装量）和失败（启动慢、学习曲线陡峭）都是宝贵的 UX 经验。Weftik Studio 应以轻量级启动、清晰工作流、原生 Git 支持为目标，避免 TIA Portal 的 UX 陷阱。
+3. **数字化双胞胎是工业自动化的未来**：Siemens 在 SIMIT/PLCSIM/NX MCD/DriveSim 上的大规模投入展示了虚拟调试的价值。Weftik 的 Simulator 模块应以三层建模（控制层 + 过程层 + 机械层）为架构参考。
 
 > 以上分析综合了 Siemens TIA Portal 的产品架构、技术特性和市场策略。文档信息来源包括 Siemens 官方网站、TIA Portal 在线文档、Siemens Industry Online Support、Press Releases 和市场研究报告。
 > **文档版本**: v1.0  

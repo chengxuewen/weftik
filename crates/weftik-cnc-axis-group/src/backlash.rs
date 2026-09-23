@@ -59,28 +59,19 @@ pub fn generate_backlash_program(cfg: &AxisGroupConfig) -> HalProgram {
         // ── Load pos_cmd ──
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_POS),
-                Operand::SignalName(format!("{}.pos_cmd", pfx)),
-            ],
+            vec![Operand::Register(R_POS), Operand::SignalName(format!("{}.pos_cmd", pfx))],
         ));
 
         // ── Load vel_cmd, determine new direction ──
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_VEL),
-                Operand::SignalName(format!("{}.vel_cmd", pfx)),
-            ],
+            vec![Operand::Register(R_VEL), Operand::SignalName(format!("{}.vel_cmd", pfx))],
         ));
 
         // ── Load last_dir ──
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_LAST_DIR),
-                Operand::SignalName(format!("{}.last_dir", pfx)),
-            ],
+            vec![Operand::Register(R_LAST_DIR), Operand::SignalName(format!("{}.last_dir", pfx))],
         ));
 
         // ── Compute new direction: new_dir = sign(vel) ──
@@ -117,10 +108,7 @@ pub fn generate_backlash_program(cfg: &AxisGroupConfig) -> HalProgram {
         let no_reversal2 = emit_jump_if_not(&mut instructions, R_SCRATCH, 0);
 
         // ── Apply backlash compensation ──
-        instructions.push(Instruction::load_imm(
-            R_BACKLASH,
-            HalValue::F64(axis.backlash_distance),
-        ));
+        instructions.push(Instruction::load_imm(R_BACKLASH, HalValue::F64(axis.backlash_distance)));
         // compensation = backlash * new_dir (apply in direction of new movement)
         instructions.push(Instruction::arith(Opcode::Mul, R_BACKLASH, R_NEW_DIR, R_COMP));
         // pos_cmd = pos_cmd + compensation
@@ -133,19 +121,13 @@ pub fn generate_backlash_program(cfg: &AxisGroupConfig) -> HalProgram {
         // ── Update last_dir = new_dir ──
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.last_dir", pfx)),
-                Operand::Register(R_NEW_DIR),
-            ],
+            vec![Operand::SignalName(format!("{}.last_dir", pfx)), Operand::Register(R_NEW_DIR)],
         ));
 
         // ── Write updated pos_cmd ──
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.pos_cmd", pfx)),
-                Operand::Register(R_POS),
-            ],
+            vec![Operand::SignalName(format!("{}.pos_cmd", pfx)), Operand::Register(R_POS)],
         ));
     }
 
@@ -168,28 +150,22 @@ fn copy_reg(instructions: &mut Vec<Instruction>, src: u8, dst: u8, zero_reg: u8)
 
 fn cmp_gt(instructions: &mut Vec<Instruction>, a: u8, b: u8, dst: u8) {
     copy_reg(instructions, a, dst, R_ZERO);
-    instructions.push(Instruction::new(
-        Opcode::Gt,
-        vec![Operand::Register(dst), Operand::Register(b)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Gt, vec![Operand::Register(dst), Operand::Register(b)]));
 }
 
 fn cmp_lt(instructions: &mut Vec<Instruction>, a: u8, b: u8, dst: u8) {
     copy_reg(instructions, a, dst, R_ZERO);
-    instructions.push(Instruction::new(
-        Opcode::Lt,
-        vec![Operand::Register(dst), Operand::Register(b)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Lt, vec![Operand::Register(dst), Operand::Register(b)]));
 }
 
 fn cmp_ne_imm(instructions: &mut Vec<Instruction>, reg: u8, imm: f64, dst: u8) {
     let temp = R_BACKLASH; // borrow
     instructions.push(Instruction::load_imm(temp, HalValue::F64(imm)));
     copy_reg(instructions, reg, dst, R_ZERO);
-    instructions.push(Instruction::new(
-        Opcode::Neq,
-        vec![Operand::Register(dst), Operand::Register(temp)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Neq, vec![Operand::Register(dst), Operand::Register(temp)]));
 }
 
 fn emit_jump_if_not(instructions: &mut Vec<Instruction>, cond_reg: u8, _placeholder: u32) -> usize {
@@ -255,10 +231,7 @@ mod tests {
         let cfg = AxisGroupConfig::default_xyz(); // backlash disabled by default
         let prog = generate_backlash_program(&cfg);
         // Only constants + halt
-        assert!(
-            prog.instructions.len() <= 3,
-            "backlash disabled should emit minimal instructions"
-        );
+        assert!(prog.instructions.len() <= 3, "backlash disabled should emit minimal instructions");
     }
 
     #[test]
@@ -268,10 +241,7 @@ mod tests {
         axis.backlash_distance = 0.01;
         let cfg = AxisGroupConfig::new("group.0", vec![axis]);
         let prog = generate_backlash_program(&cfg);
-        let has_last_dir = prog
-            .signals
-            .iter()
-            .any(|s| s.hal_signal_name.ends_with(".last_dir"));
+        let has_last_dir = prog.signals.iter().any(|s| s.hal_signal_name.ends_with(".last_dir"));
         assert!(has_last_dir);
     }
 

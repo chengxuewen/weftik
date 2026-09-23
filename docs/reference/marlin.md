@@ -781,7 +781,7 @@ Marlin 的核心优势是 **"最简单、最省心、最广泛"**：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 单芯片一体式架构的参考
 
@@ -795,7 +795,7 @@ Marlin 的单芯片架构（8-bit AVR）:
   -> 2011-2020 年占据 3D 打印固件 90%+ 市场份额
 ```
 
-**AUDESYS 参考**: AUDESYS HAL 在嵌入式 MCU 侧的设计可参考 Marlin 的极简模式：
+**Weftik 参考**: Weftik HAL 在嵌入式 MCU 侧的设计可参考 Marlin 的极简模式：
 
 - 在资源受限的 MCU 上，用中断 ISR 实现精确的定时控制
 - 使用整数运算（Bresenham DDA）替代浮点运算，降低计算需求
@@ -803,7 +803,7 @@ Marlin 的单芯片架构（8-bit AVR）:
 
 ### 7.2 步进电机 ISR 中断驱动设计
 
-Marlin 的步进控制和 ISR 架构对 AUDESYS HAL 的实时层设计有直接参考价值：
+Marlin 的步进控制和 ISR 架构对 Weftik HAL 的实时层设计有直接参考价值：
 
 ```
 Marlin ISR 结构:
@@ -814,7 +814,7 @@ Marlin ISR 结构:
       -> 调度下一个中断时间
       -> 位置更新
 
-AUDESYS HAL 实时层参考:
+Weftik HAL 实时层参考:
   RT Timer Interrupt
     -> HalTransport 数据采样
     -> Signal 最新值更新
@@ -831,11 +831,11 @@ AUDESYS HAL 实时层参考:
 
 ### 7.3 PID 温度控制
 
-Marlin 的 PID 温度控制是 AUDESYS HAL 的 `temperature` 模块的最佳参考实现：
+Marlin 的 PID 温度控制是 Weftik HAL 的 `temperature` 模块的最佳参考实现：
 
 ```cpp
-// Marlin PID -> AUDESYS HAL 温度控制模块参考
-// AUDESYS HAL 的 PID 温度控制器设计
+// Marlin PID -> Weftik HAL 温度控制模块参考
+// Weftik HAL 的 PID 温度控制器设计
 pub struct PIDController {
     kp: f32,
     ki: f32,
@@ -871,22 +871,22 @@ impl PIDController {
 
 ### 7.4 Configuration.h 宏配置系统
 
-Marlin 的 `Configuration.h` 编译时配置系统对 AUDESYS 的配置设计有参考价值：
+Marlin 的 `Configuration.h` 编译时配置系统对 Weftik 的配置设计有参考价值：
 
-| Marlin 配置方式 | 优点 | 缺点 | AUDESYS 参考 |
+| Marlin 配置方式 | 优点 | 缺点 | Weftik 参考 |
 |----------------|------|------|-------------|
 | 编译时宏 #define | 零运行时开销 | 每次修改需编译 | 核心参数（如 PIN 映射）可编译时确定 |
 | 条件编译 #ifdef | 代码裁剪 | 配置复杂度高 | 模块化编译时可选择性地包含功能 |
 | 2000+ 配置项 | 灵活性极高 | 新手配置困难 | 设计合理的默认值 + 可选高级配置 |
 
-**AUDESYS 参考**: AUDESYS 的配置系统可以借鉴 Marlin 的"编译时裁剪 + 运行时参数"分层：
+**Weftik 参考**: Weftik 的配置系统可以借鉴 Marlin 的"编译时裁剪 + 运行时参数"分层：
 
 - **编译时层**: HAL 的 PIN 映射、RT 参数、硬件配置（零开销）
 - **运行时层**: 控制逻辑参数、通信参数、HMI 参数（Flexible）
 
-### 7.5 Marlin 与 AUDESYS HAL 的详细对比
+### 7.5 Marlin 与 Weftik HAL 的详细对比
 
-| 维度 | Marlin | AUDESYS HAL（设计） |
+| 维度 | Marlin | Weftik HAL（设计） |
 |------|--------|-------------------|
 | 架构 | 单芯片 MCU 一体式 | 分布式 Host + HAL MCU |
 | 目标 | 3D 打印机运动控制 | 工业控制系统通信/仿真 |
@@ -902,13 +902,13 @@ Marlin 的 `Configuration.h` 编译时配置系统对 AUDESYS 的配置设计有
 
 ### 7.6 核心参考价值总结
 
-Marlin 为 AUDESYS 提供了三个层面的参考价值：
+Marlin 为 Weftik 提供了三个层面的参考价值：
 
-1. **嵌入式实时控制的极简范式**：Marlin 在 8 位 AVR（8KB SRAM）上实现了完整的 3D 打印机控制系统，证明了在资源受限的 MCU 上实现确定性实时控制是可行的。AUDESYS HAL 的 MCU 侧设计应参考 Marlin 的 ISR 驱动架构，保持核心代码的简洁性和确定性。
+1. **嵌入式实时控制的极简范式**：Marlin 在 8 位 AVR（8KB SRAM）上实现了完整的 3D 打印机控制系统，证明了在资源受限的 MCU 上实现确定性实时控制是可行的。Weftik HAL 的 MCU 侧设计应参考 Marlin 的 ISR 驱动架构，保持核心代码的简洁性和确定性。
 
-2. **PID 温度控制的参考实现**：Marlin 的 PID 温度控制器经过了数万次实际部署的验证，其积分限幅、热失控保护、多路 PID 并行等设计可直接作为 AUDESYS HAL 温度模块的参考。
+2. **PID 温度控制的参考实现**：Marlin 的 PID 温度控制器经过了数万次实际部署的验证，其积分限幅、热失控保护、多路 PID 并行等设计可直接作为 Weftik HAL 温度模块的参考。
 
-3. **配置系统的教训**：Marlin 的 `Configuration.h` 配置系统虽然灵活，但 2000+ 配置项和编译时修改的复杂度是新手的主要痛点。AUDESYS 应采用"编译时核心裁剪 + 运行时灵活配置"的分层设计，避免 Marlin 的配置复杂度问题。
+3. **配置系统的教训**：Marlin 的 `Configuration.h` 配置系统虽然灵活，但 2000+ 配置项和编译时修改的复杂度是新手的主要痛点。Weftik 应采用"编译时核心裁剪 + 运行时灵活配置"的分层设计，避免 Marlin 的配置复杂度问题。
 
 ---
 

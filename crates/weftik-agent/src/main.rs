@@ -6,15 +6,15 @@
 //!
 //! Graceful shutdown: SIGINT/SIGTERM → SIGKILL children → wait → exit.
 
-use weftik_runtime_common::types::Role;
-use weftik_agent::config::AgentConfig;
-use weftik_agent::monitor::{MAX_RETRIES, ManagedProcess, ProcessState};
 use std::io::{self, Read, Write};
 use std::os::unix::net::UnixStream;
 use std::path::Path;
 use std::process;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
+use weftik_agent::config::AgentConfig;
+use weftik_agent::monitor::{MAX_RETRIES, ManagedProcess, ProcessState};
+use weftik_runtime_common::types::Role;
 
 // ── Wire constants (match controller ipc.rs) ──────────────────────────
 

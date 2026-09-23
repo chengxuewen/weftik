@@ -5,8 +5,8 @@
 use criterion::{BenchmarkId, Criterion, Throughput, black_box, criterion_group, criterion_main};
 
 use weftik_amw_inproc::InprocTransport;
-use weftik_runtime::{SignalDef, SignalRegistry, WriteStrategy};
 use weftik_hal_core::{HalPinType, HalTransport, HalValue, Timestamp};
+use weftik_runtime::{SignalDef, SignalRegistry, WriteStrategy};
 
 // ── Signal throughput ──
 

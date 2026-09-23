@@ -1,11 +1,11 @@
-# Panel 架构设计（契约参考 — 原 AUDESYS AUDEDeck）
+# Panel 架构设计（契约参考 — 原 Weftik AUDEDeck）
 
 > ⛔ **D117 (2026-09-23)**：本文件是**契约方**文档。AUDEDeck 与 Studio HMI 设计器已从仓库移除；Panel 实现由**外部项目**维护，本文作为其实现参考。本仓库侧约束性契约见 `openspec/specs/hmi-spec.md`（IPC 0x16/0x17/0x18 + Config Barrier + Role::Hmi）。
 
 **生成日期**: 2026-07-19
 **修订日期**: 2026-07-21
 
-> ℹ️ Studio 迁移通知：AUDESYS Studio 已从 Tauri+React 迁移到 Eclipse Theia（详见 docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md）。AUDEDeck 不受影响——仍基于 Tauri + PWA 独立运行，由 3rdparty/AUDEDeck/ 提供。Widget 复用 @audesys/deck-core。
+> ℹ️ Studio 迁移通知：Weftik Studio 已从 Tauri+React 迁移到 Eclipse Theia（详见 docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md）。AUDEDeck 不受影响——仍基于 Tauri + PWA 独立运行，由 3rdparty/AUDEDeck/ 提供。Widget 复用 @weftik/deck-core。
 
 **依赖决策**: D64 (Role::HMI), D65 (AUDEDeck 独立进程), D66 (Transport 层), D68 (HMI 布局部署), D62 (SignalBridge Hybrid), D63 (周期边界批量), D17 (Config Barrier)
 **参考**: `docs/modules/runtime/ipc-security-design.md`, `docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md`
@@ -36,7 +36,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                          AUDESYS AUDEDeck Shell                          │
+│                          Weftik AUDEDeck Shell                          │
 │                                                                               │
 │  ┌───────────────────────────┐    ┌───────────────────────────────────────┐  │
 │  │     Plugin System          │    │        Navigation Manager             │  │

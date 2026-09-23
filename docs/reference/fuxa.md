@@ -574,25 +574,25 @@ FUXA 在实际项目中的一个独特角色是作为传统 SCADA 的 Web 化前
 - 在一个传统 SCADA + FUXA 的混合架构中，传统 SCADA 负责控制逻辑和历史存储，FUXA 负责 Web 可视化和移动端访问
 - 这种"前端分离"的架构在不替换原有系统的前提下实现了现代化升级
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
-### 7.1 SVG 编辑器——AUDESYS Studio HMI 设计器的直接参考
+### 7.1 SVG 编辑器——Weftik Studio HMI 设计器的直接参考
 
-FUXA 的 SVG 编辑器是 AUDESYS Studio HMI 设计器**最直接的实现参考**：
+FUXA 的 SVG 编辑器是 Weftik Studio HMI 设计器**最直接的实现参考**：
 
-| FUXA SVG Editor 设计 | AUDESYS Studio 参考点 |
+| FUXA SVG Editor 设计 | Weftik Studio 参考点 |
 |---------------------|---------------------|
-| 浏览器内拖拽式编辑器 | AUDESYS HMI Designer 的核心交互模式 |
+| 浏览器内拖拽式编辑器 | Weftik HMI Designer 的核心交互模式 |
 | 组件库 + 属性面板 + 画布三栏布局 | IDE 布局设计 |
-| Tag 属性绑定（属性面板配置） | AUDESYS HMI 数据绑定系统 |
-| 条件样式（基于 Tag 值的颜色/可见性变化） | AUDESYS HMI 动态渲染引擎 |
-| 图层管理 + Z-Order | AUDESYS HMI 图形对象模型 |
-| SVG 原生渲染 + WebSocket 实时更新 | AUDESYS 前端技术栈选择 |
+| Tag 属性绑定（属性面板配置） | Weftik HMI 数据绑定系统 |
+| 条件样式（基于 Tag 值的颜色/可见性变化） | Weftik HMI 动态渲染引擎 |
+| 图层管理 + Z-Order | Weftik HMI 图形对象模型 |
+| SVG 原生渲染 + WebSocket 实时更新 | Weftik 前端技术栈选择 |
 
 **关键设计参考**：
 
 ```
-AUDESYS HMI Designer 组件模型（参考 FUXA）：
+Weftik HMI Designer 组件模型（参考 FUXA）：
 ┌────────────────────────────────────────┐
 │  HMIComponent                          │
 │  ├── ComponentType (Shape/Basic)       │
@@ -610,31 +610,31 @@ AUDESYS HMI Designer 组件模型（参考 FUXA）：
 
 ### 7.2 协议适配器架构
 
-FUXA 的协议插件化架构与 AUDESYS HAL 的设备驱动接口高度契合：
+FUXA 的协议插件化架构与 Weftik HAL 的设备驱动接口高度契合：
 
-| FUXA 协议适配器 | AUDESYS HAL 对应 |
+| FUXA 协议适配器 | Weftik HAL 对应 |
 |---------------|-----------------|
 | 统一接口：connect / disconnect / read / write | HAL Driver trait |
 | 每个协议独立模块（modbus.js / opcua.js / s7.js） | HAL Driver 插件（独立 crate） |
 | 周期性轮询 VS 事件订阅 | HAL 的轮询模式和订阅模式 |
 | 设备配置（host/port/unitID 等） | HAL DriverConfig 结构体 |
 
-**FUXA 对 AUDESYS 驱动架构的启发**：
+**FUXA 对 Weftik 驱动架构的启发**：
 
-- FUXA 选择 npm 生态的成熟协议库（如 node-opcua），AUDESYS 可以选择 Rust 生态的成熟 crate（如 `ruma`-ster 的 opcua crate）
-- FUXA 的协议适配器是松耦合设计，AUDESYS 也应保持 Driver 之间的独立性
+- FUXA 选择 npm 生态的成熟协议库（如 node-opcua），Weftik 可以选择 Rust 生态的成熟 crate（如 `ruma`-ster 的 opcua crate）
+- FUXA 的协议适配器是松耦合设计，Weftik 也应保持 Driver 之间的独立性
 - FUXA 的 WebAPI 驱动（HTTP 数据源）说明了一个重要概念：**数据源不一定是物理设备，也可以是 REST API**
 
-### 7.3 轻量级部署——AUDESYS Runtime 的参考
+### 7.3 轻量级部署——Weftik Runtime 的参考
 
-FUXA 在 Raspberry Pi 上的部署经验为 AUDESYS Runtime 的轻量化提供了参考：
+FUXA 在 Raspberry Pi 上的部署经验为 Weftik Runtime 的轻量化提供了参考：
 
 - **Node.js 内存占用**：FUXA 在 RPi 上的典型内存占用约 200-500 MB（含 Node.js 运行时）
 - **SQLite 作为配置存储**：无需安装和配置独立数据库
 - **Docker 化**：便于在边缘设备上部署和更新
 - **Daemon 模式**：无头设备的后台运行
 
-AUDESYS Runtime 选择 Rust 编译为原生二进制，比 Node.js 的解释执行有本质优势：
+Weftik Runtime 选择 Rust 编译为原生二进制，比 Node.js 的解释执行有本质优势：
 - 更低的内存占用（10-50 MB vs 200-500 MB）
 - 更快的启动速度（毫秒 vs 秒）
 - 无 GC 停顿（确定性实时性能）
@@ -643,13 +643,13 @@ AUDESYS Runtime 选择 Rust 编译为原生二进制，比 Node.js 的解释执�
 
 FUXA 证明了**Web 原生 HMI 在现实中是可行的**：
 
-| 挑战 | FUXA 的解决方案 | AUDESYS 的参考 |
+| 挑战 | FUXA 的解决方案 | Weftik 的参考 |
 |------|---------------|---------------|
-| SVG 编辑器的复杂度 | 自研轻量级 SVG 编辑器 | AUDESYS 可参考其架构，或考虑基于开源编辑器（如 svg.js）构建 |
-| 实时数据刷新 | WebSocket 推送 | AUDESYS 使用 WebSocket 或 HAL StreamChannel 的 Web 桥接 |
-| 多页面导航 | Angular Router | AUDESYS 前端路由设计 |
-| 大数据量渲染 | SVG 原生渲染（单画面< 200 组件） | AUDESYS 需评估 Canvas/WebGL 渲染方案（大数据量场景） |
-| 移动端适配 | 响应式布局（有限） | AUDESYS 应从设计初期就支持完整响应式 |
+| SVG 编辑器的复杂度 | 自研轻量级 SVG 编辑器 | Weftik 可参考其架构，或考虑基于开源编辑器（如 svg.js）构建 |
+| 实时数据刷新 | WebSocket 推送 | Weftik 使用 WebSocket 或 HAL StreamChannel 的 Web 桥接 |
+| 多页面导航 | Angular Router | Weftik 前端路由设计 |
+| 大数据量渲染 | SVG 原生渲染（单画面< 200 组件） | Weftik 需评估 Canvas/WebGL 渲染方案（大数据量场景） |
+| 移动端适配 | 响应式布局（有限） | Weftik 应从设计初期就支持完整响应式 |
 
 ### 7.5 技术栈选择的启示
 
@@ -666,29 +666,29 @@ FUXA 的技术栈（TypeScript/JavaScript + Node.js + Angular + SQLite）展示�
 - 内存占用较高
 - 单线程模型的扩展性受限
 
-**对 AUDESYS 的参考**：
+**对 Weftik 的参考**：
 - **前端**：可以采用 TypeScript + React（充分利用 npm 生态）
 - **后端/实时**：必须使用 Rust（确定性实时性能、无 GC、内存安全）
 - **FFI 桥接**：Rust 核心通过 WebSocket/HTTP/FlatBuffers 与 TypeScript 前端通信
 
 ### 7.6 开源生态策略
 
-FUXA 在 GitHub 上的成功为 AUDESYS 的开源策略提供参考：
+FUXA 在 GitHub 上的成功为 Weftik 的开源策略提供参考：
 
-| FUXA 策略 | AUDESYS 参考 |
+| FUXA 策略 | Weftik 参考 |
 |----------|------------|
-| MIT License | AUDESYS 可选择 MIT 或 Apache 2.0（商业友好） |
-| 活跃的 GitHub Issues 社区 | AUDESYS 建立 GitHub Discussions + Issues |
-| Docker 官方镜像 | AUDESYS 提供官方 Docker 镜像 |
-| npm 发布 | AUDESYS 提供各平台的预编译二进制包 |
-| 清晰的 README + 截图 | AUDESYS 文档质量策略 |
-| 定期 Release + Changelog | AUDESYS 发布规范 |
+| MIT License | Weftik 可选择 MIT 或 Apache 2.0（商业友好） |
+| 活跃的 GitHub Issues 社区 | Weftik 建立 GitHub Discussions + Issues |
+| Docker 官方镜像 | Weftik 提供官方 Docker 镜像 |
+| npm 发布 | Weftik 提供各平台的预编译二进制包 |
+| 清晰的 README + 截图 | Weftik 文档质量策略 |
+| 定期 Release + Changelog | Weftik 发布规范 |
 
-### 7.7 从 FUXA 到 AUDESYS 的升级路径
+### 7.7 从 FUXA 到 Weftik 的升级路径
 
-将 FUXA 的局限性转化为 AUDESYS 的差异化优势：
+将 FUXA 的局限性转化为 Weftik 的差异化优势：
 
-| FUXA 的局限 | AUDESYS 的解决方案 |
+| FUXA 的局限 | Weftik 的解决方案 |
 |-----------|-----------------|
 | Node.js 单线程 | Rust 多线程 + 异步任务调度 |
 | 无实时确定性 | Rust + SCHED_FIFO 实时调度 |
@@ -700,10 +700,10 @@ FUXA 在 GitHub 上的成功为 AUDESYS 的开源策略提供参考：
 
 ### 7.8 需警惕的陷阱
 
-1. **SVG 编辑器的复杂度陷阱**：FUXA 的 SVG 编辑器看似简单，但完整实现（吸附、旋转、缩放、路径编辑、导出）需要大量工作。AUDESYS 可考虑基于成熟的 Web 图形库（如 Fabric.js、Konva.js）构建编辑器。
-2. **Node.js 版本依赖**：FUXA 经历了 Node.js 14 → 18 的迁移，某些 S7 库（node-snap7）需要额外编译依赖。AUDESYS 选择 Rust 避免了这类运行时版本问题。
-3. **SQLite 的性能天花板**：FUXA 默认使用 SQLite 存储历史数据，在大 Tag 量（> 1000 点）时可能出现性能瓶颈。AUDESYS 应考虑可插拔的时序存储后端。
-4. **单进程架构的可扩展性**：FUXA 是单进程架构，无法水平扩展。AUDESYS Runtime 应从一开始就支持多进程/分布式架构。
+1. **SVG 编辑器的复杂度陷阱**：FUXA 的 SVG 编辑器看似简单，但完整实现（吸附、旋转、缩放、路径编辑、导出）需要大量工作。Weftik 可考虑基于成熟的 Web 图形库（如 Fabric.js、Konva.js）构建编辑器。
+2. **Node.js 版本依赖**：FUXA 经历了 Node.js 14 → 18 的迁移，某些 S7 库（node-snap7）需要额外编译依赖。Weftik 选择 Rust 避免了这类运行时版本问题。
+3. **SQLite 的性能天花板**：FUXA 默认使用 SQLite 存储历史数据，在大 Tag 量（> 1000 点）时可能出现性能瓶颈。Weftik 应考虑可插拔的时序存储后端。
+4. **单进程架构的可扩展性**：FUXA 是单进程架构，无法水平扩展。Weftik Runtime 应从一开始就支持多进程/分布式架构。
 
 ---
 
@@ -790,10 +790,10 @@ npm start
 
 - 文档版本: 1.0
 - 生成日期: 2026-07-13
-- 作者: AUDESYS Team
+- 作者: Weftik Team
 - 审核状态: 草稿
 - 信息来源: FUXA GitHub 仓库、npm 包页面、frangoteam.org 官网、Docker Hub、GitHub Issues 和 Release Notes
 - 标注"待确认"的信息需进一步验证
 
-> FUXA 是 AUDESYS 研究 Web 原生 SCADA/HMI 工程实践最重要的开源参考。其 SVG 编辑器、协议适配器架构和部署模式为 AUDESYS Studio 和 Runtime 的设计提供了可运行的对照样本。
+> FUXA 是 Weftik 研究 Web 原生 SCADA/HMI 工程实践最重要的开源参考。其 SVG 编辑器、协议适配器架构和部署模式为 Weftik Studio 和 Runtime 的设计提供了可运行的对照样本。
 

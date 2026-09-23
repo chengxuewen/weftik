@@ -27,10 +27,16 @@ fn eval_parallel(branches: &[Vec<Contact>], vars: &[(&str, bool)]) -> bool {
     evaluate_power_flow(&mut network, &snapshot, &mut edge_state)
 }
 
-fn cno(name: &str) -> Contact { Contact::No(name.to_string()) }
-fn cnc(name: &str) -> Contact { Contact::Nc(name.to_string()) }
+fn cno(name: &str) -> Contact {
+    Contact::No(name.to_string())
+}
+fn cnc(name: &str) -> Contact {
+    Contact::Nc(name.to_string())
+}
 
-fn coil(name: &str, kind: CoilKind) -> Coil { Coil { var: name.to_string(), kind } }
+fn coil(name: &str, kind: CoilKind) -> Coil {
+    Coil { var: name.to_string(), kind }
+}
 
 // ---------------------------------------------------------------------------
 // TV-1: Single NO Contact → OUT
@@ -213,17 +219,41 @@ fn tv10_serial_parallel_branch_inside_series() {
     let mut es = EdgeState::new();
 
     // X1=F → no path
-    assert!(!eval_pf(&mut network, &bools(&[("X1", false), ("X2", false), ("X3", false), ("X4", true)]), &mut es));
+    assert!(!eval_pf(
+        &mut network,
+        &bools(&[("X1", false), ("X2", false), ("X3", false), ("X4", true)]),
+        &mut es
+    ));
     // X1=T, X2=F, X3=F, X4=T → branch fails
-    assert!(!eval_pf(&mut network, &bools(&[("X1", true), ("X2", false), ("X3", false), ("X4", true)]), &mut es));
+    assert!(!eval_pf(
+        &mut network,
+        &bools(&[("X1", true), ("X2", false), ("X3", false), ("X4", true)]),
+        &mut es
+    ));
     // X1=T, X2=T, X3=F, X4=T → upper branch passes
-    assert!(eval_pf(&mut network, &bools(&[("X1", true), ("X2", true), ("X3", false), ("X4", true)]), &mut es));
+    assert!(eval_pf(
+        &mut network,
+        &bools(&[("X1", true), ("X2", true), ("X3", false), ("X4", true)]),
+        &mut es
+    ));
     // X1=T, X2=F, X3=T, X4=T → lower branch passes
-    assert!(eval_pf(&mut network, &bools(&[("X1", true), ("X2", false), ("X3", true), ("X4", true)]), &mut es));
+    assert!(eval_pf(
+        &mut network,
+        &bools(&[("X1", true), ("X2", false), ("X3", true), ("X4", true)]),
+        &mut es
+    ));
     // X1=T, X2=T, X3=T, X4=T → both pass
-    assert!(eval_pf(&mut network, &bools(&[("X1", true), ("X2", true), ("X3", true), ("X4", true)]), &mut es));
+    assert!(eval_pf(
+        &mut network,
+        &bools(&[("X1", true), ("X2", true), ("X3", true), ("X4", true)]),
+        &mut es
+    ));
     // X1=T, X2=T, X3=T, X4=F → last contact blocks
-    assert!(!eval_pf(&mut network, &bools(&[("X1", true), ("X2", true), ("X3", true), ("X4", false)]), &mut es));
+    assert!(!eval_pf(
+        &mut network,
+        &bools(&[("X1", true), ("X2", true), ("X3", true), ("X4", false)]),
+        &mut es
+    ));
 }
 
 fn eval_pf(network: &mut ContactNetwork, snapshot: &InputSnapshot, es: &mut EdgeState) -> bool {
@@ -238,21 +268,45 @@ fn eval_pf(network: &mut ContactNetwork, snapshot: &InputSnapshot, es: &mut Edge
 #[test]
 fn tv11_three_nc_series_safety_interlock() {
     // FFF: all NC closed → power flows
-    assert!(eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", false), ("DOOR", false), ("TEMP", false)]));
+    assert!(eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", false), ("DOOR", false), ("TEMP", false)]
+    ));
     // FFT: TEMP=T → NC(TEMP)=F → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", false), ("DOOR", false), ("TEMP", true)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", false), ("DOOR", false), ("TEMP", true)]
+    ));
     // FTF: DOOR=T → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", false), ("DOOR", true), ("TEMP", false)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", false), ("DOOR", true), ("TEMP", false)]
+    ));
     // TFF: E_OK=T → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", true), ("DOOR", false), ("TEMP", false)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", true), ("DOOR", false), ("TEMP", false)]
+    ));
     // FTT: DOOR=T, TEMP=T → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", false), ("DOOR", true), ("TEMP", true)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", false), ("DOOR", true), ("TEMP", true)]
+    ));
     // TTF: E_OK=T, DOOR=T → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", true), ("DOOR", true), ("TEMP", false)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", true), ("DOOR", true), ("TEMP", false)]
+    ));
     // TFT: E_OK=T, TEMP=T → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", true), ("DOOR", false), ("TEMP", true)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", true), ("DOOR", false), ("TEMP", true)]
+    ));
     // TTT: all TRUE → no flow
-    assert!(!eval_serial(&[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")], &[("E_OK", true), ("DOOR", true), ("TEMP", true)]));
+    assert!(!eval_serial(
+        &[cnc("E_OK"), cnc("DOOR"), cnc("TEMP")],
+        &[("E_OK", true), ("DOOR", true), ("TEMP", true)]
+    ));
 }
 
 // ---------------------------------------------------------------------------
@@ -329,7 +383,11 @@ fn tv13_multiple_coils_on_one_rung() {
     let mut rungs = vec![RungDef {
         id: "r1".into(),
         network: build_serial_network(&[cno("X1")]),
-        coils: vec![coil("Y1", CoilKind::Out), coil("Y2", CoilKind::Out), coil("Y3", CoilKind::Out)],
+        coils: vec![
+            coil("Y1", CoilKind::Out),
+            coil("Y2", CoilKind::Out),
+            coil("Y3", CoilKind::Out),
+        ],
     }];
     let result = evaluate_cycle(&mut rungs, &mut vars);
     for y in ["Y1", "Y2", "Y3"] {
@@ -342,7 +400,11 @@ fn tv13_multiple_coils_on_one_rung() {
     let mut rungs = vec![RungDef {
         id: "r1".into(),
         network: build_serial_network(&[cno("X1")]),
-        coils: vec![coil("Y1", CoilKind::Out), coil("Y2", CoilKind::Out), coil("Y3", CoilKind::Out)],
+        coils: vec![
+            coil("Y1", CoilKind::Out),
+            coil("Y2", CoilKind::Out),
+            coil("Y3", CoilKind::Out),
+        ],
     }];
     let result = evaluate_cycle(&mut rungs, &mut vars);
     for y in ["Y1", "Y2", "Y3"] {
@@ -357,18 +419,28 @@ fn tv13_multiple_coils_on_one_rung() {
 #[test]
 fn tv14_en_eno_chain() {
     // Row: X1=F → ENO1=F, ENO2=F, Y1=F
-    let results = evaluate_eno_chain(false, &[
-        FnBlock { name: "TON".into(), error: false, outputs: vec![] },
-        FnBlock { name: "CTU".into(), error: false, outputs: vec![FnOutput { var: "Y1".into(), value: true }] },
-    ]);
+    let results = evaluate_eno_chain(
+        false,
+        &[
+            FnBlock { name: "TON".into(), error: false, outputs: vec![] },
+            FnBlock {
+                name: "CTU".into(),
+                error: false,
+                outputs: vec![FnOutput { var: "Y1".into(), value: true }],
+            },
+        ],
+    );
     assert_eq!(results[0].eno, false);
     assert_eq!(results[1].eno, false);
 
     // Row: X1=T, no error, X2=F → TON passes, CTU doesn't execute
-    let results = evaluate_eno_chain(true, &[
-        FnBlock { name: "TON".into(), error: false, outputs: vec![] },
-        FnBlock { name: "CTU".into(), error: false, outputs: vec![] },
-    ]);
+    let results = evaluate_eno_chain(
+        true,
+        &[
+            FnBlock { name: "TON".into(), error: false, outputs: vec![] },
+            FnBlock { name: "CTU".into(), error: false, outputs: vec![] },
+        ],
+    );
     assert!(results[0].eno);
     assert_eq!(results[1].en, true); // CTU would receive EN=T if directly connected
     // Actually in the test: X2 contact is between TON and CTU.
@@ -378,19 +450,29 @@ fn tv14_en_eno_chain() {
     assert_eq!(results[1].en, results[0].eno);
 
     // Row: X1=T, TON error → ENO1=F, Y1=F
-    let results = evaluate_eno_chain(true, &[
-        FnBlock { name: "TON".into(), error: true, outputs: vec![] },
-        FnBlock { name: "CTU".into(), error: false, outputs: vec![FnOutput { var: "Y1".into(), value: true }] },
-    ]);
+    let results = evaluate_eno_chain(
+        true,
+        &[
+            FnBlock { name: "TON".into(), error: true, outputs: vec![] },
+            FnBlock {
+                name: "CTU".into(),
+                error: false,
+                outputs: vec![FnOutput { var: "Y1".into(), value: true }],
+            },
+        ],
+    );
     assert_eq!(results[0].eno, false);
     assert_eq!(results[1].en, false);
     assert_eq!(results[1].eno, false);
 
     // Row: X1=T, TON ok, CTU error → ENO2=F
-    let results = evaluate_eno_chain(true, &[
-        FnBlock { name: "TON".into(), error: false, outputs: vec![] },
-        FnBlock { name: "CTU".into(), error: true, outputs: vec![] },
-    ]);
+    let results = evaluate_eno_chain(
+        true,
+        &[
+            FnBlock { name: "TON".into(), error: false, outputs: vec![] },
+            FnBlock { name: "CTU".into(), error: true, outputs: vec![] },
+        ],
+    );
     assert!(results[0].eno);
     assert_eq!(results[1].eno, false);
 }
@@ -448,7 +530,9 @@ fn tv15_rung_to_rung_propagation() {
 }
 
 fn coil_val(result: &PowerFlowResult, rung_idx: usize, coil_id: &str) -> bool {
-    result.rung_states[rung_idx].coil_states.iter()
+    result.rung_states[rung_idx]
+        .coil_states
+        .iter()
         .find(|c| c.coil_id == coil_id)
         .map(|c| c.energized)
         .unwrap_or(false)
@@ -547,7 +631,11 @@ fn tv18_parallel_branches_different_depths() {
     network.set_output_node(out);
 
     // X1=F, X2=*, X3=F → no path
-    assert!(!eval_pf(&mut network, &bools(&[("X1", false), ("X2", false), ("X3", false)]), &mut es));
+    assert!(!eval_pf(
+        &mut network,
+        &bools(&[("X1", false), ("X2", false), ("X3", false)]),
+        &mut es
+    ));
     // X1=T, X2=T, X3=* → branch 1 passes
     assert!(eval_pf(&mut network, &bools(&[("X1", true), ("X2", true), ("X3", false)]), &mut es));
     // X1=*, X2=*, X3=T → branch 2 passes

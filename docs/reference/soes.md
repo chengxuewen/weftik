@@ -61,9 +61,9 @@ SOES 的典型应用场景包括：
 4. **阀岛/气动控制**：在工业气动控制中，通过 SOES 实现 EtherCAT 从站适配
 5. **协议转换网关**：将 Modbus RTU/TCP、CANopen 等传统现场总线通过 SOES 桥接到 EtherCAT
 
-### 1.4 与 AUDESYS 的关系定位
+### 1.4 与 Weftik 的关系定位
 
-SOES 对 AUDESYS HAL 的参考价值主要体现在三个层面：
+SOES 对 Weftik HAL 的参考价值主要体现在三个层面：
 - **EtherCAT 从站协议栈实现架构**：HAL 通信层需要理解从站侧协议栈的分层设计
 - **ESC 芯片访问与硬件抽象**：SOES 的 ESC 访问抽象层是硬件抽象设计的微型案例
 - **CoE/PDO 映射机制**：HAL 的 Signal/StreamChannel 原语可参考 PDO 映射的配置模式
@@ -620,23 +620,23 @@ SOES 不直接使用 SSC 生成的 C 代码，而是：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
-### 7.1 SOES ESC HAL 抽象层 vs AUDESYS HAL 架构 (5星)
+### 7.1 SOES ESC HAL 抽象层 vs Weftik HAL 架构 (5星)
 
-SOES 的 ESC 硬件抽象层（ecat_hal）和 AUDESYS 的 HAL 在概念上是高度同构的——两者都试图在上层协议栈和底层硬件之间建立抽象边界。
+SOES 的 ESC 硬件抽象层（ecat_hal）和 Weftik 的 HAL 在概念上是高度同构的——两者都试图在上层协议栈和底层硬件之间建立抽象边界。
 
-**SOES 对 AUDESYS HAL 的关键启示**：
+**SOES 对 Weftik HAL 的关键启示**：
 
-1. **微型 HAL 设计**：SOES 的 `ESC_HAL_Interface` 仅包含 8 个函数指针（readReg/writeReg/readData/writeData/ackIRQ/getIRQ/enableIRQ/disableIRQ），以最小的接口覆盖全部需求。AUDESYS HAL 应参考这种"最小本质接口"原则——不要预测所有未来硬件，而是定义一组最小原语，让硬件适配层补充实现。
+1. **微型 HAL 设计**：SOES 的 `ESC_HAL_Interface` 仅包含 8 个函数指针（readReg/writeReg/readData/writeData/ackIRQ/getIRQ/enableIRQ/disableIRQ），以最小的接口覆盖全部需求。Weftik HAL 应参考这种"最小本质接口"原则——不要预测所有未来硬件，而是定义一组最小原语，让硬件适配层补充实现。
 
-2. **零抽象开销**：SOES 的 HAL 函数在编译期通过函数指针间接调用，但在性能关键路径（PDO 数据存取）中提供直接寄存器访问宏。AUDESYS HAL 应遵循相同的性能原则：关键路径提供内联访问路径，配置路径使用抽象接口。
+2. **零抽象开销**：SOES 的 HAL 函数在编译期通过函数指针间接调用，但在性能关键路径（PDO 数据存取）中提供直接寄存器访问宏。Weftik HAL 应遵循相同的性能原则：关键路径提供内联访问路径，配置路径使用抽象接口。
 
-3. **中断与轮询双模式**：SOES 同时支持中断驱动（通过 ESC 中断通知协议栈事件）和轮询模式。AUDESYS HAL 的实时通信线程应同样支持这两种模式：轮询用于确定性周期，中断用于低延迟事件响应。
+3. **中断与轮询双模式**：SOES 同时支持中断驱动（通过 ESC 中断通知协议栈事件）和轮询模式。Weftik HAL 的实时通信线程应同样支持这两种模式：轮询用于确定性周期，中断用于低延迟事件响应。
 
-**AUDESYS HAL 设计建议**：
+**Weftik HAL 设计建议**：
 ```
-// AUDESYS HAL 硬件抽象接口（参考 SOES 结构）
+// Weftik HAL 硬件抽象接口（参考 SOES 结构）
 trait HalTransport {
     // 核心原语（类似 SOES ecat_hal）
     fn read_register(&self, addr: RegisterAddr) -> Result<u16>;
@@ -653,11 +653,11 @@ trait HalTransport {
 }
 ```
 
-### 7.2 CoE 对象字典 vs AUDESYS HAL 类型系统 (4星)
+### 7.2 CoE 对象字典 vs Weftik HAL 类型系统 (4星)
 
-SOES 的 CoE 对象字典与 AUDESYS HAL 的类型系统在功能上具有惊人的相似性：
+SOES 的 CoE 对象字典与 Weftik HAL 的类型系统在功能上具有惊人的相似性：
 
-| 功能 | SOES CoE 对象字典 | AUDESYS HAL 类型系统 |
+| 功能 | SOES CoE 对象字典 | Weftik HAL 类型系统 |
 |------|-------------------|---------------------|
 | 类型描述 | index/subIndex/objType | 14 种基础类型 + Array<T> |
 | 访问控制 | objAccess (RO/RW/WO) | HalQoS security_domain |
@@ -665,32 +665,32 @@ SOES 的 CoE 对象字典与 AUDESYS HAL 的类型系统在功能上具有惊人
 | 实时数据 | PDO 映射 | Signal + StreamChannel |
 | 元数据 | objSize/maxSubIdx | Schema 自描述 |
 
-**AUDESYS 可借鉴的设计模式**：
-- **索引化访问**：EtherCAT 的索引-子索引对象字典是经过实际考验的数据组织模式。AUDESYS 的 Signal 命名（`component.interface.name`）与对象字典的索引结构可以建立映射关系
-- **PDO 映射思想**：PDO 映射将对象字典条目"绑定"到过程数据帧——这正是 AUDESYS 中 Signal 绑定到 StreamChannel 的等价操作。AUDESYS 可在编译期预计算 Signal 在 StreamChannel 中的偏移，实现零运行时开销
+**Weftik 可借鉴的设计模式**：
+- **索引化访问**：EtherCAT 的索引-子索引对象字典是经过实际考验的数据组织模式。Weftik 的 Signal 命名（`component.interface.name`）与对象字典的索引结构可以建立映射关系
+- **PDO 映射思想**：PDO 映射将对象字典条目"绑定"到过程数据帧——这正是 Weftik 中 Signal 绑定到 StreamChannel 的等价操作。Weftik 可在编译期预计算 Signal 在 StreamChannel 中的偏移，实现零运行时开销
 
-### 7.3 DC 分布式时钟 vs AUDESYS 实时同步 (4星)
+### 7.3 DC 分布式时钟 vs Weftik 实时同步 (4星)
 
-EtherCAT 的 DC 机制为 AUDESYS 的实时同步提供了成熟的参考模型：
+EtherCAT 的 DC 机制为 Weftik 的实时同步提供了成熟的参考模型：
 
-**DC 的三个核心贡献对 AUDESYS 的参考价值**：
+**DC 的三个核心贡献对 Weftik 的参考价值**：
 
-1. **参考时钟选举**：DC 将第一个支持 DC 的从站作为参考时钟，其他从站和主站与之同步。AUDESYS HAL 的 RT 线程组可以选举一个主时钟节点，所有 RT 线程以此为准同步周期启动。
+1. **参考时钟选举**：DC 将第一个支持 DC 的从站作为参考时钟，其他从站和主站与之同步。Weftik HAL 的 RT 线程组可以选举一个主时钟节点，所有 RT 线程以此为准同步周期启动。
 
-2. **漂移补偿算法**：DC 通过测量时钟偏移变化率（漂移率），对本地时钟频率进行 PI 调节。AUDESYS 如果需要跨设备的 StreamChannel 同步，同样的 PI 漂移补偿算法可以复用到 amw 层。
+2. **漂移补偿算法**：DC 通过测量时钟偏移变化率（漂移率），对本地时钟频率进行 PI 调节。Weftik 如果需要跨设备的 StreamChannel 同步，同样的 PI 漂移补偿算法可以复用到 amw 层。
 
-3. **SYNC 信号链**：DC 的 SYNC0/SYNC1 信号在硬件级别触发同步事件。AUDESYS 的 RT 线程可以使用 Linux `timerfd` 或 `clock_nanosleep` 实现软件级别的 SYNC 等效机制，在 Phase 2 再考虑硬件辅助同步。
+3. **SYNC 信号链**：DC 的 SYNC0/SYNC1 信号在硬件级别触发同步事件。Weftik 的 RT 线程可以使用 Linux `timerfd` 或 `clock_nanosleep` 实现软件级别的 SYNC 等效机制，在 Phase 2 再考虑硬件辅助同步。
 
-**AUDESYS 实时同步的分阶段路线**：
+**Weftik 实时同步的分阶段路线**：
 - **Phase 1**：软件同步，使用 `clock_nanosleep` + PREEMPT_RT，目标抖动 <100us
 - **Phase 2**：网络级同步，参考 DC 漂移补偿，目标抖动 <10us
 - **Phase 3**：硬件辅助同步（如 1588 PTP + 专用硬件），目标抖动 <1us
 
-### 7.4 SM/FMMU 配置 vs AUDESYS StreamChannel 数据路径 (4星)
+### 7.4 SM/FMMU 配置 vs Weftik StreamChannel 数据路径 (4星)
 
-EtherCAT 的 SyncManager 和 FMMU 配置机制为 AUDESYS StreamChannel 的数据路径管理提供了参考：
+EtherCAT 的 SyncManager 和 FMMU 配置机制为 Weftik StreamChannel 的数据路径管理提供了参考：
 
-| EtherCAT 概念 | AUDESYS 类比 | 说明 |
+| EtherCAT 概念 | Weftik 类比 | 说明 |
 |---------------|-------------|------|
 | SM0/SM1（Mailbox） | RPC 通道 | 非周期性配置和命令 |
 | SM2（输出 PDO） | StreamChannel (主到从) | 主站周期性写入从站 |
@@ -698,39 +698,39 @@ EtherCAT 的 SyncManager 和 FMMU 配置机制为 AUDESYS StreamChannel 的数�
 | FMMU 逻辑地址映射 | StreamChannel 路由表 | 将逻辑数据路径映射到物理内存 |
 | 过程数据 RAM | Signal 值缓冲区 | 实时数据的内存存储区域 |
 
-**AUDESYS 的可借鉴设计**：
-- **编译期静态路由**：EtherCAT 的 FMMU 配置在 Pre-Op 状态下完成，运行时不更改。AUDESYS 的 StreamChannel 路由表同样应在配置阶段（Non-RT）确定，RT 路径使用预计算的路由信息零开销转发
-- **SyncManager 看门狗**：SM 的看门狗机制检测通信中断——如果主站未在指定时间内更新输出，从站进入安全状态。AUDESYS 的 HalQoS 中的 `deadline` 参数提供了类似的语义
+**Weftik 的可借鉴设计**：
+- **编译期静态路由**：EtherCAT 的 FMMU 配置在 Pre-Op 状态下完成，运行时不更改。Weftik 的 StreamChannel 路由表同样应在配置阶段（Non-RT）确定，RT 路径使用预计算的路由信息零开销转发
+- **SyncManager 看门狗**：SM 的看门狗机制检测通信中断——如果主站未在指定时间内更新输出，从站进入安全状态。Weftik 的 HalQoS 中的 `deadline` 参数提供了类似的语义
 
 ### 7.5 SOES 的开源治理与社区模式 (3星)
 
-SOES 的开源治理模式对 AUDESYS 的参考价值：
+SOES 的开源治理模式对 Weftik 的参考价值：
 
 **值得采纳的实践**：
 - **电子邮箱列表 + GitHub Issues 双渠道**：IgH 和 SOES 使用邮件列表进行深度技术讨论，GitHub Issues 用于 bug 追踪
 - **GPL v2 + 商业授权双许可**：为开源社区提供自由使用的版本，同时为商业用户提供付费授权和技术支持
 - **参考硬件平台策略**：SOES 通过社区移植支持多种 MCU 平台但官方仅维护 2-3 个参考平台
 
-**AUDESYS 应避免的问题**：
-- **Bus factor = 1**：SOES 的核心维护者只有一人，项目风险集中。AUDESYS 从 Phase 1 开始确保核心模块至少有两位熟悉代码的贡献者
-- **文档不足**：SOES 的文档严重依赖社区 Wiki，缺乏正式的 API 文档和移植指南。AUDESYS 在 Phase 0 就将文档作为必选项
+**Weftik 应避免的问题**：
+- **Bus factor = 1**：SOES 的核心维护者只有一人，项目风险集中。Weftik 从 Phase 1 开始确保核心模块至少有两位熟悉代码的贡献者
+- **文档不足**：SOES 的文档严重依赖社区 Wiki，缺乏正式的 API 文档和移植指南。Weftik 在 Phase 0 就将文档作为必选项
 
-### 7.6 总结：SOES 对 AUDESYS HAL 的关键参考权重
+### 7.6 总结：SOES 对 Weftik HAL 的关键参考权重
 
 | 参考点 | 权重 | 适用模块 | 优先级 |
 |--------|------|----------|--------|
-| ESC HAL 抽象层设计 | 5星 | AUDESYS HAL Transport trait | P0 |
-| CoE 对象字典 -> 类型系统映射 | 4星 | AUDESYS 类型系统 + Signal | P1 |
+| ESC HAL 抽象层设计 | 5星 | Weftik HAL Transport trait | P0 |
+| CoE 对象字典 -> 类型系统映射 | 4星 | Weftik 类型系统 + Signal | P1 |
 | DC 分布式时钟漂移补偿 | 4星 | amw 实时同步层 | P1 |
 | SM/FMMU -> StreamChannel 路由 | 4星 | amw_inproc / amw_zenoh | P1 |
-| PDO 映射 -> Signal 绑定 | 3星 | AUDESYS 配置层 | P2 |
-| 双许可商业开源模式 | 3星 | AUDESYS 项目治理 | P3 |
+| PDO 映射 -> Signal 绑定 | 3星 | Weftik 配置层 | P2 |
+| 双许可商业开源模式 | 3星 | Weftik 项目治理 | P3 |
 | 中断 vs 轮询双模式 | 3星 | HAL RT 线程调度 | P1 |
 | 看门狗通信检测 | 3星 | HalQoS deadline | P1 |
 
-**总体评估**：SOES 对 AUDESYS 的价值在于提供了一个经过实际验证的**嵌入式硬件抽象微型案例**。虽然 SOES 是一个 EtherCAT 从站协议栈而 AUDESYS 是一个工业控制系统平台，但两者在硬件抽象层的设计哲学上是高度一致的。AUDESYS HAL 的 Transport trait 可以直接采用 SOES ESC HAL 的"最小原语接口 + 性能关键路径零抽象"模式。同时，EtherCAT 的 DC 同步、PDO 映射和 SM/FMMU 数据路径管理为 AUDESYS 的 StreamChannel 和 HalQoS 提供了经过大规模实际部署检验的参考模型。
+**总体评估**：SOES 对 Weftik 的价值在于提供了一个经过实际验证的**嵌入式硬件抽象微型案例**。虽然 SOES 是一个 EtherCAT 从站协议栈而 Weftik 是一个工业控制系统平台，但两者在硬件抽象层的设计哲学上是高度一致的。Weftik HAL 的 Transport trait 可以直接采用 SOES ESC HAL 的"最小原语接口 + 性能关键路径零抽象"模式。同时，EtherCAT 的 DC 同步、PDO 映射和 SM/FMMU 数据路径管理为 Weftik 的 StreamChannel 和 HalQoS 提供了经过大规模实际部署检验的参考模型。
 
-> **补充说明**：SOES 作为开源 EtherCAT 从站协议栈，其核心价值不在于协议栈本身的功能完整性（不如 Beckhoff SSC 完整），而在于其硬件抽象层的简洁设计和嵌入式友好性。AUDESYS 在 Phase 1 的 HAL 设计中应重点吸收 SOES 的"最小抽象层"哲学，而非追求功能完备性——功能可以在后续阶段逐步追加，但抽象层的设计质量决定了整体的可扩展性和性能上限。
+> **补充说明**：SOES 作为开源 EtherCAT 从站协议栈，其核心价值不在于协议栈本身的功能完整性（不如 Beckhoff SSC 完整），而在于其硬件抽象层的简洁设计和嵌入式友好性。Weftik 在 Phase 1 的 HAL 设计中应重点吸收 SOES 的"最小抽象层"哲学，而非追求功能完备性——功能可以在后续阶段逐步追加，但抽象层的设计质量决定了整体的可扩展性和性能上限。
 
 ---
 

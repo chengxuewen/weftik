@@ -69,12 +69,12 @@
 - **Downward (fieldbus)**: Supports mainstream fieldbuses, important member of EtherCAT Technology Group
 - **Horizontal (cloud/IT)**: OPC UA, MQTT integration with IT systems; Automation Server provides cloud capability
 
-## 5.4 AUDESYS Relevance — Market Positioning
+## 5.4 Weftik Relevance — Market Positioning
 
-| CODESYS Market Insight | AUDESYS Application |
+| CODESYS Market Insight | Weftik Application |
 |------------------------|---------------------|
-| Free IDE + licensed runtime lowers barrier | AUDESYS Studio pricing strategy |
-| Hardware neutrality wins OEM adoption | AUDESYS HAL hardware abstraction validates the strategy |
-| OEM machine building is the sweet spot | AUDESYS target segment alignment |
-| Education market (free IDE) builds future users | AUDESYS developer adoption strategy |
-| Compete on hardware flexibility, not brand lock-in | AUDESYS vs single-vendor industrial IDEs |
+| Free IDE + licensed runtime lowers barrier | Weftik Studio pricing strategy |
+| Hardware neutrality wins OEM adoption | Weftik HAL hardware abstraction validates the strategy |
+| OEM machine building is the sweet spot | Weftik target segment alignment |
+| Education market (free IDE) builds future users | Weftik developer adoption strategy |
+| Compete on hardware flexibility, not brand lock-in | Weftik vs single-vendor industrial IDEs |

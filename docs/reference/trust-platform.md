@@ -1,6 +1,6 @@
 # truST Platform — 开源 IEC 61131-3 全栈控制工作台
 
-> **全栈 Rust 工业控制平台 — 与 AUDESYS 架构高度对齐的参考项目**
+> **全栈 Rust 工业控制平台 — 与 Weftik 架构高度对齐的参考项目**
 > 仓库：https://github.com/johannesPettersson80/trust-platform
 > 许可：MIT OR Apache-2.0 | 204 Stars | 27 Forks | 772 Commits | 86 Releases | v0.24.32
 > 语言栈：Rust 52.4% / JavaScript 25% / TypeScript 12.7% / Smalltalk 6.4% / 其他 3.5%
@@ -53,7 +53,7 @@ truST 的发展轨迹清晰地展示了一个独立开发者从零构建工业�
 | 2026-07（上旬） | PREEMPT_RT 软实时部署文档完成 | 确定性实时控制方案（SCHED_FIFO + PREEMPT_RT）的完整文档和最佳实践发布。Raspberry Pi ARM 平台验证通过，嵌入式部署成为现实 |
 | 2026-07（中旬） | v0.24.32 发布，核心行为测试锁定 | 进入功能稳定化阶段。behavior-locked by tests 的声明标志着项目信心达到新高度 |
 
-该发展轨迹对 AUDESYS 项目规划的核心启示：构建工业控制平台不需要等待架构完美、功能完整才开始向用户交付价值。truST 在每个阶段交付的增量都具有独立的使用价值——LSP 可以独立使用（不需要 Runtime）、Runtime 可以独立运行（不需要 Mesh）、HMI 在 Runtime 基础上增加了可视化操作能力。AUDESYS 可以借鉴同样的增量交付策略：Phase 1 从最小可用的 Runtime + 基本 HAL 开始，Phase 2 增加 Studio IDE 和调试能力，Phase 3 增加 Simulator 仿真器和高级功能。这种策略可以降低技术风险、加速用户反馈循环、并为团队提供早期的成就感和持续动力。
+该发展轨迹对 Weftik 项目规划的核心启示：构建工业控制平台不需要等待架构完美、功能完整才开始向用户交付价值。truST 在每个阶段交付的增量都具有独立的使用价值——LSP 可以独立使用（不需要 Runtime）、Runtime 可以独立运行（不需要 Mesh）、HMI 在 Runtime 基础上增加了可视化操作能力。Weftik 可以借鉴同样的增量交付策略：Phase 1 从最小可用的 Runtime + 基本 HAL 开始，Phase 2 增加 Studio IDE 和调试能力，Phase 3 增加 Simulator 仿真器和高级功能。这种策略可以降低技术风险、加速用户反馈循环、并为团队提供早期的成就感和持续动力。
 
 ### 1.3 产品定位与核心价值主张
 
@@ -92,19 +92,19 @@ truST 的七项核心价值主张全面覆盖现代工业控制平台的关键�
 | 系统集成商 | PREEMPT_RT 实时生产系统部署；远程运维和多站点管理 | 确定性实时执行能力（微秒级循环周期）；硬件平台无关性（x86/ARM 均可部署）；远程 HMI 监控和诊断；安全合规（安全审计、访问控制）；故障快速诊断和恢复能力 |
 | 教育机构/研究者 | 工业控制相关课程教学；自动化控制算法研究实验 | 完全免费开源（零许可证费用）；支持低成本硬件平台（Raspberry Pi）；完善的英文文档和社区支持；代码完全透明可审查、可修改、可扩展 |
 
-### 1.5 与 AUDESYS 的关系定位
+### 1.5 与 Weftik 的关系定位
 
-truST 是 AUDESYS 项目目前发现的与自身架构蓝图最对齐的开源参考项目。两者的设计决策在多个关键维度上高度重合：
+truST 是 Weftik 项目目前发现的与自身架构蓝图最对齐的开源参考项目。两者的设计决策在多个关键维度上高度重合：
 
-- 技术栈：两者都选择了全 Rust 技术栈（AUDESYS 决策 D19 的核心结论），truST 提供了这一决策在工业控制领域的具体实践验证
+- 技术栈：两者都选择了全 Rust 技术栈（Weftik 决策 D19 的核心结论），truST 提供了这一决策在工业控制领域的具体实践验证
 - 架构模式：两者都规划了 Studio IDE + Runtime + 硬件适配的三层架构模式
 - 编程语言：两者都以 IEC 61131-3 结构化文本 (ST) 为主要的控制编程语言
 - 部署平台：两者都以 PREEMPT_RT Linux 为目标实时部署平台
 - 工程方法：两者都拥抱现代开发实践（Git 版本控制、CI/CD 自动化、测试驱动开发）
 
-truST 本质上相当于 AUDESYS 的"最小可行验证版本"（Minimum Viable Validation）。它在以下关键方向上提供了坚实的实践验证：Rust 语言在工业控制领域的技术可行性（性能、安全性、生态成熟度）、LSP 协议用于 IEC 61131-3 语言服务的实现方式、浏览器 HMI 作为工业控制操作界面的用户体验、AI Agent API 作为控制运行时智能接口的设计模式、PREEMPT_RT 实时 Linux 作为控制平台操作系统的部署方案。
+truST 本质上相当于 Weftik 的"最小可行验证版本"（Minimum Viable Validation）。它在以下关键方向上提供了坚实的实践验证：Rust 语言在工业控制领域的技术可行性（性能、安全性、生态成熟度）、LSP 协议用于 IEC 61131-3 语言服务的实现方式、浏览器 HMI 作为工业控制操作界面的用户体验、AI Agent API 作为控制运行时智能接口的设计模式、PREEMPT_RT 实时 Linux 作为控制平台操作系统的部署方案。
 
-在 AUDESYS 的参考项目评估体系中，truST 被评为最高参考价值等级：⭐⭐⭐⭐⭐ (5/5)。
+在 Weftik 的参考项目评估体系中，truST 被评为最高参考价值等级：⭐⭐⭐⭐⭐ (5/5)。
 
 ---
 
@@ -206,7 +206,7 @@ Agent API 是 truST 面向工业 AI 未来发展方向的探索性设计。通�
 
 truST Mesh 的多协议通信架构体现了"按任务特征选择最优通信方式"的工程智慧。ADS 线（TCP, Beckhoff ADS 协议）与 TwinCAT 生态无缝集成。WebSocket 线（HTTP Upgrade to WS, 10-50ms 延迟）提供 HMI 和 IDE 的实时双向通信。Mesh 线（TCP, 运行时间对等互联）用于分布式控制场景下的数据交换。
 
-truST Mesh 的设计理念与 AUDESYS HAL 的 amw (AUDESYS Middleware) 设计高度一致：都认为不同的工业通信场景（控制面、数据面、监控面）需要不同传输协议的优化。关键区别在于实现方式：truST 采用了更偏工程实用的"三条预设线"（硬编码三种协议的实现），而 AUDESYS 的 amw 采取更偏系统化、可扩展的设计——通过 HalTransport（传输抽象 trait）、HalDiscovery（发现机制 trait）、HalQoS（服务质量 trait）三极可替换 trait 体系，允许根据部署环境灵活插入不同的底层传输协议实现（Phase 1 使用 amw_inproc 进行进程内通信，Phase 2+ 使用 amw_zenoh 进行分布式通信，未来可能扩展 amw_dds 等其它实现）。
+truST Mesh 的设计理念与 Weftik HAL 的 amw (Weftik Middleware) 设计高度一致：都认为不同的工业通信场景（控制面、数据面、监控面）需要不同传输协议的优化。关键区别在于实现方式：truST 采用了更偏工程实用的"三条预设线"（硬编码三种协议的实现），而 Weftik 的 amw 采取更偏系统化、可扩展的设计——通过 HalTransport（传输抽象 trait）、HalDiscovery（发现机制 trait）、HalQoS（服务质量 trait）三极可替换 trait 体系，允许根据部署环境灵活插入不同的底层传输协议实现（Phase 1 使用 amw_inproc 进行进程内通信，Phase 2+ 使用 amw_zenoh 进行分布式通信，未来可能扩展 amw_dds 等其它实现）。
 
 truST 的调度层次结构：
 
@@ -246,7 +246,7 @@ truST 的调度层次结构：
 - CPU 核心 2-3：通信 + 非实时服务
 - 通过 taskset/cgroups v2 配置亲和性
 
-**AUDESYS 映射**：控制循环 ↔ RT 线程 (D13)，I/O ↔ 通信线程，Mesh ↔ StreamChannel 流线程。
+**Weftik 映射**：控制循环 ↔ RT 线程 (D13)，I/O ↔ 通信线程，Mesh ↔ StreamChannel 流线程。
 
 ### 2.9 IEC 61131-3 语言支持详解
 
@@ -292,9 +292,9 @@ truST 实现了结构化文本 (ST) 的核心语法子集。从 LSP 实现的诊
 - 断线重连：序列号追踪丢失窗口，恢复后自动重传
 - 网络分区恢复：Last-Write-Wins 冲突解决
 
-**truST Mesh vs AUDESYS amw 对比**：
+**truST Mesh vs Weftik amw 对比**：
 
-| 维度 | truST Mesh | AUDESYS amw | 分析 |
+| 维度 | truST Mesh | Weftik amw | 分析 |
 |------|-----------|------------|------|
 | 抽象方式 | 硬编码三条线，各自独立实现 | HalTransport/HalDiscovery/HalQoS 三极 trait，可插拔 | amw 更灵活——换底层传输不需修改控制逻辑 |
 | 协议选择 | 每场景有优化协议 | 统一抽象，通过配置切换 | Mesh 更贴工程，amw 更系统化 |
@@ -302,7 +302,7 @@ truST 实现了结构化文本 (ST) 的核心语法子集。从 LSP 实现的诊
 | QoS | 三条线各自隐式 QoS | HalQoS 显式定义 (deadline/liveliness/security_domain) | amw 的显式 QoS 让应用层忽略底层协议差异 |
 | 发现机制 | 手动配置运行时拓扑 | HalDiscovery trait 支持动态发现 | amw 更适合弹性部署 |
 
-**AUDESYS 应采纳的三个设计优点**：
+**Weftik 应采纳的三个设计优点**：
 1. "按通信模式选最优协议"的实用主义——不为统一性牺牲性能
 2. "按需传输 + Delta-based"策略——减少带宽，提高大规模部署可行性
 3. 灵活拓扑（全连接/星型/链式）——amw 应支持多种拓扑
@@ -319,7 +319,7 @@ HIR 的跨组件复用机制：
 类型系统设计参考：
 - IEC 61131-3 标准类型 + 类型推导（从字面量推断、从表达式提升、从函数返回值推断）
 - 函数块实例化的类型参数化（类似 Rust 的泛型约束，但受限于 IEC 61131-3 的语法）
-- 缺乏完整的 trait/interface 抽象（这是 AUDESYS 的差异化机会——Rust trait 可用于定义 HAL 组件接口）
+- 缺乏完整的 trait/interface 抽象（这是 Weftik 的差异化机会——Rust trait 可用于定义 HAL 组件接口）
 ### 2.7 安全与合规基础设施
 
 truST 在安全方面采取了 Rust 生态的标准最佳实践。cargo-deny 工具在 CI 流水线中自动执行：许可证合规检查（deny.toml 定义白名单，拒绝 GPL 等可能与双许可证冲突的依赖）、安全漏洞扫描（对接 RustSec Advisory Database，自动检测已知 CVE）、重复依赖检测（防止同一库的多个版本导致二进制膨胀）。SECURITY.md 提供标准的安全漏洞报告流程和响应时间承诺。GitHub Actions CI 流水线每次提交和 PR 自动执行 cargo test（单元和集成测试）、cargo clippy（静态分析和代码质量检查）、cargo deny check（安全审计）、cargo fmt --check（代码格式一致性）。
@@ -419,7 +419,7 @@ truST 采用 SemVer pre-1.0 + behavior-locked by tests 策略：
 2. 承诺在 1.0 之前不故意破坏测试覆盖的 API
 3. 鼓励用户通过提交测试用例锁定依赖行为
 
-AUDESYS 启示：Phase 1 优先建立核心测试套件，在测试框架完善之前不承诺 API 稳定性。
+Weftik 启示：Phase 1 优先建立核心测试套件，在测试框架完善之前不承诺 API 稳定性。
 
 ---
 
@@ -449,7 +449,7 @@ AUDESYS 启示：Phase 1 优先建立核心测试套件，在测试框架完善�
 
 ### 6.2 全栈 Rust 验证
 
-在 PREEMPT_RT 环境下验证了 Rust 确定性执行的可行性。编译时内存安全、零成本抽象性能、LLVM 后端跨平台能力。AUDESYS D19 的最直接先行验证。
+在 PREEMPT_RT 环境下验证了 Rust 确定性执行的可行性。编译时内存安全、零成本抽象性能、LLVM 后端跨平台能力。Weftik D19 的最直接先行验证。
 
 ### 6.3 AI 原生
 
@@ -465,63 +465,63 @@ Agent API 是工业控制领域的前沿探索——控制运行时主动暴露�
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 全栈架构对齐 (⭐⭐⭐⭐⭐)
 
-truST 模块直接映射到 AUDESYS 规划：trust-lsp+trust-ide → Studio IDE、trust-runtime → Runtime、runtime-core 硬件适配部分 → HAL、trust-debug → 工业调试桥。truST 是 AUDESYS 的"最小可行验证版"。
+truST 模块直接映射到 Weftik 规划：trust-lsp+trust-ide → Studio IDE、trust-runtime → Runtime、runtime-core 硬件适配部分 → HAL、trust-debug → 工业调试桥。truST 是 Weftik 的"最小可行验证版"。
 
 ### 7.2 编译管线参考 (⭐⭐⭐⭐)
 
-AST→HIR→IR 三阶段管线对 AUDESYS 多语言编译器设计有直接参考价值。HIR 公共中间表示使不同前端语言共享同一 IDE 和运行时。
+AST→HIR→IR 三阶段管线对 Weftik 多语言编译器设计有直接参考价值。HIR 公共中间表示使不同前端语言共享同一 IDE 和运行时。
 
 ### 7.3 Mesh 对 amw 的启示 (⭐⭐⭐⭐)
 
-实际使用经验：ADS 线和 Mesh 线是最高频场景。确认 amw_zenoh 应为 AUDESYS Phase 2 最高优先级的传输实现。
+实际使用经验：ADS 线和 Mesh 线是最高频场景。确认 amw_zenoh 应为 Weftik Phase 2 最高优先级的传输实现。
 
 ### 7.4 开发流程 (⭐⭐⭐⭐)
 
-高频发布、测试驱动行为锁定、CI/CD 全流程、跨平台编译。AUDESYS 从零构建可直接参考此模式。
+高频发布、测试驱动行为锁定、CI/CD 全流程、跨平台编译。Weftik 从零构建可直接参考此模式。
 
 ### 7.5 差异化方向
 
-truST 的局限即 AUDESYS 的机遇：多语言支持（truST 仅 ST）、显式 HAL 抽象（truST HAL 隐含在 runtime-core）、Simulator 仿真器（AUDESYS 独有 AVD Manager）、工业调试桥（超越标准 DAP）、团队协作架构（truST 单人项目）。
+truST 的局限即 Weftik 的机遇：多语言支持（truST 仅 ST）、显式 HAL 抽象（truST HAL 隐含在 runtime-core）、Simulator 仿真器（Weftik 独有 AVD Manager）、工业调试桥（超越标准 DAP）、团队协作架构（truST 单人项目）。
 
 ### 7.6 LSP 设计模板
 
-AUDESYS Studio IDE 如果为 ST 语言构建编辑器，truST LSP 的实现可作为直接参考模板。
+Weftik Studio IDE 如果为 ST 语言构建编辑器，truST LSP 的实现可作为直接参考模板。
 
 ### 7.7 总结
 
-truST 直接验证了 AUDESYS 技术路线（Rust 全栈 + IEC 61131-3 + PREEMPT_RT）的可行性。AUDESYS 可以跳过基础技术验证阶段，直接聚焦多语言、显式 HAL、仿真器和调试桥等差异化能力的建设。
+truST 直接验证了 Weftik 技术路线（Rust 全栈 + IEC 61131-3 + PREEMPT_RT）的可行性。Weftik 可以跳过基础技术验证阶段，直接聚焦多语言、显式 HAL、仿真器和调试桥等差异化能力的建设。
 
-### 7.8 truST vs AUDESYS HAL 架构对照表
+### 7.8 truST vs Weftik HAL 架构对照表
 
-以下表格从多个维度系统对照 truST 与 AUDESYS 的设计选择，为 AUDESYS 的架构决策提供量化参考：
+以下表格从多个维度系统对照 truST 与 Weftik 的设计选择，为 Weftik 的架构决策提供量化参考：
 
 **编译与执行管线对照**：
 
-| 维度 | truST Platform | AUDESYS (规划) | 对照分析 |
+| 维度 | truST Platform | Weftik (规划) | 对照分析 |
 |------|---------------|---------------|---------|
-| 解析管线 | trust-syntax (CST) → trust-hir (HIR) → trust-runtime-core (可执行 IR) | 多语言前端 (ST/LD/FBD) → HIR (统一中间表示) → Runtime IR | AUDESYS HIR 需支持多语言输入，复杂度高于 truST |
-| 类型系统 | IEC 61131-3 基本类型 + 复合类型 | 14 种统一类型 (D12) + 动态类型扩展 | truST 贴近标准，AUDESYS 更系统化 |
-| 代码复用机制 | 子 VI / FB 调用（类似函数调用） | FB 实例化 + trait/interface 抽象 | truST 缺失 trait 机制，AUDESYS 有 Rust trait 加持 |
-| IDE 代码分析 | trust-lsp (HIR 查询) + trust-wasm-analysis (浏览器 WASM) | Studio IDE 内嵌 LSP server + WASM 分析 | 两者方案高度一致，AUDESYS 可直接参考 |
+| 解析管线 | trust-syntax (CST) → trust-hir (HIR) → trust-runtime-core (可执行 IR) | 多语言前端 (ST/LD/FBD) → HIR (统一中间表示) → Runtime IR | Weftik HIR 需支持多语言输入，复杂度高于 truST |
+| 类型系统 | IEC 61131-3 基本类型 + 复合类型 | 14 种统一类型 (D12) + 动态类型扩展 | truST 贴近标准，Weftik 更系统化 |
+| 代码复用机制 | 子 VI / FB 调用（类似函数调用） | FB 实例化 + trait/interface 抽象 | truST 缺失 trait 机制，Weftik 有 Rust trait 加持 |
+| IDE 代码分析 | trust-lsp (HIR 查询) + trust-wasm-analysis (浏览器 WASM) | Studio IDE 内嵌 LSP server + WASM 分析 | 两者方案高度一致，Weftik 可直接参考 |
 
 **通信架构对照**：
 
-| 维度 | truST Mesh | AUDESYS amw | 策略差异 |
+| 维度 | truST Mesh | Weftik amw | 策略差异 |
 |------|-----------|------------|---------|
-| 抽象层次 | 三条预设通信线（ADS/WebSocket/Mesh） | HalTransport/HalDiscovery/HalQoS 三极 trait | truST 实用优先，AUDESYS 系统化可扩展 |
-| 数据交换语义 | Mesh 线内嵌 Pub/Sub + QoS 标志 | Signal (单写多读) + StreamChannel (多写多读) | AUDESYS 语义更精确 |
-| 变化通知 | Delta-based 更新 + 死区阈值 | Signal 值变化通知（订阅模式） | 机制相似，AUDESYS 更通用 |
-| RPC 支持 | 无显式 RPC 原语（通过 HTTP REST API 实现） | RPC 原语（请求/响应 + 超时） | AUDESYS 更系统化——RPC 是一等通信原语 |
-| 发现机制 | 手动配置文件指定运行时拓扑 | HalDiscovery trait (动态发现) | AUDESYS 更适合弹性部署 |
-| 服务质量 | 三条线各自的隐式 QoS | HalQoS (deadline/liveliness/security_domain) | AUDESYS QoS 显式且标准 |
+| 抽象层次 | 三条预设通信线（ADS/WebSocket/Mesh） | HalTransport/HalDiscovery/HalQoS 三极 trait | truST 实用优先，Weftik 系统化可扩展 |
+| 数据交换语义 | Mesh 线内嵌 Pub/Sub + QoS 标志 | Signal (单写多读) + StreamChannel (多写多读) | Weftik 语义更精确 |
+| 变化通知 | Delta-based 更新 + 死区阈值 | Signal 值变化通知（订阅模式） | 机制相似，Weftik 更通用 |
+| RPC 支持 | 无显式 RPC 原语（通过 HTTP REST API 实现） | RPC 原语（请求/响应 + 超时） | Weftik 更系统化——RPC 是一等通信原语 |
+| 发现机制 | 手动配置文件指定运行时拓扑 | HalDiscovery trait (动态发现) | Weftik 更适合弹性部署 |
+| 服务质量 | 三条线各自的隐式 QoS | HalQoS (deadline/liveliness/security_domain) | Weftik QoS 显式且标准 |
 
 **调度与执行模型对照**：
 
-| 维度 | truST Runtime | AUDESYS Runtime (D13) |
+| 维度 | truST Runtime | Weftik Runtime (D13) |
 |------|---------------|----------------------|
 | 实时线程 | SCHED_FIFO rt_prio 90 | RT 线程 (LinuxCNC 显式函数列表) |
 | 通信线程 | SCHED_FIFO rt_prio 60-50 | I/O 通信线程 + StreamChannel 流线程 |
@@ -531,7 +531,7 @@ truST 直接验证了 AUDESYS 技术路线（Rust 全栈 + IEC 61131-3 + PREEMPT
 
 **类型系统与数据模型**：
 
-| 维度 | truST | AUDESYS |
+| 维度 | truST | Weftik |
 |------|-------|---------|
 | 基本类型 | IEC 61131-3 标准类型 | 14 种统一类型 (D12)：Bool/S8/U8/S16/U16/S32/U32/S64/U64/F32/F64 + String + Blob + Array<T> |
 | 序列化 | 无显式序列化（内存内直接执行） | FlatBuffers (零拷贝，跨语言) |
@@ -540,7 +540,7 @@ truST 直接验证了 AUDESYS 技术路线（Rust 全栈 + IEC 61131-3 + PREEMPT
 
 **部署与运维**：
 
-| 维度 | truST | AUDESYS |
+| 维度 | truST | Weftik |
 |------|-------|---------|
 | 平台 | Linux/PREEMPT_RT/macOS/Windows/Raspberry Pi | Linux/PREEMPT_RT (Phase 1), 跨平台 (Phase 2+) |
 | 配置管理 | .trust 项目文件 | YAML/JSON 配置文件 + FlatBuffers 二进制配置 |
@@ -549,18 +549,18 @@ truST 直接验证了 AUDESYS 技术路线（Rust 全栈 + IEC 61131-3 + PREEMPT
 | 容器化 | 无（预编译二进制部署） | OCI 容器 (Phase 2+) |
 | 远程运维 | 浏览器 /hmi + /ide | Studio IDE 远程调试 + Web HMI |
 
-### 7.9 truST LSP 对 AUDESYS 的具体参考
+### 7.9 truST LSP 对 Weftik 的具体参考
 
-truST LSP 的实现为 AUDESYS Studio IDE 提供了最直接的技术模板：
+truST LSP 的实现为 Weftik Studio IDE 提供了最直接的技术模板：
 
-| truST LSP 能力 | AUDESYS Studio 可采纳模式 | 定制化差异 |
+| truST LSP 能力 | Weftik Studio 可采纳模式 | 定制化差异 |
 |---------------|------------------------|---------|
-| HIR 增量更新（每次编辑后 ms 级重分析） | Studio 编译管线的增量编译 | AUDESYS 需支持多语言的增量分析 |
+| HIR 增量更新（每次编辑后 ms 级重分析） | Studio 编译管线的增量编译 | Weftik 需支持多语言的增量分析 |
 | 基于 tower-lsp 的异步请求处理 | Studio LSP 实现框架选择 | 可直接使用 tower-lsp（同为 Rust 项目） |
-| WASM 分析前移（浏览器客户端诊断） | Studio Web IDE 客户端分析 | AUDESYS 需额外支持 FBD/LD 图形化诊断 |
+| WASM 分析前移（浏览器客户端诊断） | Studio Web IDE 客户端分析 | Weftik 需额外支持 FBD/LD 图形化诊断 |
 | 语义重命名（非文本替换） | Studio 跨文件重命名 | 需处理 Signal/StreamChannel 命名绑定的级联重命名 |
-| 循环依赖检测 | Studio 工程拓扑校验 | AUDESYS 需检测 HAL 拓扑中的循环引用 (component A ↔ component B) |
-| 类型不匹配检测 | Studio 类型检查 | AUDESYS 的类型系统更复杂 (14 种 + FlatBuffers 序列化) |
+| 循环依赖检测 | Studio 工程拓扑校验 | Weftik 需检测 HAL 拓扑中的循环引用 (component A ↔ component B) |
+| 类型不匹配检测 | Studio 类型检查 | Weftik 的类型系统更复杂 (14 种 + FlatBuffers 序列化) |
 
 ### 7.10 总结与优先级
 
@@ -569,13 +569,13 @@ truST LSP 的实现为 AUDESYS Studio IDE 提供了最直接的技术模板：
 | 全栈 Rust 验证 | P0 | Phase 1 | 确认 Rust 全栈技术路线的可行性已被 truST 充分验证 |
 | 编译管线 (AST→HIR→IR) | P0 | Phase 1 | 直接参考 truST 的四阶段管线，扩展支持多语言 HIR |
 | LSP 实现 | P0 | Phase 2 | 以 truST LSP 为模板构建 Studio IDE 语言服务 |
-| Mesh 通信架构 | P1 | Phase 2 | amw 设计中平衡实用主义 (truST) 与系统化 (AUDESYS) |
+| Mesh 通信架构 | P1 | Phase 2 | amw 设计中平衡实用主义 (truST) 与系统化 (Weftik) |
 | 实时调度模型 | P1 | Phase 1 | 参考 truST 的优先级分配，构建 D13 混合线程调度 |
 | 开发流程 (高频发布+测试锁定) | P1 | Phase 1 | 从零构建即采用 CI/CD + 行为测试锁定 |
 | Agent API | P2 | Phase 3 | AI 集成接口的参考设计 |
 | PLCopen XML 互操作 | P2 | Phase 2 | Studio IDE 的导入/导出能力参考 |
 
-truST 是 AUDESYS 发现的最高价值参考项目——它在 Rust 全栈、IEC 61131-3、PREEMPT_RT、LSP 四个 AUDESYS 核心技术决策上均提供了经过实践验证的实现模板。AUDESYS 可以站在 truST 的肩膀上，跳过基础验证，直接聚焦多语言支持、显式 HAL 抽象、仿真器和调试桥等差异化能力。
+truST 是 Weftik 发现的最高价值参考项目——它在 Rust 全栈、IEC 61131-3、PREEMPT_RT、LSP 四个 Weftik 核心技术决策上均提供了经过实践验证的实现模板。Weftik 可以站在 truST 的肩膀上，跳过基础验证，直接聚焦多语言支持、显式 HAL 抽象、仿真器和调试桥等差异化能力。
 ---
 
 > **文档版本**：1.0 | **编写日期**：2026-07-13
@@ -594,7 +594,7 @@ PREEMPT_RT 补丁将标准 Linux 内核改造为完全可抢占的实时内核�
 
 #### 关于 AI Agent API 的安全性
 
-Agent API 的设计中，写入操作（如修改循环速率、I/O 映射）应受严格的权限控制。在 truST 的当前实现中，Agent API 的认证和授权机制尚未在公开文档中详细描述，这是一个需要关注的安全边界。AUDESYS 在设计 AI 集成接口时应明确划分"只读"（诊断、遥测）和"可写"（参数设置、配置修改）权限，并配以完善的认证授权机制（如 token-based auth + RBAC）。
+Agent API 的设计中，写入操作（如修改循环速率、I/O 映射）应受严格的权限控制。在 truST 的当前实现中，Agent API 的认证和授权机制尚未在公开文档中详细描述，这是一个需要关注的安全边界。Weftik 在设计 AI 集成接口时应明确划分"只读"（诊断、遥测）和"可写"（参数设置、配置修改）权限，并配以完善的认证授权机制（如 token-based auth + RBAC）。
 
 #### 关于与 TwinCAT/CODESYS 的实际兼容性
 
@@ -604,7 +604,7 @@ PLCopen XML 格式虽然标准化，但不同厂商的实现之间存在细微�
 
 #### truST 的 Rust 技术栈选择分析
 
-truST 选择全 Rust 技术栈（从解析器到运行时到 Web 服务器）是 AUDESYS D19 决策的最直接先行验证。以下为各模块的 Rust 生态依赖分析：
+truST 选择全 Rust 技术栈（从解析器到运行时到 Web 服务器）是 Weftik D19 决策的最直接先行验证。以下为各模块的 Rust 生态依赖分析：
 
 | 模块 | Rust 依赖 | 成熟度 | 说明 |
 |------|----------|--------|------|
@@ -616,7 +616,7 @@ truST 选择全 Rust 技术栈（从解析器到运行时到 Web 服务器）是
 | trust-ads (Beckhoff ADS) | tokio (异步 TCP) + 自实现 ADS 帧编解码 | 成熟 | tokio 用于非实时通信的异步网络 |
 | trust-wasm-analysis (WASM) | wasm-bindgen + wasm-pack | 成熟 | HIR 编译为 WASM，浏览器客户端运行 |
 
-关键结论：truST 不使用 async/await 来处理实时控制逻辑（控制循环用原生线程 + SCHED_FIFO），而仅在非实时通信（ADS TCP、Web 服务器）中使用 tokio。这与 AUDESYS D19 的"RT 数据面 Rust 独占（< 1μs）"策略一致——实时线程不使用任何异步运行时。
+关键结论：truST 不使用 async/await 来处理实时控制逻辑（控制循环用原生线程 + SCHED_FIFO），而仅在非实时通信（ADS TCP、Web 服务器）中使用 tokio。这与 Weftik D19 的"RT 数据面 Rust 独占（< 1μs）"策略一致——实时线程不使用任何异步运行时。
 
 #### truST 的单人项目可持续性评估
 
@@ -628,26 +628,26 @@ truST 作为单人项目面临的核心可持续性风险：
 4. **测试覆盖率不透明**：虽然声明 behavior-locked by tests，但测试套件的规模和覆盖范围未公开
 5. **高速迭代的可持续性**：每 1.5 天一个版本的节奏可能在功能复杂度增加后难以为继
 
-**AUDESYS 的应对策略**（从 truST 的教训中学习）：
+**Weftik 的应对策略**（从 truST 的教训中学习）：
 - Phase 1 从团队协作架构开始（GitHub Organization + CODEOWNERS + 至少 2 个核心维护者）
 - 每次 PR 必须经过至少 1 个审查者批准（enforce branch protection rules）
 - 测试覆盖率强制执行 80% 最低标准（当前 .agents/rules/common/testing.md 已规定）
 - 架构决策通过 RFC（Request for Comments）流程讨论和文档化（.agents/memorys/decisions.md 的延续）
 
-#### truST 对 AUDESYS 开发周期的启发
+#### truST 对 Weftik 开发周期的启发
 
-truST 5 个月 86 个版本的极高迭代速度为 AUDESYS 的开发节奏提供了有价值的参考：
+truST 5 个月 86 个版本的极高迭代速度为 Weftik 的开发节奏提供了有价值的参考：
 
-| truST 实践 | AUDESYS 可行策略 |
+| truST 实践 | Weftik 可行策略 |
 |-----------|----------------|
-| 极小版本增量 (每个版本 1-3 个功能修改) | AUDESYS 可采用类似的微版本策略——每完成一个独立功能就发布 |
-| CI/CD 全自动（测试 + 构建 + 发布） | AUDESYS Phase 1 即建立 CI/CD 流水线 |
-| 预编译二进制直接下载 | AUDESYS Runtime 提供多平台预编译二进制 |
+| 极小版本增量 (每个版本 1-3 个功能修改) | Weftik 可采用类似的微版本策略——每完成一个独立功能就发布 |
+| CI/CD 全自动（测试 + 构建 + 发布） | Weftik Phase 1 即建立 CI/CD 流水线 |
+| 预编译二进制直接下载 | Weftik Runtime 提供多平台预编译二进制 |
 | 测试行为锁定 | Phase 1 核心测试套件即是 behavior-locked |
 | VS Code Marketplace 扩展分发 | Studio IDE 通过 VS Code Marketplace 分发 LSP 扩展 |
-| GitHub Discussions 社区交互 | AUDESYS 使用 GitHub Discussions + Discord 构建社区 |
+| GitHub Discussions 社区交互 | Weftik 使用 GitHub Discussions + Discord 构建社区 |
 
-但 AUDESYS 不应盲目追求"每 1.5 天一个版本"的极端节奏——truST 是单人项目，不需要团队协调成本；而 AUDESYS 规划为团队项目，正常的 2-4 周版本周期更合适。
+但 Weftik 不应盲目追求"每 1.5 天一个版本"的极端节奏——truST 是单人项目，不需要团队协调成本；而 Weftik 规划为团队项目，正常的 2-4 周版本周期更合适。
 
 #### truST 技术栈各模块的 Rust 版依赖分析
 
@@ -664,38 +664,38 @@ truST 5 个月 86 个版本的极高迭代速度为 AUDESYS 的开发节奏提�
 | wasm-bindgen | WASM 绑定 | 0.2+ | HIR 编译为 WASM |
 | ethercrab-rs | EtherCAT 主站 | 0.5+ | 疑似依赖（可选的硬件集成） |
 
-这些依赖选择验证了 Rust 生态在工业控制软件基础设施方面的成熟度——truST 不需要从头构建 LSP 框架、HTTP 服务器或异步运行时。AUDESYS 可以继承这个成熟的依赖栈。
+这些依赖选择验证了 Rust 生态在工业控制软件基础设施方面的成熟度——truST 不需要从头构建 LSP 框架、HTTP 服务器或异步运行时。Weftik 可以继承这个成熟的依赖栈。
 
-#### truST 项目对 AUDESYS 技术路线决策的全景验证
+#### truST 项目对 Weftik 技术路线决策的全景验证
 
-truST 在 5 个月内完成的功能集对 AUDESYS 的技术路线图提供了全景验证：
+truST 在 5 个月内完成的功能集对 Weftik 的技术路线图提供了全景验证：
 
-| AUDESYS 技术决策 | truST 验证状态 | 验证程度 |
+| Weftik 技术决策 | truST 验证状态 | 验证程度 |
 |-----------------|-------------|---------|
 | D1: Rust 全栈技术栈 | truST 全 Rust 实现 (52.4% Rust) | ✅ 完全验证 |
 | D10: Signal/StreamChannel/RPC 三原语 | truST Mesh 三条线 (ADS/WS/Mesh) | ⚠️ 间接验证——truST 不是显式三原语，但三条线各自对应一种通信模式 |
-| D12: 14 种统一类型 | truST IEC 61131-3 类型系统 | ⚠️ 部分验证——truST 使用 IEC 标准类型，非 AUDESYS 的 14 种 |
+| D12: 14 种统一类型 | truST IEC 61131-3 类型系统 | ⚠️ 部分验证——truST 使用 IEC 标准类型，非 Weftik 的 14 种 |
 | D13: 四系统混合线程调度 | truST SCHED_FIFO + SCHED_OTHER 调度架构 | ✅ 完全验证——优先级分离和 CPU 隔离模式 |
 | D14: 独立详细设计文档 | truST MkDocs 文档站点 | ✅ 模式验证 |
-| D16: HalQoS (deadline/liveliness/security_domain) | truST 无显式 QoS (非设计目标) | ❌ 未验证——AUDESYS 需自建 |
+| D16: HalQoS (deadline/liveliness/security_domain) | truST 无显式 QoS (非设计目标) | ❌ 未验证——Weftik 需自建 |
 | D17: Config Barrier + LockLevel | truST .trust 项目文件 + 在线下载 | ⚠️ 间接验证——truST 的项目文件作为配置统一入口 |
-| D19: Rust Core + FlatBuffers | truST Rust 独占（无跨语言需求） | ⚠️ 部分验证——truST 验证了 Rust 独占模式，AUDESYS 需额外验证 FlatBuffers 跨语言 |
+| D19: Rust Core + FlatBuffers | truST Rust 独占（无跨语言需求） | ⚠️ 部分验证——truST 验证了 Rust 独占模式，Weftik 需额外验证 FlatBuffers 跨语言 |
 
 #### truST 项目的未解决挑战
 
-truST 仍有一些针对 AUDESYS 项目值得警惕的未解决挑战：
+truST 仍有一些针对 Weftik 项目值得警惕的未解决挑战：
 
-1. **安全认证路径缺失**：truST 未启动任何工业安全完整性等级 (SIL) 认证流程。AUDESYS 如果未来需要安全关键应用，需要从项目初期规划认证路径
-2. **多语言编程支持（ST 以外）**：truST 坚持仅支持 ST 语言的策略限制了其适用范围。AUDESYS 从设计阶段就应支持多语言 (ST, FBD, LD, SFC)
+1. **安全认证路径缺失**：truST 未启动任何工业安全完整性等级 (SIL) 认证流程。Weftik 如果未来需要安全关键应用，需要从项目初期规划认证路径
+2. **多语言编程支持（ST 以外）**：truST 坚持仅支持 ST 语言的策略限制了其适用范围。Weftik 从设计阶段就应支持多语言 (ST, FBD, LD, SFC)
 3. **大规模部署的验证空白**：truST 缺乏 10+ 机器的生产部署验证（仅有开发者测试）。QiTech Control 在此方面有优势
 4. **第三方硬件兼容性**：truST 的硬件集成主要通过 ADS 协议（TwinCAT）而非直接物理 I/O。缺少 PLCopen 到实际硬件的完整链路测试
 5. **长期维护承诺不确定性**：单人项目对工业用户的风险感知——工业用户需要的不是"5 个月 86 个版本"的冲刺，而是"5 年持续稳定更新"的信心
 
-#### truST 与 AUDESYS 在关键技术选型上的最终对照总结
+#### truST 与 Weftik 在关键技术选型上的最终对照总结
 
-以下表格总结了 truST 在各个关键技术维度上对 AUDESYS 的验证程度和参考价值等级：
+以下表格总结了 truST 在各个关键技术维度上对 Weftik 的验证程度和参考价值等级：
 
-| 技术维度 | truST 实现 | AUDESYS 映射 | 验证程度 | 参考优先级 |
+| 技术维度 | truST 实现 | Weftik 映射 | 验证程度 | 参考优先级 |
 |---------|-----------|-------------|---------|----------|
 | 全栈 Rust | 52.4% Rust | 100% Rust (D19) | 已验证 | P0 |
 | IEC 61131-3 | ST only | ST + FBD + LD + SFC (规划) | 部分验证 | P0 |
@@ -712,17 +712,17 @@ truST 仍有一些针对 AUDESYS 项目值得警惕的未解决挑战：
 | PLCopen XML | 导入/导出 | Studio IDE 导入/导出 | 已验证 | P2 |
 | 多语言 | 仅 ST | 多语言前端 (D19) | 未验证 | P1 |
 
-truST 已为 AUDESYS 验证了 8 个核心技术假设中的 7 个（仅显式 HAL 和仿真器是 AUDESYS 独有的差异化领域）。这意味着 AUDESYS Phase 1 可以跳过基础技术验证阶段，直接聚焦差异化能力的开发。
+truST 已为 Weftik 验证了 8 个核心技术假设中的 7 个（仅显式 HAL 和仿真器是 Weftik 独有的差异化领域）。这意味着 Weftik Phase 1 可以跳过基础技术验证阶段，直接聚焦差异化能力的开发。
 
 #### 文档维护说明
 
 本文档基于 truST Platform v0.24.32 (2026-07-11) 编写。由于 truST 处于高速迭代期（每 1.5 天一个版本），部分细节可能在短时间内发生变化。建议每季度审查一次本参考文档，以保持与 truST 最新状态的对齐。对于关键设计决策（如编译管线、通信模型、调度架构），应进一步深入 truST 源码进行技术审核，而非仅依赖本文档的概览分析。
 
-### 附录：truST 与 AUDESYS 开发路线图对表
+### 附录：truST 与 Weftik 开发路线图对表
 
-truST 的 5 个月发展路线为 AUDESYS 的阶段规划提供了现实参考：
+truST 的 5 个月发展路线为 Weftik 的阶段规划提供了现实参考：
 
-| truST 里程碑 | AUDESYS Phase 1 映射 | 说明 |
+| truST 里程碑 | Weftik Phase 1 映射 | 说明 |
 |------------|--------------------|------|
 | trust-syntax + trust-hir (第 1 个月) | HIR 多语言编译器基础 | AST→HIR 管线的最简实现 |
 | trust-lsp VS Code 扩展 (第 2 个月) | Studio IDE 基础编辑器 | LSP 语言服务框架 |
@@ -731,7 +731,7 @@ truST 的 5 个月发展路线为 AUDESYS 的阶段规划提供了现实参考�
 | 浏览器 HMI + IDE (第 5 个月) | Studio Web IDE | 浏览器远程工程界面 |
 | truST Mesh (第 6 个月) | amw multiprocess transport | 多运行时实例通信 |
 
-AUDESYS Phase 1 预计需要 12-18 个月（较 truST 更长，因为团队协作和多语言支持的额外复杂度）。但 truST 的单人 5 个月进度证明——Rust 可以使工业控制软件的迭代速度达到 Web 应用水平。
+Weftik Phase 1 预计需要 12-18 个月（较 truST 更长，因为团队协作和多语言支持的额外复杂度）。但 truST 的单人 5 个月进度证明——Rust 可以使工业控制软件的迭代速度达到 Web 应用水平。
 
 ### 附录：truST 技术栈清单 (完整)
 
@@ -750,13 +750,13 @@ AUDESYS Phase 1 预计需要 12-18 个月（较 truST 更长，因为团队协�
 | trust-dev | CLI 开发者工具 | 1,000-2,000 | 低 |
 | trust-bundle-gen | STBC 项目打包 | 1,000-2,000 | 低 |
 
-总代码量估计：50,000-100,000 行（含 Rust + JS/TS）。AUDESYS Phase 1 目标代码量约为 truST 的 2-3 倍（因多语言支持和显式 HAL 抽象），预计 150,000-300,000 行。
+总代码量估计：50,000-100,000 行（含 Rust + JS/TS）。Weftik Phase 1 目标代码量约为 truST 的 2-3 倍（因多语言支持和显式 HAL 抽象），预计 150,000-300,000 行。
 
-### 附录：truST 对 AUDESYS 项目管理的启示
+### 附录：truST 对 Weftik 项目管理的启示
 
 从 truST 项目运营中学到的关键管理教训：
 
-| 管理维度 | truST 实践 | AUDESYS 策略 |
+| 管理维度 | truST 实践 | Weftik 策略 |
 |---------|-----------|------------|
 | 版本策略 | 高频小版本 (每 1.5 天) | 稳定周期 + 补丁版本 (每 2-4 周) |
 | CI/CD | 全自动测试 + 构建 + 发布 | Phase 1 即建立 CI |
@@ -785,9 +785,9 @@ AUDESYS Phase 1 预计需要 12-18 个月（较 truST 更长，因为团队协�
 
 ### 附录：truST 项目最终评估
 
-truST Platform 是 AUDESYS 目前发现的最高价值参考项目，验证了 Rust 全栈 + IEC 61131-3 + PREEMPT_RT 的技术路线可行性。其 5 个月从零到 86 个版本的极速迭代，证明了 Rust 使工业控制软件开发效率达到 Web 应用水平。建议 AUDESYS 团队深入研读 truST 源码，特别是编译管线（trust-syntax/trust-hir/trust-runtime-core）和 LSP 实现（trust-lsp），将其作为 AUDESYS Phase 1 的直接参考模板。
+truST Platform 是 Weftik 目前发现的最高价值参考项目，验证了 Rust 全栈 + IEC 61131-3 + PREEMPT_RT 的技术路线可行性。其 5 个月从零到 86 个版本的极速迭代，证明了 Rust 使工业控制软件开发效率达到 Web 应用水平。建议 Weftik 团队深入研读 truST 源码，特别是编译管线（trust-syntax/trust-hir/trust-runtime-core）和 LSP 实现（trust-lsp），将其作为 Weftik Phase 1 的直接参考模板。
 
-> 本文档记录了 AUDESYS 团队对 truST Platform 的全面技术评估，涵盖产品画像、技术特性、功能概览、现状与生态、市场定位、产品特色以及对 AUDESYS 的参考价值分析。评估时间 2026-07-13，基于 truST v0.24.32。
+> 本文档记录了 Weftik 团队对 truST Platform 的全面技术评估，涵盖产品画像、技术特性、功能概览、现状与生态、市场定位、产品特色以及对 Weftik 的参考价值分析。评估时间 2026-07-13，基于 truST v0.24.32。
 
 > 完整参考系列：truST Platform (本文档) | QiTech Control | OPC UA | NI LabVIEW
 
@@ -796,4 +796,4 @@ truST Platform 是 AUDESYS 目前发现的最高价值参考项目，验证了 R
 > 本文档将持续更新以反映 truST 项目的迭代发展。建议每季度审查一次以确保内容时效性。
 ---
 
-> **附录**：本文档为 AUDESYS 项目技术参考文档系列之一。完整系列包含 truST Platform、QiTech Control、OPC UA 等参考技术文档。本系列文档的目标是为 AUDESYS 项目的架构设计、技术选型和工程决策提供系统化的外部参考信息。
+> **附录**：本文档为 Weftik 项目技术参考文档系列之一。完整系列包含 truST Platform、QiTech Control、OPC UA 等参考技术文档。本系列文档的目标是为 Weftik 项目的架构设计、技术选型和工程决策提供系统化的外部参考信息。

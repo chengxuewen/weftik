@@ -1,4 +1,4 @@
-# AGENTS.md — AUDESYS Project Knowledge Base
+# AGENTS.md — Weftik Project Knowledge Base
 
 **Generated:** 2026-07-13
 **Commit:** `dae532d`
@@ -6,11 +6,11 @@
 **Branch:** `main`
 
 ## OVERVIEW
-AUDESYS — 工业控制系统运行时模拟平台。从 MODACS 分离，聚焦 Studio IDE、Runtime 运行时、Simulator 仿真器、HAL 硬件抽象层。当前 24 crates、799+ 测试、6 IEC 61131-3 编译器、Theia Studio IDE 已就绪。HAL 详细设计已完成，参考文档库 41 篇。
+Weftik — 面向工业自动化与机器人的统一开发与运行时框架（品牌改名自 AUDESYS，D118）。聚焦 Studio IDE、Runtime、Simulator、HAL。当前 24 crates、6 IEC 61131-3 编译器 + G-code、Theia Studio IDE。Panel/HMI UI 属外部项目，Runtime 保留 IPC 契约（D117）。
 
 ## STRUCTURE
 ```
-AUDESYS/
+Weftik/
 ├── .opencode/          # OpenCode 配置（插件、MCP、LSP、instructions）
 │   ├── opencode.json   # 主配置：模型、插件、44 条 instructions、6 个 MCP、8 个 LSP
 │   ├── agent-guide.md  # 554 行 — AI 代理使用指南（5 层模型体系、OMO 编排）
@@ -31,7 +31,7 @@ AUDESYS/
 ├── SKILL.md            # 技能注册表（superpowers + 项目专属 + agents）
 ├── AGENTS.md           # 本文件 — 项目知识库入口
 ├── README.md           # 项目简介
-├── package.json        # 极简：仅 `name: "AUDESYS"` + `@colbymchenry/codegraph` 开发依赖
+├── package.json        # 极简：仅 `name: "weftik"` + `@colbymchenry/codegraph` 开发依赖
 ├── package-lock.json   # npm lock 文件
 ├── LICENSE             # Apache 2.0
 └── .gitignore          # 排除 .sisyphus/
@@ -61,44 +61,42 @@ AUDESYS/
 | 模块 | 状态 | 路径 |
 |------|:----:|------|
 | Studio IDE | ✅ Theia 迁移完成 | `apps/studio/` + `theia-extensions/` |
-| Runtime Engine | ✅ 完成 | `crates/audesys-runtime-engine/` |
-| IPC Server | ✅ 完成 | `crates/audesys-ipc-server/` |
-| Runtime Client | ✅ 完成 | `crates/audesys-runtime-client/` |
-| AUDEDeck | ✅ 集成 (3rdparty) | `3rdparty/AUDEDeck/` (Tauri + PWA) |
-| LD GLSP Editor | ✅ 完成 | `theia-extensions/audesys-ld-glsp/` |
-| FBD GLSP Editor | ✅ 完成 | `theia-extensions/audesys-fbd-glsp/` |
-| LD Compiler | ✅ 完成 | `crates/audesys-ld-compiler/` |
-| FBD Compiler | ✅ 完成 | `crates/audesys-fbd-compiler/` |
-| ST/IL/SFC Compilers | ✅ 完成 | `crates/audesys-hal-binding-gen/` + `audesys-il-compiler/` + `audesys-sfc-compiler/` |
-| G-code Compiler | ✅ 完成 | `crates/audesys-gcode-compiler/` |
-| CNC Axis Group | ✅ 完成 | `crates/audesys-axis-group/` |
-| SimulationHarness | ✅ 完成 | `crates/audesys-runtime-engine/` |
-| HAL Core | 🟡 设计完成 | `crates/audesys-hal-core/` |
+| Runtime Engine | ✅ 完成 | `crates/weftik-runtime/` |
+| IPC Server | ✅ 完成 | `crates/weftik-runtime/src/ipc.rs`（无独立 crate） |
+| Runtime Client | ✅ 完成 | `crates/weftik-runtime-client/` |
+| Panel/HMI | 📦 移交（D117） | 契约 IPC 0x16/0x17/0x18（本仓保留） |
+| LD Compiler | ✅ 完成 | `crates/weftik-ld-compiler/` |
+| FBD Compiler | ✅ 完成 | `crates/weftik-fbd-compiler/` |
+| ST/IL/SFC Compilers | ✅ 完成 | `crates/weftik-hal-binding-gen/` + `weftik-il-compiler/` + `weftik-sfc-compiler/` |
+| G-code Compiler | ✅ 完成 | `crates/weftik-gcode-compiler/` |
+| CNC Axis Group | ✅ 完成 | `crates/weftik-cnc-axis-group/` + `crates/weftik-cnc-motion/` |
+| SimulationHarness | ✅ 完成 | `crates/weftik-runtime/` (in-proc harness) |
+| HAL Core | 🟡 设计完成 | `crates/weftik-hal-core/` |
 | Simulator (AVD) | 🔮 Phase 3/4 | 7 种虚拟设备 |
 
-## VERTICAL SLICE: LD → Runtime → AUDEDeck
+## VERTICAL SLICE: LD → Runtime → Panel
 
-LD (Ladder Diagram) 编辑器到 AUDEDeck 的完整垂直切片：
+LD (Ladder Diagram) 编辑器到运行时面板的完整垂直切片（Panel 由外部项目实现，D117）：
 
 | 层 | 组件 | 路径 | 状态 |
 |----|------|------|:----:|
-| Editor | LD GLSP Editor (Sprotty SVG) | `theia-extensions/audesys-ld-glsp/` | ✅ |
-| Compiler | LD Compiler (LD to IL to HalProgram) | `crates/audesys-ld-compiler/` | ✅ |
-| Runtime | Runtime Engine (5-step cycle + Hot-swap) | `crates/audesys-runtime-engine/` | ✅ |
-| IPC | IPC Server (UDS + HMAC, 0x01-0x17) | `crates/audesys-ipc-server/` | ✅ |
-| Client | RuntimeClient (7 methods + auth) | `crates/audesys-runtime-client/` | ✅ |
-| HMI | AUDEDeck (Tauri + PWA, 9 commands, push/poll) | `3rdparty/AUDEDeck/` | ✅ |
+| Editor | LD Editor (React Flow, D110) | `theia-extensions/weftik-ld-editor/` | ✅ |
+| Compiler | LD Compiler (LD to IL to HalProgram) | `crates/weftik-ld-compiler/` | ✅ |
+| Runtime | Runtime Engine (5-step cycle + Hot-swap) | `crates/weftik-runtime/` | ✅ |
+| IPC | IPC Server (UDS + HMAC, 0x01-0x18) | `crates/weftik-runtime/src/ipc.rs` | ✅ |
+| Client | RuntimeClient (7 methods + auth) | `crates/weftik-runtime-client/` | ✅ |
+| HMI | Panel（外部项目，经 IPC 0x16/0x17/0x18 契约接入） | 契约: `openspec/specs/hmi-spec.md` | 📦 移交 |
 
-Data flow: `.ld` file to LdSprottyDiagramWidget (GLSP) to LdOperationHandler.compile()
-to LdCompiler (LD grammar to IL tokens to HalProgram) to deploy_program (IPC 0x10)
-to RuntimeEngine (load + execute cycle) to signal values to SignalBridge
-(IPC 0x16 push + 100ms poll fallback) to AUDEDeck widgets (Gauge/Trend/Tank/...).
+Data flow: `.ld` file → LdEditorWidget (React Flow) → LdOperationHandler.compile()
+→ LdCompiler (LD grammar → IL tokens → HalProgram) → deploy_program (IPC 0x10)
+→ RuntimeEngine (load + execute cycle) → signal values → external Panel
+(IPC 0x16 push + 100ms poll fallback → Panel widgets).
 ## CONVENTIONS
-### AUDESYS 独有
-- **命名**: `AUDESYS` 全大写，npm scope `@audesys/`
+### Weftik 独有
+- **命名**: `Weftik` 全大写，npm scope `@weftik/`
 - **去 MODACS 化**: 保持零 MODACS 残留，每次修改后运行 `grep -ri modacs . --exclude-dir=.git --exclude-dir=.sisyphus`
-- **精确编辑**: 不全局 MODACS→AUDESYS 替换，使用手术式编辑
-- **@modacs/* 移除**: 移除所有 `@modacs/*` 引用，不自动替换为 `@audesys/*`
+- **精确编辑**: 不全局 MODACS→Weftik 替换，使用手术式编辑
+- **@modacs/* 移除**: 移除所有 `@modacs/*` 引用，不自动替换为 `@weftik/*`
 - **文档组织**: 概览 → `architecture.md`，详细设计 → `docs/modules/{module}/` 子文档
 
 ### TypeScript
@@ -119,7 +117,7 @@ to RuntimeEngine (load + execute cycle) to signal values to SignalBridge
 - **`console.log`** — 生产代码禁止
 - **静默吞异常** — `catch(e) {}` 绝对不允许
 - **对象突变** — 始终返回新对象，永不就地修改
-- **全局 MODACS→AUDESYS 替换** — 使用精确的手术式编辑
+- **全局 MODACS→Weftik 替换** — 使用精确的手术式编辑
 - **硬编码密钥** — 使用环境变量或密钥管理器
 - **不必要的文件写入** — 文档文件仅在用户明确要求时创建
 - **引入第 4 种通信原语** — Signal/StreamChannel/RPC 已正交覆盖全部场景

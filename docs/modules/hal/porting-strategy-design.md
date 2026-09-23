@@ -2,33 +2,33 @@
 
 ## 11. 移植对接方案
 
-每个被移植的系统功能根据自己的通信特征选择最合适的原语。下面描述"移植后的功能如何对接 AUDESYS HAL"——不是桥接外部协议。
+每个被移植的系统功能根据自己的通信特征选择最合适的原语。下面描述"移植后的功能如何对接 Weftik HAL"——不是桥接外部协议。
 
 ### 11.1 移植 LinuxCNC 功能
 
-LinuxCNC 的 HAL 和 AUDESYS HAL 高度同构（都是单写多读 Signal + 线程函数调度）。
+LinuxCNC 的 HAL 和 Weftik HAL 高度同构（都是单写多读 Signal + 线程函数调度）。
 
 ```
-LinuxCNC motion planner (移植为 AUDESYS Component)
+LinuxCNC motion planner (移植为 Weftik Component)
   │
-  │  pin: axis.0.position  (F64, OUT)  →  AUDESYS Signal "motion.axis.0.pos"
-  │  pin: axis.0.enable    (Bool, IN)  →  AUDESYS Signal "motion.axis.0.enable"
-  │  pin: axis.0.velocity  (F64, OUT)  →  AUDESYS Signal "motion.axis.0.vel"
+  │  pin: axis.0.position  (F64, OUT)  →  Weftik Signal "motion.axis.0.pos"
+  │  pin: axis.0.enable    (Bool, IN)  →  Weftik Signal "motion.axis.0.enable"
+  │  pin: axis.0.velocity  (F64, OUT)  →  Weftik Signal "motion.axis.0.vel"
   │
-  │  function: servo-thread.update()   →  AUDESYS RT thread 调度表
+  │  function: servo-thread.update()   →  Weftik RT thread 调度表
   │    ┌─ read IN pins
   │    ├─ compute
   │    └─ write OUT pins
   │
   │  halcmd commands (load/unload/link/...)
-  │    →  AUDESYS RPC: loadComponent / linkPin / addThread
+  │    →  Weftik RPC: loadComponent / linkPin / addThread
 ```
 
-- Signal 1:1 映射（LinuxCNC pin → AUDESYS Signal）
-- LinuxCNC function list → AUDESYS RT 线程 `update()` 调度表
-- LinuxCNC halcmd → AUDESYS RPC
+- Signal 1:1 映射（LinuxCNC pin → Weftik Signal）
+- LinuxCNC function list → Weftik RT 线程 `update()` 调度表
+- LinuxCNC halcmd → Weftik RPC
 
-| LinuxCNC halcmd | AUDESYS HAL | 说明 |
+| LinuxCNC halcmd | Weftik HAL | 说明 |
 |---|---|---|
 | `halcmd loadrt comp` | RPC `loadComponent(name, type, config)` | 加载实时组件 |
 | `halcmd addf comp.func thread` | RPC `addFunction(component, func, thread)` | 函数加入 RT 线程 |
@@ -46,7 +46,7 @@ LinuxCNC motion planner (移植为 AUDESYS Component)
 OpenPLC 以扫描周期为单位运行，不适合逐 pin 映射。
 
 ```
-OpenPLC IEC runtime (移植为 AUDESYS Component)
+OpenPLC IEC runtime (移植为 Weftik Component)
   │
   │  Task Main: 周期 10ms
   │
@@ -72,7 +72,7 @@ OpenPLC IEC runtime (移植为 AUDESYS Component)
 
 ### 11.3 移植 ROS2 功能
 
-ROS2 有三种通信模式，分别映射到 AUDESYS 的三种原语：
+ROS2 有三种通信模式，分别映射到 Weftik 的三种原语：
 
 ```
 ROS2 移植节点
@@ -103,7 +103,7 @@ ROS2 移植节点
 dora-rs 的数据流模型直接映射：
 
 ```
-dora 风格 operator (移植为 AUDESYS Component)
+dora 风格 operator (移植为 Weftik Component)
   │
   ├── 输入 stream: camera/image (Arrow IPC buffer, ~2MB/frame, 30Hz)
   │     →  StreamChannel<Blob> "camera.image"

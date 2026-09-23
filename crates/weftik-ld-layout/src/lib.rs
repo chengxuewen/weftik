@@ -91,12 +91,7 @@ impl LayoutNode {
     }
     /// Bounding box: (min_x, min_y, max_x, max_y).
     pub fn bbox(&self) -> (f64, f64, f64, f64) {
-        (
-            self.position.x,
-            self.position.y,
-            self.right(),
-            self.bottom(),
-        )
+        (self.position.x, self.position.y, self.right(), self.bottom())
     }
     /// True if `self` overlaps `other`.
     pub fn overlaps(&self, other: &LayoutNode) -> bool {
@@ -183,11 +178,8 @@ pub fn layout_ld(input: LayoutInput) -> LayoutOutput {
     let mut rungs = input.rungs;
 
     // Build lookup
-    let node_map: HashMap<String, usize> = nodes
-        .iter()
-        .enumerate()
-        .map(|(i, n)| (n.id.clone(), i))
-        .collect();
+    let node_map: HashMap<String, usize> =
+        nodes.iter().enumerate().map(|(i, n)| (n.id.clone(), i)).collect();
 
     // Step 0: Validate (warnings only — non-fatal)
     let _report = validation::validate(&nodes, &edges, &rungs);
@@ -211,12 +203,7 @@ pub fn layout_ld(input: LayoutInput) -> LayoutOutput {
     // Step 6: Route wires (Manhattan-style)
     let edges = wire_routing::route_wires(edges, &nodes, &node_map);
 
-    LayoutOutput {
-        id: input.id,
-        nodes,
-        edges,
-        rungs,
-    }
+    LayoutOutput { id: input.id, nodes, edges, rungs }
 }
 
 /// Run layout and return the result as a JSON string.
@@ -294,12 +281,7 @@ mod tests {
 
     #[test]
     fn empty_graph_roundtrips() {
-        let input = LayoutInput {
-            id: "test".into(),
-            nodes: vec![],
-            edges: vec![],
-            rungs: vec![],
-        };
+        let input = LayoutInput { id: "test".into(), nodes: vec![], edges: vec![], rungs: vec![] };
         let output = layout_ld(input);
         assert_eq!(output.id, "test");
         assert!(output.nodes.is_empty());
@@ -314,18 +296,8 @@ mod tests {
             nodes: vec![],
             edges: vec![],
             rungs: vec![
-                RungDef {
-                    id: "r1".into(),
-                    rung_number: 0,
-                    comment: None,
-                    element_ids: vec![],
-                },
-                RungDef {
-                    id: "r2".into(),
-                    rung_number: 0,
-                    comment: None,
-                    element_ids: vec![],
-                },
+                RungDef { id: "r1".into(), rung_number: 0, comment: None, element_ids: vec![] },
+                RungDef { id: "r2".into(), rung_number: 0, comment: None, element_ids: vec![] },
             ],
         };
         let output = layout_ld(input);
@@ -338,10 +310,7 @@ mod tests {
         // One rung: contact "c1" + coil "o1"
         let input = LayoutInput {
             id: "test".into(),
-            nodes: vec![
-                make_node("c1", "node:contact"),
-                make_node("o1", "node:coil"),
-            ],
+            nodes: vec![make_node("c1", "node:contact"), make_node("o1", "node:coil")],
             edges: vec![],
             rungs: vec![RungDef {
                 id: "r1".into(),
@@ -352,18 +321,10 @@ mod tests {
         };
         let output = layout_ld(input);
         // Contact should be positioned at ELEMENT_START_X, first rung row
-        let contact = output
-            .nodes
-            .iter()
-            .find(|n| n.id == "c1")
-            .expect("contact exists");
+        let contact = output.nodes.iter().find(|n| n.id == "c1").expect("contact exists");
         assert!(contact.position.x >= ELEMENT_START_X);
         // Coil should be to the right of the contact
-        let coil = output
-            .nodes
-            .iter()
-            .find(|n| n.id == "o1")
-            .expect("coil exists");
+        let coil = output.nodes.iter().find(|n| n.id == "o1").expect("coil exists");
         assert!(coil.position.x > contact.position.x);
     }
 
@@ -371,10 +332,7 @@ mod tests {
     fn layout_deterministic_output() {
         let input = LayoutInput {
             id: "test".into(),
-            nodes: vec![
-                make_node("c1", "node:contact"),
-                make_node("o1", "node:coil"),
-            ],
+            nodes: vec![make_node("c1", "node:contact"), make_node("o1", "node:coil")],
             edges: vec![],
             rungs: vec![RungDef {
                 id: "r1".into(),
@@ -385,10 +343,7 @@ mod tests {
         };
         let a = layout_ld(input.clone());
         let b = layout_ld(input);
-        assert_eq!(
-            serde_json::to_string(&a).unwrap(),
-            serde_json::to_string(&b).unwrap()
-        );
+        assert_eq!(serde_json::to_string(&a).unwrap(), serde_json::to_string(&b).unwrap());
     }
 
     #[test]
@@ -403,15 +358,11 @@ mod tests {
           "rungs": [{"id":"r1","rungNumber":0,"elementIds":["c1","o1"]}]
         }"#;
         let output = layout_ld_json(json).expect("should succeed");
-        let parsed: serde_json::Value =
-            serde_json::from_str(&output).expect("valid JSON output");
+        let parsed: serde_json::Value = serde_json::from_str(&output).expect("valid JSON output");
         assert_eq!(parsed["id"], "test");
         // Check extra fields preserved
         let nodes = parsed["nodes"].as_array().expect("nodes array");
-        let contact = nodes
-            .iter()
-            .find(|v| v["id"] == "c1")
-            .expect("contact found");
+        let contact = nodes.iter().find(|v| v["id"] == "c1").expect("contact found");
         assert_eq!(contact["variableName"], "X1");
         assert_eq!(contact["contactType"], "NO");
     }

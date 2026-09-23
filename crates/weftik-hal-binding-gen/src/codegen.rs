@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use weftik_hal_core::HalValue;
 use weftik_hal_core::types::HalPinType;
-use std::collections::HashMap;
 
 use weftik_hal_ir::{
     instruction::{Instruction, Opcode},

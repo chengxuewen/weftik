@@ -578,19 +578,19 @@ FORTE 的通信层使用工厂模式，在运行时动态构建通信栈。这�
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
 #### 1. 事件驱动分布式执行模型
 
-4diac FORTE 的 IEC 61499 事件驱动模型与 AUDESYS 的 Runtime 设计高度相关。关键借鉴点：
+4diac FORTE 的 IEC 61499 事件驱动模型与 Weftik 的 Runtime 设计高度相关。关键借鉴点：
 
 - **FB 网络（Function Block Network）**：应用由互联的 FB 组成
 - **事件传播**：事件在 FB 之间传播，触发执行链
 - **数据流**：数据随事件流动，确保数据一致性
 
-**AUDESYS 参考**：AUDESYS Runtime 的事件驱动执行模型可借鉴 IEC 61499 的 FB 网络概念，将控制逻辑表示为互联的组件网络。
+**Weftik 参考**：Weftik Runtime 的事件驱动执行模型可借鉴 IEC 61499 的 FB 网络概念，将控制逻辑表示为互联的组件网络。
 
 #### 2. 分层通信架构
 
@@ -600,7 +600,7 @@ FORTE 的 CComLayer 分层架构提供了灵活的通信协议栈：
 - **层间接口标准化**：openConnection/closeConnection/sendData/recvData
 - **可插拔协议**：新增协议只需实现新的层
 
-**AUDESYS 参考**：AUDESYS HAL 的 HalTransport trait 设计可参考 FORTE 的分层通信架构，实现传输层可替换。
+**Weftik 参考**：Weftik HAL 的 HalTransport trait 设计可参考 FORTE 的分层通信架构，实现传输层可替换。
 
 #### 3. 设备模型
 
@@ -611,7 +611,7 @@ FORTE 的 Device-Resource-ExecutionUnit-FB 四层模型提供了清晰的逻辑�
 - **ExecutionUnit**：最小执行单位
 - **FB**：功能单元
 
-**AUDESYS 参考**：AUDESYS 的模块化架构可借鉴这种分层设备模型，将 Runtime 实例划分为多个逻辑资源。
+**Weftik 参考**：Weftik 的模块化架构可借鉴这种分层设备模型，将 Runtime 实例划分为多个逻辑资源。
 
 #### 4. 管理模型标准化
 
@@ -621,22 +621,22 @@ FORTE 实现了标准化的管理接口，使 IDE 能够远程配置设备：
 - **监控**：在线状态监控
 - **调试**：触发事件、读写数据
 
-**AUDESYS 参考**：AUDESYS Studio IDE 与 Runtime 之间的管理接口可参考这种标准化管理模型。
+**Weftik 参考**：Weftik Studio IDE 与 Runtime 之间的管理接口可参考这种标准化管理模型。
 
 ### 7.2 可移植/适配的技术模块
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| 分层通信层架构 | CComLayer 工厂模式 | 高，AUDESYS HAL 传输层设计参考 |
-| FB 执行引擎 | 事件驱动 FB 执行 | 高，AUDESYS Runtime 事件驱动模型参考 |
+| 分层通信层架构 | CComLayer 工厂模式 | 高，Weftik HAL 传输层设计参考 |
+| FB 执行引擎 | 事件驱动 FB 执行 | 高，Weftik Runtime 事件驱动模型参考 |
 | 设备模型 | Device-Resource-FB 层次 | 中，模块化架构设计参考 |
 | 管理模型 | 标准化管理接口 | 高，Studio-Runtime 管理协议参考 |
-| 协议适配器 | OPC UA/Modbus/MQTT 适配 | 高，AUDESYS 协议集成参考 |
-| Dynamic Type Loader | LuaJIT 运行时加载 | 中，AUDESYS 插件系统参考 |
+| 协议适配器 | OPC UA/Modbus/MQTT 适配 | 高，Weftik 协议集成参考 |
+| Dynamic Type Loader | LuaJIT 运行时加载 | 中，Weftik 插件系统参考 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | 4diac FORTE | AUDESYS |
+| 维度 | 4diac FORTE | Weftik |
 |------|------------|---------|
 | 核心定位 | IEC 61499 运行时环境 | 工业控制系统模拟平台 |
 | 标准 | IEC 61499 | 多标准兼容（规划中） |
@@ -649,14 +649,14 @@ FORTE 实现了标准化的管理接口，使 IDE 能够远程配置设备：
 | 轻量化 | 极高 | 中（GUI 环境） |
 
 **互补关系**：
-- 4diac FORTE 的 IEC 61499 事件驱动模型可作为 AUDESYS Runtime 的参考架构
-- AUDESYS 的 HAL 设计（3 信号原语 + amw 抽象）在通信抽象上比 FORTE 的 ComLayer 更丰富
-- 4diac 的管理模型为 AUDESYS Studio-Runtime 管理协议提供参考
-- AUDESYS 可将 4diac FORTE 作为仿真目标
+- 4diac FORTE 的 IEC 61499 事件驱动模型可作为 Weftik Runtime 的参考架构
+- Weftik 的 HAL 设计（3 信号原语 + amw 抽象）在通信抽象上比 FORTE 的 ComLayer 更丰富
+- 4diac 的管理模型为 Weftik Studio-Runtime 管理协议提供参考
+- Weftik 可将 4diac FORTE 作为仿真目标
 
-### 7.4 详细对比分析：AUDESYS HAL 与 4diac FORTE 通信层
+### 7.4 详细对比分析：Weftik HAL 与 4diac FORTE 通信层
 
-| 维度 | 4diac FORTE ComLayer | AUDESYS HAL（设计） |
+| 维度 | 4diac FORTE ComLayer | Weftik HAL（设计） |
 |------|---------------------|-------------------|
 | 设计目标 | 协议无关的通信栈 | 完整的实时通信中间件 |
 | 原语 | openConnection/sendData/recvData | Signal + StreamChannel + RPC |
@@ -669,11 +669,11 @@ FORTE 实现了标准化的管理接口，使 IDE 能够远程配置设备：
 | 扩展机制 | 添加新的 ComLayer 类 | 实现 HalTransport trait |
 | 配置管理 | 静态编译时配置 | Config Barrier + LockLevel |
 
-4diac FORTE 的 ComLayer 是典型的协议抽象层（解决如何在运行时动态选择通信协议），而 AUDESYS 的 HAL 是通信中间件（解决如何在分布式异构节点间可靠、实时地交换数据）。两者在抽象层次上有所重叠，但 AUDESYS HAL 的 QoS 和类型系统更丰富。
+4diac FORTE 的 ComLayer 是典型的协议抽象层（解决如何在运行时动态选择通信协议），而 Weftik 的 HAL 是通信中间件（解决如何在分布式异构节点间可靠、实时地交换数据）。两者在抽象层次上有所重叠，但 Weftik HAL 的 QoS 和类型系统更丰富。
 
 ### 7.5 开源生态系统对比
 
-| 维度 | 4diac 生态 | AUDESYS（当前/规划） |
+| 维度 | 4diac 生态 | Weftik（当前/规划） |
 |------|----------|-------------------|
 | 项目成立 | 2007 年 | 2026 年 |
 | 组织 | Eclipse Foundation | 独立项目 |
@@ -684,7 +684,7 @@ FORTE 实现了标准化的管理接口，使 IDE 能够远程配置设备：
 | 协议集成 | 8+ 种协议 | JSON-RPC/REST（规划中） |
 | 硬件支持 | 多种 RTOS 和平台 | 仿真为主 |
 
-4diac 提供了 IEC 61499 标准开源实现的参考路径，其开发者社区和学术影响力的建立方式对 AUDESYS 有参考价值。
+4diac 提供了 IEC 61499 标准开源实现的参考路径，其开发者社区和学术影响力的建立方式对 Weftik 有参考价值。
 
 ### 7.6 IEC 61499 核心概念详解
 
@@ -701,41 +701,41 @@ FORTE 实现了标准化的管理接口，使 IDE 能够远程配置设备：
 | 通信机制 | 总线/网络协议 | PUBLISH/SUBSCRIBE 模型 |
 | 配置管理 | 下载完整程序 | 在线部署/卸载 |
 
-### 7.7 IEC 61499 标准对 AUDESYS 的启发
+### 7.7 IEC 61499 标准对 Weftik 的启发
 
-IEC 61499 标准的核心设计理念 —— 事件驱动、分布式执行、组件化 —— 与 AUDESYS 的模块化架构设计高度契合：
+IEC 61499 标准的核心设计理念 —— 事件驱动、分布式执行、组件化 —— 与 Weftik 的模块化架构设计高度契合：
 
 1. **事件驱动优于循环扫描**：在仿真场景中，事件驱动模型比固定周期的循环扫描更灵活
 2. **分布式执行**：支持多设备协同控制是未来工业控制系统的发展方向
-3. **组件化**：FB 作为可复用的功能单元，与 AUDESYS 的模块化设计理念一致
+3. **组件化**：FB 作为可复用的功能单元，与 Weftik 的模块化设计理念一致
 4. **标准化管理接口**：工具与运行时的标准化通信是 IDE 集成的关键
 
-### 7.8 从 4diac 到 AUDESYS 的桥接路径
+### 7.8 从 4diac 到 Weftik 的桥接路径
 
-虽然 4diac FORTE 是嵌入式 IEC 61499 运行时而 AUDESYS 是仿真平台，但两者可以通过以下方式桥接：
+虽然 4diac FORTE 是嵌入式 IEC 61499 运行时而 Weftik 是仿真平台，但两者可以通过以下方式桥接：
 
-1. **FORTE 适配器** — 在 AUDESYS 中实现 FORTE 兼容层，直接运行 IEC 61499 应用
-2. **FB 转 HAL 映射** — 将 IEC 61499 FB 的数据/事件映射到 AUDESYS 的 Signal/StreamChannel
-3. **仿真模式** — AUDESYS Simulator 可仿真 FORTE 行为，用于 IEC 61499 应用测试
-4. **管理协议桥接** — 复用 FORTE 的管理模型设计 AUDESYS Studio-Runtime 通信协议
+1. **FORTE 适配器** — 在 Weftik 中实现 FORTE 兼容层，直接运行 IEC 61499 应用
+2. **FB 转 HAL 映射** — 将 IEC 61499 FB 的数据/事件映射到 Weftik 的 Signal/StreamChannel
+3. **仿真模式** — Weftik Simulator 可仿真 FORTE 行为，用于 IEC 61499 应用测试
+4. **管理协议桥接** — 复用 FORTE 的管理模型设计 Weftik Studio-Runtime 通信协议
 
 ---
 
-### 7.9 总结：4diac 对 AUDESYS 的核心参考价值
+### 7.9 总结：4diac 对 Weftik 的核心参考价值
 
-4diac FORTE 作为 IEC 61499 标准的开源参考实现，对 AUDESYS 提供了以下核心参考价值：
+4diac FORTE 作为 IEC 61499 标准的开源参考实现，对 Weftik 提供了以下核心参考价值：
 
-1. **事件驱动架构**：FB 网络的事件驱动执行模型是 AUDESYS Runtime 设计的重要参考
-2. **分层通信栈**：CComLayer 工厂模式为 AUDESYS HAL 的传输层抽象提供了可参考的实现
+1. **事件驱动架构**：FB 网络的事件驱动执行模型是 Weftik Runtime 设计的重要参考
+2. **分层通信栈**：CComLayer 工厂模式为 Weftik HAL 的传输层抽象提供了可参考的实现
 3. **标准化管理模型**：工具与运行时之间的标准化管理接口为 Studio-Runtime 管理协议提供参考
 4. **轻量化设计**：在 16/32 位嵌入式设备上实现完整的 IEC 61499 运行时，展示了极致轻量化的可能性
 5. **分布式部署**：多设备协同的 PUBLISH/SUBSCRIBE 模式是分布式工业控制的参考架构
 
 **核心差异认知**：
-- 4diac FORTE 是嵌入式 IEC 61499 运行时，AUDESYS 是通用工业控制仿真平台
+- 4diac FORTE 是嵌入式 IEC 61499 运行时，Weftik 是通用工业控制仿真平台
 - 两者的 HAL（通信抽象层）在抽象层次上有所重叠但有本质区别
-- 4diac 的学术定位 vs AUDESYS 的工业定位，导致社区和功能策略不同
-- 4diac 的 Eclipse Foundation 治理模式 vs AUDESYS 的独立项目模式
+- 4diac 的学术定位 vs Weftik 的工业定位，导致社区和功能策略不同
+- 4diac 的 Eclipse Foundation 治理模式 vs Weftik 的独立项目模式
 
 
 ### 2.10 执行模型详解

@@ -2,7 +2,7 @@
 name: openspec-explore
 description: >-
   Enter explore mode — a thinking partner for exploring ideas, investigating
-  problems, and clarifying requirements for AUDESYS (Rust + HAL + amw_inproc multi-language).
+  problems, and clarifying requirements for Weftik (Rust + HAL + amw_inproc multi-language).
   Use when the user wants to think through something before or during a change.
 license: MIT
 compatibility: Designed for Claude Code, GitHub Copilot, and similar agents.
@@ -11,10 +11,10 @@ metadata:
   author: openspec
   version: "1.0"
   category: workflow
-  project: AUDESYS
+  project: Weftik
 ---
 
-# OpenSpec Explore — AUDESYS
+# OpenSpec Explore — Weftik
 
 Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
 
@@ -40,12 +40,12 @@ Enter explore mode. Think deeply. Visualize freely. Follow the conversation wher
 **Explore the problem space**
 - Ask clarifying questions that emerge from what they said
 - Challenge assumptions about Rust/HAL architecture
-- Reframe the problem in AUDESYS context
+- Reframe the problem in Weftik context
 - Find analogies from similar industrial control system stations
 
-**Investigate the AUDESYS codebase**
+**Investigate the Weftik codebase**
 - Map existing architecture relevant to the discussion
-  - `crates/audesys-hal-core/` — HAL traits, types, primitives (D10/D11/D12)
+  - `crates/weftik-hal-core/` — HAL traits, types, primitives (D10/D11/D12)
   - `crates/amw_inproc/` — In-process HAL transport/discovery
   - `crates/hal-flatbuffers/` — FlatBuffers schema + bindings (D19)
   - `apps/studio/` — Tauri + React + TypeScript IDE (D21)
@@ -83,7 +83,7 @@ Enter explore mode. Think deeply. Visualize freely. Follow the conversation wher
 │   │ (D11 in-proc)  │     │ (D19 cross-lang)     │     │
 │   └────────────────┘     └──────────────────────┘     │
 │                                                       │
-│   AUDESYS HAL architecture                            │
+│   Weftik HAL architecture                            │
 └───────────────────────────────────────────────────────┘
 ```
 
@@ -146,7 +146,7 @@ When exploring, draw from four structured sources in order of priority:
 - **Check when** questions involve "why was this done this way?" or project history
 
 ### 4. Codebase (`crates/`, `apps/`)
-- `crates/audesys-hal-core/` — HAL traits, types, primitives (D10/D11/D12)
+- `crates/weftik-hal-core/` — HAL traits, types, primitives (D10/D11/D12)
 - `crates/amw_inproc/` — in-process transport/discovery (D11, Phase 1)
 - `crates/hal-flatbuffers/` — FlatBuffers schema + bindings (D19, cross-language)
 - `apps/studio/` — Tauri + React + TypeScript IDE (D21, Phase 1)
@@ -154,9 +154,9 @@ When exploring, draw from four structured sources in order of priority:
 
 ---
 
-## AUDESYS Project Awareness
+## Weftik Project Awareness
 
-When exploring, keep these AUDESYS specifics in mind:
+When exploring, keep these Weftik specifics in mind:
 
 | Concern | Details |
 |---------|---------|
@@ -191,7 +191,7 @@ User: I'm thinking about adding a signal monitoring panel
 
 You: Signal monitoring could go in several places. Let me think about this...
 
-      SIGNAL MONITORING OPTIONS IN AUDESYS
+      SIGNAL MONITORING OPTIONS IN Weftik
       ═══════════════════════════════════════════
 
       ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
@@ -230,7 +230,7 @@ You: [reads hal-core signal module and related files]
 ```
 User: Should we use amw_inproc or amw_zenoh for Phase 1?
 
-You: Let's look at what AUDESYS already does...
+You: Let's look at what Weftik already does...
 
      amw_inproc (current)  vs   amw_zenoh (Phase 2+)
      ─────────────────────────────────────────────────
@@ -278,5 +278,5 @@ When it feels like things are crystallizing, you might summarize:
 - **Don't force structure** — Let patterns emerge naturally
 - **Don't auto-capture** — Offer to save insights, don't just do it
 - **Do visualize** — A good diagram is worth many paragraphs
-- **Do explore the codebase** — Ground discussions in AUDESYS reality
+- **Do explore the codebase** — Ground discussions in Weftik reality
 - **Do question assumptions** — Including the user's and your own

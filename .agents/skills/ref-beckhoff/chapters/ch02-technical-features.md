@@ -99,7 +99,7 @@ Runtime environment executing control code on target IPC:
 
 ## 2.3 ADS (Automation Device Specification) Communication Protocol
 
-ADS is TwinCAT's **unified communication protocol**, analogous to AUDESYS HAL primitives.
+ADS is TwinCAT's **unified communication protocol**, analogous to Weftik HAL primitives.
 
 **Message Router**: Each TwinCAT device runs an ADS Message Router managing all message routing and distribution. ADS devices identified by unique **AMS Port number**:
 
@@ -139,12 +139,12 @@ TwinCAT uses **Rate-Monotonic Scheduling (RMS)**:
 
 Key scheduling characteristics:
 
-| Feature | Detail | AUDESYS Reference |
+| Feature | Detail | Weftik Reference |
 |---------|--------|-------------------|
-| Cycle jitter control | Core isolation + double-tick keeps jitter at microseconds | AUDESYS RT thread jitter control |
-| Task dependency | Depends-on relationships (A executes before B) | AUDESYS mixed scheduling dependency management |
-| Runtime priority | Dynamic runtime adjustment | AUDESYS runtime priority management |
-| Safety runtime isolation | TwinSAFE as independent runtime, isolated from normal Tasks | AUDESYS Safety module isolation |
+| Cycle jitter control | Core isolation + double-tick keeps jitter at microseconds | Weftik RT thread jitter control |
+| Task dependency | Depends-on relationships (A executes before B) | Weftik mixed scheduling dependency management |
+| Runtime priority | Dynamic runtime adjustment | Weftik runtime priority management |
+| Safety runtime isolation | TwinSAFE as independent runtime, isolated from normal Tasks | Weftik Safety module isolation |
 
 ## 2.5 Multi-Runtime Integration
 

@@ -455,75 +455,75 @@ SimpleFOC是少数支持混合步进电机（Hybrid Stepper Motor）FOC控制的
 
 SimpleFOCStudio是SimpleFOC区别于其他开源FOC库的核心特色。它将实时调参、波形绘图、代码生成、串口终端整合在一个桌面应用中，用户图形化地调整PID参数并立即观察电机响应——这种体验接近商业级伺服调试工具（如Yaskawa SigmaTune、Beckhoff TwinCAT Scope）。
 
-## 七、对AUDESYS参考价值
+## 七、对Weftik参考价值
 
 ### 7.1 MCU级智能固件架构的启示
 
-SimpleFOC 的核心架构——"对象化的硬件抽象 + 实时控制循环 + 通信协议栈 + 图形化调试工具"——为 AUDESYS 的 MCU 级智能固件（Edge Node / HAL Driver 固件）设计提供了完整的参考模式。
+SimpleFOC 的核心架构——"对象化的硬件抽象 + 实时控制循环 + 通信协议栈 + 图形化调试工具"——为 Weftik 的 MCU 级智能固件（Edge Node / HAL Driver 固件）设计提供了完整的参考模式。
 
-**HAL Driver 固件架构映射**：SimpleFOC 的 `loopFOC()` 是单一的实时控制循环，而 AUDESYS 的 HAL 协议设计（Signal / StreamChannel / RPC 三分法）需要一个更加通用的实时框架。SimpleFOC 的架构可以作为 AUDESYS MCU固件中**运动控制通道**的参考实现——将`loopFOC()`替换为AUDESYS的`RT-Scheduler`调度机制，将Commander Interface转换为HAL RPC接口，将Monitoring转换为HAL Signal输出。
+**HAL Driver 固件架构映射**：SimpleFOC 的 `loopFOC()` 是单一的实时控制循环，而 Weftik 的 HAL 协议设计（Signal / StreamChannel / RPC 三分法）需要一个更加通用的实时框架。SimpleFOC 的架构可以作为 Weftik MCU固件中**运动控制通道**的参考实现——将`loopFOC()`替换为Weftik的`RT-Scheduler`调度机制，将Commander Interface转换为HAL RPC接口，将Monitoring转换为HAL Signal输出。
 
 具体映射关系：
 
-| SimpleFOC组件 | AUDESYS对应概念 | 参考价值 |
+| SimpleFOC组件 | Weftik对应概念 | 参考价值 |
 |---------------|----------------|----------|
 | loopFOC() 实时循环 | RT-Scheduler（D13四系统混合调度） | 证明了"单一定时器循环+函数调度"在MCU上的可行性 |
-| Commander Interface | HAL RPC 原语 | ASCII协议简单有效，但AUDESYS应使用FlatBuffers二进制协议以获得更好性能 |
+| Commander Interface | HAL RPC 原语 | ASCII协议简单有效，但Weftik应使用FlatBuffers二进制协议以获得更好性能 |
 | Monitoring | HAL Signal 原语 | 制表符分隔的遥测输出直接对应Signal的单写多读模式 |
-| SimpleFOCStudio | AUDESYS Studio | PyQt5桌面GUI+实时串口通信的模式可作为Studio中调试面板的参考 |
+| SimpleFOCStudio | Weftik Studio | PyQt5桌面GUI+实时串口通信的模式可作为Studio中调试面板的参考 |
 | 对象化硬件抽象 | HAL 设备对象模型 | 每个硬件组件独立C++类+link()组合的模式应纳入HAL Driver SDK设计参考 |
 
 ### 7.2 运动控制策略参考
 
-SimpleFOC在FOC运动控制方面的实现为AUDESYS Runtime的运动控制模块提供了直接参考：
+SimpleFOC在FOC运动控制方面的实现为Weftik Runtime的运动控制模块提供了直接参考：
 
-1. **多种扭矩控制模式的运行时切换**：AUDESYS Runtime的MCU级固件可能需要根据应用场景动态切换控制模式（如启动时使用estimated_current，稳态切换为foc_current）。SimpleFOC的`torque_controller`枚举+switch架构可直接复用。
+1. **多种扭矩控制模式的运行时切换**：Weftik Runtime的MCU级固件可能需要根据应用场景动态切换控制模式（如启动时使用estimated_current，稳态切换为foc_current）。SimpleFOC的`torque_controller`枚举+switch架构可直接复用。
 
-2. **开环-闭环混合控制**：AUDESYS Simulator在仿真模式下可能需要开环控制进行故障模拟，SimpleFOC的开环+扭矩组合模式为此提供了参考。
+2. **开环-闭环混合控制**：Weftik Simulator在仿真模式下可能需要开环控制进行故障模拟，SimpleFOC的开环+扭矩组合模式为此提供了参考。
 
-3. **参数自动表征**：AUDESYS的HAL Driver固件应考虑集成类似的自动参数测量功能，降低现场安装和配置的难度。
+3. **参数自动表征**：Weftik的HAL Driver固件应考虑集成类似的自动参数测量功能，降低现场安装和配置的难度。
 
-4. **电感滞后补偿和交叉耦合补偿**：这些高级FOC技术在高速伺服控制中是必需的，AUDESYS Runtime应将其纳入运动控制模块的核心算法库。
+4. **电感滞后补偿和交叉耦合补偿**：这些高级FOC技术在高速伺服控制中是必需的，Weftik Runtime应将其纳入运动控制模块的核心算法库。
 
 ### 7.3 跨平台MCU抽象层设计
 
-SimpleFOC支持10+ MCU架构的事实证明了"面向MCU的硬件抽象层"在嵌入式领域的可行性。AUDESYS的HAL设计虽然面向更高的系统层级（从RT到控制面），但SimpleFOC证明了：
+SimpleFOC支持10+ MCU架构的事实证明了"面向MCU的硬件抽象层"在嵌入式领域的可行性。Weftik的HAL设计虽然面向更高的系统层级（从RT到控制面），但SimpleFOC证明了：
 
 - 即使在不支持动态分配的MCU上（如Arduino UNO仅2KB RAM），对象化的硬件抽象仍然可行
 - C++模板和虚函数可以在资源受限的嵌入式中有效使用
 - 跨平台统一API可以做到对用户代码完全透明
 
-AUDESYS的hal-core设计可以参考SimpleFOC的平台抽象策略：为每个MCU架构提供底层实现（timer、PWM、ADC、GPIO），上层应用通过统一API调用，不感知平台差异。
+Weftik的hal-core设计可以参考SimpleFOC的平台抽象策略：为每个MCU架构提供底层实现（timer、PWM、ADC、GPIO），上层应用通过统一API调用，不感知平台差异。
 
 ### 7.4 调试协议的简洁性
 
-Commander Interface 的ASCII命令协议虽然简单，但有效。这提示AUDESYS在设计初期也可以采用文本协议进行调试和原型验证，随后再升级为二进制协议。Commander的逐字符解析方式在资源受限的MCU上是极简且高效的，AUDESYS的HAL RPC在MCU端的实现应考虑类似的无缓冲逐字符解析模式。
+Commander Interface 的ASCII命令协议虽然简单，但有效。这提示Weftik在设计初期也可以采用文本协议进行调试和原型验证，随后再升级为二进制协议。Commander的逐字符解析方式在资源受限的MCU上是极简且高效的，Weftik的HAL RPC在MCU端的实现应考虑类似的无缓冲逐字符解析模式。
 
 ### 7.5 开源硬件驱动的参考
 
-SimpleFOC的BG431B-EVAL和BG341B-EVAL驱动板设计为AUDESYS的硬件参考平台选择提供了方向：
+SimpleFOC的BG431B-EVAL和BG341B-EVAL驱动板设计为Weftik的硬件参考平台选择提供了方向：
 
 - STM32G4系列（ARM Cortex-M4F，带浮点单元和CORDIC协处理器）是运动控制的理想MCU
 - 内建驱动器和电流检测的一体板设计降低了系统复杂度
-- 开源硬件设计（KiCad）可供AUDESYS设计参考平台时直接参考
+- 开源硬件设计（KiCad）可供Weftik设计参考平台时直接参考
 
-### 7.6 对AUDESYS Simulator的参考
+### 7.6 对Weftik Simulator的参考
 
-SimpleFOC的loopFOC()实现逻辑（位置→角度→扭矩→调制四步流水线）为AUDESYS Simulator的电机仿真模型提供了算法基础。Simulator可以通过调用SimpleFOC的FOC算法（移植到仿真环境而非MCU）来模拟电机行为，无需连接真实电机即可验证控制策略。
+SimpleFOC的loopFOC()实现逻辑（位置→角度→扭矩→调制四步流水线）为Weftik Simulator的电机仿真模型提供了算法基础。Simulator可以通过调用SimpleFOC的FOC算法（移植到仿真环境而非MCU）来模拟电机行为，无需连接真实电机即可验证控制策略。
 
 ### 7.7 局限性与警示
 
-SimpleFOC的局限性也反过来提示AUDESYS在哪些方面必须超越：
+SimpleFOC的局限性也反过来提示Weftik在哪些方面必须超越：
 
-1. **实时性**：SimpleFOC基于裸机无RTOS的架构不满足硬实时要求。AUDESYS的HAL必须从D13开始就确定四系统混合线程调度模型。
+1. **实时性**：SimpleFOC基于裸机无RTOS的架构不满足硬实时要求。Weftik的HAL必须从D13开始就确定四系统混合线程调度模型。
 
-2. **通信协议**：CommanderInterface的串口ASCII协议在速率和确定性上都不够。AUDESYS必须使用FlatBuffers二进制协议（D19/D39），并在RT路径上使用零拷贝加载。
+2. **通信协议**：CommanderInterface的串口ASCII协议在速率和确定性上都不够。Weftik必须使用FlatBuffers二进制协议（D19/D39），并在RT路径上使用零拷贝加载。
 
-3. **安全性**：SimpleFOC无任何功能安全特性。AUDESYS的HAL设计应考虑IEC 61508 SIL 2级（至少）的兼容性。
+3. **安全性**：SimpleFOC无任何功能安全特性。Weftik的HAL设计应考虑IEC 61508 SIL 2级（至少）的兼容性。
 
-4. **标准化**：SimpleFOC使用自定义通信协议而非工业标准。AUDESYS必须兼容Modbus RTU/TCP（D23）和OPC UA（Phase 2）等工业标准协议。
+4. **标准化**：SimpleFOC使用自定义通信协议而非工业标准。Weftik必须兼容Modbus RTU/TCP（D23）和OPC UA（Phase 2）等工业标准协议。
 
-5. **多语言支持**：SimpleFOC完全在C++/Arduino生态中。AUDESYS的HAL必须支持多语言（D19的15种语言），通过FlatBuffers实现跨语言通信。
+5. **多语言支持**：SimpleFOC完全在C++/Arduino生态中。Weftik的HAL必须支持多语言（D19的15种语言），通过FlatBuffers实现跨语言通信。
 
 
 ### 3.6 传感器支持矩阵
@@ -636,7 +636,7 @@ Issue和Pull Request响应及时，通常在24-48小时内得到维护者回应�
 
 SimpleFOC 不仅是一个软件库，还配套有开源硬件：
 
-- **BG431B-EVAL**：基于STM32G431（ARM Cortex-M4，170MHz，集成FPU和CORDIC协处理器）的高性能BLDC/Stepper评估板。内置三相驱动器（支持6路PWM），支持低边电流检测（DMA），带USB接口和调试接口。定价约€50。适合作为AUDESYS HAL硬件参考平台。
+- **BG431B-EVAL**：基于STM32G431（ARM Cortex-M4，170MHz，集成FPU和CORDIC协处理器）的高性能BLDC/Stepper评估板。内置三相驱动器（支持6路PWM），支持低边电流检测（DMA），带USB接口和调试接口。定价约€50。适合作为Weftik HAL硬件参考平台。
 
 - **BG341B-EVAL**：基于STM32G031（ARM Cortex-M0+，64MHz）的成本优化BLDC驱动板。精简功能集，保留核心FOC能力。定价约€30。适合批量生产验证。
 
@@ -783,101 +783,101 @@ void loop() {
 
 这种极简性使得SimpleFOC在教育和原型开发中具有突出优势。
 
-## 七、对AUDESYS参考价值
+## 七、对Weftik参考价值
 
 ### 7.1 MCU级智能固件架构的启示
 
-SimpleFOC 的核心架构——"对象化的硬件抽象 + 实时控制循环 + 通信协议栈 + 图形化调试工具"——为 AUDESYS 的 MCU 级智能固件（Edge Node / HAL Driver 固件）设计提供了完整的参考模式。
+SimpleFOC 的核心架构——"对象化的硬件抽象 + 实时控制循环 + 通信协议栈 + 图形化调试工具"——为 Weftik 的 MCU 级智能固件（Edge Node / HAL Driver 固件）设计提供了完整的参考模式。
 
-**HAL Driver 固件架构映射**：SimpleFOC 的 `loopFOC()` 是单一的实时控制循环，而 AUDESYS 的 HAL 协议设计（Signal / StreamChannel / RPC 三分法）需要一个更加通用的实时框架。SimpleFOC 的架构可以作为 AUDESYS MCU固件中**运动控制通道**的参考实现——将`loopFOC()`替换为AUDESYS的RT-Scheduler调度机制，将Commander Interface转换为HAL RPC接口，将Monitoring转换为HAL Signal输出。
+**HAL Driver 固件架构映射**：SimpleFOC 的 `loopFOC()` 是单一的实时控制循环，而 Weftik 的 HAL 协议设计（Signal / StreamChannel / RPC 三分法）需要一个更加通用的实时框架。SimpleFOC 的架构可以作为 Weftik MCU固件中**运动控制通道**的参考实现——将`loopFOC()`替换为Weftik的RT-Scheduler调度机制，将Commander Interface转换为HAL RPC接口，将Monitoring转换为HAL Signal输出。
 
 具体映射关系：
 
-| SimpleFOC组件 | AUDESYS对应概念 | 参考价值 |
+| SimpleFOC组件 | Weftik对应概念 | 参考价值 |
 |---------------|----------------|----------|
 | loopFOC() 实时循环 | RT-Scheduler（D13四系统混合调度） | 证明了"单一定时器循环+函数调度"在MCU上的可行性 |
-| Commander Interface | HAL RPC 原语 | ASCII协议简单有效，但AUDESYS应使用FlatBuffers二进制协议 |
+| Commander Interface | HAL RPC 原语 | ASCII协议简单有效，但Weftik应使用FlatBuffers二进制协议 |
 | Monitoring | HAL Signal 原语 | 制表符分隔的遥测输出直接对应Signal的单写多读模式 |
-| SimpleFOCStudio | AUDESYS Studio | PyQt5桌面GUI+实时串口通信的模式可作为Studio调试面板参考 |
+| SimpleFOCStudio | Weftik Studio | PyQt5桌面GUI+实时串口通信的模式可作为Studio调试面板参考 |
 | 对象化硬件抽象 | HAL 设备对象模型 | 每个硬件组件独立C++类+link()组合的模式应纳入HAL Driver SDK设计参考 |
 
 ### 7.2 运动控制策略参考
 
-SimpleFOC在FOC运动控制方面的实现为AUDESYS Runtime的运动控制模块提供了直接参考：
+SimpleFOC在FOC运动控制方面的实现为Weftik Runtime的运动控制模块提供了直接参考：
 
-1. **多种扭矩控制模式的运行时切换**：AUDESYS Runtime的MCU级固件可能需要根据应用场景动态切换控制模式（如启动时使用estimated_current，稳态切换为foc_current）。SimpleFOC的`torque_controller`枚举+switch架构可直接复用。
+1. **多种扭矩控制模式的运行时切换**：Weftik Runtime的MCU级固件可能需要根据应用场景动态切换控制模式（如启动时使用estimated_current，稳态切换为foc_current）。SimpleFOC的`torque_controller`枚举+switch架构可直接复用。
 
-2. **开环-闭环混合控制**：AUDESYS Simulator在仿真模式下可能需要开环控制进行故障模拟，SimpleFOC的开环+扭矩组合模式为此提供了参考。
+2. **开环-闭环混合控制**：Weftik Simulator在仿真模式下可能需要开环控制进行故障模拟，SimpleFOC的开环+扭矩组合模式为此提供了参考。
 
-3. **参数自动表征**：AUDESYS的HAL Driver固件应考虑集成类似的自动参数测量功能，降低现场安装和配置的难度。
+3. **参数自动表征**：Weftik的HAL Driver固件应考虑集成类似的自动参数测量功能，降低现场安装和配置的难度。
 
-4. **电感滞后补偿和交叉耦合补偿**：这些高级FOC技术在高速伺服控制中是必需的，AUDESYS Runtime应将其纳入运动控制模块的核心算法库。
+4. **电感滞后补偿和交叉耦合补偿**：这些高级FOC技术在高速伺服控制中是必需的，Weftik Runtime应将其纳入运动控制模块的核心算法库。
 
-5. **前馈控制**：SimpleFOC的电压前馈和电流前馈实现为AUDESYS的高级控制策略提供了参考，特别是在需要高动态响应的应用场景。
+5. **前馈控制**：SimpleFOC的电压前馈和电流前馈实现为Weftik的高级控制策略提供了参考，特别是在需要高动态响应的应用场景。
 
 ### 7.3 跨平台MCU抽象层设计
 
-SimpleFOC支持10+ MCU架构的事实证明了"面向MCU的硬件抽象层"在嵌入式领域的可行性。AUDESYS的HAL设计虽然面向更高的系统层级（从RT到控制面），但SimpleFOC证明了：
+SimpleFOC支持10+ MCU架构的事实证明了"面向MCU的硬件抽象层"在嵌入式领域的可行性。Weftik的HAL设计虽然面向更高的系统层级（从RT到控制面），但SimpleFOC证明了：
 
 - 即使在不支持动态分配的MCU上（如Arduino UNO仅2KB RAM），对象化的硬件抽象仍然可行
 - C++模板和虚函数可以在资源受限的嵌入式中有效使用
 - 跨平台统一API可以做到对用户代码完全透明
 
-AUDESYS的hal-core设计可以参考SimpleFOC的平台抽象策略：为每个MCU架构提供底层实现（timer、PWM、ADC、GPIO），上层应用通过统一API调用，不感知平台差异。
+Weftik的hal-core设计可以参考SimpleFOC的平台抽象策略：为每个MCU架构提供底层实现（timer、PWM、ADC、GPIO），上层应用通过统一API调用，不感知平台差异。
 
 ### 7.4 调试协议的简洁性
 
-Commander Interface 的ASCII命令协议虽然简单，但有效。这提示AUDESYS在设计初期也可以采用文本协议进行调试和原型验证，随后再升级为二进制协议。Commander的逐字符解析方式在资源受限的MCU上是极简且高效的，AUDESYS的HAL RPC在MCU端的实现应考虑类似的无缓冲逐字符解析模式。
+Commander Interface 的ASCII命令协议虽然简单，但有效。这提示Weftik在设计初期也可以采用文本协议进行调试和原型验证，随后再升级为二进制协议。Commander的逐字符解析方式在资源受限的MCU上是极简且高效的，Weftik的HAL RPC在MCU端的实现应考虑类似的无缓冲逐字符解析模式。
 
 ### 7.5 开源硬件驱动的参考
 
-SimpleFOC的BG431B-EVAL和BG341B-EVAL驱动板设计为AUDESYS的硬件参考平台选择提供了方向：
+SimpleFOC的BG431B-EVAL和BG341B-EVAL驱动板设计为Weftik的硬件参考平台选择提供了方向：
 
 - STM32G4系列（ARM Cortex-M4F，带浮点单元和CORDIC协处理器）是运动控制的理想MCU选择
 - 内建驱动器和电流检测的一体板设计降低了系统复杂度
-- 开源硬件设计（KiCad）可供AUDESYS设计参考平台时直接参考
+- 开源硬件设计（KiCad）可供Weftik设计参考平台时直接参考
 - 分离式设计（主板+驱动板）适应不同应用场景
 
-### 7.6 对AUDESYS Simulator的参考
+### 7.6 对Weftik Simulator的参考
 
-SimpleFOC的loopFOC()实现逻辑（位置→角度→扭矩→调制四步流水线）为AUDESYS Simulator的电机仿真模型提供了算法基础。Simulator可以通过调用SimpleFOC的FOC算法（移植到仿真环境而非MCU）来模拟电机行为，无需连接真实电机即可验证控制策略。
+SimpleFOC的loopFOC()实现逻辑（位置→角度→扭矩→调制四步流水线）为Weftik Simulator的电机仿真模型提供了算法基础。Simulator可以通过调用SimpleFOC的FOC算法（移植到仿真环境而非MCU）来模拟电机行为，无需连接真实电机即可验证控制策略。
 
-具体来说，AUDESYS Simulator可以：
+具体来说，Weftik Simulator可以：
 1. 将SimpleFOC的FOC算法移植到仿真环境，作为电机模型的控制算法
 2. 使用SimpleFOC的PID参数作为仿真模型的默认参数
 3. 复用SimpleFOC的Commander协议作为Simulator与外部工具之间的调试接口
 4. 参考SimpleFOCStudio的架构设计Simulator的调试面板
 
-### 7.7 对AUDESYS HAL协议设计的参考
+### 7.7 对Weftik HAL协议设计的参考
 
-SimpleFOC的"对象链接"模式为AUDESYS HAL的设备对象模型提供了参考思路：
+SimpleFOC的"对象链接"模式为Weftik HAL的设备对象模型提供了参考思路：
 
 - 每个硬件组件（电机、驱动器、传感器）有独立的对象和接口
 - 通过组合（composition）而非继承（inheritance）实现组件复用
 - 配置和初始化分离（init()/initFOC()两步走），便于错误处理和重试
 
-AUDESYS HAL的Device Object模型可以参考这种设计，为不同类别的设备（传感器、执行器、通信模块）定义统一的接口规范。
+Weftik HAL的Device Object模型可以参考这种设计，为不同类别的设备（传感器、执行器、通信模块）定义统一的接口规范。
 
 ### 7.8 局限性与警示
 
-SimpleFOC的局限性也反过来提示AUDESYS在哪些方面必须超越：
+SimpleFOC的局限性也反过来提示Weftik在哪些方面必须超越：
 
-1. **实时性**：SimpleFOC基于裸机无RTOS的架构不满足硬实时要求。AUDESYS的HAL必须从D13开始就确定四系统混合线程调度模型，在MCU端至少需要支持PREEMPT_RT或RTIC。
+1. **实时性**：SimpleFOC基于裸机无RTOS的架构不满足硬实时要求。Weftik的HAL必须从D13开始就确定四系统混合线程调度模型，在MCU端至少需要支持PREEMPT_RT或RTIC。
 
-2. **通信协议**：CommanderInterface的串口ASCII协议在速率和确定性上都不够。AUDESYS必须使用FlatBuffers二进制协议（D19/D39），并在RT路径上使用零拷贝加载。
+2. **通信协议**：CommanderInterface的串口ASCII协议在速率和确定性上都不够。Weftik必须使用FlatBuffers二进制协议（D19/D39），并在RT路径上使用零拷贝加载。
 
-3. **安全性**：SimpleFOC无任何功能安全特性。AUDESYS的HAL设计应考虑IEC 61508 SIL 2级的兼容性，至少需要实现STO和SBC等基础安全功能。
+3. **安全性**：SimpleFOC无任何功能安全特性。Weftik的HAL设计应考虑IEC 61508 SIL 2级的兼容性，至少需要实现STO和SBC等基础安全功能。
 
-4. **标准化**：SimpleFOC使用自定义通信协议而非工业标准。AUDESYS必须兼容Modbus RTU/TCP（D23）和OPC UA（Phase 2）等工业标准协议。
+4. **标准化**：SimpleFOC使用自定义通信协议而非工业标准。Weftik必须兼容Modbus RTU/TCP（D23）和OPC UA（Phase 2）等工业标准协议。
 
-5. **多语言支持**：SimpleFOC完全在C++/Arduino生态中。AUDESYS的HAL必须支持多语言（D19的15种语言），通过FlatBuffers实现跨语言通信。
+5. **多语言支持**：SimpleFOC完全在C++/Arduino生态中。Weftik的HAL必须支持多语言（D19的15种语言），通过FlatBuffers实现跨语言通信。
 
-6. **可扩展性**：SimpleFOC的架构不易扩展到大功率和高精度应用。AUDESYS的HAL应从设计之初就考虑可扩展性，支持从微型MCU到高性能MPSoC的部署。
+6. **可扩展性**：SimpleFOC的架构不易扩展到大功率和高精度应用。Weftik的HAL应从设计之初就考虑可扩展性，支持从微型MCU到高性能MPSoC的部署。
 
-7. **测试覆盖**：SimpleFOC的测试覆盖率不高，主要依赖社区测试。AUDESYS必须从一开始就建立三层QA体系（D30），确保RT代码的可靠性。
+7. **测试覆盖**：SimpleFOC的测试覆盖率不高，主要依赖社区测试。Weftik必须从一开始就建立三层QA体系（D30），确保RT代码的可靠性。
 
-### 7.9 总结：SimpleFOC对AUDESYS的整体价值
+### 7.9 总结：SimpleFOC对Weftik的整体价值
 
-SimpleFOC对AUDESYS的核心参考价值在于：它证明了在资源受限的MCU上实现高性能FOC运动控制是可行的，并且可以通过开源社区驱动的方式发展。AUDESYS的HAL和Runtime设计可以从SimpleFOC中汲取大量实践经验，特别是：硬件抽象层的对象化设计、实时控制循环的流水线调度、调试通信协议的简洁性、以及自动化参数调优工具链。
+SimpleFOC对Weftik的核心参考价值在于：它证明了在资源受限的MCU上实现高性能FOC运动控制是可行的，并且可以通过开源社区驱动的方式发展。Weftik的HAL和Runtime设计可以从SimpleFOC中汲取大量实践经验，特别是：硬件抽象层的对象化设计、实时控制循环的流水线调度、调试通信协议的简洁性、以及自动化参数调优工具链。
 
-同时，SimpleFOC的局限性也清楚地向AUDESYS展示了：MCU级FOC库无法替代完整的工业运动控制器。AUDESYS必须在SimpleFOC的基础上，增加硬实时保障、工业现场总线支持、功能安全认证和多语言互操作性，才能真正满足工业控制系统的需求。
+同时，SimpleFOC的局限性也清楚地向Weftik展示了：MCU级FOC库无法替代完整的工业运动控制器。Weftik必须在SimpleFOC的基础上，增加硬实时保障、工业现场总线支持、功能安全认证和多语言互操作性，才能真正满足工业控制系统的需求。

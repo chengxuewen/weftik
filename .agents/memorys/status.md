@@ -1,13 +1,14 @@
-# AUDESYS 项目状态
+# Weftik 项目状态
 
 ## 当前阶段
+- **Weftik 改名完成（2026-09-23）** — 全栈 AUDESYS→Weftik：24 crates / 9 扩展 / @weftik npm scope / fbs namespace / WEFTIK_* env / weftik_runtime_* 指标 / CLI；单主线 = 公开仓 gitee.com/chengxuewen/weftik（D118）。隔离 25 个既有回归测试待独立修复（见 pitfalls 清单）
 - **Weftik Phase -1 UI 移除完成（2026-09-23）** — AUDEDeck(43 文件)/hmi-designer/studio-core/napi HMI 三函数/设计器规范整块删除（提交 2958f54，-27.5k 行）；Runtime HMI 契约保留（IPC 0x16/0x17/0x18 + Role::Hmi），Panel/UI 由外部项目主导（D117）
-- **工程项目管理（A7 + 无 workspace 创建）完成（2026-08-10）** — New AUDESYS Project 向导（D114 工程组织模型）：目录约定 + project.yaml 清单 + 一 POU 一文件。修复「无 workspace 无法建工程」：改为从零创建（默认 ~/AUDESYS-Projects/，EnvVariablesServer 解析 home）+ 自动打开 workspace。菜单上浮 File 顶层（D115）。E2E 门禁通过（15.9s）。详见 D114/D115/D116
+- **工程项目管理（A7 + 无 workspace 创建）完成（2026-08-10）** — New Weftik Project 向导（D114 工程组织模型）：目录约定 + project.yaml 清单 + 一 POU 一文件。修复「无 workspace 无法建工程」：改为从零创建（默认 ~/Weftik-Projects/，EnvVariablesServer 解析 home）+ 自动打开 workspace。菜单上浮 File 顶层（D115）。E2E 门禁通过（15.9s）。详见 D114/D115/D116
 - **LD 编辑器拓扑 bug 修复完成（2026-08-05）** — D112 拓扑化后 3 个 bug 修复：(1) 拖动元素后连线消失（reorderElement 删线不重建串联）→ 新增 rewireRungSeries；(2) 跨 rung 误删连线（filter 含全局 rail id，rail 跨 rung 共享）→ 只按本 rung 元素 id 过滤；(3) 线圈放置失败（addCoil 保留自由放置位置校验，UI 拓扑路径不传 position 必抛错）→ 移除位置校验，coil 拓扑化追加。vitest 144/144。详见本项目 pitfalls.md
 - **LD/IL 编辑器改进完成** — 2026-07-31，Phase 1-2 完成：IL 编译器新增 S/R/NOT/MOD/定时器/计数器/边沿/双稳态 (33 助记符)、LD 并联分支 (| NO/NC→OR/ORN)、多输出、P/N 跳变触点、rung:group 视图、3 个 GLSP 操作 Handler。63 测试通过 (31 LD + 32 IL)。详见计划 .sisyphus/plans/ld-editor-improvements/
 - **FBD GLSP 迁移完成** — 2026-07-31，FBD 编辑器从 React+SVG 迁移到完整 Eclipse GLSP 架构。14 新文件、GPort 端口系统、5 种逻辑门 IView、36 测试全通过。详见 D107。
 - **Yarn Workspaces 迁移完成** — 2026-07-31，Studio 从 npm + file: link + 两步构建迁移到 Theia 官方 Yarn Workspaces monorepo。消除 `build-glsp.sh` 两步构建 workaround，Symbol 重复问题永久解决。构建流程：`yarn install && npx theia build`。
-- **HMI Designer 暂时禁用** — 2026-07-31，因 vitest 依赖解析问题（@testing-library/dom 缺失），从 apps/studio/package.json 移除 audesys-hmi-designer。待依赖问题解决后重新启用。
+- **HMI Designer 暂时禁用** — 2026-07-31，因 vitest 依赖解析问题（@testing-library/dom 缺失），从 apps/studio/package.json 移除 weftik-hmi-designer。待依赖问题解决后重新启用。
 - **Theia 迁移完成** — 2026-07-21，Studio IDE 从 Tauri+React 迁移到 Eclipse Theia+Monaco Editor+GLSP+napi-rs。6 语言编辑器就绪：ST Monaco ✅、IL Monaco ✅、G-code Monaco ✅、LD GLSP 编辑器 ✅、FBD GLSP 编辑器 ✅、SFC 编辑器 ✅。Signal Browser ✅、Scope View ✅、Debug Panel ✅、HMI Designer (Theia) ✅、Mode System ✅。AUDEDeck 不受影响（D65 保持有效）。
 - **Studio ↔ Runtime 集成完成** — RuntimeClient 库（UDS IPC 客户端，6 方法+认证）、Studio napi-rs bridge 命令（deploy_program/load_hal_config/read_controller_signal）
 - **协议适配器就绪** — Modbus RTU/TCP（8 测试）、HART（6 测试）
@@ -19,19 +20,19 @@
 - **HMI 设计器就绪** — 2026-07-19，可视化拖拽编辑器（react-rnd 自由布局画布）、7 种工业 widget（Gauge/Trend/Tank/Indicator/Button/Display/Text）、信号绑定对话框（controller_signal_snapshot 集成）、属性面板（位置/尺寸/标签/信号/类型专属配置）、Edit/Preview 模式切换、YAML 持久化（save_hmi_layout/load_hmi_layout）
 
 ## 仓库状态
-- **最新提交**: `d050224` — `docs(memory): lesson-review — Theia ~/ URI 不解析 + E2E workspace 状态污染`（与 origin/main 同步）
-- **提交历史**: 220+ commits on main (2026-07-08 至 2026-08-10)
+- **最新提交**: 改名链 — `44f2546` feat(rename)! 代码面 / docs 面随后；本地领先 origin 未 push（门禁全绿后才推）
+- **提交历史**: 399+ commits on main (2026-07-08 起，公开仓自 v0.1.0 发布后继续)
 - **源代码**: 24 crates（crates/）。apps/studio/ 已弃用（D71 Theia 迁移）；AUDEDeck 已移除（D117）
-- **测试**: 799 `#[test]` 标注 + vitest 144 tests (LD React Flow) + 26 tests (FBD React Flow) + Rust (40 LD + 39 IL) + Playwright E2E 31 场景 (LD) + 10 场景 (FBD) |
-- **SDD 规范**: 239 项（openspec/specs/7 份）：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI(22) + Studio Theia(55)
-- **CI**: qa-fast 5 门禁（test/clippy/fmt/deny/unwrap）+ GitHub Actions macOS+Linux 矩阵
+- **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形死循环 8 + ST→IR 控制流 17）；vitest 144 (LD) + 26 (FBD)；Playwright E2E LD/FBD（改名后待重跑验证）
+- **SDD 规范**: openspec/specs/：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI 契约(13，设计器段已随 D117 删除) + Studio Theia(55) + 编辑器规范若干
+- **CI**: 本地 qa-fast 5 门禁（test/clippy/fmt/deny/unwrap）；GitHub workflows 已删（D-c：暂不要 CI，Gitee origin 下从未触发）
 - **依赖**: `@colbymchenry/codegraph` (devDependency) + Rust toolchain stable
 
 ## 模块状态
 
 | 模块 | 状态 | 备注 |
 |------|:----:|------|
-| ST 编译器 + HAL IR/VM | ✅ 完成 | 34 操作码，7 控制流，函数调用栈。ST 编译位于 audesys-hal-binding-gen（原 hal-binding-gen 扩展为完整 ST-HalProgram 编译器），非独立 crate
+| ST 编译器 + HAL IR/VM | ✅ 完成 | 34 操作码，7 控制流，函数调用栈。ST 编译位于 weftik-hal-binding-gen（原 hal-binding-gen 扩展为完整 ST-HalProgram 编译器），非独立 crate
 | IL 编译器 | ✅ 完成 | 21 IL 助记符 → HalProgram |
 | LD 编译器 | ✅ 完成 | LD 图形 → IL 文本 → HalProgram |
 | FBD 编译器 | ✅ 完成 | 功能块图 to HalProgram。2026-07-23 修复: 加入 workspace members
@@ -52,7 +53,7 @@
 | Debug Panel (Theia) | ✅ 完成 | Theia Widget，8 源文件/7 测试，DI bindings 完整 |
 | HMI Designer (Theia) | ✅ 完成 | Theia Widget，HMI 可视化设计器迁移完成 |
 | Mode System | ✅ 完成 | 编辑器模式切换系统（6 语言 + HMI） |
-| 工程管理 (A1-A7) | ✅ 完成 | POU 树 + 变量表 + 类型 + 编译/部署/调试 + New AUDESYS Project 向导（D114 目录+project.yaml，无 workspace 从零创建 + 自动打开，D115） |
+| 工程管理 (A1-A7) | ✅ 完成 | POU 树 + 变量表 + 类型 + 编译/部署/调试 + New Weftik Project 向导（D114 目录+project.yaml，无 workspace 从零创建 + 自动打开，D115） |
 | RuntimeClient | ✅ 完成 | UDS IPC 客户端（7 方法含 deploy_hmi_layout + 认证）|
 | Studio ↔ Controller 联调 | ✅ 完成 | deploy_program + load_hal_config + read_controller_signal |
 | Modbus RTU/TCP | ✅ 完成 | libmodbus FFI，8 测试 |
@@ -72,7 +73,7 @@
 | CNC 系统 | 🟡 编译器+轴组完成 | G-code (75 测试含 G2/G3)、轴组 crate (32 测试)、运动规划器提取中、插补设计文档完成 |
 | Studio 插件架构 | ⚠️ 已废弃（D71 Theia 替代） | D58/D59 被 D71 取代：插件模型→Theia Extension System，PlatformAdapter→Theia Browser 模式 |
 | AUDEDeck | ⛔ 已移除（D117） | 2026-09 删除；Runtime IPC 契约保留，Panel 由外部项目维护 |
-| HMI 设计器 | ⛔ 已移除（D117） | 2026-09 删除 theia-extensions/audesys-hmi-designer + packages/studio-core；布局验证职责移交外部项目 |
+| HMI 设计器 | ⛔ 已移除（D117） | 2026-09 删除 theia-extensions/weftik-hmi-designer + packages/studio-core；布局验证职责移交外部项目 |
 | HMI 部署契约 | ✅ 对外契约 | IPC 0x17→Config Barrier→外部 Panel；验收依据 openspec/specs/hmi-spec.md（13 项）|
 | HMI 调试能力 | ⛔ 随设计器失效（D117） | SimHarness 本体保留；Preview 信号注入随设计器移除 |
 
@@ -112,7 +113,7 @@
 
 | 技能 | 状态 | 用途 |
 |------|:----:|------|
-| design-system | ✅ | AUDESYS 工业 UI 设计系统 |
+| design-system | ✅ | Weftik 工业 UI 设计系统 |
 | book-to-skill | ✅ | 文档→技能转换 |
 | doc-audit | ✅ | 6 维度文档架构审计 |
 | test-harness | ✅ | 多语言自动化测试工具架（6 模式） |
@@ -136,7 +137,7 @@
   - Supervisor → **Agent** (车端管理代理)
   - Controller → **Runtime** (实时运行时)
   - Field + Cloud → **Hub** (统一插件化平台)
-- **新增 crates 规划**: `audesys-agent` (从 Supervisor 改名), `audesys-hub` (新仓库)
+- **新增 crates 规划**: `weftik-agent` (从 Supervisor 改名), `weftik-hub` (新仓库)
 - **Studio 双形态**: Desktop (CODESYS IDE 模式) + Web (Hub 插件模式)
 - **新增功能设计**: 配方管理(ISA-18.2)、告警管理、审计追踪(21 CFR 11)、控制器冗余(Hot Standby)、时间同步(PTP)、数字孪生
 - **15 项新架构决策**: D77-D91 已记录于 decisions.md
@@ -162,7 +163,7 @@
 - **esbuild 构建修复**: 删除所有扩展 node_modules → Symbol 去重 → LD/FBD 图标正常
 - **浏览器菜单修复**: theia.target 改为 browser → browser-menu-module 加载 → 原生 Web 菜单可点击
 - **React hooks 修复**: 所有扩展 React 导入改为 @theia/core/shared/react, 0 errors
-- **@audesys/theia-bridge**: 添加到 studio dependencies（扩展不再自带）
+- **@weftik/theia-bridge**: 添加到 studio dependencies（扩展不再自带）
 - **LD palette onStart 移除**: 防止重复创建 widget
 - **PC+Web 共存**: theia.target=browser, 一次构建 → 三目标 (browser/node/electron), 双端功能对齐
 - **think-before-act 技能**: 新增元约束技能，先调研→列方案→审批→执行

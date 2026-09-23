@@ -102,9 +102,9 @@ TwinCAT/BSD engineering support: XAE (VS-based) programs TwinCAT/BSD targets via
 
 **Core value**: Beckhoff's open strategy is key to its competitiveness. EtherCAT open enables any vendor to build EtherCAT devices. TwinCAT open interfaces (ADS, TcCOM) enable third-party integration. This "closed core + open interfaces" model is a proven paradigm in industrial software.
 
-## 6.7 ADS vs AUDESYS HAL Communication Primitives
+## 6.7 ADS vs Weftik HAL Communication Primitives
 
-| Dimension | ADS (Beckhoff) | AUDESYS HAL |
+| Dimension | ADS (Beckhoff) | Weftik HAL |
 |-----------|---------------|-------------|
 | Core primitives | Message router + Read/Write/Notification | Signal / StreamChannel / RPC tripartite |
 | Addressing | (AMS Port, IndexGroup, IndexOffset) triple | (component.interface.name) Signal naming |
@@ -114,8 +114,8 @@ TwinCAT/BSD engineering support: XAE (VS-based) programs TwinCAT/BSD targets via
 | Security | Secure ADS (Build 4026+), ADS-over-MQTT | HalQoS Security Domain isolation |
 | Protocol openness | Fully public (Beckhoff provides full spec PDF) | HAL in detailed design (docs/modules/hal/) |
 
-**AUDESYS takeaways**:
+**Weftik takeaways**:
 
-1. ADS Index Group / Index Offset binary addressing shows performance advantage over string naming. AUDESYS Signal naming (component.interface.name) could compile to numeric pairs internally
-2. ADS Notification (subscribe/push) provides server-push data pattern, similar to AUDESYS Signal latest-value-overwrite + subscription notification, but ADS supports periodic or edge-triggered notifications
-3. ADS Message Router handles same-machine and cross-machine routing, consistent with AUDESYS amw abstraction layer positioning
+1. ADS Index Group / Index Offset binary addressing shows performance advantage over string naming. Weftik Signal naming (component.interface.name) could compile to numeric pairs internally
+2. ADS Notification (subscribe/push) provides server-push data pattern, similar to Weftik Signal latest-value-overwrite + subscription notification, but ADS supports periodic or edge-triggered notifications
+3. ADS Message Router handles same-machine and cross-machine routing, consistent with Weftik amw abstraction layer positioning

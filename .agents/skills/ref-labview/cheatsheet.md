@@ -50,7 +50,7 @@ Physical Channel ("Dev1/ai0")
 
 ## HAL Equivalent Mapping
 
-| LabVIEW | AUDESYS HAL |
+| LabVIEW | Weftik HAL |
 |---------|-------------|
 | Wire | Signal (single-writer, latest-value) |
 | Stream Channel (Channel Wire) | StreamChannel (buffered, multi-writer) |
@@ -63,7 +63,7 @@ Physical Channel ("Dev1/ai0")
 
 ## RT Scheduling Comparison
 
-| LabVIEW RT | AUDESYS D13 |
+| LabVIEW RT | Weftik D13 |
 |-----------|-------------|
 | Timed Loop | RT thread (LinuxCNC function list) |
 | CPU core isolation | RT thread exclusive core |
@@ -72,7 +72,7 @@ Physical Channel ("Dev1/ai0")
 | Host/Target split | Studio/Runtime separation |
 | Network Streams | amw_zenoh transport |
 
-## Critical AUDESYS Lessons
+## Critical Weftik Lessons
 
 | Lesson | Source | Action |
 |--------|--------|--------|
@@ -86,12 +86,12 @@ Physical Channel ("Dev1/ai0")
 
 ## Do NOT Copy From LabVIEW
 
-- Binary .vi source files -> AUDESYS: text-based project files
-- NI hardware lock-in -> AUDESYS: amw trait hardware independence
-- Graphical spaghetti on large projects -> AUDESYS: ST primary, graphical debug only
-- MAX GUI-dependent config -> AUDESYS: CLI/YAML-first config
-- IDE monolithic architecture -> AUDESYS: plugin-based (VS Code model)
-- Patent-protected G language -> AUDESYS: open standards (IEC 61131-3 + text DSL)
+- Binary .vi source files -> Weftik: text-based project files
+- NI hardware lock-in -> Weftik: amw trait hardware independence
+- Graphical spaghetti on large projects -> Weftik: ST primary, graphical debug only
+- MAX GUI-dependent config -> Weftik: CLI/YAML-first config
+- IDE monolithic architecture -> Weftik: plugin-based (VS Code model)
+- Patent-protected G language -> Weftik: open standards (IEC 61131-3 + text DSL)
 
 ## Do Copy From LabVIEW
 

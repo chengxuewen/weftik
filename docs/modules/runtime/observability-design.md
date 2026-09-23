@@ -1,4 +1,4 @@
-# AUDESYS Runtime 可观测性设计
+# Weftik Runtime 可观测性设计
 
 > 生成日期：2026-07-15
 > 设计目标：为 Runtime 六模块（Agent/Runtime/Panel/Gateway/Remote/Edge）定义统一的可观测性架构——健康检查端点、Prometheus 指标、结构化日志、告警路由、以及 AmwMetrics 核心结构
@@ -123,104 +123,104 @@ Remote       +4          :9104
 Edge         +5          :9105
 ```
 
-所有指标以 `audesys_` 为命名空间前缀。
+所有指标以 `weftik_` 为命名空间前缀。
 
 ### 3.2 通用指标
 
 ```
-# HELP audesys_build_info 构建版本和编译时间
-# TYPE audesys_build_info gauge
-audesys_build_info{version="0.1.0", commit="36de3e7", rustc="1.85.0"} 1
+# HELP weftik_build_info 构建版本和编译时间
+# TYPE weftik_build_info gauge
+weftik_build_info{version="0.1.0", commit="36de3e7", rustc="1.85.0"} 1
 
-# HELP audesys_uptime_seconds 进程启动后的运行时间
-# TYPE audesys_uptime_seconds counter
-audesys_uptime_seconds{module="controller"} 84321
+# HELP weftik_uptime_seconds 进程启动后的运行时间
+# TYPE weftik_uptime_seconds counter
+weftik_uptime_seconds{module="controller"} 84321
 
-# HELP audesys_health_status 当前健康状态 (1=healthy, 2=degraded, 3=critical)
-# TYPE audesys_health_status gauge
-audesys_health_status{module="controller"} 1
+# HELP weftik_health_status 当前健康状态 (1=healthy, 2=degraded, 3=critical)
+# TYPE weftik_health_status gauge
+weftik_health_status{module="controller"} 1
 
-# HELP audesys_memory_bytes 进程 RSS 内存
-# TYPE audesys_memory_bytes gauge
-audesys_memory_bytes{module="controller"} 16777216
+# HELP weftik_memory_bytes 进程 RSS 内存
+# TYPE weftik_memory_bytes gauge
+weftik_memory_bytes{module="controller"} 16777216
 ```
 
 ### 3.3 Runtime 专有指标
 
 ```
-# HELP audesys_rt_cycle_jitter_ns RT 线程周期 jitter（纳秒）
-# TYPE audesys_rt_cycle_jitter_ns gauge
-audesys_rt_cycle_jitter_ns{thread="control_loop"} 1230
+# HELP weftik_rt_cycle_jitter_ns RT 线程周期 jitter（纳秒）
+# TYPE weftik_rt_cycle_jitter_ns gauge
+weftik_rt_cycle_jitter_ns{thread="control_loop"} 1230
 
-# HELP audesys_rt_cycle_duration_ns RT 线程单周期实际执行时间（纳秒）
-# TYPE audesys_rt_cycle_duration_ns gauge
-audesys_rt_cycle_duration_ns{thread="control_loop"} 87500
+# HELP weftik_rt_cycle_duration_ns RT 线程单周期实际执行时间（纳秒）
+# TYPE weftik_rt_cycle_duration_ns gauge
+weftik_rt_cycle_duration_ns{thread="control_loop"} 87500
 
-# HELP audesys_rt_overrun_total RT 线程周期超限累计次数
-# TYPE audesys_rt_overrun_total counter
-audesys_rt_overrun_total{thread="control_loop"} 0
+# HELP weftik_rt_overrun_total RT 线程周期超限累计次数
+# TYPE weftik_rt_overrun_total counter
+weftik_rt_overrun_total{thread="control_loop"} 0
 
-# HELP audesys_signal_deadline_miss_total Signal 更新超时累计次数
-# TYPE audesys_signal_deadline_miss_total counter
-audesys_signal_deadline_miss_total{signal="encoder.position"} 0
+# HELP weftik_signal_deadline_miss_total Signal 更新超时累计次数
+# TYPE weftik_signal_deadline_miss_total counter
+weftik_signal_deadline_miss_total{signal="encoder.position"} 0
 
-# HELP audesys_config_barrier_total Config Barrier 应用累计次数
-# TYPE audesys_config_barrier_total counter
-audesys_config_barrier_total{status="applied"} 42
+# HELP weftik_config_barrier_total Config Barrier 应用累计次数
+# TYPE weftik_config_barrier_total counter
+weftik_config_barrier_total{status="applied"} 42
 
-# HELP audesys_func_list_call_count 函数列表中单个函数的调用计数
-# TYPE audesys_func_list_call_count counter
-audesys_func_list_call_count{function="pid_update"} 123456
+# HELP weftik_func_list_call_count 函数列表中单个函数的调用计数
+# TYPE weftik_func_list_call_count counter
+weftik_func_list_call_count{function="pid_update"} 123456
 ```
 
 ### 3.4 Agent 专有指标
 
 ```
-# HELP audesys_supervisor_subprocess_up 子进程存活状态 (1=up, 0=down)
-# TYPE audesys_supervisor_subprocess_up gauge
-audesys_supervisor_subprocess_up{module="controller"} 1
-audesys_supervisor_subprocess_up{module="panel"} 1
-audesys_supervisor_subprocess_up{module="gateway"} 1
+# HELP weftik_supervisor_subprocess_up 子进程存活状态 (1=up, 0=down)
+# TYPE weftik_supervisor_subprocess_up gauge
+weftik_supervisor_subprocess_up{module="controller"} 1
+weftik_supervisor_subprocess_up{module="panel"} 1
+weftik_supervisor_subprocess_up{module="gateway"} 1
 
-# HELP audesys_supervisor_subprocess_restarts_total 子进程重启累计次数
-# TYPE audesys_supervisor_subprocess_restarts_total counter
-audesys_supervisor_subprocess_restarts_total{module="controller"} 1
+# HELP weftik_supervisor_subprocess_restarts_total 子进程重启累计次数
+# TYPE weftik_supervisor_subprocess_restarts_total counter
+weftik_supervisor_subprocess_restarts_total{module="controller"} 1
 
-# HELP audesys_health_aggregate 全模块聚合健康等级 (1=all_healthy, 2=any_degraded, 3=any_critical)
-# TYPE audesys_health_aggregate gauge
-audesys_health_aggregate{cluster="production"} 1
+# HELP weftik_health_aggregate 全模块聚合健康等级 (1=all_healthy, 2=any_degraded, 3=any_critical)
+# TYPE weftik_health_aggregate gauge
+weftik_health_aggregate{cluster="production"} 1
 ```
 
 ### 3.5 Gateway 专有指标
 
 ```
-# HELP audesys_gateway_upstream_latency_ms 上游 MES/ERP 延迟（毫秒）
-# TYPE audesys_gateway_upstream_latency_ms gauge
-audesys_gateway_upstream_latency_ms{upstream="mes"} 42
+# HELP weftik_gateway_upstream_latency_ms 上游 MES/ERP 延迟（毫秒）
+# TYPE weftik_gateway_upstream_latency_ms gauge
+weftik_gateway_upstream_latency_ms{upstream="mes"} 42
 
-# HELP audesys_gateway_message_queue_depth 内部消息队列深度
-# TYPE audesys_gateway_message_queue_depth gauge
-audesys_gateway_message_queue_depth{queue="to_mes"} 128
+# HELP weftik_gateway_message_queue_depth 内部消息队列深度
+# TYPE weftik_gateway_message_queue_depth gauge
+weftik_gateway_message_queue_depth{queue="to_mes"} 128
 
-# HELP audesys_gateway_connection_up 对外连接状态
-# TYPE audesys_gateway_connection_up gauge
-audesys_gateway_connection_up{target="mes.plant1"} 1
+# HELP weftik_gateway_connection_up 对外连接状态
+# TYPE weftik_gateway_connection_up gauge
+weftik_gateway_connection_up{target="mes.plant1"} 1
 ```
 
 ### 3.6 Panel / Remote / Edge 专有指标
 
 ```
-# HELP audesys_panel_fps Panel HMI 渲染帧率
-# TYPE audesys_panel_fps gauge
-audesys_panel_fps{window="main"} 60
+# HELP weftik_panel_fps Panel HMI 渲染帧率
+# TYPE weftik_panel_fps gauge
+weftik_panel_fps{window="main"} 60
 
-# HELP audesys_edge_collector_gap_ns 采集周期偏离预期值的最大偏差
-# TYPE audesys_edge_collector_gap_ns gauge
-audesys_edge_collector_gap_ns{collector="temperature"} 5000
+# HELP weftik_edge_collector_gap_ns 采集周期偏离预期值的最大偏差
+# TYPE weftik_edge_collector_gap_ns gauge
+weftik_edge_collector_gap_ns{collector="temperature"} 5000
 
-# HELP audesys_edge_cache_bytes 边缘缓存占用字节数
-# TYPE audesys_edge_cache_bytes gauge
-audesys_edge_cache_bytes{collector="temperature"} 4194304
+# HELP weftik_edge_cache_bytes 边缘缓存占用字节数
+# TYPE weftik_edge_cache_bytes gauge
+weftik_edge_cache_bytes{collector="temperature"} 4194304
 ```
 
 ---
@@ -295,14 +295,14 @@ Agent 为每条日志注入 `cluster` / `host` / `instance_id` 标签后再转�
 ### 5.2 Prometheus Alerting Rules
 
 ```yaml
-# prometheus-rules.yaml — AUDESYS 告警规则
+# prometheus-rules.yaml — Weftik 告警规则
 
 groups:
-  - name: audesys_controller
+  - name: weftik_controller
     interval: 10s
     rules:
       - alert: RuntimeOverrun
-        expr: audesys_rt_overrun_total > 0
+        expr: weftik_rt_overrun_total > 0
         for: 5s
         labels:
           severity: p1
@@ -312,7 +312,7 @@ groups:
           description: "module={{ $labels.module }} thread={{ $labels.thread }} overrun"
 
       - alert: RuntimeJitterHigh
-        expr: audesys_rt_cycle_jitter_ns > 50000
+        expr: weftik_rt_cycle_jitter_ns > 50000
         for: 10s
         labels:
           severity: p2
@@ -322,7 +322,7 @@ groups:
           description: "当前 {{ $value }}ns，阈值 50000ns"
 
       - alert: SignalDeadlineMiss
-        expr: audesys_signal_deadline_miss_total > 0
+        expr: weftik_signal_deadline_miss_total > 0
         for: 5s
         labels:
           severity: p1
@@ -330,11 +330,11 @@ groups:
         annotations:
           summary: "Signal 更新超时"
 
-  - name: audesys_supervisor
+  - name: weftik_supervisor
     interval: 10s
     rules:
       - alert: SubprocessDown
-        expr: audesys_supervisor_subprocess_up == 0
+        expr: weftik_supervisor_subprocess_up == 0
         for: 5s
         labels:
           severity: p0
@@ -343,7 +343,7 @@ groups:
           summary: "子进程 {{ $labels.module }} 不在运行"
 
       - alert: HealthAggregateCritical
-        expr: audesys_health_aggregate == 3
+        expr: weftik_health_aggregate == 3
         for: 5s
         labels:
           severity: p0
@@ -351,11 +351,11 @@ groups:
         annotations:
           summary: "Runtime 集群健康状态为 critical"
 
-  - name: audesys_gateway
+  - name: weftik_gateway
     interval: 15s
     rules:
       - alert: GatewayDisconnected
-        expr: audesys_gateway_connection_up == 0
+        expr: weftik_gateway_connection_up == 0
         for: 30s
         labels:
           severity: p2

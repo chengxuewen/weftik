@@ -14,7 +14,7 @@
 4. [现状与生态](#四现状与生态)
 5. [市场定位](#五市场定位)
 6. [产品特色](#六产品特色)
-7. [对 AUDESYS 参考价值](#七对-audesys-参考价值)
+7. [对 Weftik 参考价值](#七对-weftik-参考价值)
 
 ---
 
@@ -720,16 +720,16 @@ DeltaV 从设计之初就考虑了一个同一平台支撑 "撬装 → 小型 �
 
 ---
 
-## 七、对 AUDESYS 参考价值
+## 七、对 Weftik 参考价值
 
 ### 7.1 架构层面的关键经验
 
-#### 7.1.1 CHARMs 电子配线 vs. AUDESYS HAL Signal 的动态绑定
+#### 7.1.1 CHARMs 电子配线 vs. Weftik HAL Signal 的动态绑定
 
-CHARMs 电子配线的核心洞察是：**"物理接线 = 物理着陆点 + 软件分配通道类型 + 软件分配控制器归属"**。用 AUDESYS HAL 的术语重新理解：
+CHARMs 电子配线的核心洞察是：**"物理接线 = 物理着陆点 + 软件分配通道类型 + 软件分配控制器归属"**。用 Weftik HAL 的术语重新理解：
 
 ```
-CHARMs 三层抽象               AUDESYS HAL 对应
+CHARMs 三层抽象               Weftik HAL 对应
 ─────────────────────         ───────────────────
 物理着陆点                     (不太适用 — HAL 是纯软件抽象层)
   ↓
@@ -740,30 +740,30 @@ CHARMs 通道类型                HAL 类型系统 (14 种)
 (最多 4 个/8 个控制器)         (Signal component.interface.name → 通过名称解析绑定)
 ```
 
-**关键启示：** AUDESYS HAL 的 Signal 命名模式（component.interface.name）已经提供了与 CHARMs 软件分配相同级别的灵活性——名称而非物理地址标识信号。但 HAL 可以进一步借鉴 CHARMs 的一个关键设计：
+**关键启示：** Weftik HAL 的 Signal 命名模式（component.interface.name）已经提供了与 CHARMs 软件分配相同级别的灵活性——名称而非物理地址标识信号。但 HAL 可以进一步借鉴 CHARMs 的一个关键设计：
 
 **"类型后期绑定（Late Type Characterization）"**
 CHARMs 允许信号类型在物理接线完成后才确定（只需更换 CHARM 模块）。在 HAL 的仿真上下文中，这意味着：
 - Simulator 模块应支持仿真 I/O 通道类型的运行时重新定义（不需要重启仿真）
 - 这对仿真平台的用户价值是：可以在不重启仿真的情况下测试不同传感器类型的替换方案
 
-#### 7.1.2 CIOC 控制器分配 vs. AUDESYS amw HalDiscovery
+#### 7.1.2 CIOC 控制器分配 vs. Weftik amw HalDiscovery
 
 CIOC 最多可分配 CHARMs 给 4 个不同控制器（PK Controller 下 8 个）。这意味着一个 I/O 物理模块是**多归属**的——不绑定到单一控制器。
 
-AUDESYS HAL 的 amw HalDiscovery 也支持类似的解耦设计：
+Weftik HAL 的 amw HalDiscovery 也支持类似的解耦设计：
 - Signal 的命名空间化（component.interface.name）允许一个信号被多个消费者发现和订阅
 - StreamChannel 的多写多读设计实现了类似的多归属模式
 
 **但 HAL 缺少一个 CIOC 提供的特性：** 管理面（而非数据面）的 I/O 分配工具。CIOC 通过 DeltaV ProfessionalPlus 提供一个集中化的面板来管理"哪个 CHARM 分配给哪个控制器"。HAL 当前没有对等的管理面工具——Signal/StreamChannel 的绑定是代码级别（API 调用）而非配置级别（声明式分配）。
 
-**建议：** 为 AUDESYS Studio IDE 设计一个"信号分配面板"——类似 DeltaV ProfessionalPlus 中 CHARM 分配界面的功能——允许用户在图形界面中将仿真 I/O 通道拖拽分配到 Runtime 控制器仿真节点。
+**建议：** 为 Weftik Studio IDE 设计一个"信号分配面板"——类似 DeltaV ProfessionalPlus 中 CHARM 分配界面的功能——允许用户在图形界面中将仿真 I/O 通道拖拽分配到 Runtime 控制器仿真节点。
 
-#### 7.1.3 DeltaV ACN 网络架构 vs. AUDESYS HAL amw 传输层
+#### 7.1.3 DeltaV ACN 网络架构 vs. Weftik HAL amw 传输层
 
 DeltaV ACN 的网络架构（Smart Switches + Firewall-IPD + LOCK 机制）提供了一套成熟的 DCS 网络设计模式：
 
-| DeltaV ACN 特征 | AUDESYS HAL 对应 |
+| DeltaV ACN 特征 | Weftik HAL 对应 |
 |----------------|-----------------|
 | 双网冗余 + Smart Switches | StreamChannel 未来 DualLink 冗余模式 |
 | Firewall-IPD 安全区分段 | HalQoS security_domain 标记 |
@@ -771,24 +771,24 @@ DeltaV ACN 的网络架构（Smart Switches + Firewall-IPD + LOCK 机制）提�
 | Smart Switches 即插即用 | amw_zenoh 自动发现模式 |
 
 **Firewall-IPD 物理防火墙的启发：**
-DeltaV Firewall-IPD 是物理设备，分段"嵌入式设备区"和"工作站区"。AUDESYS HAL 的 HalQoS security_domain 可以做类似的事情——但仅限于逻辑标记层面。如果未来 AUDESYS Runtime 需要保护物理 I/O 访问的安全性，"逻辑标记 + 网络防火墙"的双层结构值得参考。
+DeltaV Firewall-IPD 是物理设备，分段"嵌入式设备区"和"工作站区"。Weftik HAL 的 HalQoS security_domain 可以做类似的事情——但仅限于逻辑标记层面。如果未来 Weftik Runtime 需要保护物理 I/O 访问的安全性，"逻辑标记 + 网络防火墙"的双层结构值得参考。
 
-#### 7.1.4 DeltaV 从小到大的可伸缩性 vs. AUDESYS 系统架构
+#### 7.1.4 DeltaV 从小到大的可伸缩性 vs. Weftik 系统架构
 
 DeltaV 的 PK Controller 独立运行 + 无缝并入大系统的能力是 DCS 架构设计中处理"从小到大的演进"的经典案例。
 
-**对 AUDESYS 的启示：**
+**对 Weftik 的启示：**
 - AU DESYS Runtime 的模块化设计已经奠定了伸缩性的基础（6 模块套件）
 - 可以借鉴 PK Controller 的"独立模式"概念：Runtime 的最小部署单元可以是一个不依赖完整 Studio/Server 的单节点（用于设备级仿真）
 - Simulator 模块可以设计为支持从单设备仿真到全厂仿真的无级扩展
 
 ### 7.2 通信模式对比
 
-#### 7.2.1 DeltaV 控制器间通信 vs. AUDESYS Signal
+#### 7.2.1 DeltaV 控制器间通信 vs. Weftik Signal
 
-DeltaV 控制器之间的引用（Inter-Controller References）允许一个控制器访问另一个控制器的 I/O 和参数。在 AUDESYS HAL 的框架中，这映射为：
+DeltaV 控制器之间的引用（Inter-Controller References）允许一个控制器访问另一个控制器的 I/O 和参数。在 Weftik HAL 的框架中，这映射为：
 
-| DeltaV | AUDESYS HAL |
+| DeltaV | Weftik HAL |
 |--------|------------|
 | Inter-Controller Reference（跨控制器引用） | Signal pull/push 跨 amw 传输层 |
 | 同一 ACN 上的数据访问 | amw_zenoh keyexpr 表达式跨节点路由 |
@@ -796,23 +796,23 @@ DeltaV 控制器之间的引用（Inter-Controller References）允许一个控�
 
 DeltaV 的 Inter-Controller Reference 本质上是一种"引用绑定"——在工程阶段声明依赖关系，运行时控制器间通过网络交换数据。这与 HAL 的 Signal push 模式高度一致（subscribe → publish 回调）。
 
-**一个差异值得注意：** DeltaV 的控制器间引用是在编译时解析的，而 AUDESYS HAL 的 Signal 绑定是运行时通过 HalDiscovery 动态解析的。运行时动态解析提供了更大的灵活性，但也带来了不确定性——在仿真平台上，这可能使得仿真行为与真实 DCS 行为不一致。建议在 Studio IDE 中提供"严格模式"——在仿真开始前静态验证所有 Signal 绑定是否可解析。
+**一个差异值得注意：** DeltaV 的控制器间引用是在编译时解析的，而 Weftik HAL 的 Signal 绑定是运行时通过 HalDiscovery 动态解析的。运行时动态解析提供了更大的灵活性，但也带来了不确定性——在仿真平台上，这可能使得仿真行为与真实 DCS 行为不一致。建议在 Studio IDE 中提供"严格模式"——在仿真开始前静态验证所有 Signal 绑定是否可解析。
 
-#### 7.2.2 DeltaV CHARMs 总线通信 vs. AUDESYS StreamChannel
+#### 7.2.2 DeltaV CHARMs 总线通信 vs. Weftik StreamChannel
 
 CIOC 与 CHARMs 之间的数字通信总线是专有的冗余串行总线（非标准以太网），以 50–500 ms 的速率轮询 96 个 CHARM 通道。
 
-| CHARMs 总线特征 | AUDESYS HAL 对应 |
+| CHARMs 总线特征 | Weftik HAL 对应 |
 |----------------|-----------------|
 | 冗余双总线 | StreamChannel 尚无链路级冗余（Phase 2+ 建议添加） |
 | 固定轮询周期（50-500 ms） | Signal push/pull（pull 模式下消费者自定频率） |
 | 96 通道单卡轮询 | 可通过多个 Signal + pull_batch 批量快照模拟 |
 
-CHARMs 总线虽然封装在专有硬件中，但其"冗余双总线 + 周期轮询"模型本质上是一种简化版的实时数据采集总线。AUDESYS HAL 可以通过组合 Signal pull_batch（批量快照）来模拟一个 I/O 卡对全部 96 个点的周期性扫描，这对仿真传统 DCS 的 I/O 扫描行为有实用价值。
+CHARMs 总线虽然封装在专有硬件中，但其"冗余双总线 + 周期轮询"模型本质上是一种简化版的实时数据采集总线。Weftik HAL 可以通过组合 Signal pull_batch（批量快照）来模拟一个 I/O 卡对全部 96 个点的周期性扫描，这对仿真传统 DCS 的 I/O 扫描行为有实用价值。
 
 ### 7.3 批次控制启示
 
-DeltaV 的 ISA-88 批次实现是业界最成熟的。虽然 AUDESYS 当前不直接支持批次控制，但作为仿真平台，它需要能够仿真批次行为：
+DeltaV 的 ISA-88 批次实现是业界最成熟的。虽然 Weftik 当前不直接支持批次控制，但作为仿真平台，它需要能够仿真批次行为：
 
 **建议设计方向：**
 - HAL 的 RPC 原语已能承载批次控制的状态机转移命令（如 Start Phase → Running → Complete）
@@ -822,9 +822,9 @@ DeltaV 的 ISA-88 批次实现是业界最成熟的。虽然 AUDESYS 当前不�
 
 ### 7.4 仿真与调试工具启示
 
-DeltaV Simulate（全系统仿真，含 Batch Executive）和 Smart Commissioning（智能调试）提供了对 AUDESYS Simulator 设计的有价值参考：
+DeltaV Simulate（全系统仿真，含 Batch Executive）和 Smart Commissioning（智能调试）提供了对 Weftik Simulator 设计的有价值参考：
 
-| DeltaV 工具 | AUDESYS 可借鉴特性 |
+| DeltaV 工具 | Weftik 可借鉴特性 |
 |------------|-------------------|
 | DeltaV Simulate | 控制器逻辑 + I/O + 批次的完整仿真闭环 |
 | Smart Commissioning | 自动化调试工作流——扫描 HART 设备、自动分配、一键调试验证 |
@@ -837,22 +837,22 @@ DeltaV Simulate（全系统仿真，含 Batch Executive）和 Smart Commissionin
 
 ### 7.5 安全性架构参考
 
-DeltaV 的 ISASecure SSA 认证提供了成套的系统安全架构参考。最值得 AUDESYS 借鉴的是：
+DeltaV 的 ISASecure SSA 认证提供了成套的系统安全架构参考。最值得 Weftik 借鉴的是：
 
 **1. LOCK 命令机制（DeltaV v13.3.1）：**
-LOCK 后嵌入式设备拒绝下载、解委、故障排查访问和固件升级。这与 AUDESYS 的 LockLevel 逻辑完全一致（Run 级别拒绝所有 RPC），但增加了一个有价值的补充：
-- **物理存在强制解锁：** DeltaV 通过 Firewall-IPD 旁路模式要求物理存在才能解锁。AUDESYS 可以考虑类似机制——高安全级别的 LockLevel 变更要求确认物理存在（如需要 Studio IDE 操作员输入硬件令牌）
+LOCK 后嵌入式设备拒绝下载、解委、故障排查访问和固件升级。这与 Weftik 的 LockLevel 逻辑完全一致（Run 级别拒绝所有 RPC），但增加了一个有价值的补充：
+- **物理存在强制解锁：** DeltaV 通过 Firewall-IPD 旁路模式要求物理存在才能解锁。Weftik 可以考虑类似机制——高安全级别的 LockLevel 变更要求确认物理存在（如需要 Studio IDE 操作员输入硬件令牌）
 
 **2. 参考架构认证：**
-DeltaV 的 ISASecure SSA 认证覆盖特定的参考架构（含 DeltaV + DeltaV SIS 组件）。如果 AUDESYS 未来需要获得安全认证（如用于关键基础设施仿真），预先定义一个 "认证参考架构"——指定哪些模块、配置和部署拓扑包含在认证范围内——是明智的策略。
+DeltaV 的 ISASecure SSA 认证覆盖特定的参考架构（含 DeltaV + DeltaV SIS 组件）。如果 Weftik 未来需要获得安全认证（如用于关键基础设施仿真），预先定义一个 "认证参考架构"——指定哪些模块、配置和部署拓扑包含在认证范围内——是明智的策略。
 
 ### 7.6 工程工具启示
 
 DeltaV ProfessionalPlus + Control Studio 的工程环境是 DCS 行业中工程效率的标杆：
 
-**对 AUDESYS Studio IDE 的具体建议：**
+**对 Weftik Studio IDE 的具体建议：**
 
-| DeltaV 工具 | AUDESYS Studio IDE 借鉴 |
+| DeltaV 工具 | Weftik Studio IDE 借鉴 |
 |------------|------------------------|
 | Control Studio FBD 编辑器 | 拖拽式功能块连接图，在线显示实时值 |
 | Recipe Studio ISA-88 视图 | 如果支持批次仿真，ISA-88 分层视图（Procedure → Phase） |
@@ -862,7 +862,7 @@ DeltaV ProfessionalPlus + Control Studio 的工程环境是 DCS 行业中工程�
 
 ### 7.7 关键经验总结
 
-| Emerson DeltaV 特征 | 对 AUDESYS 的启示 | 优先级 |
+| Emerson DeltaV 特征 | 对 Weftik 的启示 | 优先级 |
 |---------------------|-------------------|:---:|
 | CHARMs 电子配线 — 软件定义 I/O + 类型后期绑定 | Simulator 支持仿真 I/O 通道类型的运行时重新定义 | 中 |
 | CIOC 控制器分配 — 集中化 I/O 管理 | Studio IDE 设计"信号分配面板"（拖拽分配仿真 I/O 到控制器） | 高 |
@@ -873,7 +873,7 @@ DeltaV ProfessionalPlus + Control Studio 的工程环境是 DCS 行业中工程�
 | Smart Commissioning — 一键调试验证 | Studio IDE 一键验证仿真 I/O 信号链完整性 | 中 |
 | AMS Device Manager — 深度仪表集成 | HAL Signal 支持设备诊断元数据（除实时值外附带健康状态） | 低 |
 | DeltaV Continuous Historian Elite (AspenTech IP.21) | Runtime 时间序列数据记录 API（对齐 StreamChannel 持久化） | 中 |
-| ISASecure SSA 参考架构认证 | 预先定义 AUDESYS 认证参考架构（如果未来需要安全认证） | 低 |
+| ISASecure SSA 参考架构认证 | 预先定义 Weftik 认证参考架构（如果未来需要安全认证） | 低 |
 
 ---
 

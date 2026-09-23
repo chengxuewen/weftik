@@ -1,7 +1,7 @@
 # Theia 工业 IDE 生态分析 + Neuron Automation 对比
 
-> 数据来源：Eclipse Theia 官网、GitHub、AUDESYS 架构文档、Neuron Automation 官网（2026-06-30 产品发布）、行业媒体报道
-> ⚠️ 关键修正：Neuron Smart Engineer 使用 **VS Code 扩展架构**，并非 Eclipse Theia。AUDESYS D71 可能引用错误来源。
+> 数据来源：Eclipse Theia 官网、GitHub、Weftik 架构文档、Neuron Automation 官网（2026-06-30 产品发布）、行业媒体报道
+> ⚠️ 关键修正：Neuron Smart Engineer 使用 **VS Code 扩展架构**，并非 Eclipse Theia。Weftik D71 可能引用错误来源。
 
 ## 1. Theia 工业 IDE 生态
 
@@ -9,7 +9,7 @@
 
 | 项目/公司 | 领域 | Theia 版本 | 状态 |
 |----------|------|-----------|:----:|
-| **AUDESYS Studio** | 工业控制 IDE (IEC 61131-3) | 1.73.0 | 开源 (Apache 2.0) |
+| **Weftik Studio** | 工业控制 IDE (IEC 61131-3) | 1.73.0 | 开源 (Apache 2.0) |
 | **STM32CubeMX2** | 嵌入式 MCU 配置 | 1.x | 商业 |
 | **TI Code Composer Studio** | 嵌入式 DSP/MCU | 1.x | 商业 |
 | **Arm Keil MDK** | 嵌入式 MCU 开发 | 1.x | 商业 |
@@ -34,7 +34,7 @@ Theia Backend (Node.js)
   └─ napi-rs Bridge → Rust 编译器
 ```
 
-**AUDESYS 实施教训**：
+**Weftik 实施教训**：
 1. `@eclipse-glsp/sprotty` vs `sprotty` 导入导致 DI Symbol 不匹配
 2. GLSP ActionHandler 必须显式注册（StatusAction, SetDirtyStateAction）
 3. 扩展 node_modules 删除原则（D97）
@@ -63,7 +63,7 @@ Theia Backend (Node.js)
 | **发布时间** | 2026-06-30 |
 | **部署** | Desktop / Server / Cloud |
 
-> ⚠️ AUDESYS D71 记录 "Neuron Automation 已验证 Theia+GLSP 可用于 IEC 61131-3 工业编程"。**但实际 Smart Engineer 使用 VS Code 扩展架构 + 专有 FBD 编辑器**（非 Theia + GLSP）。D71 可能引用的是 Neuron 的早期原型或其他产品线。
+> ⚠️ Weftik D71 记录 "Neuron Automation 已验证 Theia+GLSP 可用于 IEC 61131-3 工业编程"。**但实际 Smart Engineer 使用 VS Code 扩展架构 + 专有 FBD 编辑器**（非 Theia + GLSP）。D71 可能引用的是 Neuron 的早期原型或其他产品线。
 
 ### 2.3 技术特性
 
@@ -85,9 +85,9 @@ Theia Backend (Node.js)
 - **RTS Micro**：小型嵌入式运行时
 - **RTS Nano**：超轻量运行时
 
-### 2.5 与 AUDESYS 的对比
+### 2.5 与 Weftik 的对比
 
-| 维度 | Neuron Smart Engineer | AUDESYS Studio |
+| 维度 | Neuron Smart Engineer | Weftik Studio |
 |------|:---:|:---:|
 | **IDE 框架** | VS Code 扩展架构 | Eclipse Theia 1.73.0 |
 | **图形编辑器** | 专有 FBD + LD | GLSP（LD/FBD 迁移中） |

@@ -12,12 +12,12 @@
 //! let val = client.read_signal("counter.value")?;
 //! ```
 
-use weftik_hal_core::types::HalPinType;
-use weftik_hal_core::value::HalValue;
-use weftik_runtime_common::types::Role;
 use std::io::{self, Read, Write};
 use std::os::unix::net::UnixStream;
 use std::sync::atomic::{AtomicBool, Ordering};
+use weftik_hal_core::types::HalPinType;
+use weftik_hal_core::value::HalValue;
+use weftik_runtime_common::types::Role;
 
 // ── Wire constants (mirrors ipc.rs) ──
 
@@ -439,7 +439,9 @@ impl RuntimeClient {
         if resp.len() < 8 {
             return Err(format!("response too short: {} bytes", resp.len()));
         }
-        let generation = u64::from_le_bytes([resp[0], resp[1], resp[2], resp[3], resp[4], resp[5], resp[6], resp[7]]);
+        let generation = u64::from_le_bytes([
+            resp[0], resp[1], resp[2], resp[3], resp[4], resp[5], resp[6], resp[7],
+        ]);
         Ok(generation)
     }
 
@@ -451,11 +453,12 @@ impl RuntimeClient {
         if resp.len() < 8 {
             return Err(format!("response too short: {} bytes", resp.len()));
         }
-        let generation = u64::from_le_bytes([resp[0], resp[1], resp[2], resp[3], resp[4], resp[5], resp[6], resp[7]]);
+        let generation = u64::from_le_bytes([
+            resp[0], resp[1], resp[2], resp[3], resp[4], resp[5], resp[6], resp[7],
+        ]);
         let yaml_bytes = resp[8..].to_vec();
         Ok((yaml_bytes, generation))
     }
-
 
     /// Subscribe to receive push notifications for a signal.
     ///
@@ -540,11 +543,7 @@ fn read_raw_frame(stream: &mut UnixStream) -> io::Result<(u8, Vec<u8>)> {
     let payload_len = frame_len - 6;
     let method_id = read_exact(stream, 1)?[0];
     let _status = read_exact(stream, 1)?[0];
-    let payload = if payload_len > 0 {
-        read_exact(stream, payload_len)?
-    } else {
-        Vec::new()
-    };
+    let payload = if payload_len > 0 { read_exact(stream, payload_len)? } else { Vec::new() };
     Ok((method_id, payload))
 }
 

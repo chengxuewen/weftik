@@ -769,7 +769,7 @@ OpenPLC 从博士项目出发，经过 12 年发展成为一个工业可用平�
 3. **Phase 3（2018-2023）**: OpenPLC v3，MATIEC 编译器 + Web UI + 多协议
 4. **Phase 4（2023-2026）**: OpenPLC v4，STruC++ + TypeScript IDE + 双进程架构
 
-这种演进路径对 AUDESYS 的参考价值在于：不必从一开始就追求功能完整性，而是通过持续的社区驱动迭代逐步成熟。
+这种演进路径对 Weftik 的参考价值在于：不必从一开始就追求功能完整性，而是通过持续的社区驱动迭代逐步成熟。
 
 #### "编译器中心"设计
 
@@ -785,7 +785,7 @@ OpenPLC v4 强调通过一键安装脚本、systemd 服务自动化和 Docker �
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
@@ -797,7 +797,7 @@ OpenPLC v4 将 **REST API 进程**（Python/Flask）与 **PLC 实时内核**（C
 - PLC 内核可随时独立重启而不影响 API 服务
 - 安全层（TLS/JWT）集中在 API 进程，避免实时线程负担
 
-**AUDESYS 参考**: Runtime 模块可考虑类似的分离架构 — 控制面（管理 API）与数据面（实时控制）解耦。
+**Weftik 参考**: Runtime 模块可考虑类似的分离架构 — 控制面（管理 API）与数据面（实时控制）解耦。
 
 #### 2. IEC 61131-3 编译器流程
 
@@ -809,30 +809,30 @@ IEC 61131-3 Source (ST/LD/FBD/IL/SFC)
   -> Dynamic Loading (.so / dlopen)
 ```
 
-**AUDESYS 参考**: 如需要支持 IEC 61131-3，可借鉴此三级编译流水线（源语言 -> 中间表示 -> 编译 -> 动态加载）。
+**Weftik 参考**: 如需要支持 IEC 61131-3，可借鉴此三级编译流水线（源语言 -> 中间表示 -> 编译 -> 动态加载）。
 
 #### 3. 插件化 I/O 驱动
 
-OpenPLC 的插件系统通过 `read_inputs()` / `write_outputs()` 回调函数抽象硬件，支持 Python 和 C/C++ 两种插件类型。这与 AUDESYS HAL 设计中的 `HalTransport` trait 思路高度一致。
+OpenPLC 的插件系统通过 `read_inputs()` / `write_outputs()` 回调函数抽象硬件，支持 Python 和 C/C++ 两种插件类型。这与 Weftik HAL 设计中的 `HalTransport` trait 思路高度一致。
 
 #### 4. 双用途定位
 
-OpenPLC 证明了一个控制平台可以同时服务 **工业应用** 和 **学术研究** 两个截然不同的市场。AUDESYS 的 Studio IDE + Simulator 组合也有潜力覆盖开发和仿真双场景。
+OpenPLC 证明了一个控制平台可以同时服务 **工业应用** 和 **学术研究** 两个截然不同的市场。Weftik 的 Studio IDE + Simulator 组合也有潜力覆盖开发和仿真双场景。
 
 ### 7.2 可移植/适配的技术模块
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| **STruC++ IEC 61131-3 编译器** | 生成 C++17，支持 Edition 3 | 高，如果 AUDESYS 需要 PLC 语言支持 |
+| **STruC++ IEC 61131-3 编译器** | 生成 C++17，支持 Edition 3 | 高，如果 Weftik 需要 PLC 语言支持 |
 | **MatIEC 词法/语法分析器** | 成熟的 flex/bison 实现 | 中，可作为 ST 解析参考 |
-| **Modbus 协议栈** | 成熟的 TCP/RTU Server+Client 实现 | 高，AUDESYS 最终需要 Modbus 集成 |
-| **插件系统架构** | 统一硬件 I/O 抽象 | 高，与 AUDESYS HAL 设计互补 |
-| **扫描周期管理** | clock_nanosleep 高精度定时 | 中，AUDESYS RT 调度可参考 |
+| **Modbus 协议栈** | 成熟的 TCP/RTU Server+Client 实现 | 高，Weftik 最终需要 Modbus 集成 |
+| **插件系统架构** | 统一硬件 I/O 抽象 | 高，与 Weftik HAL 设计互补 |
+| **扫描周期管理** | clock_nanosleep 高精度定时 | 中，Weftik RT 调度可参考 |
 | **PLC 状态机** | INIT/STOPPED/RUNNING/ERROR 模型 | 高，标准 IEC 状态模型 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | OpenPLC | AUDESYS |
+| 维度 | OpenPLC | Weftik |
 |------|---------|---------|
 | 核心定位 | 开源 PLC 运行时（替代商用 PLC） | 工业控制系统模拟平台 |
 | 目标用户 | PLC 程序员、工控工程师、安全研究员 | 控制工程师、系统集成商、开发者 |
@@ -846,14 +846,14 @@ OpenPLC 证明了一个控制平台可以同时服务 **工业应用** 和 **学
 
 **互补关系**：
 
-- OpenPLC 的 **编译器和运行时** 可作为 AUDESYS 的底层控制执行引擎
-- AUDESYS 的 **HAL 设计**（3 信号原语 + amw 抽象 + 14 类型系统）在概念上比 OpenPLC 的 HAL 更丰富，可提供更强大的通信抽象
-- 两者的硬件抽象层理念一致，但设计深度不同 — OpenPLC 的 HAL 是简单的函数回调，AUDESYS 的 HAL 是完整的通信中间件
-- AUDESYS 可将 OpenPLC 作为 **参考实现** 或 **仿真目标** — 编译 IEC 61131-3 程序后在 AUDESYS Simulator 中运行
+- OpenPLC 的 **编译器和运行时** 可作为 Weftik 的底层控制执行引擎
+- Weftik 的 **HAL 设计**（3 信号原语 + amw 抽象 + 14 类型系统）在概念上比 OpenPLC 的 HAL 更丰富，可提供更强大的通信抽象
+- 两者的硬件抽象层理念一致，但设计深度不同 — OpenPLC 的 HAL 是简单的函数回调，Weftik 的 HAL 是完整的通信中间件
+- Weftik 可将 OpenPLC 作为 **参考实现** 或 **仿真目标** — 编译 IEC 61131-3 程序后在 Weftik Simulator 中运行
 
-### 7.4 详细对比分析：AUDESYS HAL 与 OpenPLC HAL
+### 7.4 详细对比分析：Weftik HAL 与 OpenPLC HAL
 
-| 维度 | OpenPLC HAL | AUDESYS HAL（设计） |
+| 维度 | OpenPLC HAL | Weftik HAL（设计） |
 |------|------------|-------------------|
 | 设计目标 | 统一 I/O 硬件访问接口 | 完整的实时通信中间件 |
 | 原语 | updateBuffersIn/Out 回调 | Signal + StreamChannel + RPC |
@@ -866,11 +866,11 @@ OpenPLC 证明了一个控制平台可以同时服务 **工业应用** 和 **学
 | 实时性 | SCHED_FIFO 扫描 | 分层延迟（< 1us / ~10us / ~100us） |
 | 配置管理 | plugins.conf + 硬件层代码框 | Config Barrier + LockLevel |
 
-OpenPLC 的 HAL 是典型的 **I/O 抽象层**（解决"如何从不同硬件读取/写入"），而 AUDESYS 的 HAL 是 **实时通信中间件**（解决"如何在分布式异构节点间可靠、实时地交换数据"）。两者在设计深度和抽象层次上有本质区别，但 OpenPLC HAL 的简洁性（仅 6 个数组 + 2 个函数）提醒 AUDESYS 设计者避免过度工程化。
+OpenPLC 的 HAL 是典型的 **I/O 抽象层**（解决"如何从不同硬件读取/写入"），而 Weftik 的 HAL 是 **实时通信中间件**（解决"如何在分布式异构节点间可靠、实时地交换数据"）。两者在设计深度和抽象层次上有本质区别，但 OpenPLC HAL 的简洁性（仅 6 个数组 + 2 个函数）提醒 Weftik 设计者避免过度工程化。
 
 ### 7.5 开源生态系统对比
 
-| 维度 | OpenPLC 生态 | AUDESYS（当前/规划） |
+| 维度 | OpenPLC 生态 | Weftik（当前/规划） |
 |------|-------------|-------------------|
 | 贡献者 | 30+ 活跃贡献者（Editor v4） | 无（早期项目） |
 | 学术引用 | 200+ 论文 | 0 |
@@ -881,7 +881,7 @@ OpenPLC 的 HAL 是典型的 **I/O 抽象层**（解决"如何从不同硬件读
 | 协议集成 | Modbus/DNP3/ENIP/EtherCAT/S7 | JSON-RPC/REST（规划中） |
 | 硬件支持 | 20+ 平台 | 仿真为主 |
 
-OpenPLC 提供了 AUDESYS 可借鉴的开源工业控制生态建设路径：以学术研究为起点，通过持续社区贡献扩展功能，在特定领域（如 ICS 安全）建立权威性，然后向更广泛的工业应用渗透。
+OpenPLC 提供了 Weftik 可借鉴的开源工业控制生态建设路径：以学术研究为起点，通过持续社区贡献扩展功能，在特定领域（如 ICS 安全）建立权威性，然后向更广泛的工业应用渗透。
 
 ---
 

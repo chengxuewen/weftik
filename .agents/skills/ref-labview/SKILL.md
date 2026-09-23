@@ -1,18 +1,18 @@
 ---
 name: ref-labview
-description: "LabVIEW 图形编程参考 — G 语言数据流、.vi 二进制格式教训、硬件集成模式。用于 AUDESYS 可视化设计器和 HAL 设计。"
+description: "LabVIEW 图形编程参考 — G 语言数据流、.vi 二进制格式教训、硬件集成模式。用于 Weftik 可视化设计器和 HAL 设计。"
 ---
 
-# ref-labview — LabVIEW Graphical Programming Reference for AUDESYS
+# ref-labview — LabVIEW Graphical Programming Reference for Weftik
 
 **Name**: ref-labview
-**Description**: LabVIEW graphical programming reference — G language dataflow, .vi binary format lessons, hardware integration patterns, rapid prototyping model. Use when designing AUDESYS Studio visual designer, HAL naming, or evaluating graphical vs textual tradeoffs.
-**Study Depth**: Technical engineering analysis with AUDESYS design mapping.
+**Description**: LabVIEW graphical programming reference — G language dataflow, .vi binary format lessons, hardware integration patterns, rapid prototyping model. Use when designing Weftik Studio visual designer, HAL naming, or evaluating graphical vs textual tradeoffs.
+**Study Depth**: Technical engineering analysis with Weftik design mapping.
 **AI Mode**: Technical. Use exact terminology. No simplification for non-engineers.
 
 ## When to Use
 
-- AUDESYS Studio IDE visual designer decisions
+- Weftik Studio IDE visual designer decisions
 - HAL naming and channel architecture design
 - Graphical vs textual programming tradeoff evaluation
 - Dataflow programming pattern adoption (Signal/StreamChannel/RPC)
@@ -31,7 +31,7 @@ ref-labview/
 │   ├── ch04.md           # RT, FPGA & Advanced Modules
 │   ├── ch05.md           # Hardware Abstraction (DAQmx/VISA)
 │   ├── ch06.md           # Ecosystem, Market & Community
-│   └── ch07.md           # AUDESYS Mapping & Design Implications
+│   └── ch07.md           # Weftik Mapping & Design Implications
 ├── glossary.md           # LabVIEW terminology glossary
 ├── patterns.md           # Reusable architectural patterns
 └── cheatsheet.md         # Quick reference card
@@ -41,26 +41,26 @@ ref-labview/
 
 1. Read `ch01.md` for historical context and LabVIEW's product philosophy
 2. Read `ch02.md` + `ch03.md` for G language and dataflow model (core differentiator)
-3. Read `ch04.md` for RT/FPGA execution models relevant to AUDESYS Runtime
+3. Read `ch04.md` for RT/FPGA execution models relevant to Weftik Runtime
 4. Read `ch05.md` for HAL design comparison (most directly applicable)
-5. Read `ch07.md` for explicit AUDESYS design mapping (reference value section)
+5. Read `ch07.md` for explicit Weftik design mapping (reference value section)
 6. Use `patterns.md` for reusable architecture patterns
 7. Use `cheatsheet.md` for quick recall
 8. Use `glossary.md` for terminology lookup
 
-## Key Takeaways for AUDESYS
+## Key Takeaways for Weftik
 
-1. **Dataflow validation**: LabVIEW 30+ years of dataflow programming validates AUDESYS D10 decision (Signal/StreamChannel/RPC three-primitive separation). Tag Channel (latest-value) = Signal, Stream Channel (buffered) = StreamChannel.
-2. **Binary format lesson**: LabVIEW's .vi binary format is the single largest source of version-control pain. AUDESYS project files MUST be text-based from day 1.
-3. **DAQmx channel architecture**: Physical channel -> virtual channel -> Task model directly maps to AUDESYS component.interface.name -> Signal naming pattern.
-4. **NXG cautionary tale**: Second-system-effect (rewrite syndrome) killed LabVIEW NXG despite huge investment. AUDESYS must evolve incrementally.
-5. **RT scheduling validation**: LabVIEW RT's timed loop + CPU core isolation + watchdog aligns with AUDESYS D13 four-system hybrid thread scheduling.
-6. **Unified target model**: Same language -> Windows/RT/FPGA/Web. AUDESYS D19 multi-language strategy (Rust core + FFI + FlatBuffers) is a practical take on the same concept.
-7. **Graphical limits**: LabVIEW proves graphical programming works for test/measurement but struggles with large-program maintainability. AUDESYS Studio should keep ST as primary, graphical as auxiliary.
+1. **Dataflow validation**: LabVIEW 30+ years of dataflow programming validates Weftik D10 decision (Signal/StreamChannel/RPC three-primitive separation). Tag Channel (latest-value) = Signal, Stream Channel (buffered) = StreamChannel.
+2. **Binary format lesson**: LabVIEW's .vi binary format is the single largest source of version-control pain. Weftik project files MUST be text-based from day 1.
+3. **DAQmx channel architecture**: Physical channel -> virtual channel -> Task model directly maps to Weftik component.interface.name -> Signal naming pattern.
+4. **NXG cautionary tale**: Second-system-effect (rewrite syndrome) killed LabVIEW NXG despite huge investment. Weftik must evolve incrementally.
+5. **RT scheduling validation**: LabVIEW RT's timed loop + CPU core isolation + watchdog aligns with Weftik D13 four-system hybrid thread scheduling.
+6. **Unified target model**: Same language -> Windows/RT/FPGA/Web. Weftik D19 multi-language strategy (Rust core + FFI + FlatBuffers) is a practical take on the same concept.
+7. **Graphical limits**: LabVIEW proves graphical programming works for test/measurement but struggles with large-program maintainability. Weftik Studio should keep ST as primary, graphical as auxiliary.
 
 ## Critical Anti-Patterns to Avoid
 
-| LabVIEW Anti-Pattern | AUDESYS Avoidance Strategy |
+| LabVIEW Anti-Pattern | Weftik Avoidance Strategy |
 |---------------------|---------------------------|
 | Binary .vi source files | Text-first: YAML/JSON/TOML for all project files |
 | Hardware vendor lock-in (NI-only DAQ) | amw trait-based transport swapping |

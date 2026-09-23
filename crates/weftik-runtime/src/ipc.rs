@@ -9,10 +9,6 @@
 //! 来源: docs/modules/runtime/ipc-security-design.md §2-3
 
 use crate::engine::Engine;
-use weftik_hal_core::qos::ConfigCommand;
-use weftik_hal_core::types::HalPinType;
-use weftik_hal_core::value::HalValue;
-use weftik_runtime_common::types::Role;
 use hmac::{Hmac, Mac};
 use rand::Rng;
 use sha2::Sha256;
@@ -26,6 +22,10 @@ use std::sync::{
 };
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use weftik_hal_core::qos::ConfigCommand;
+use weftik_hal_core::types::HalPinType;
+use weftik_hal_core::value::HalValue;
+use weftik_runtime_common::types::Role;
 
 // ── Constants ──
 
@@ -282,7 +282,6 @@ fn hal_value_to_json(value: &HalValue) -> String {
     }
 }
 
-
 fn read_exact(stream: &mut UnixStream, n: usize) -> io::Result<Vec<u8>> {
     let mut buf = vec![0u8; n];
     stream.read_exact(&mut buf)?;
@@ -452,7 +451,10 @@ fn can_read(role: Option<&Role>) -> bool {
 }
 
 fn can_write(role: Option<&Role>) -> bool {
-    matches!(role, Some(Role::Engineer) | Some(Role::Supervisor) | Some(Role::System) | Some(Role::Hmi))
+    matches!(
+        role,
+        Some(Role::Engineer) | Some(Role::Supervisor) | Some(Role::System) | Some(Role::Hmi)
+    )
 }
 
 // ── IpcServer ──
@@ -508,7 +510,6 @@ impl IpcServer {
         let whitelist = self.whitelist.clone();
         let subscriptions = Arc::clone(&self.subscriptions);
 
-
         let handle = thread::spawn(move || {
             let poll = Duration::from_millis(100);
             while running.load(Ordering::SeqCst) {
@@ -520,7 +521,14 @@ impl IpcServer {
                         let subscriptions = Arc::clone(&subscriptions);
                         let next_sid = Arc::new(Mutex::new(1u64));
                         thread::spawn(move || {
-                            handle_connection(stream, engine, &token_secret, &whitelist, &next_sid, subscriptions);
+                            handle_connection(
+                                stream,
+                                engine,
+                                &token_secret,
+                                &whitelist,
+                                &next_sid,
+                                subscriptions,
+                            );
                         });
                     }
                     Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
@@ -1176,8 +1184,6 @@ fn handle_connection(
                         );
                     }
                 }
-
-
             }
             METHOD_GET_HMI_LAYOUT => {
                 let role = session.as_ref().map(|s| &s.role);
@@ -1373,11 +1379,8 @@ fn handle_auth(
         *sid = sid.wrapping_add(1);
         id
     };
-    let ttl_ms = if requested_role == Role::Supervisor {
-        AGENT_TOKEN_TTL_MS
-    } else {
-        DEFAULT_TOKEN_TTL_MS
-    };
+    let ttl_ms =
+        if requested_role == Role::Supervisor { AGENT_TOKEN_TTL_MS } else { DEFAULT_TOKEN_TTL_MS };
     let expires_at_ms = now_ms() + ttl_ms;
 
     let token = build_wire_token(secret, session_id, role_to_u8(&requested_role), expires_at_ms);

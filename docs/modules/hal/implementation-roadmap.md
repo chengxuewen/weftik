@@ -1,4 +1,4 @@
-# AUDESYS HAL 分阶段实施路线
+# Weftik HAL 分阶段实施路线
 
 > 拆分自 docs/hal-detailed-design.md（2026-07-15）
 
@@ -12,7 +12,7 @@
 | **Phase 4** | RPC 原语实现（timeout, idempotency） | loadComponent → configureComponent → activateComponent 流程 |
 | **Phase 5** | 移植 LinuxCNC motion planner 验证 Signal 模型 | 6 轴轨迹通过 Signal 发布，RT 周期内完成 |
 | **Phase 6** | 移植 OpenPLC IEC runtime 验证 Array + Blob | 梯形图扫描周期 I/O 通过 Array\<S32\> 传输 |
-| **Phase 7** | 移植 ROS2 节点验证三种原语协同 | topic + service 全部通过 AUDESYS HAL 通信 |
+| **Phase 7** | 移植 ROS2 节点验证三种原语协同 | topic + service 全部通过 Weftik HAL 通信 |
 | **Phase 8** | 移植 dora-rs operator 验证 StreamChannel 高吞吐 | 2MB/frame 摄像头流零拷贝传输 |
 
 ---

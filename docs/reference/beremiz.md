@@ -526,29 +526,29 @@ Beremiz 的发展历史为开源工业自动化项目提供了几个重要教训
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
 #### 1. 完整的 IDE + Runtime 架构
 
-Beremiz 是少有的提供完整开源 PLC IDE 和 Runtime 的项目。其架构为 AUDESYS Studio IDE 提供了直接参考：
+Beremiz 是少有的提供完整开源 PLC IDE 和 Runtime 的项目。其架构为 Weftik Studio IDE 提供了直接参考：
 
 ```
 Beremiz Architecture:
   Editor (IDE) <-> Compiler (MatIEC) <-> Runtime (Target C)
 
-AUDESYS Reference:
+Weftik Reference:
   Studio IDE <-> Compiler (RuSTy/HAL IR) <-> Runtime (HAL)
 ```
 
-**AUDESYS 参考**: Studio IDE 的设计可参考 Beremiz 的编辑器 + 编译器 + Runtime 三层分离模式，避免功能耦合。
+**Weftik 参考**: Studio IDE 的设计可参考 Beremiz 的编辑器 + 编译器 + Runtime 三层分离模式，避免功能耦合。
 
 #### 2. MatIEC 编译器管线
 
 MatIEC 的编译器管线是 IEC 61131-3 编译器实现的参考实现：
 
-| 阶段 | MatIEC | AUDESYS 参考 (D22) |
+| 阶段 | MatIEC | Weftik 参考 (D22) |
 |------|--------|-------------------|
 | 词法分析 | flex | RuSTy 或自研 |
 | 语法分析 | bison | RuSTy 或自研 |
@@ -557,7 +557,7 @@ MatIEC 的编译器管线是 IEC 61131-3 编译器实现的参考实现：
 | 代码生成 | ANSI C | LLVM/目标代码 |
 | 标准库 | IEC 61131-3 原生 | IEC 61131-3 兼容层 |
 
-**AUDESYS 参考**: MatIEC 验证了 IEC 61131-3 编译器的可行性。AUDESYS D22 的 RuSTy -> HAL IR -> 自研分阶段策略，其 HAL IR 阶段可参考 MatIEC 作为编译管线稳定的中间接口层。
+**Weftik 参考**: MatIEC 验证了 IEC 61131-3 编译器的可行性。Weftik D22 的 RuSTy -> HAL IR -> 自研分阶段策略，其 HAL IR 阶段可参考 MatIEC 作为编译管线稳定的中间接口层。
 
 #### 3. 硬件目标抽象系统
 
@@ -571,13 +571,13 @@ Target Definition:
   - Communication: 协议栈配置
 ```
 
-**AUDESYS 参考**: AUDESYS 的 HAL 设计（HalTransport 等 trait）在概念层次上比 Beremiz 的硬件目标抽象更丰富，但 Beremiz 的"目标 = 工具链 + 硬件 + 驱动 + 通信"分解方式可指导 AUDESYS 多目标设计。
+**Weftik 参考**: Weftik 的 HAL 设计（HalTransport 等 trait）在概念层次上比 Beremiz 的硬件目标抽象更丰富，但 Beremiz 的"目标 = 工具链 + 硬件 + 驱动 + 通信"分解方式可指导 Weftik 多目标设计。
 
 #### 4. PLCopen XML 标准交换
 
 Beremiz 采用 PLCopen XML 作为工程交换格式，验证了标准交换格式的长期价值。
 
-**AUDESYS 参考**: AUDESYS D24 定义使用 YAML 作为开发配置、FlatBuffers 作为运行时格式。这种"人类可读 + 机器高效"的双格式策略，与 Beremiz 的"PLCopen XML 编辑器使用 + C 运行时执行"的思路一致。
+**Weftik 参考**: Weftik D24 定义使用 YAML 作为开发配置、FlatBuffers 作为运行时格式。这种"人类可读 + 机器高效"的双格式策略，与 Beremiz 的"PLCopen XML 编辑器使用 + C 运行时执行"的思路一致。
 
 #### 5. 开源社区演进路径
 
@@ -587,7 +587,7 @@ Beremiz 展示了开源 IEC 61131-3 平台的完整生命周期：
 个人项目 -> 社区项目 -> 分支分化 -> 活跃度下降
 ```
 
-**AUDESYS 参考**: AUDESYS 应从 Beremiz 的教训中规划商业支撑策略（D40 Phase 2 v0.1.0 发布策略），避免成为缺乏维护动力的开源项目。
+**Weftik 参考**: Weftik 应从 Beremiz 的教训中规划商业支撑策略（D40 Phase 2 v0.1.0 发布策略），避免成为缺乏维护动力的开源项目。
 
 ### 7.2 可移植/适配的技术模块
 
@@ -595,13 +595,13 @@ Beremiz 展示了开源 IEC 61131-3 平台的完整生命周期：
 |---------|------|---------|
 | **MatIEC 词法/语法分析器** | 成熟的 IEC 61131-3 flex/bison 实现 | 中，可作为 ST 解析的参考实现 |
 | **MatIEC 标准库** | IEC 61131-3 标准类型和函数实现 | 高，IEC 标准类型定义可参考 |
-| **PLCopen XML Schema** | IEC 61131-3 标准交换格式定义 | 高，如 AUDESYS 需要支持 PLCopen |
+| **PLCopen XML Schema** | IEC 61131-3 标准交换格式定义 | 高，如 Weftik 需要支持 PLCopen |
 | **目标定义机制** | Toolchain + Hardware + Driver 三层 | 中，概念层次可参考 |
 | **I/O 映像表** | 标准 %IX/%QX/%IW/%QW 地址模型 | 高，PLC I/O 标准映射方式 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | Beremiz | AUDESYS |
+| 维度 | Beremiz | Weftik |
 |------|---------|---------|
 | 核心定位 | IEC 61131-3 PLC 开发平台 | 工业控制系统模拟平台 |
 | 目标用户 | PLC 程序员、自动化教学 | 控制工程师、系统集成商、开发者 |
@@ -614,15 +614,15 @@ Beremiz 展示了开源 IEC 61131-3 平台的完整生命周期：
 | 安全性 | 无内置安全 | 规划中（TLS/JWT） |
 
 **互补关系**:
-- Beremiz 的 **MatIEC 编译器** 可作为 AUDESYS Phase 1/RuSTy 阶段的参考实现
-- Beremiz 的 **PLCopen XML 支持** 为 AUDESYS Studio IDE 的 IEC 61131-3 兼容性提供了标准路径
-- AUDESYS 的 **HAL 设计**（3 信号原语 + amw 抽象）在通信抽象层远超 Beremiz 的简单驱动接口
-- Beremiz 的 **硬件目标抽象** 为 AUDESYS Runtime 的多平台支持提供了参考层次划分
-- AUDESYS 可提供 Beremiz 所缺少的现代化 IDE（Tauri/React）、调试能力和安全特性
+- Beremiz 的 **MatIEC 编译器** 可作为 Weftik Phase 1/RuSTy 阶段的参考实现
+- Beremiz 的 **PLCopen XML 支持** 为 Weftik Studio IDE 的 IEC 61131-3 兼容性提供了标准路径
+- Weftik 的 **HAL 设计**（3 信号原语 + amw 抽象）在通信抽象层远超 Beremiz 的简单驱动接口
+- Beremiz 的 **硬件目标抽象** 为 Weftik Runtime 的多平台支持提供了参考层次划分
+- Weftik 可提供 Beremiz 所缺少的现代化 IDE（Tauri/React）、调试能力和安全特性
 
-### 7.4 MatIEC vs AUDESYS 编译器策略 (D22) 对比
+### 7.4 MatIEC vs Weftik 编译器策略 (D22) 对比
 
-| 维度 | MatIEC | AUDESYS Phase 1 (RuSTy) | AUDESYS Phase 2-3 (HAL IR/自研) |
+| 维度 | MatIEC | Weftik Phase 1 (RuSTy) | Weftik Phase 2-3 (HAL IR/自研) |
 |------|--------|------------------------|-------------------------------|
 | 源语言 | IEC 61131-3 Ed 2 | IEC 61131-3 ST | IEC 61131-3 全部语言 |
 | 输入格式 | .st 文件 | ST 源码 | ST 源码 / PLCopen XML |
@@ -634,13 +634,13 @@ Beremiz 展示了开源 IEC 61131-3 平台的完整生命周期：
 
 **关键启示**:
 - MatIEC 证明了 IEC 61131-3 -> C 代码生成是一条经过验证的编译器路径
-- Beremiz 的 Ed 2 限制提醒 AUDESYS 应从 Ed 3 起步（D22 已考虑这一点）
+- Beremiz 的 Ed 2 限制提醒 Weftik 应从 Ed 3 起步（D22 已考虑这一点）
 - MatIEC 的单一 ANSI C 输出格式限制了多目标优化空间，HAL IR 方案更灵活
-- 编译器是长期投入，AUDESYS 的分阶段策略（RuSTy -> HAL IR -> 自研）避免了 MatIEC "一人编译器"的风险
+- 编译器是长期投入，Weftik 的分阶段策略（RuSTy -> HAL IR -> 自研）避免了 MatIEC "一人编译器"的风险
 
-### 7.5 历史教训与 AUDESYS 项目策略
+### 7.5 历史教训与 Weftik 项目策略
 
-| Beremiz 教训 | AUDESYS 对应策略 |
+| Beremiz 教训 | Weftik 对应策略 |
 |-------------|-----------------|
 | 缺乏商业支撑导致活跃度下降 | D40: Phase 2 发布 v0.1.0，规划商业化路径 |
 | 编辑器技术栈老化（Python 2/wxWidgets） | D21: Tauri + React，现代化技术栈 |

@@ -482,24 +482,31 @@ pub fn evaluate_rung(
             Contact::PosEdge(v) => (ContactType::No, edge_is(v, snapshot, edge_state)),
             Contact::NegEdge(v) => (ContactType::Nc, edge_is(v, snapshot, edge_state)),
         };
-        contact_states.push(ContactState { contact_id: contact.var_name().to_string(), contact_type: ct, is_closed });
+        contact_states.push(ContactState {
+            contact_id: contact.var_name().to_string(),
+            contact_type: ct,
+            is_closed,
+        });
     }
 
-    let coil_states: Vec<CoilState> = coils.iter().map(|coil| {
-        let energized = match coil.kind {
-            CoilKind::Out => power,
-            CoilKind::Negated => !power,
-            CoilKind::Set => power || (var_store.get_bool(&coil.var) && !power),
-            CoilKind::Reset => !power && var_store.get_bool(&coil.var),
-        };
-        let coil_type = match coil.kind {
-            CoilKind::Out => CoilType::Normal,
-            CoilKind::Negated => CoilType::Negated,
-            CoilKind::Set => CoilType::Set,
-            CoilKind::Reset => CoilType::Reset,
-        };
-        CoilState { coil_id: coil.var.clone(), coil_type, energized }
-    }).collect();
+    let coil_states: Vec<CoilState> = coils
+        .iter()
+        .map(|coil| {
+            let energized = match coil.kind {
+                CoilKind::Out => power,
+                CoilKind::Negated => !power,
+                CoilKind::Set => power || (var_store.get_bool(&coil.var) && !power),
+                CoilKind::Reset => !power && var_store.get_bool(&coil.var),
+            };
+            let coil_type = match coil.kind {
+                CoilKind::Out => CoilType::Normal,
+                CoilKind::Negated => CoilType::Negated,
+                CoilKind::Set => CoilType::Set,
+                CoilKind::Reset => CoilType::Reset,
+            };
+            CoilState { coil_id: coil.var.clone(), coil_type, energized }
+        })
+        .collect();
 
     RungState { rung_id: rung_id.to_string(), contact_states, coil_states }
 }
@@ -573,10 +580,7 @@ pub fn evaluate_eno(en: bool, error: bool) -> bool {
 ///
 /// Each block's ENO becomes the EN of the next block.
 /// If any block's ENO is FALSE, downstream blocks are skipped.
-pub fn evaluate_eno_chain(
-    first_en: bool,
-    blocks: &[FnBlock],
-) -> Vec<FnBlockResult> {
+pub fn evaluate_eno_chain(first_en: bool, blocks: &[FnBlock]) -> Vec<FnBlockResult> {
     let mut results = Vec::new();
     let mut en = first_en;
     for block in blocks {
@@ -644,10 +648,7 @@ pub struct RungDef {
 ///
 /// Rungs are evaluated top-to-bottom. All contacts use the same input
 /// snapshot. A coil written in rung N is visible as a contact in rung N+1.
-pub fn evaluate_cycle(
-    rungs: &mut [RungDef],
-    vars: &mut VarStore,
-) -> PowerFlowResult {
+pub fn evaluate_cycle(rungs: &mut [RungDef], vars: &mut VarStore) -> PowerFlowResult {
     let mut input_snapshot = vars.snapshot();
     let mut edge_state = EdgeState::new();
     let mut rung_states = Vec::new();
@@ -656,39 +657,60 @@ pub fn evaluate_cycle(
     for rung in rungs.iter_mut() {
         let power = evaluate_power_flow(&mut rung.network, &input_snapshot, &mut edge_state);
 
-        let contact_states: Vec<ContactState> = rung.network.edges.iter().map(|edge| {
-            let (ct, is_closed) = match &edge.contact {
-                Contact::No(v) => (ContactType::No, input_snapshot.get_bool(v)),
-                Contact::Nc(v) => (ContactType::Nc, !input_snapshot.get_bool(v)),
-                // ponytail: edge contacts get approximate state for reporting
-                Contact::PosEdge(v) => (ContactType::No, input_snapshot.get_bool(v)),
-                Contact::NegEdge(v) => (ContactType::Nc, !input_snapshot.get_bool(v)),
-            };
-            ContactState { contact_id: edge.contact.var_name().to_string(), contact_type: ct, is_closed }
-        }).collect();
+        let contact_states: Vec<ContactState> = rung
+            .network
+            .edges
+            .iter()
+            .map(|edge| {
+                let (ct, is_closed) = match &edge.contact {
+                    Contact::No(v) => (ContactType::No, input_snapshot.get_bool(v)),
+                    Contact::Nc(v) => (ContactType::Nc, !input_snapshot.get_bool(v)),
+                    // ponytail: edge contacts get approximate state for reporting
+                    Contact::PosEdge(v) => (ContactType::No, input_snapshot.get_bool(v)),
+                    Contact::NegEdge(v) => (ContactType::Nc, !input_snapshot.get_bool(v)),
+                };
+                ContactState {
+                    contact_id: edge.contact.var_name().to_string(),
+                    contact_type: ct,
+                    is_closed,
+                }
+            })
+            .collect();
 
-        let coil_states: Vec<CoilState> = rung.coils.iter().map(|coil| {
-            let energized = match coil.kind {
-                CoilKind::Out => power,
-                CoilKind::Negated => !power,
-                CoilKind::Set => {
-                    if power { true } else { vars.get_bool(&coil.var) }
+        let coil_states: Vec<CoilState> = rung
+            .coils
+            .iter()
+            .map(|coil| {
+                let energized = match coil.kind {
+                    CoilKind::Out => power,
+                    CoilKind::Negated => !power,
+                    CoilKind::Set => {
+                        if power {
+                            true
+                        } else {
+                            vars.get_bool(&coil.var)
+                        }
+                    }
+                    CoilKind::Reset => {
+                        if power {
+                            false
+                        } else {
+                            vars.get_bool(&coil.var)
+                        }
+                    }
+                };
+                let coil_type = match coil.kind {
+                    CoilKind::Out => CoilType::Normal,
+                    CoilKind::Negated => CoilType::Negated,
+                    CoilKind::Set => CoilType::Set,
+                    CoilKind::Reset => CoilType::Reset,
+                };
+                if energized {
+                    powered_coils.push(coil.var.clone());
                 }
-                CoilKind::Reset => {
-                    if power { false } else { vars.get_bool(&coil.var) }
-                }
-            };
-            let coil_type = match coil.kind {
-                CoilKind::Out => CoilType::Normal,
-                CoilKind::Negated => CoilType::Negated,
-                CoilKind::Set => CoilType::Set,
-                CoilKind::Reset => CoilType::Reset,
-            };
-            if energized {
-                powered_coils.push(coil.var.clone());
-            }
-            CoilState { coil_id: coil.var.clone(), coil_type, energized }
-        }).collect();
+                CoilState { coil_id: coil.var.clone(), coil_type, energized }
+            })
+            .collect();
 
         // Apply coil results to var store for rung-to-rung propagation
         for cs in &coil_states {
@@ -698,11 +720,7 @@ pub fn evaluate_cycle(
         // Update snapshot so rung N+1 contacts see rung N coil results (IEC §4.1.2)
         input_snapshot = vars.snapshot();
 
-        rung_states.push(RungState {
-            rung_id: rung.id.clone(),
-            contact_states,
-            coil_states,
-        });
+        rung_states.push(RungState { rung_id: rung.id.clone(), contact_states, coil_states });
     }
 
     edge_state.advance_cycle(&input_snapshot);
@@ -760,6 +778,6 @@ pub fn build_parallel_network(branches: &[Vec<Contact>]) -> ContactNetwork {
 }
 
 #[cfg(test)]
-mod tests;
-#[cfg(test)]
 mod test_vectors;
+#[cfg(test)]
+mod tests;

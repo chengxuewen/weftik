@@ -63,6 +63,6 @@ CODESYS is not a PLC hardware manufacturer — it's a software stack vendor to O
 - **Downstream**: Machine builders, integrators, end users use the IDE
 - **Store**: CODESYS Store = app marketplace for libraries, plugins, SoftPLCs
 
-## 1.6 AUDESYS Relevance
+## 1.6 Weftik Relevance
 
-CODESYS's "IDE free, runtime licensed" model is a direct reference for AUDESYS's Studio (IDE) pricing strategy. The hardware-independent positioning validates AUDESYS's HAL-centric architecture where the runtime is decoupled from specific hardware.
+CODESYS's "IDE free, runtime licensed" model is a direct reference for Weftik's Studio (IDE) pricing strategy. The hardware-independent positioning validates Weftik's HAL-centric architecture where the runtime is decoupled from specific hardware.

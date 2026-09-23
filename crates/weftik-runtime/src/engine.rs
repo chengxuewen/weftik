@@ -10,6 +10,16 @@
 use crate::lifecycle::LifecycleManager;
 use crate::metrics::RuntimeMetrics;
 use crate::signals::{SignalDef, SignalRegistry, StrategyFilter, WriteStrategy};
+use std::collections::HashMap;
+use std::io::Write;
+use std::os::unix::net::UnixStream;
+use std::sync::atomic::AtomicU64;
+use std::sync::{
+    Arc, Mutex, RwLock,
+    atomic::{AtomicBool, Ordering},
+};
+use std::thread::{self, JoinHandle};
+use std::time::{Duration, Instant};
 use weftik_hal_core::middleware::AmwMiddleware;
 use weftik_hal_core::qos::{ConfigCommand, ConfigStatus, LockLevel};
 use weftik_hal_core::types::Timestamp;
@@ -18,16 +28,6 @@ use weftik_hal_ir::Executor;
 use weftik_hal_ir::program::HalProgram;
 use weftik_hal_ir::types::Direction;
 use weftik_runtime_common::types::{HealthCheck, HealthCheckRegistry, HealthStatus, SourceId};
-use std::collections::HashMap;
-use std::io::Write;
-use std::os::unix::net::UnixStream;
-use std::sync::{
-    Arc, Mutex, RwLock,
-    atomic::{AtomicBool, Ordering},
-};
-use std::sync::atomic::AtomicU64;
-use std::thread::{self, JoinHandle};
-use std::time::{Duration, Instant};
 
 /// The hard real-time execution engine.
 ///
@@ -76,7 +76,8 @@ pub struct Engine {
     /// Active HMI layout (available for Panel read)
     hmi_layout: Arc<RwLock<Option<(Vec<u8>, u64)>>>,
     /// Signal push targets for IPC subscriptions (signal_name → [(session_id, stream)])
-    signal_push_targets: RwLock<Option<Arc<Mutex<HashMap<String, Vec<(u64, Arc<Mutex<UnixStream>>)>>>>>>,
+    signal_push_targets:
+        RwLock<Option<Arc<Mutex<HashMap<String, Vec<(u64, Arc<Mutex<UnixStream>>)>>>>>>,
 }
 
 impl Engine {
@@ -90,10 +91,7 @@ impl Engine {
             lock_level: RwLock::new(LockLevel::None),
             config_queue: Arc::new(Mutex::new(Vec::new())),
             health: RwLock::new(HealthCheckRegistry::new()),
-            source_id: SourceId {
-                process_name: "weftik-runtime".into(),
-                pid: std::process::id(),
-            },
+            source_id: SourceId { process_name: "weftik-runtime".into(), pid: std::process::id() },
             cycle_count: Arc::new(std::sync::atomic::AtomicU64::new(0)),
             signals: Arc::new(RwLock::new(SignalRegistry::new())),
             metrics: Arc::new(RuntimeMetrics::new()),
@@ -165,7 +163,6 @@ impl Engine {
         let paused = Arc::clone(&self.paused);
         let step_requested = Arc::clone(&self.step_requested);
         let signal_push_targets = self.signal_push_targets.read().unwrap().clone();
-
 
         thread::spawn(move || {
             let interval = Duration::from_millis(cycle_interval_ms);
@@ -326,7 +323,6 @@ impl Engine {
                         }
                     }
                 }
-
 
                 // Record cycle jitter for Studio jitter panel
                 let cycle_elapsed = cycle_start.elapsed().as_micros() as u64;
@@ -574,11 +570,11 @@ impl Engine {
     /// generation counter, and stores it in pending_hmi_layout for application
     /// at the next cycle boundary. Returns the generation number.
     pub fn deploy_hmi_layout(&self, yaml_bytes: &[u8]) -> Result<u64, String> {
-        let yaml_str = std::str::from_utf8(yaml_bytes)
-            .map_err(|e| format!("invalid UTF-8: {}", e))?;
+        let yaml_str =
+            std::str::from_utf8(yaml_bytes).map_err(|e| format!("invalid UTF-8: {}", e))?;
         // Validate parseable YAML
-        let _: serde_yaml::Value = serde_yaml::from_str(yaml_str)
-            .map_err(|e| format!("invalid YAML: {}", e))?;
+        let _: serde_yaml::Value =
+            serde_yaml::from_str(yaml_str).map_err(|e| format!("invalid YAML: {}", e))?;
         let generation = self.hmi_layout_generation.fetch_add(1, Ordering::SeqCst) + 1;
         *self.pending_hmi_layout.write().unwrap() = Some((yaml_bytes.to_vec(), generation));
         Ok(generation)
@@ -596,11 +592,11 @@ impl Engine {
 mod tests {
     use super::*;
     use crate::signals::{SignalDef, WriteStrategy};
+    use std::time::Duration;
     use weftik_hal_core::middleware::AmwMetrics;
     use weftik_hal_core::qos::HalQoS;
     use weftik_hal_core::transport::{HalTransport, RpcHandler, SignalCallback};
     use weftik_hal_core::types::HalResult;
-    use std::time::Duration;
 
     /// Minimal mock AmwMiddleware for unit tests.
     /// Tracks publish/read calls for assertions.

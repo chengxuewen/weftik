@@ -92,9 +92,9 @@ system.util.sendEmail(...)               // Send email
 - University: https://inductiveuniversity.com
 - Exchange: https://inductiveautomation.com/exchange
 
-## AUDESYS Reference Mapping
+## Weftik Reference Mapping
 
-| AUDESYS Component | Ignition Reference |
+| Weftik Component | Ignition Reference |
 |-------------------|-------------------|
 | Studio HMI Designer | Perspective (browser-based, responsive) |
 | Runtime Tag System | Tag Engine + Tag Providers |

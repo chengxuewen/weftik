@@ -1,7 +1,7 @@
 ---
 name: openspec-propose
 description: >-
-  Propose a new change for AUDESYS with structured artifacts (proposal, design,
+  Propose a new change for Weftik with structured artifacts (proposal, design,
   tasks). Generates .sisyphus/plans/<name>/proposal.md + design.md + tasks.md.
   Use when the user describes what they want to build and needs a complete proposal ready for implementation.
 license: MIT
@@ -11,12 +11,12 @@ metadata:
   author: openspec
   version: "2.0"
   category: workflow
-  project: AUDESYS
+  project: Weftik
 ---
 
-# OpenSpec Propose — AUDESYS
+# OpenSpec Propose — Weftik
 
-Create a structured change proposal for AUDESYS. Produce three artifacts that together answer
+Create a structured change proposal for Weftik. Produce three artifacts that together answer
 "what are we building, how does it fit, and what's the plan?"
 
 When ready to implement, follow with `/openspec-apply`.
@@ -56,7 +56,7 @@ Read every spec whose module overlaps. Note if no relevant spec exists.
 
 | Layer | Location | When affected |
 |-------|----------|---------------|
-| **HAL Core** | `crates/audesys-hal-core/` | New traits, types, primitives, error types |
+| **HAL Core** | `crates/weftik-hal-core/` | New traits, types, primitives, error types |
 | **amw_inproc** | `crates/amw_inproc/` | Transport/Discovery implementation changes |
 | **FlatBuffers** | `crates/hal-flatbuffers/` + `.fbs` schemas | New/changed cross-language types |
 | **Studio** | `apps/studio/` | Tauri+React+TypeScript frontend changes (D21) |
@@ -112,8 +112,8 @@ Create `.sisyphus/plans/<change-name>/tasks.md`. Tasks must be **atomic, ordered
 ## Phase 1: Foundation
 
 - [ ] **Add `<trait/struct>` to HAL Core**
-  - File: `crates/audesys-hal-core/src/<path>/<file>.rs`
-  - Verify: `cargo check -p audesys-hal-core`
+  - File: `crates/weftik-hal-core/src/<path>/<file>.rs`
+  - Verify: `cargo check -p weftik-hal-core`
 
 - [ ] **Implement for amw_inproc**
   - File: `crates/amw_inproc/src/<file>.rs`
@@ -129,7 +129,7 @@ Create `.sisyphus/plans/<change-name>/tasks.md`. Tasks must be **atomic, ordered
 
 - [ ] **Add Rust unit tests** (AAA pattern, D33)
   - File: same as implementation
-  - Verify: `cargo test -p audesys-hal-core`
+  - Verify: `cargo test -p weftik-hal-core`
 
 - [ ] **Add integration tests**
   - File: `tests/<name>_test.rs`
@@ -159,7 +159,7 @@ Display summary — change name, artifact list, line counts. Let user request ch
 
 | Purpose | Path |
 |---------|------|
-| HAL Core | `crates/audesys-hal-core/src/` |
+| HAL Core | `crates/weftik-hal-core/src/` |
 | amw_inproc | `crates/amw_inproc/src/` |
 | FlatBuffers schemas | `crates/hal-flatbuffers/*.fbs` |
 | Studio | `apps/studio/src/` |
@@ -169,13 +169,13 @@ Display summary — change name, artifact list, line counts. Let user request ch
 
 ---
 
-## AUDESYS-Specific Guidelines
+## Weftik-Specific Guidelines
 
 ### Crate references
 
 | Crate | Path | Type |
 |---------|------|------|
-| HAL Core | `crates/audesys-hal-core/` | Rust (traits, types, primitives) |
+| HAL Core | `crates/weftik-hal-core/` | Rust (traits, types, primitives) |
 | amw-inproc | `crates/amw_inproc/` | Rust (HAL Transport/Discovery in-process) |
 | HAL FlatBuffers | `crates/hal-flatbuffers/` | Rust + .fbs schemas |
 | Studio | `apps/studio/` | Tauri + React + TypeScript (D21) |
@@ -184,7 +184,7 @@ Display summary — change name, artifact list, line counts. Let user request ch
 
 ```bash
 cargo build                                    # Full build
-cargo build --package audesys-hal-core --package amw_inproc  # HAL-only
+cargo build --package weftik-hal-core --package amw_inproc  # HAL-only
 cargo test                                     # Debug build + tests
 ./scripts/qa/qa-fast.sh                        # QA fast gate (5 checks)
 ```
@@ -207,7 +207,7 @@ cargo test                                     # Debug build + tests
 - **Layer assessment must be explicit** — "maybe affects FlatBuffers" is not acceptable; decide and document
 - **Transport assessment must be explicit** — amw_inproc-only? amw_zenoh? Both? Document the split
 - **Tasks must be atomic** — each task produces one verifiable result (compiling code, passing tests)
-- Always reference actual AUDESYS file paths and crate names
+- Always reference actual Weftik file paths and crate names
 - If context is critically unclear, ask — but prefer reasonable decisions to keep momentum
 - If a proposal with that name already exists, ask to continue or create new
 - Do NOT propose changes to `version.txt` — versioning is user-managed

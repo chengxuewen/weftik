@@ -43,9 +43,9 @@ Smart Engineer 采用 **VS Code 扩展架构**（非 Eclipse Theia）：
 └────────────────────────────────────┘
 ```
 
-### 2.2 与 AUDESYS Studio 的技术栈对比
+### 2.2 与 Weftik Studio 的技术栈对比
 
-| 组件 | Neuron Smart Engineer | AUDESYS Studio |
+| 组件 | Neuron Smart Engineer | Weftik Studio |
 |------|----------------------|----------------|
 | **IDE 框架** | VS Code 扩展架构 | Eclipse Theia 1.73.0 |
 | **文本编辑器** | Monaco（推测） | Monaco Editor |
@@ -132,7 +132,7 @@ Neuron Automation 在**功能安全 PLC 编程工具**领域处于领先地位�
 | **Neuron Smart Engineer** | VS Code 扩展 | SIL 3 ✅ | ✅ Transforma | ❌ |
 | **CODESYS** | 自研 | SIL 2 | ❌ | ❌ |
 | **Beckhoff TwinCAT** | VS Shell | SIL 3 | ❌ | ❌ |
-| **AUDESYS Studio** | Theia | ❌ | ❌ | ✅ |
+| **Weftik Studio** | Theia | ❌ | ❌ | ✅ |
 | **Beremiz** | 自研 | ❌ | ❌ | ✅ |
 | **OpenPLC** | Web | ❌ | ❌ | ✅ |
 
@@ -168,11 +168,11 @@ Transforma AI 的独特价值：
 - **CLI 接口**：支持 CI/CD 自动化构建
 - **Headless 模式**：服务器端构建，无需 GUI
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
 ### 7.1 架构路线启示
 
-| AUDESYS 决策 | Neuron 验证 | 建议 |
+| Weftik 决策 | Neuron 验证 | 建议 |
 |-------------|-----------|------|
 | **D71: Theia 迁移** | Neuron 选择了 VS Code 扩展而非 Theia | 验证 Theia 路线有其独特价值（深度定制），但 VS Code 路线更成熟 |
 | **GLSP 图形编辑器** | Neuron 使用专有 FBD 编辑器而非 GLSP | GLSP 提供标准化框架但定制成本高 |
@@ -181,7 +181,7 @@ Transforma AI 的独特价值：
 
 ### 7.2 功能对标建议
 
-| Neuron 功能 | AUDESYS 对标 | 优先级 |
+| Neuron 功能 | Weftik 对标 | 优先级 |
 |------------|-------------|:----:|
 | **Transforma AI** | 可规划 AI 辅助编程（ST 代码生成） | 远期 |
 | **SIL 3 认证** | 非当前目标（先在非安全市场验证） | 远期 |
@@ -193,15 +193,15 @@ Transforma AI 的独特价值：
 
 ### 7.3 关键教训
 
-1. **AI 是工业编程的未来**：Neuron 的 Transforma 证明 IEC 61131-3 编程可以被 AI 辅助，AUDESYS 应规划 AI 能力
-2. **安全认证是市场壁垒**：功能安全认证需要数年积累，AUDESYS 应在合适的时机启动认证流程
+1. **AI 是工业编程的未来**：Neuron 的 Transforma 证明 IEC 61131-3 编程可以被 AI 辅助，Weftik 应规划 AI 能力
+2. **安全认证是市场壁垒**：功能安全认证需要数年积累，Weftik 应在合适的时机启动认证流程
 3. **VS Code 扩展生态不可忽视**：即使使用 Theia 框架，也应保留 VS Code 扩展兼容性
 4. **文本工程文件 > 二进制**：Neuron 的纯文本工程文件策略验证了 D69（YAML 版本管理）的正确性
 5. **2026-06-30 发布证明**：Smart Engineer 刚发布不到 2 个月（此文档生成于 2026-07-30），是市场上最新的 IEC 61131-3 Web IDE
 
-### 7.4 竞品优势与 AUDESYS 定位
+### 7.4 竞品优势与 Weftik 定位
 
-| 维度 | Neuron 优势 | AUDESYS 差异化 |
+| 维度 | Neuron 优势 | Weftik 差异化 |
 |------|-----------|--------------|
 | **安全** | ✅ SIL 3 T3 | → 非安全市场先验证 |
 | **AI** | ✅ Transforma | → 开源 AI 辅助框架 |
@@ -212,4 +212,4 @@ Transforma AI 的独特价值：
 
 > **文档版本**: v1.0
 > **生成日期**: 2026-07-30
-> **数据来源**: Neuron Automation 官网 (neuron-automation.eu), Smart Engineer 产品数据表 PDF (2026-06-30), Computer&Automation, Digital Engineering Magazin, AUDESYS 架构文档
+> **数据来源**: Neuron Automation 官网 (neuron-automation.eu), Smart Engineer 产品数据表 PDF (2026-06-30), Computer&Automation, Digital Engineering Magazin, Weftik 架构文档

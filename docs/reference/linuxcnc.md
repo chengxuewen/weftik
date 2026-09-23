@@ -834,11 +834,11 @@ INI 配置: 6 关节（SCARA 参数 D1-D6）
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
-### 7.1 LinuxCNC HAL 与 AUDESYS HAL 的架构对比
+### 7.1 LinuxCNC HAL 与 Weftik HAL 的架构对比
 
-| 维度 | LinuxCNC HAL | AUDESYS HAL（设计） |
+| 维度 | LinuxCNC HAL | Weftik HAL（设计） |
 |------|------------|-------------------|
 | 设计目标 | 实时运动控制的硬件抽象 | 分布式实时通信中间件 |
 | 通信模型 | 共享内存指针（Pin -> Signal） | 三原语（Signal/StreamChannel/RPC） |
@@ -861,7 +861,7 @@ LinuxCNC 的 **base-thread + servo-thread 两级线程模型** 是经过 20 年�
 - **base-thread（高频短周期）**: 适合步进脉冲生成、编码器读取等对延迟极度敏感的操作
 - **servo-thread（低频长周期）**: 适合 PID 计算、轨迹规划、运动学等需要较多计算时间的操作
 
-**AUDESYS 参考**: AUDESYS 的三层延迟模型（< 1us / ~10us / ~100us）可以映射到类似的线程层次：
+**Weftik 参考**: Weftik 的三层延迟模型（< 1us / ~10us / ~100us）可以映射到类似的线程层次：
 
 ```
 Layer 1 (< 1us): Rust 独占，无 GC/无 JIT，类似 base-thread
@@ -887,7 +887,7 @@ addf pid.0.do-pid-calcs servo-thread
 
 这种设计允许系统集成商精确控制每个函数在哪个线程以什么频率执行。
 
-**AUDESYS 参考**: 在 AUDESYS 的 Runtime 中，不同功能的执行也可以分组到不同的线程/任务中：
+**Weftik 参考**: 在 Weftik 的 Runtime 中，不同功能的执行也可以分组到不同的线程/任务中：
 
 - 硬实时任务（类似 base-thread）：I/O 读取、状态更新
 - 控制任务（类似 servo-thread）：控制算法、调度
@@ -897,7 +897,7 @@ addf pid.0.do-pid-calcs servo-thread
 
 #### 1. "集成电路"设计范式
 
-LinuxCNC 将软件系统设计类比为硬件电路设计，这一理念值得 AUDESYS 借鉴：
+LinuxCNC 将软件系统设计类比为硬件电路设计，这一理念值得 Weftik 借鉴：
 
 - **标准化接口**：所有 HAL 组件都通过相同的 Pin/Signal/Function 接口暴露
 - **可组合性**：标准组件可以像搭积木一样组合成复杂系统
@@ -919,22 +919,22 @@ LinuxCNC 将软件系统设计类比为硬件电路设计，这一理念值得 A
 
 这种渐进式复杂度管理使 LinuxCNC 能同时服务初学者和专家。
 
-### 7.4 对 AUDESYS 设计的具体建议
+### 7.4 对 Weftik 设计的具体建议
 
 1. **HAL 信号命名规范**:
-   LinuxCNC 使用 `component.instance.pin` 的命名规范（如 `motion.0.pos-cmd.0`），AUDESYS 的 `component.interface.name` 命名规范与之理念一致，可以借鉴其层级结构
+   LinuxCNC 使用 `component.instance.pin` 的命名规范（如 `motion.0.pos-cmd.0`），Weftik 的 `component.interface.name` 命名规范与之理念一致，可以借鉴其层级结构
 
 2. **线程与函数的分离**:
-   LinuxCNC 将"功能定义"（Function）和"执行调度"（Thread）分离，使系统集成商可以自由组合。AUDESYS 的 Runtime 调度器也可以采用类似设计
+   LinuxCNC 将"功能定义"（Function）和"执行调度"（Thread）分离，使系统集成商可以自由组合。Weftik 的 Runtime 调度器也可以采用类似设计
 
 3. **观测工具的重要性**:
-   LinuxCNC 的 halmeter/halscope 是其成功的关键因素之一。AUDESYS 的工业调试桥（Industrial Debug Bridge）应提供类似的实时观测能力
+   LinuxCNC 的 halmeter/halscope 是其成功的关键因素之一。Weftik 的工业调试桥（Industrial Debug Bridge）应提供类似的实时观测能力
 
 4. **配置与代码分离**:
-   LinuxCNC 通过 INI + HAL 文件将配置与代码分离，允许用户修改系统行为而不需要编译代码。AUDESYS 的 Config Barrier 设计也体现了这一理念
+   LinuxCNC 通过 INI + HAL 文件将配置与代码分离，允许用户修改系统行为而不需要编译代码。Weftik 的 Config Barrier 设计也体现了这一理念
 
 5. **运动学可插拔性**:
-   LinuxCNC 的运动学模块通过标准 C 函数接口实现可插拔。AUDESYS 的 Simulator 模块也可以采用类似的可插拔运动学架构
+   LinuxCNC 的运动学模块通过标准 C 函数接口实现可插拔。Weftik 的 Simulator 模块也可以采用类似的可插拔运动学架构
 
 ### 7.5 LinuxCNC 的发展教训
 
@@ -949,7 +949,7 @@ LinuxCNC 长期绑定 RTAI，这导致：
 
 到 2.9 系列才迁移到 PREEMPT_RT，这一过程耗时数年。
 
-**AUDESYS 教训**: 实时方案应从一开始就选择主线支持的技术。PREEMPT_RT 已是主线内核的一部分，比 RTAI 更可持续。
+**Weftik 教训**: 实时方案应从一开始就选择主线支持的技术。PREEMPT_RT 已是主线内核的一部分，比 RTAI 更可持续。
 
 #### 教训 2：社区分裂的风险
 
@@ -959,7 +959,7 @@ Machinekit 分支（2014）的出现说明：
 - 保守的合并策略可能迫使创新出走
 - 分裂后两个项目都无法充分发挥潜力
 
-**AUDESYS 教训**: 保持开放的治理结构，及时合并社区贡献。
+**Weftik 教训**: 保持开放的治理结构，及时合并社区贡献。
 
 #### 教训 3：文档即产品
 
@@ -970,7 +970,7 @@ LinuxCNC 成功的关键因素之一是极其详尽的文档：
 - 文档通过 Weblate 众包翻译为多种语言
 - 社区论坛积累了海量配置案例和故障排除经验
 
-**AUDESYS 教训**: 在项目早期就投入文档建设，将文档视为产品的一部分而非附属品。
+**Weftik 教训**: 在项目早期就投入文档建设，将文档视为产品的一部分而非附属品。
 
 #### 教训 4：渐进式学习曲线
 
@@ -982,7 +982,7 @@ LinuxCNC 的设计有意将学习曲线分为多个层次：
 4. **编写运动学**：实现自定义机器拓扑
 5. **修改内核**：深入 LinuxCNC 核心代码
 
-**AUDESYS 教训**: Studio IDE 的设计也应遵循渐进式复杂度 — 通过 GUI 完成 80% 的常见任务，通过代码 API 支持剩余 20% 的深度定制。
+**Weftik 教训**: Studio IDE 的设计也应遵循渐进式复杂度 — 通过 GUI 完成 80% 的常见任务，通过代码 API 支持剩余 20% 的深度定制。
 
 ---
 

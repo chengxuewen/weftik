@@ -1,8 +1,8 @@
 # AVEVA InTouch HMI/SCADA（原 Wonderware）
 
-> AUDESYS 项目参考文档 · 生成日期: 2026-07-13
+> Weftik 项目参考文档 · 生成日期: 2026-07-13
 > 研究来源: AVEVA 官方文档、Wikipedia、行业博客、技术白皮书、InTouch 脚本与逻辑指南、系统规模指南
-> 本文档旨在为 AUDESYS HMI 运行时、Studio IDE、配置管理、对象建模及可视化架构的设计提供跨产品参考
+> 本文档旨在为 Weftik HMI 运行时、Studio IDE、配置管理、对象建模及可视化架构的设计提供跨产品参考
 
 ---
 
@@ -237,7 +237,7 @@ Galaxy 是 System Platform 的**集中式配置数据库**，基于 Microsoft SQ
 
 ### 2.4 WindowMaker 与 WindowViewer — IDE/Runtime 分离设计
 
-这是 InTouch 最具影响力的设计决策之一，也是 AUDESYS Studio ↔ Runtime 最直接的对标对象。
+这是 InTouch 最具影响力的设计决策之一，也是 Weftik Studio ↔ Runtime 最直接的对标对象。
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -293,7 +293,7 @@ Galaxy 是 System Platform 的**集中式配置数据库**，基于 Microsoft SQ
 
 ### 2.5 Tag 数据模型
 
-InTouch 的 Tag 模型是 HMI 行业的标准范式，值得 AUDESYS 深入研究——包括其演进路径中的经验教训。
+InTouch 的 Tag 模型是 HMI 行业的标准范式，值得 Weftik 深入研究——包括其演进路径中的经验教训。
 
 #### 2.5.1 Tag 类型体系
 
@@ -353,7 +353,7 @@ InTouch 的 Tag 模型是 HMI 行业的标准范式，值得 AUDESYS 深入研�
 
 #### 2.5.3 Tag-based → Object-based 的演进
 
-这是 InTouch 历史中最重要的技术教训，直接对应 AUDESYS D7（避免 Tag 中心设计）的决策：
+这是 InTouch 历史中最重要的技术教训，直接对应 Weftik D7（避免 Tag 中心设计）的决策：
 
 | 阶段 | 模型 | 优势 | 局限 |
 |------|------|------|------|
@@ -972,22 +972,22 @@ InTouch 正在经历一个历史性的现代化转型：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
 ### 7.1 ArchestrA 对象模型 — HAL 设备建模参考
 
-ArchestrA 的面向对象范式对 AUDESYS HAL 设计有直接参考价值：
+ArchestrA 的面向对象范式对 Weftik HAL 设计有直接参考价值：
 
-| ArchestrA 概念 | AUDESYS 对应 | 参考价值 |
+| ArchestrA 概念 | Weftik 对应 | 参考价值 |
 |---------------|-------------|---------|
 | **Object Template** | HAL Device Model（设备模型模板） | 定义一类设备的 Signal/StreamChannel/RPC 接口套餐 |
 | **Instance** | Device Instance（设备实例） | 运行时实例化，绑定到物理 I/O 或仿真 I/O |
 | **Containment** | 设备层次结构（Device Tree） | 模块包含子模块（如机器人 → 关节 → 电机上 HAL Pin） |
 | **Derived Template** | 设备模型继承 | 基类设备（GenericMotor）→ 派生设备（SERVO_Motor） |
 | **Deployment** | Task/Thread Assignment | 设备实例分配到特定 RT 线程或 I/O 线程 |
-| **Attribute** | Signal / StreamChannel | ArchestrA 的 Attribute = AUDESYS 的 Signal（带时间戳和质量） |
+| **Attribute** | Signal / StreamChannel | ArchestrA 的 Attribute = Weftik 的 Signal（带时间戳和质量） |
 
-**AUDESYS 可以借鉴的设计模式**：
+**Weftik 可以借鉴的设计模式**：
 ```
 // ArchestrA 风格的 HAL 设备模型定义（概念示例）
 DeviceTemplate MotorBase:
@@ -1017,9 +1017,9 @@ DeviceTemplate ServoMotor extends MotorBase:
 
 ### 7.2 Galaxy 集中式配置 — Studio IDE 配置管理
 
-Galaxy 的集中式配置数据库为 AUDESYS Studio 提供了配置管理架构的参考模型：
+Galaxy 的集中式配置数据库为 Weftik Studio 提供了配置管理架构的参考模型：
 
-| Galaxy 特性 | AUDESYS 参考 | 建议 |
+| Galaxy 特性 | Weftik 参考 | 建议 |
 |------------|-------------|------|
 | **单一数据源** | Studio Project 文件（YAML/JSON 或 SQLite） | 所有配置在一个项目文件中，避免多文件同步 |
 | **多工程师协作** | Git-based 版本控制 + 检出/检入隐喻 | Studio 集成 Git，支持分支/合并 |
@@ -1029,13 +1029,13 @@ Galaxy 的集中式配置数据库为 AUDESYS Studio 提供了配置管理架构
 | **对象版本管理** | Git tags + semantic versioning | 设备模板版本管理 |
 
 **关键教训 — Galaxy 的复杂度代价**：
-Galaxy 的缺点是过度集中化带来运维负担。AUDESYS 可以采用**轻量级的 Git-based 配置管理**——配置就是代码（Configuration as Code），以 Git 仓库代替复杂的集中式数据库。Git 的合并/分支/版本回滚能力天然支持多工程师协作。
+Galaxy 的缺点是过度集中化带来运维负担。Weftik 可以采用**轻量级的 Git-based 配置管理**——配置就是代码（Configuration as Code），以 Git 仓库代替复杂的集中式数据库。Git 的合并/分支/版本回滚能力天然支持多工程师协作。
 
 ### 7.3 WindowMaker ↔ WindowViewer — Studio ↔ Runtime 对标
 
-InTouch 的 IDE/Runtime 分离设计是 AUDESYS Studio ↔ Runtime 分离最直接的对标对象：
+InTouch 的 IDE/Runtime 分离设计是 Weftik Studio ↔ Runtime 分离最直接的对标对象：
 
-| InTouch | AUDESYS | 分析 |
+| InTouch | Weftik | 分析 |
 |---------|---------|------|
 | **WindowMaker** | Studio IDE | 图形化工程环境 |
 | **WindowViewer** | Runtime Engine | 实时执行环境 |
@@ -1046,7 +1046,7 @@ InTouch 的 IDE/Runtime 分离设计是 AUDESYS Studio ↔ Runtime 分离最直�
 
 **需注意的设计差异**：
 
-| 维度 | InTouch | AUDESYS 建议 |
+| 维度 | InTouch | Weftik 建议 |
 |------|---------|-------------|
 | 数据类型 | 4 种（Discrete/Integer/Real/Message） | 14 种（D12 决策：含 IEC 61131-3 全覆盖） |
 | 数据模型 | 平面 Tag → 对象（ArchestrA） | 原生对象-信号模型（Signal/StreamChannel/RPC 三分法） |
@@ -1055,7 +1055,7 @@ InTouch 的 IDE/Runtime 分离设计是 AUDESYS Studio ↔ Runtime 分离最直�
 
 ### 7.4 Tag-based → Object-based 演进 — 历史教训
 
-InTouch 从 Tag 模型到 ArchestrA 对象的演进过程对 AUDESYS 有根本性的参考价值：
+InTouch 从 Tag 模型到 ArchestrA 对象的演进过程对 Weftik 有根本性的参考价值：
 
 **教训 1：不要从平面 Tag 开始**
 InTouch 的 Tag 模型在 1990 年代非常合适（概念简单，符合当时 PLC 的内存镜像模式）。但随着系统复杂度增长，平面 Tag 的致命缺陷暴露无遗：
@@ -1063,21 +1063,21 @@ InTouch 的 Tag 模型在 1990 年代非常合适（概念简单，符合当时 
 - "泵类型"的概念不存在于数据模型中——只存在于工程师的脑海中。
 - 跨项目复用为零。
 
-AUDESYS 从第一天就应采用 **Signal（component.interface.name）** 的层次命名模型，避免平面 Tag 的设计。
+Weftik 从第一天就应采用 **Signal（component.interface.name）** 的层次命名模型，避免平面 Tag 的设计。
 
 **教训 2：向后兼容的代价巨大**
 ArchestrA 引入后，InTouch 必须同时支持 Standalone（Tag-based）和 Managed（Object-based）两种应用模式。这两种模式的脚本语法不同（QuickScript vs .NET Script）、Tag 访问方式不同（直接 Tag 名 vs Galaxy 属性路径）——至今仍在增加维护负担。
 
-AUDESYS 的 HAL 只有一种数据模型：Signal/StreamChannel/RPC。不引入向后兼容的 Tag 模式。
+Weftik 的 HAL 只有一种数据模型：Signal/StreamChannel/RPC。不引入向后兼容的 Tag 模式。
 
 **教训 3：对象模型 + 图形符号绑定**
-ArchestrA 的最佳设计选择之一是将对象模板与 Industrial Graphics 绑定——对象不仅包含数据和逻辑，还包含其可视化表现形式。AUDESYS Studio 应借鉴：用户拖入一个设备模板到画面中，自动生成与该设备的所有 Signal 绑定的标准控件（数值显示、状态灯、趋势图、报警指示）。
+ArchestrA 的最佳设计选择之一是将对象模板与 Industrial Graphics 绑定——对象不仅包含数据和逻辑，还包含其可视化表现形式。Weftik Studio 应借鉴：用户拖入一个设备模板到画面中，自动生成与该设备的所有 Signal 绑定的标准控件（数值显示、状态灯、趋势图、报警指示）。
 
 ### 7.5 InTouch OMI 现代化 — Studio Web 前端参考
 
-InTouch 从 Win32 WindowViewer 到 HTML5 OMI 的现代化转型为 AUDESYS Studio 提供了关键参考：
+InTouch 从 Win32 WindowViewer 到 HTML5 OMI 的现代化转型为 Weftik Studio 提供了关键参考：
 
-| OMI 特性 | AUDESYS Studio 参考 |
+| OMI 特性 | Weftik Studio 参考 |
 |----------|-------------------|
 | **HTML5 原生可视化** | Studio HMI 设计器应基于 Web（React/Vue），摆脱桌面依赖 |
 | **响应式设计** | 一次设计，自适应部署到多种屏幕尺寸（控制室大屏、工程笔记本、平板） |
@@ -1087,7 +1087,7 @@ InTouch 从 Win32 WindowViewer 到 HTML5 OMI 的现代化转型为 AUDESYS Studi
 | **历史回放** | 仿真/测试时回放历史数据——对 Simulator 模块极为有用 |
 | **Situational Awareness 设计** | ISA-101 标准的色彩方案和布局规范——工业 UI 的黄金标准 |
 
-**AUDESYS Studio 的具体建议**：
+**Weftik Studio 的具体建议**：
 - **HMI 设计完全 Web 化**：使用 React/Vue + Canvas/SVG 实现工业图形编辑器
 - **核心编程（PLC 逻辑）桌面优先**：IEC 61131-3 编程环境的 LSP + 语法高亮 + 调试在 Web 中实现仍有技术挑战
 - **模板驱动的画面生成**：拖入 Device Template → 自动生成与其 Signal/StreamChannel/RPC 绑定的标准 UI 控件
@@ -1095,13 +1095,13 @@ InTouch 从 Win32 WindowViewer 到 HTML5 OMI 的现代化转型为 AUDESYS Studi
 
 ### 7.6 通信架构 — amw 中间件对照
 
-InTouch 的 I/O Server 模型对 AUDESYS 的 amw（AUDESYS Middleware）设计有参考价值：
+InTouch 的 I/O Server 模型对 Weftik 的 amw（Weftik Middleware）设计有参考价值：
 
-| InTouch 通信概念 | AUDESYS amw 对应 | 参考价值 |
+| InTouch 通信概念 | Weftik amw 对应 | 参考价值 |
 |-----------------|-----------------|---------|
 | **Access Name** | amw 连接抽象（Connection） | 屏蔽底层协议差异——应用只需指定逻辑连接名 |
 | **DA Server** | amw_transport 实现 | 每种协议对应一个 transport 实现 |
-| **SuiteLink（VTQ）** | Signal 天然携带 Timestamp + Quality | AUDESYS Signal 已经包含 VTQ（D10/D11 决策） |
+| **SuiteLink（VTQ）** | Signal 天然携带 Timestamp + Quality | Weftik Signal 已经包含 VTQ（D10/D11 决策） |
 | **OPC UA Server 角色** | amw 对外接口（OPC UA Pub/Sub） | Runtime 可对外暴露 OPC UA Server 接口 |
 | **FSGateway** | amw Gateway/Bridge | 跨协议数据桥接 |
 | **IOSetAccessName() 动态切换** | amw 故障转移 | 运行时切换 backup transport |
@@ -1109,9 +1109,9 @@ InTouch 的 I/O Server 模型对 AUDESYS 的 amw（AUDESYS Middleware）设计�
 
 ### 7.7 报警系统 — 分布式报警架构参考
 
-InTouch 的分布式报警系统对 AUDESYS 的报警管理设计有重要参考：
+InTouch 的分布式报警系统对 Weftik 的报警管理设计有重要参考：
 
-| InTouch 报警特性 | AUDESYS 参考 |
+| InTouch 报警特性 | Weftik 参考 |
 |-----------------|-------------|
 | **Provider-Consumer 解耦** | 报警生产者（Runtime 节点）与消费者（HMI 客户端）独立部署 |
 | **分布式报警内存** | 多个 Runtime 节点报警构成逻辑统一视图 |
@@ -1123,9 +1123,9 @@ InTouch 的分布式报警系统对 AUDESYS 的报警管理设计有重要参考
 
 ### 7.8 工程效率 — 模板化与自动化
 
-InTouch 的 Industrial Graphics 和自动化库声称可减少 80% 工程工作量——AUDESYS Studio 应内建类似的工程效率机制：
+InTouch 的 Industrial Graphics 和自动化库声称可减少 80% 工程工作量——Weftik Studio 应内建类似的工程效率机制：
 
-| InTouch 效率机制 | AUDESYS 实现建议 |
+| InTouch 效率机制 | Weftik 实现建议 |
 |-----------------|-----------------|
 | Industrial Graphics Library | Studio 设备符号库（拖放使用） |
 | Symbol Wizard（可配置模板） | Studio 组件属性面板（配置参数自动生成绑定） |
@@ -1136,7 +1136,7 @@ InTouch 的 Industrial Graphics 和自动化库声称可减少 80% 工程工作�
 
 ### 7.9 冗余设计对标
 
-| InTouch 冗余 | AUDESYS 冗余参考 | 优先级 |
+| InTouch 冗余 | Weftik 冗余参考 | 优先级 |
 |-------------|----------------|--------|
 | AppEngine Primary/Backup（~15s failover） | Runtime 热备（ACTIVE/STANDBY 模式） | Phase 2 |
 | GR Node SQL Server Mirroring | Studio 项目存储高可用（Git + remote backup） | Phase 2 |
@@ -1145,17 +1145,17 @@ InTouch 的 Industrial Graphics 和自动化库声称可减少 80% 工程工作�
 
 ### 7.10 需警惕的陷阱
 
-从 InTouch 的发展历程中，AUDESYS 应注意避免：
+从 InTouch 的发展历程中，Weftik 应注意避免：
 
-1. **Tag 模型的技术债**：AUDESYS D10 决策已确立 Signal/StreamChannel/RPC 三分法——这是正确的。不要引入平面 Tag 作为兼容层。
-2. **双重产品线的维护负担**：InTouch OMI 与 WindowViewer、Classic InTouch 与 System Platform 双线并行造成了长期的维护和技术支持负担。AUDESYS Studio 应选定唯一的技术栈（Web 前端 + Rust 后端），避免视觉分裂。
-3. **许可定价的透明性**：InTouch 的"不公开标价"模式造成市场不信任。如果 AUDESYS 未来商业化，应考虑公开定价或至少提供明确的报价机制。
-4. **过度工程化**：Galaxy + ArchestrA 引入的管理复杂性对小项目是负担。AUDESYS 应保持"渐进式复杂度"——小项目可以用简化的配置，大项目解锁完整对象模型。
+1. **Tag 模型的技术债**：Weftik D10 决策已确立 Signal/StreamChannel/RPC 三分法——这是正确的。不要引入平面 Tag 作为兼容层。
+2. **双重产品线的维护负担**：InTouch OMI 与 WindowViewer、Classic InTouch 与 System Platform 双线并行造成了长期的维护和技术支持负担。Weftik Studio 应选定唯一的技术栈（Web 前端 + Rust 后端），避免视觉分裂。
+3. **许可定价的透明性**：InTouch 的"不公开标价"模式造成市场不信任。如果 Weftik 未来商业化，应考虑公开定价或至少提供明确的报价机制。
+4. **过度工程化**：Galaxy + ArchestrA 引入的管理复杂性对小项目是负担。Weftik 应保持"渐进式复杂度"——小项目可以用简化的配置，大项目解锁完整对象模型。
 5. **向后兼容的代价**：InTouch 至今仍在支持 DDE、NetDDE、Group Var Tag（v7.11 遗留产物）、传统 QuickScript 语法——这些向后兼容承诺严重拖慢了现代化速度。
-6. **Windows 绑定**：InTouch 对 Windows 的深度依赖（COM/DCOM、ActiveX、SuiteLink 的 Windows 性能计数器）限制了平台选择。AUDESYS Runtime 的 Rust/C 实现可避免此问题。
+6. **Windows 绑定**：InTouch 对 Windows 的深度依赖（COM/DCOM、ActiveX、SuiteLink 的 Windows 性能计数器）限制了平台选择。Weftik Runtime 的 Rust/C 实现可避免此问题。
 7. **安装体积膨胀**："即使仅装 InTouch 也必须下载 4.5GB System Platform 仓库"——这种打包方式增加了部署摩擦。
 
-### 7.11 总结：InTouch 对 AUDESYS 的关键参考权重
+### 7.11 总结：InTouch 对 Weftik 的关键参考权重
 
 | 参考领域 | 重要性 | 适用阶段 | 优先级 |
 |---------|--------|---------|--------|
@@ -1164,10 +1164,10 @@ InTouch 的 Industrial Graphics 和自动化库声称可减少 80% 工程工作�
 | Tag-based → Object-based 演进教训 | 极高 | Phase 1（防设计偏差） | P0 |
 | Galaxy 配置管理 → Studio 项目管理 | 高 | Phase 2 | P1 |
 | OMI Web 现代化 → Studio Web 前端 | 高 | Phase 2 | P1 |
-| 分布式报警 → AUDESYS 报警管理 | 中 | Phase 2-3 | P2 |
+| 分布式报警 → Weftik 报警管理 | 中 | Phase 2-3 | P2 |
 | 冗余设计 → Runtime 高可用 | 中 | Phase 3 | P2 |
 | 工程效率机制 → Studio UX 设计 | 中 | Phase 2-3 | P2 |
-| 商业许可模型 → AUDESYS 未来商业模式 | 低 | Phase 3+ | P3 |
+| 商业许可模型 → Weftik 未来商业模式 | 低 | Phase 3+ | P3 |
 
 ---
 
@@ -1431,47 +1431,47 @@ InTouch 的 Industrial Graphics 和自动化库声称可减少 80% 工程工作�
 5. **汽车制造** —— 生产线 HMI，与 PLC 和 MES 系统深度集成
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 HMI 运行时架构参考
 
-**InTouch 的 Design-time / Runtime 分离模式**对 AUDESYS Studio IDE + Runtime 架构的启示:
+**InTouch 的 Design-time / Runtime 分离模式**对 Weftik Studio IDE + Runtime 架构的启示:
 
-| InTouch 概念 | AUDESYS 可借鉴之处 |
+| InTouch 概念 | Weftik 可借鉴之处 |
 |-------------|-------------------|
-| **WindowMaker**（设计器） | AUDESYS Studio IDE 的图形化 HMI 设计器 |
-| **WindowViewer**（运行时） | AUDESYS Runtime 的 HMI 渲染引擎 |
-| **Display**（窗口） | AUDESYS 的 HMI 屏幕/视图 |
-| **Animation Links** | AUDESYS 的 Signal → UI 控件双向绑定 |
-| **Symbol Factory** | AUDESYS 的 HMI 控件库/组件库 |
-| **Runtime 客户端** | AUDESYS 的多客户端架构（本地/Web/Mobile） |
+| **WindowMaker**（设计器） | Weftik Studio IDE 的图形化 HMI 设计器 |
+| **WindowViewer**（运行时） | Weftik Runtime 的 HMI 渲染引擎 |
+| **Display**（窗口） | Weftik 的 HMI 屏幕/视图 |
+| **Animation Links** | Weftik 的 Signal → UI 控件双向绑定 |
+| **Symbol Factory** | Weftik 的 HMI 控件库/组件库 |
+| **Runtime 客户端** | Weftik 的多客户端架构（本地/Web/Mobile） |
 
 **关键设计模式**:
-- **Runtime 与 Designer 分离**: AUDESYS Studio（设计）和 Runtime（执行）应该清晰分离
+- **Runtime 与 Designer 分离**: Weftik Studio（设计）和 Runtime（执行）应该清晰分离
 - **事件驱动脚本引擎**: InTouch 的脚本优先级机制（UI 响应优先）值得参考
-- **无限 Read-Write 客户端**: AUDESYS 应支持多个 HMI 客户端同时访问
-- **不依赖实时操作系统**: InTouch 运行在 Windows 上的经验说明 HMI 不需要硬实时，但 AUDESYS 的 Supervisor 层需要确定性
+- **无限 Read-Write 客户端**: Weftik 应支持多个 HMI 客户端同时访问
+- **不依赖实时操作系统**: InTouch 运行在 Windows 上的经验说明 HMI 不需要硬实时，但 Weftik 的 Supervisor 层需要确定性
 
 ### 7.2 报警管理系统的设计模式
 
-InTouch 的报警系统是**业界最强的报警管理方案之一**，对 AUDESYS 报警模块有重要参考价值:
+InTouch 的报警系统是**业界最强的报警管理方案之一**，对 Weftik 报警模块有重要参考价值:
 
 **设计模式清单**:
 
 1. **优先级分级** (Priority 1-999, 4 Ranges)
-   - AUDESYS 可参考: 定义 3-5 级报警优先级（CRITICAL/HIGH/MEDIUM/LOW/INFO）
+   - Weftik 可参考: 定义 3-5 级报警优先级（CRITICAL/HIGH/MEDIUM/LOW/INFO）
    - 每个级别可配置颜色、确认策略、通知渠道
 
 2. **确认机制** (Acknowledge)
-   - AUDESYS 需要: 报警确认流程（选确认/全确认/按优先级确认）
+   - Weftik 需要: 报警确认流程（选确认/全确认/按优先级确认）
    - 确认状态持久化（断电后恢复）
 
 3. **抑制机制** (Suppress)
-   - AUDESYS 需要: 临时屏蔽报警（维护模式、启动阶段）
+   - Weftik 需要: 临时屏蔽报警（维护模式、启动阶段）
    - Inhibit Tag 模式: 通过另一个 Tag 控制报警抑制
 
 4. **报警历史** (Historical Logging)
-   - AUDESYS 需要: 报警事件日志（时间戳、类型、值、确认状态）
+   - Weftik 需要: 报警事件日志（时间戳、类型、值、确认状态）
    - 与历史数据库集成（类似 Historian）
 
 5. **报警显示控件**
@@ -1486,31 +1486,31 @@ InTouch 的报警系统是**业界最强的报警管理方案之一**，对 AUDE
 
 ### 7.3 Tag-based 数据模型 vs Signal-based 模型的对比
 
-这是 AUDESYS 设计者需要**深入思考**的核心架构决策:
+这是 Weftik 设计者需要**深入思考**的核心架构决策:
 
-| 维度 | InTouch Tag 模型 | AUDESYS Signal 模型 | 差异分析 |
+| 维度 | InTouch Tag 模型 | Weftik Signal 模型 | 差异分析 |
 |------|-----------------|-------------------|---------|
 | **核心概念** | Tag（标记）—— 命名变量 | Signal（信号）—— 命名数据通道 | Tag 偏 HMI 变量，Signal 偏通信通道 |
 | **数据流方向** | 双向（Read-Write） | 单写多读（Signal）/ 多写多读（StreamChannel） | Signal 更明确表达方向性 |
 | **存储位置** | 中央 Tag Dictionary | 分布在各节点 | Tag 集中，Signal 分布式 |
 | **通信机制** | Access Name（通信路径抽象） | amw_transport（传输层抽象） | 两者都是通信抽象层 |
 | **属性系统** | Dot Fields（Tag.HiLimit 等） | Signal 属性 + QoS | Dot Fields 简单灵活，QoS 更结构化 |
-| **实时性** | 非实时（Windows 调度） | RT 线程（确定性） | AUDESYS 更严格 |
+| **实时性** | 非实时（Windows 调度） | RT 线程（确定性） | Weftik 更严格 |
 | **事件驱动** | Condition/Data Change Script | Signal 事件感知 + StreamChannel | 两者都支持事件驱动 |
-| **报警集成** | 报警属性配置在 Tag 中 | 报警作为 Signal 的消费者 | AUDESYS 更灵活 |
+| **报警集成** | 报警属性配置在 Tag 中 | 报警作为 Signal 的消费者 | Weftik 更灵活 |
 
 **关键洞察**:
 - InTouch 的 **Tag Dictionary 集中管理模式**在企业级部署中非常实用，但存在单点瓶颈
-- AUDESYS 的 **Signal-based 模型**更分布式，更适合多进程/多节点部署
-- **Dot Fields 机制**值得借鉴: 为 AUDESYS Signal 添加可配置的元数据属性（类似 HiLimit/LoLimit）
+- Weftik 的 **Signal-based 模型**更分布式，更适合多进程/多节点部署
+- **Dot Fields 机制**值得借鉴: 为 Weftik Signal 添加可配置的元数据属性（类似 HiLimit/LoLimit）
 - **Access Name 机制**值得借鉴: 通信路径与变量定义解耦，支持热切换通信后端
 
 ### 7.4 OPC 作为通信桥梁的架构启示
 
 InTouch 通过 OPC 作为**标准化通信桥梁**，实现了与任意 PLC/SCADA 的互操作。
 
-**对 AUDESYS 的启示**:
-- AUDESYS HAL 应提供类似 OPC 的**标准化接口层**，允许第三方系统通过标准协议接入
+**对 Weftik 的启示**:
+- Weftik HAL 应提供类似 OPC 的**标准化接口层**，允许第三方系统通过标准协议接入
 - **amw_transport** 层应支持多种传输后端（inproc/zenoh/UDS/OPC UA），与 InTouch 的多驱动策略类似
 - **通信路径抽象**（Access Name）模式值得借鉴: 将通信配置与变量定义分离
 
@@ -1518,16 +1518,16 @@ InTouch 通过 OPC 作为**标准化通信桥梁**，实现了与任意 PLC/SCAD
 
 InTouch 的 **WindowMaker（设计器）+ WindowViewer（运行时）** 分离模式是 HMI/SCADA 领域的经典架构。
 
-**对 AUDESYS 的启示**:
-- AUDESYS Studio IDE 应提供完整的 HMI 设计器（类似 WindowMaker）
-- AUDESYS Runtime 应提供独立的 HMI 渲染引擎（类似 WindowViewer）
+**对 Weftik 的启示**:
+- Weftik Studio IDE 应提供完整的 HMI 设计器（类似 WindowMaker）
+- Weftik Runtime 应提供独立的 HMI 渲染引擎（类似 WindowViewer）
 - 设计时修改不应中断运行时（热部署能力）
 - 运行时支持多客户端（本地/Web/Mobile）
 
-### 7.6 总结: InTouch 对 AUDESYS 的核心借鉴价值
+### 7.6 总结: InTouch 对 Weftik 的核心借鉴价值
 
-1. **报警管理系统**是 InTouch 最成熟的功能模块，AUDESYS 应从中汲取优先级分级、确认机制、抑制机制、历史日志的设计经验
-2. **Tag Dictionary 集中管理**虽然适合企业级部署，但 AUDESYS 的分布式 Signal 模型更灵活，应在两者之间找到平衡
-3. **Design-time / Runtime 分离**是 HMI/SCADA 领域的最佳实践，AUDESYS 应遵循
-4. **OPC 通信桥梁模式**对 AUDESYS 的标准化接口设计有重要参考价值
-5. **QuickScript 的 7 种脚本类型**为 AUDESYS 的脚本/事件系统提供了成熟的参考模式
+1. **报警管理系统**是 InTouch 最成熟的功能模块，Weftik 应从中汲取优先级分级、确认机制、抑制机制、历史日志的设计经验
+2. **Tag Dictionary 集中管理**虽然适合企业级部署，但 Weftik 的分布式 Signal 模型更灵活，应在两者之间找到平衡
+3. **Design-time / Runtime 分离**是 HMI/SCADA 领域的最佳实践，Weftik 应遵循
+4. **OPC 通信桥梁模式**对 Weftik 的标准化接口设计有重要参考价值
+5. **QuickScript 的 7 种脚本类型**为 Weftik 的脚本/事件系统提供了成熟的参考模式

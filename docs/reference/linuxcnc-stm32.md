@@ -416,7 +416,7 @@ STM32 的中断管理对步进生成的实时性至关重要：
 - SDO（服务数据对象）：非周期性传输配置数据
 - 支持多主站和心跳监控
 
-**与 AUDESYS 的关联**：CANopen 设备配置文件（CiA 402）定义了统一的驱动器和运动控制设备接口。AUDESYS 的 HAL 设备对象模型可以参考 CiA 402 的对象字典设计。
+**与 Weftik 的关联**：CANopen 设备配置文件（CiA 402）定义了统一的驱动器和运动控制设备接口。Weftik 的 HAL 设备对象模型可以参考 CiA 402 的对象字典设计。
 
 ### 2.15 编码器反馈接口
 
@@ -729,18 +729,18 @@ STM32 方案支持多种通信接口，适应不同的应用场景：
 
 STM32 方案通过 LinuxCNC 的 HAL（硬件抽象层）组件实现深度集成，用户可以在 HAL 配置中使用与标准 stepgen 完全相同的信号连接方式，切换透明。
 
-## 七、对AUDESYS参考价值
+## 七、对Weftik参考价值
 
 ### 7.1 PC↔MCU 实时接口架构的启示
 
-LinuxCNC-STM32 方案最核心的参考价值在于其"PC + MCU 双处理器实时接口"架构。AUDESYS 的 Runtime（§6，运行在 PC 或嵌入式 Linux 上）和 HAL（硬件抽象层，运行在 MCU 上）之间需要类似的接口设计。
+LinuxCNC-STM32 方案最核心的参考价值在于其"PC + MCU 双处理器实时接口"架构。Weftik 的 Runtime（§6，运行在 PC 或嵌入式 Linux 上）和 HAL（硬件抽象层，运行在 MCU 上）之间需要类似的接口设计。
 
 **架构映射**：
 
-| LinuxCNC-STM32 | AUDESYS 对应 | 参考价值 |
+| LinuxCNC-STM32 | Weftik 对应 | 参考价值 |
 |---------------|-------------|----------|
-| PC 运行 LinuxCNC + HAL | AUDESYS Runtime (PC/Linux) | 运行非实时控制逻辑 |
-| STM32 运行步进发生器固件 | AUDESYS HAL Driver (MCU) | 运行实时硬件控制 |
+| PC 运行 LinuxCNC + HAL | Weftik Runtime (PC/Linux) | 运行非实时控制逻辑 |
+| STM32 运行步进发生器固件 | Weftik HAL Driver (MCU) | 运行实时硬件控制 |
 | 通信接口（USB/SPI/以太网） | amw 中间件 (D11) | 传输层实现 |
 | HAL 组件（weeny.c/remora.c） | HAL RPC 客户端 | PC 端通信 API |
 | 步进定时器中断 | RT-Scheduler 硬实时线程 | 时间关键任务调度 |
@@ -748,33 +748,33 @@ LinuxCNC-STM32 方案最核心的参考价值在于其"PC + MCU 双处理器实�
 
 ### 7.2 实时性分层的借鉴
 
-LinuxCNC-STM32 的分层实时性设计直接验证了 AUDESYS 的四系统混合线程调度（D13）的合理性：
+LinuxCNC-STM32 的分层实时性设计直接验证了 Weftik 的四系统混合线程调度（D13）的合理性：
 
-- **硬实时层（STM32 定时器 ISR）** ↔ AUDESYS 的 RT 线程（SCHED_FIFO）：处理微秒级时间关键任务
-- **软实时层（PC 伺服线程）** ↔ AUDESYS 的 I/O 通信线程：处理毫秒级周期性任务
-- **非实时层（PC 用户空间）** ↔ AUDESYS 的控制面/配置面：处理非实时逻辑
+- **硬实时层（STM32 定时器 ISR）** ↔ Weftik 的 RT 线程（SCHED_FIFO）：处理微秒级时间关键任务
+- **软实时层（PC 伺服线程）** ↔ Weftik 的 I/O 通信线程：处理毫秒级周期性任务
+- **非实时层（PC 用户空间）** ↔ Weftik 的控制面/配置面：处理非实时逻辑
 
-AUDESYS 的 RT-Scheduler 可以从 LinuxCNC-STM32 的架构中验证：在 MCU 端处理硬实时任务、在 PC 端处理软实时任务的分层设计是可行的。
+Weftik 的 RT-Scheduler 可以从 LinuxCNC-STM32 的架构中验证：在 MCU 端处理硬实时任务、在 PC 端处理软实时任务的分层设计是可行的。
 
 ### 7.3 通信延迟预算的参考
 
-LinuxCNC-STM32 的通信延迟分析为 AUDESYS 的 amw 中间件（D11）提供了重要的延迟预算参考：
+LinuxCNC-STM32 的通信延迟分析为 Weftik 的 amw 中间件（D11）提供了重要的延迟预算参考：
 
-| 通信层 | LinuxCNC-STM32 延迟 | AUDESYS 目标 | 差距 |
+| 通信层 | LinuxCNC-STM32 延迟 | Weftik 目标 | 差距 |
 |--------|-------------------|-------------|------|
 | USB 全速 | 1-6ms | 不可用于 RT 通信 | — |
 | SPI 同步 | 1-10μs | 可用于 RT 通信 | 足够 |
 | 以太网 UDP | 0.1-1ms | 可用于控制面通信 | 需要优化 |
 | RT 定时器 | <1μs | 硬件原生延迟 | 匹配 |
 
-AUDESYS 的 amw 传输层（D11：amw_inproc / amw_zenoh）应选择适合的通信接口，并在不同接口之间提供一致的 API。
+Weftik 的 amw 传输层（D11：amw_inproc / amw_zenoh）应选择适合的通信接口，并在不同接口之间提供一致的 API。
 
 ### 7.4 步进频率控制算法的移植
 
-LinuxCNC-STM32 的步进频率控制算法（累加器法 + 定时器 PWM 输出）可以直接移植到 AUDESYS 的 HAL Driver 固件中：
+LinuxCNC-STM32 的步进频率控制算法（累加器法 + 定时器 PWM 输出）可以直接移植到 Weftik 的 HAL Driver 固件中：
 
 ```rust
-// AUDESYS HAL 步进发生器（Rust 实现参考）
+// Weftik HAL 步进发生器（Rust 实现参考）
 struct StepperGenerator {
     accumulator: u32,
     pickoff: u32,       // 2^31 或 2^32
@@ -802,61 +802,61 @@ impl StepperGenerator {
 
 ### 7.5 HAL 组件设计模式的参考
 
-LinuxCNC 的 HAL 组件设计模式（`halcompile` 编译、`loadrt` 加载、`addf` 添加到实时线程、信号连接）为 AUDESYS 的 HAL API 设计提供了参考：
+LinuxCNC 的 HAL 组件设计模式（`halcompile` 编译、`loadrt` 加载、`addf` 添加到实时线程、信号连接）为 Weftik 的 HAL API 设计提供了参考：
 
-- **面向信号的连接**：HAL 使用信号（Signal）连接组件，类似 AUDESYS 的 Signal 原语
+- **面向信号的连接**：HAL 使用信号（Signal）连接组件，类似 Weftik 的 Signal 原语
 - **实时函数注册**：HAL 组件注册实时函数，LinuxCNC 调度器确保在实时线程中执行
 - **参数导出**：组件参数通过 HAL 引脚暴露，可在运行时调整
 
-AUDESYS 的 HAL RPC 和 Signal 原语应该提供类似的能力：组件间通过信号连接，实时函数由调度器管理，参数可运行时调整。
+Weftik 的 HAL RPC 和 Signal 原语应该提供类似的能力：组件间通过信号连接，实时函数由调度器管理，参数可运行时调整。
 
 ### 7.6 USB 延迟问题的警示
 
-LinuxCNC 社区对 USB 用于实时控制的明确拒绝（"USB devices cannot be used for real time tasks"）对 AUDESYS 是一个重要警示：
+LinuxCNC 社区对 USB 用于实时控制的明确拒绝（"USB devices cannot be used for real time tasks"）对 Weftik 是一个重要警示：
 
-- **USB 不适合 RT 数据面**：AUDESYS 的 RT 数据面（D16）不应使用 USB 作为传输层
+- **USB 不适合 RT 数据面**：Weftik 的 RT 数据面（D16）不应使用 USB 作为传输层
 - **USB 适合控制面/配置面**：USB 可以用于非实时的配置和调试通信
 - **硬件卸载是唯一出路**：如果必须使用 USB，必须在 MCU 端卸载所有实时任务
 
-AUDESYS 的 amw 传输层选择（D11：Phase 1 amw_inproc、Phase 2+ amw_zenoh）避免了 USB 的限制，但如果在未来需要 USB 连接，必须参考 LinuxCNC 的教训。
+Weftik 的 amw 传输层选择（D11：Phase 1 amw_inproc、Phase 2+ amw_zenoh）避免了 USB 的限制，但如果在未来需要 USB 连接，必须参考 LinuxCNC 的教训。
 
 ### 7.7 STM32 定时器资源的管理
 
-STM32 定时器资源的管理策略对 AUDESYS 的 HAL 设备对象模型有参考价值：
+STM32 定时器资源的管理策略对 Weftik 的 HAL 设备对象模型有参考价值：
 
 - **定时器复用**：一个定时器可以同时驱动多个步进通道（通过不同的比较值）
 - **定时器同步**：多个定时器可以通过硬件触发链同步
 - **DMA 卸载**：DMA 可以自动更新定时器参数，无需 CPU 干预
 
-AUDESYS 的 HAL Driver 固件应该提供类似的定时器管理抽象层，让上层应用不必关心具体的定时器资源分配。
+Weftik 的 HAL Driver 固件应该提供类似的定时器管理抽象层，让上层应用不必关心具体的定时器资源分配。
 
 ### 7.8 通信协议设计的参考
 
-LinuxCNC-STM32 的通信协议设计（命令-响应、频率命令+状态反馈、心跳机制、超时保护）为 AUDESYS 的 HAL RPC 协议提供了参考：
+LinuxCNC-STM32 的通信协议设计（命令-响应、频率命令+状态反馈、心跳机制、超时保护）为 Weftik 的 HAL RPC 协议提供了参考：
 
 - **命令-响应模式**：PC 发送命令帧，MCU 执行并返回状态，适合大部分控制场景
 - **批量更新**：一次发送多个轴的命令，减少通信开销
 - **心跳机制**：PC 定期发送心跳包，MCU 监控心跳超时，在超时时自动停止所有轴
 - **状态反馈**：MCU 返回各轴位置、限位状态、故障状态
 
-AUDESYS 的 HAL RPC 应该支持类似的功能，同时增加安全域（D27）和 QoS 参数（D16）。
+Weftik 的 HAL RPC 应该支持类似的功能，同时增加安全域（D27）和 QoS 参数（D16）。
 
-### 7.9 对 AUDESYS Simulator 的参考
+### 7.9 对 Weftik Simulator 的参考
 
-LinuxCNC-STM32 的"PC 端软实时 + MCU 端硬实时"架构为 AUDESYS Simulator 提供了仿真模型：
+LinuxCNC-STM32 的"PC 端软实时 + MCU 端硬实时"架构为 Weftik Simulator 提供了仿真模型：
 
 - **Simulator 可以在 PC 上模拟 STM32 的行为**：在仿真模式下，PC 端运行 STM32 固件的模拟版本
 - **通信协议可以在回环（loopback）模式下测试**：PC 端的 HAL 组件通过本地回环与模拟的 STM32 通信
 - **实时性验证**：通过记录和比较延迟分布，验证是否满足实时性要求
 
-### 7.10 总结：LinuxCNC-STM32 对 AUDESYS 的整体价值
+### 7.10 总结：LinuxCNC-STM32 对 Weftik 的整体价值
 
-LinuxCNC-STM32 方案对 AUDESYS 的核心参考价值在于：
+LinuxCNC-STM32 方案对 Weftik 的核心参考价值在于：
 
 1. **PC+MCU 双处理器实时接口架构**：验证了"PC 运行非实时逻辑 + MCU 运行硬实时逻辑"的可行性
 2. **分层实时性设计**：硬实时（定时器 ISR）→ 软实时（伺服线程）→ 非实时（用户空间）的三层模型
 3. **通信延迟预算**：不同通信接口的延迟特性数据，为 amw 传输层选择提供依据
-4. **步进频率控制算法**：可直接移植到 AUDESYS HAL Driver 固件
+4. **步进频率控制算法**：可直接移植到 Weftik HAL Driver 固件
 5. **HAL 组件设计模式**：面向信号的连接、实时函数注册、参数导出
 6. **USB 延迟的警示**：USB 不适合实时数据面，硬件卸载是唯一出路
 7. **定时器管理策略**：定时器复用、同步、DMA 卸载的 STM32 实践
@@ -866,4 +866,4 @@ LinuxCNC-STM32 方案对 AUDESYS 的核心参考价值在于：
 - 轴数受限于定时器资源
 - 通信接口的延迟和带宽限制
 
-AUDESYS 的 HAL 设计应该在这些方面超越 STM32 方案，特别是在多轴同步、高步进频率和确定性通信方面。
+Weftik 的 HAL 设计应该在这些方面超越 STM32 方案，特别是在多轴同步、高步进频率和确定性通信方面。

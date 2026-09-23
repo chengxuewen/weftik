@@ -1,4 +1,4 @@
-# AUDESYS Studio Theia 迁移 SDD 规范
+# Weftik Studio Theia 迁移 SDD 规范
 
 > **来源**: `docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md`
 > **总项数**: 50
@@ -10,7 +10,7 @@
 
 ## 1. STH-BRIDGE — napi-rs 桥接 API (10 项)
 
-> **crate**: `crates/audesys-theia-bridge/`（~500-1000 行）
+> **crate**: `crates/weftik-theia-bridge/`（~500-1000 行）
 > **运行模式**: worker_thread 池（避免阻塞 Node.js 事件循环）
 > **覆盖**: ~25 个函数（原 34 个 Tauri 命令审计后）
 
@@ -38,7 +38,7 @@
 
 ## 2. STH-BACKEND — Theia 后端服务 (10 项)
 
-> **路径**: `theia-extensions/audesys-backend/src/node/`
+> **路径**: `theia-extensions/weftik-backend/src/node/`
 > **框架**: Theia Backend (Node.js + Express + inversify DI)
 > **新增代码**: ~1500-2000 行（含 inversify 样板）
 
@@ -97,7 +97,7 @@
 
 **STH-033**: GLSP 节点类型 — 梯形图 GModel 节点体系：ContactNode（常开/常闭, type 切换 via ChangeContactTypeOperation）、CoilNode（普通/取反/置位/复位）、PowerRailNode（左/右母线, 只读, 自动生成）、FbPlaceholderNode（功能块占位符, 待 Phase 4 扩展）、WireConnection（连线, 正交路由）、Rung（梯级容器, id 自动 001-999 编号）
 
-**STH-034**: napi-rs Compiler Bridge — GLSP Server 通过 napi-rs 调用 Rust 编译器：客户端发送 RequestCompileAction → GLSP Server CompileActionHandler → napi-rs → audesys-ld-compiler → HalProgram；编译结果（diagnostics 数组、programJson 字符串）通过 JSON-RPC 返回客户端；napi-rs 调用在 worker_thread 池中执行（避免阻塞 GLSP Server 主线程）
+**STH-034**: napi-rs Compiler Bridge — GLSP Server 通过 napi-rs 调用 Rust 编译器：客户端发送 RequestCompileAction → GLSP Server CompileActionHandler → napi-rs → weftik-ld-compiler → HalProgram；编译结果（diagnostics 数组、programJson 字符串）通过 JSON-RPC 返回客户端；napi-rs 调用在 worker_thread 池中执行（避免阻塞 GLSP Server 主线程）
 
 
 ---

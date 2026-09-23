@@ -1,19 +1,19 @@
 ---
 name: ref-fuxa
-description: "FUXA 开源 Web SCADA/HMI 参考 — SVG 拖拽编辑器、插件化协议适配器、轻量 Node.js 部署、JSON 项目文件。用于 AUDESYS HMI 设计。"
+description: "FUXA 开源 Web SCADA/HMI 参考 — SVG 拖拽编辑器、插件化协议适配器、轻量 Node.js 部署、JSON 项目文件。用于 Weftik HMI 设计。"
 ---
 
-# ref-fuxa — FUXA Web SCADA Reference for AUDESYS Studio HMI Design
+# ref-fuxa — FUXA Web SCADA Reference for Weftik Studio HMI Design
 
 **Name**: ref-fuxa
-**Description**: FUXA open-source Web SCADA/HMI reference — SVG drag-and-drop editor, plugin-based protocol adapter architecture, lightweight Node.js deployment, JSON-native project files. Use when designing AUDESYS Studio HMI Designer, HAL driver interfaces, or evaluating Web-native SCADA architecture.
+**Description**: FUXA open-source Web SCADA/HMI reference — SVG drag-and-drop editor, plugin-based protocol adapter architecture, lightweight Node.js deployment, JSON-native project files. Use when designing Weftik Studio HMI Designer, HAL driver interfaces, or evaluating Web-native SCADA architecture.
 **Source**: `docs/reference/fuxa.md`
-**Study Depth**: Technical engineering analysis with AUDESYS design mapping.
+**Study Depth**: Technical engineering analysis with Weftik design mapping.
 **AI Mode**: Technical. Use exact terminology. No simplification for non-engineers.
 
 ## When to Use
 
-- AUDESYS Studio HMI Designer interaction model decisions
+- Weftik Studio HMI Designer interaction model decisions
 - SVG editor component architecture (component library, data binding, conditional styling)
 - HAL driver plugin architecture and protocol adapter interface design
 - Web-native SCADA deployment patterns (Docker, Raspberry Pi, edge)
@@ -33,7 +33,7 @@ ref-fuxa/
 │   ├── ch04.md           # Ecosystem & Community (Versions, Deployment, Stack)
 │   ├── ch05.md           # Market Positioning & Competitive Analysis
 │   ├── ch06.md           # Product Differentiators (SVG Editor, Lightweight, MIT, Docker)
-│   └── ch07.md           # AUDESYS Reference Value & Design Mapping
+│   └── ch07.md           # Weftik Reference Value & Design Mapping
 ├── glossary.md           # FUXA terminology glossary
 ├── patterns.md           # Reusable architectural patterns
 └── cheatsheet.md         # Quick reference card
@@ -46,23 +46,23 @@ ref-fuxa/
 3. Read `ch03.md` for feature set: SVG visualization, alarms, trends, REST API
 4. Read `ch04.md` for ecosystem maturity, deployment options, and tech stack details
 5. Read `ch06.md` for differentiators: SVG editor as "Web HMI Figma", Raspberry Pi deployment
-6. Read `ch07.md` for explicit AUDESYS design mapping (most directly applicable)
+6. Read `ch07.md` for explicit Weftik design mapping (most directly applicable)
 7. Use `patterns.md` for reusable architecture patterns
 8. Use `cheatsheet.md` for quick recall
 
-## Key Takeaways for AUDESYS
+## Key Takeaways for Weftik
 
-1. **SVG editor validates Web-native HMI**: FUXA proves a browser-based drag-and-drop HMI designer is production-viable. AUDESYS Studio HMI Designer should adopt the same three-panel layout (toolbox + canvas + property panel) and data-binding model.
-2. **Plugin protocol adapters map to HAL Driver trait**: FUXA's unified `connect/disconnect/read/write` interface across 8 protocols directly validates AUDESYS HAL Driver trait architecture. Each protocol = independent crate, same interface.
-3. **JSON project files over binary formats**: FUXA stores entire SCADA projects as JSON files in `_appdata/` — Git-friendly, scriptable, human-readable. Confirms AUDESYS D24 (YAML + FlatBuffers) direction.
-4. **Node.js GC is NOT hard real-time**: FUXA uses Node.js with GC pauses. AUDESYS Runtime's Rust choice provides inherent advantage: lower memory (10-50MB vs 200-500MB), faster startup (ms vs s), no GC stalls, SCHED_FIFO determinism.
-5. **REST API enables middleware role**: FUXA's REST API allows it to act as a data middle layer between physical devices and MES/ERP/AI systems — validates AUDESYS Runtime's API gateway role.
-6. **WebSocket real-time channel**: FUXA uses WebSocket (socket.io) for millisecond tag push. AUDESYS can use WebSocket or HAL StreamChannel Web bridge.
-7. **Raspberry Pi deployment precedent**: $45 total cost for a SCADA server — validates AUDESYS edge deployment targets.
+1. **SVG editor validates Web-native HMI**: FUXA proves a browser-based drag-and-drop HMI designer is production-viable. Weftik Studio HMI Designer should adopt the same three-panel layout (toolbox + canvas + property panel) and data-binding model.
+2. **Plugin protocol adapters map to HAL Driver trait**: FUXA's unified `connect/disconnect/read/write` interface across 8 protocols directly validates Weftik HAL Driver trait architecture. Each protocol = independent crate, same interface.
+3. **JSON project files over binary formats**: FUXA stores entire SCADA projects as JSON files in `_appdata/` — Git-friendly, scriptable, human-readable. Confirms Weftik D24 (YAML + FlatBuffers) direction.
+4. **Node.js GC is NOT hard real-time**: FUXA uses Node.js with GC pauses. Weftik Runtime's Rust choice provides inherent advantage: lower memory (10-50MB vs 200-500MB), faster startup (ms vs s), no GC stalls, SCHED_FIFO determinism.
+5. **REST API enables middleware role**: FUXA's REST API allows it to act as a data middle layer between physical devices and MES/ERP/AI systems — validates Weftik Runtime's API gateway role.
+6. **WebSocket real-time channel**: FUXA uses WebSocket (socket.io) for millisecond tag push. Weftik can use WebSocket or HAL StreamChannel Web bridge.
+7. **Raspberry Pi deployment precedent**: $45 total cost for a SCADA server — validates Weftik edge deployment targets.
 
 ## Critical Anti-Patterns to Avoid
 
-| FUXA Limitation | AUDESYS Avoidance Strategy |
+| FUXA Limitation | Weftik Avoidance Strategy |
 |-----------------|---------------------------|
 | Node.js GC pauses (non-deterministic timing) | Rust core, no GC, SCHED_FIFO real-time scheduling |
 | Single-process architecture (no horizontal scaling) | Rust multi-threading + amw trait-based transport swapping |

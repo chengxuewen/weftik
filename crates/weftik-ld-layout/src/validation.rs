@@ -32,11 +32,7 @@ pub struct ValidationReport {
 ///
 /// Validation never fails — it only produces warnings. The layout engine
 /// continues regardless of validation results.
-pub fn validate(
-    nodes: &[LayoutNode],
-    edges: &[LayoutEdge],
-    rungs: &[RungDef],
-) -> ValidationReport {
+pub fn validate(nodes: &[LayoutNode], edges: &[LayoutEdge], rungs: &[RungDef]) -> ValidationReport {
     ValidationReport {
         warnings: vec![],
         unconnected: check_connectivity(nodes, edges),
@@ -48,10 +44,8 @@ pub fn validate(
 
 /// Check that every non-rail node is referenced by at least one edge.
 fn check_connectivity(nodes: &[LayoutNode], edges: &[LayoutEdge]) -> Vec<String> {
-    let connected: HashSet<&str> = edges
-        .iter()
-        .flat_map(|e| [e.source_id.as_str(), e.target_id.as_str()])
-        .collect();
+    let connected: HashSet<&str> =
+        edges.iter().flat_map(|e| [e.source_id.as_str(), e.target_id.as_str()]).collect();
 
     nodes
         .iter()
@@ -62,10 +56,8 @@ fn check_connectivity(nodes: &[LayoutNode], edges: &[LayoutEdge]) -> Vec<String>
 
 /// Check that each rung has at least one contact and one coil.
 fn check_rung_completeness(nodes: &[LayoutNode], rungs: &[RungDef]) -> Vec<String> {
-    let kind_map: HashMap<&str, &str> = nodes
-        .iter()
-        .map(|n| (n.id.as_str(), n.kind.as_str()))
-        .collect();
+    let kind_map: HashMap<&str, &str> =
+        nodes.iter().map(|n| (n.id.as_str(), n.kind.as_str())).collect();
 
     rungs
         .iter()
@@ -89,10 +81,8 @@ fn check_rung_completeness(nodes: &[LayoutNode], rungs: &[RungDef]) -> Vec<Strin
 
 /// Find nodes not assigned to any rung (excluding power rails).
 fn check_orphans(nodes: &[LayoutNode], rungs: &[RungDef]) -> Vec<String> {
-    let assigned: HashSet<&str> = rungs
-        .iter()
-        .flat_map(|r| r.element_ids.iter().map(|s| s.as_str()))
-        .collect();
+    let assigned: HashSet<&str> =
+        rungs.iter().flat_map(|r| r.element_ids.iter().map(|s| s.as_str())).collect();
 
     nodes
         .iter()
@@ -106,10 +96,7 @@ fn check_orphans(nodes: &[LayoutNode], rungs: &[RungDef]) -> Vec<String> {
 /// Only checks non-rail nodes. Returns pairs of overlapping IDs.
 fn check_overlaps(nodes: &[LayoutNode]) -> Vec<(String, String)> {
     let mut overlaps = Vec::new();
-    let elements: Vec<&LayoutNode> = nodes
-        .iter()
-        .filter(|n| n.kind != "node:powerrail")
-        .collect();
+    let elements: Vec<&LayoutNode> = nodes.iter().filter(|n| n.kind != "node:powerrail").collect();
 
     for i in 0..elements.len() {
         for j in (i + 1)..elements.len() {
@@ -128,8 +115,8 @@ fn check_overlaps(nodes: &[LayoutNode]) -> Vec<(String, String)> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::{Point, Size};
+    use super::*;
 
     fn make_node(id: &str, kind: &str, x: f64, y: f64) -> LayoutNode {
         LayoutNode {

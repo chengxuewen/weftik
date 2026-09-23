@@ -25,8 +25,8 @@ Platform: macOS (darwin-x64), Node.js native addon.
 - healthQuery shows p99 spike (45µs) — first call in iteration batch likely hits cold cache
 - Bridge exports 29 napi-rs functions mapping from original 34 Tauri commands
 
-**Bridge binary:** `audesys-theia-bridge.darwin-x64.node` — 861 KB  
-**Bridge source:** 446 lines (`crates/audesys-theia-bridge/src/lib.rs`)
+**Bridge binary:** `weftik-theia-bridge.darwin-x64.node` — 861 KB  
+**Bridge source:** 446 lines (`crates/weftik-theia-bridge/src/lib.rs`)
 
 ---
 
@@ -47,7 +47,7 @@ Platform: macOS (darwin-x64), Node.js native addon.
 | Directory | Size |
 |---|---|
 | theia-extensions/ (total) | 2.4 GB |
-| audesys-core + node_modules | ~2.4 GB (dominated by @theia/* framework) |
+| weftik-core + node_modules | ~2.4 GB (dominated by @theia/* framework) |
 
 ### Comparison: Old Tauri Studio
 
@@ -70,30 +70,30 @@ Platform: macOS (darwin-x64), Node.js native addon.
 
 | Crate | Tests |
 |---|---|
-| audesys-controller | 150 |
-| audesys-hal-core | 134 |
-| audesys-hal-binding-gen | 88 |
-| audesys-gcode-compiler | 75 |
-| audesys-hal-ir | 61 |
-| audesys-ld-semantics | 32 |
-| audesys-cnc-axis-group | 32 |
-| audesys-il-compiler | 32 |
-| audesys-amw-inproc | 28 |
-| audesys-ld-layout | 27 |
-| audesys-ld-compiler | 25 |
-| audesys-fbd-compiler | 21 |
-| audesys-sfc-compiler | 19 |
-| audesys-runtime-common | 16 |
-| audesys-controller-client | 16 |
-| audesys-amw-zenoh | 8 |
-| audesys-modbus | 8 |
-| audesys-cnc-motion | 7 |
-| audesys-hal-flatbuffers | 6 |
-| audesys-hart | 6 |
-| audesys-dap-adapter | 5 |
-| audesys-supervisor | 3 |
-| audesys-modbus-sys | 0 |
-| audesys-theia-bridge | 0 |
+| weftik-controller | 150 |
+| weftik-hal-core | 134 |
+| weftik-hal-binding-gen | 88 |
+| weftik-gcode-compiler | 75 |
+| weftik-hal-ir | 61 |
+| weftik-ld-semantics | 32 |
+| weftik-cnc-axis-group | 32 |
+| weftik-il-compiler | 32 |
+| weftik-amw-inproc | 28 |
+| weftik-ld-layout | 27 |
+| weftik-ld-compiler | 25 |
+| weftik-fbd-compiler | 21 |
+| weftik-sfc-compiler | 19 |
+| weftik-runtime-common | 16 |
+| weftik-controller-client | 16 |
+| weftik-amw-zenoh | 8 |
+| weftik-modbus | 8 |
+| weftik-cnc-motion | 7 |
+| weftik-hal-flatbuffers | 6 |
+| weftik-hart | 6 |
+| weftik-dap-adapter | 5 |
+| weftik-supervisor | 3 |
+| weftik-modbus-sys | 0 |
+| weftik-theia-bridge | 0 |
 
 ### TypeScript Tests
 
@@ -101,7 +101,7 @@ Platform: macOS (darwin-x64), Node.js native addon.
 |---|---|---|
 | apps/studio/ (vitest) | ~142 `it()`/`test()` | Old Tauri Studio component tests |
 | apps/studio-theia/ (playwright) | 5 (1 spec) | Smoke E2E: `e2e/smoke/startup.spec.ts` |
-| theia-extensions/audesys-core/src/ | 0 | No own unit tests yet |
+| theia-extensions/weftik-core/src/ | 0 | No own unit tests yet |
 | theia-extensions/ (incl. node_modules) | 12,216 | Mostly @theia/* framework specs |
 
 **Total own tests:** ~946 (799 Rust + 142 TS + 5 E2E)
@@ -112,7 +112,7 @@ Platform: macOS (darwin-x64), Node.js native addon.
 
 | Crate | Status |
 |---|---|
-| audesys-theia-bridge | ✅ Compiles (`cargo build --release` + `cargo test --no-run`) |
+| weftik-theia-bridge | ✅ Compiles (`cargo build --release` + `cargo test --no-run`) |
 | All 24 Rust crates | ✅ qa-fast gate: test + clippy + fmt + deny |
 
 **Bridge type:** cdylib (Node.js native addon via napi-rs)  

@@ -1,24 +1,24 @@
 ---
 name: skill-creator
 description: >-
-  Generate AUDESYS project skills from HAL Rust traits (crates/audesys-hal-core/src/),
+  Generate Weftik project skills from HAL Rust traits (crates/weftik-hal-core/src/),
   SDD specs (openspec/specs/*.md), FlatBuffers schemas (*.fbs), or Cargo crate names.
   Use when the user wants to create a new AI-assisted workflow skill for testing,
   spec execution, schema verification, or build validation.
 license: MIT
 metadata:
-  author: AUDESYS
+  author: Weftik
   version: "1.0"
-  project: AUDESYS
+  project: Weftik
 ---
 
-Create AUDESYS project-specific AI skills from project artifacts.
+Create Weftik project-specific AI skills from project artifacts.
 
 **Input**: One of four input sources:
-- `crates/audesys-hal-core/src/**/*.rs` (Rust trait definition) → trait testing skill
+- `crates/weftik-hal-core/src/**/*.rs` (Rust trait definition) → trait testing skill
 - `openspec/specs/<module>.md` (SDD spec with spec IDs) → spec execution skill
 - `*.fbs` (FlatBuffers schema file) → schema verification skill
-- Cargo crate name matching `audesys-*` / `amw_*` / `hal-*` → build test skill
+- Cargo crate name matching `weftik-*` / `amw_*` / `hal-*` → build test skill
 
 Also accepts a natural-language description: "generate a trait testing skill for HalTransport."
 
@@ -30,7 +30,7 @@ Also accepts a natural-language description: "generate a trait testing skill for
    - `*.rs` file containing `pub trait` → **HAL trait mode**
    - `openspec/specs/*.md` file with `S-TYPE-*` / `S-QOS-*` / `S-CB-*` / `S-PROTO-*` IDs → **SDD spec mode**
    - `*.fbs` file with `table` / `union` / `struct` → **FlatBuffers schema mode**
-   - Cargo crate name matching `audesys-*` / `amw_*` / `hal-*` → **Cargo crate mode**
+   - Cargo crate name matching `weftik-*` / `amw_*` / `hal-*` → **Cargo crate mode**
    - Natural-language phrase → ask user which mode, default to **HAL trait mode** if ambiguous
 
    If no input provided: "What should the skill be based on? (HAL trait / SDD spec / FlatBuffers schema / Cargo crate)"
@@ -47,7 +47,7 @@ Also accepts a natural-language description: "generate a trait testing skill for
    - HAL trait → name: `<trait-name>-trait-test` (e.g., `haltransport-trait-test`), purpose: "Generate #[test] stubs with mockall for <trait>"
    - SDD spec → name: `<spec-tag>-exec` (e.g., `hal-type-system-exec` from `hal-type-system-spec.md`), purpose: "Implement and verify tests for <spec summary>"
    - FlatBuffers schema → name: `<schema>-fbs-verify` (e.g., `hal-value-fbs-verify`), purpose: "Verify FlatBuffers schema <file> with round-trip tests"
-   - Cargo crate → name: `<crate>-build-test` (e.g., `audesys-hal-core-build-test`), purpose: "Verify cargo build and cargo test for <crate>"
+   - Cargo crate → name: `<crate>-build-test` (e.g., `weftik-hal-core-build-test`), purpose: "Verify cargo build and cargo test for <crate>"
 
 4. **Generate skill content**
 
@@ -59,7 +59,7 @@ Also accepts a natural-language description: "generate a trait testing skill for
    description: <one-line purpose>
    license: MIT
    metadata:
-     author: AUDESYS
+     author: Weftik
      version: "1.0"
      generatedFrom: <source file path>
      category: <workflow | testing | verification>
@@ -109,7 +109,7 @@ After generating:
 ### Example 1: HAL trait → testing skill
 
 ```
-User: "Create a trait testing skill from crates/audesys-hal-core/src/mock_transport.rs"
+User: "Create a trait testing skill from crates/weftik-hal-core/src/mock_transport.rs"
 → Reads mock_transport.rs, finds MockHalTransport struct + methods: write_signal, read_signal, signal_count
 → Extracts `来源:` references to hal-protocol-design.md Signal §
 → Creates .agents/skills/mockhaltransport-trait-test/SKILL.md
@@ -139,10 +139,10 @@ User: "Create a verification skill for hal_value.fbs"
 ### Example 4: Cargo crate → build test skill
 
 ```
-User: "Generate a build-test skill for audesys-hal-core"
-→ Reads crates/audesys-hal-core/Cargo.toml + src/
+User: "Generate a build-test skill for weftik-hal-core"
+→ Reads crates/weftik-hal-core/Cargo.toml + src/
 → Extracts: crate name, deps, test targets, feature gates
-→ Creates .agents/skills/audesys-hal-core-build-test/SKILL.md
+→ Creates .agents/skills/weftik-hal-core-build-test/SKILL.md
 → Skill runs: cargo check → cargo test → cargo clippy → cargo fmt (qa-fast 4 gates)
 ```
 
@@ -152,7 +152,7 @@ User: "Generate a build-test skill for audesys-hal-core"
 - YAML frontmatter must include: `name`, `description`, `metadata.author`, `metadata.version`
 - Skill directory name must match `name` field exactly
 - If skill with same name exists, ask before overwriting
-- Use AUDESYS conventions only: `audesys::` / `amw::` namespaces, AAA test pattern, mockall for traits
+- Use Weftik conventions only: `weftik::` / `amw::` namespaces, AAA test pattern, mockall for traits
 - Keep skills under 200 lines — short skills are easier to maintain
 - No external CLI dependencies beyond what's in Cargo.toml — flatc is optional, cargo is required
 - Respect Phase awareness: Phase 0 = trait stubs only, Phase 1 = concrete types + amw_inproc

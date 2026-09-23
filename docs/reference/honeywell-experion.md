@@ -14,7 +14,7 @@
 4. [现状与生态](#四现状与生态)
 5. [市场定位](#五市场定位)
 6. [产品特色](#六产品特色)
-7. [对 AUDESYS 参考价值](#七对-audesys-参考价值)
+7. [对 Weftik 参考价值](#七对-weftik-参考价值)
 
 ---
 
@@ -599,81 +599,81 @@ Experion PKS 的设计重心在大型连续过程（炼油、石化）。虽然�
 
 ---
 
-## 七、对 AUDESYS 参考价值
+## 七、对 Weftik 参考价值
 
 ### 7.1 架构层面的关键经验
 
-#### 7.1.1 CEE 确定性运行时 vs. AUDESYS HAL 线程调度
+#### 7.1.1 CEE 确定性运行时 vs. Weftik HAL 线程调度
 
 Honeywell CEE 的最大启示是：**在工业控制系统中，确定性执行比原始速度更重要。**
 
-AUDESYS HAL 参考了四种系统的线程调度（LinuxCNC 显式函数列表 + ROS2 control 的 read→update→write 管线 + OpenPLC 扫描屏障 + dora-rs 事件驱动 I/O 线程），这与 Honeywell CEE 的哲学高度一致：
+Weftik HAL 参考了四种系统的线程调度（LinuxCNC 显式函数列表 + ROS2 control 的 read→update→write 管线 + OpenPLC 扫描屏障 + dora-rs 事件驱动 I/O 线程），这与 Honeywell CEE 的哲学高度一致：
 
-| Honeywell CEE 特征 | AUDESYS HAL 对应设计 |
+| Honeywell CEE 特征 | Weftik HAL 对应设计 |
 |-------------------|---------------------|
 | 每个功能块在固定周期内、以固定顺序执行 | RT 线程管线（read→update→write 固定顺序） |
 | XU/PU 容量模型确保不超量使用 | 四系统混合线程调度中各类线程独立分配 |
 | 不依赖通用操作系统的调度 | 硬实时线程使用 SCHED_FIFO，避开 Linux 完全公平调度器（CFS） |
 | CEE 平台无关，支持多种硬件 | amw 传输层可替换（InProc → Zenoh → DDS） |
 
-**具体建议：** AUDESYS Runtime 在设计控制器仿真模块时，应参考 CEE 的容量模型（XU/PU 计量），为每种功能块类型定义计算成本预算，并在设计时提供"超量使用"的静态检查或运行时警告。这对于仿真平台的用户价值在于：能够在部署前验证控制策略不会超出目标硬件的实时容量。
+**具体建议：** Weftik Runtime 在设计控制器仿真模块时，应参考 CEE 的容量模型（XU/PU 计量），为每种功能块类型定义计算成本预算，并在设计时提供"超量使用"的静态检查或运行时警告。这对于仿真平台的用户价值在于：能够在部署前验证控制策略不会超出目标硬件的实时容量。
 
-#### 7.1.2 软件定义 I/O — I/O HIVE vs. AUDESYS HAL Signal
+#### 7.1.2 软件定义 I/O — I/O HIVE vs. Weftik HAL Signal
 
-Honeywell I/O HIVE 的核心理念是"解耦控制器与 I/O 的物理绑定"。用 AUDESYS HAL 的语境理解：
+Honeywell I/O HIVE 的核心理念是"解耦控制器与 I/O 的物理绑定"。用 Weftik HAL 的语境理解：
 
 ```
 I/O HIVE: 物理 I/O 模块 → CN100 网络 → 通过软件分配给任意 C300 控制器
-AUDESYS HAL: 物理设备 → HAL Signal 命名空间 (component.interface.name) → 通过 amw 发现服务动态绑定到消费者
+Weftik HAL: 物理设备 → HAL Signal 命名空间 (component.interface.name) → 通过 amw 发现服务动态绑定到消费者
 ```
 
-AUDESYS HAL 的 Signal（component.interface.name 命名模式）本质上已经在做 I/O HIVE 所做的事情——通过名称（而非物理地址）标识信号，通过 amw HalDiscovery 实现动态绑定。但 HAL 可以进一步借鉴 I/O HIVE 的两个特征：
+Weftik HAL 的 Signal（component.interface.name 命名模式）本质上已经在做 I/O HIVE 所做的事情——通过名称（而非物理地址）标识信号，通过 amw HalDiscovery 实现动态绑定。但 HAL 可以进一步借鉴 I/O HIVE 的两个特征：
 
 1. **I/O 可编程性：** I/O HIVE 允许在 I/O 模块加载控制器功能的子集。HAL 的 Simulator 模块可以在仿真 I/O 设备上实现类似的"边缘控制"——即部分简单控制逻辑（如报警死区计算、线性化）在仿真 I/O 设备本地执行，减轻 Runtime 控制器仿真模块的负担。
 2. **分布式过程柜：** I/O HIVE 支持全远程部署。HAL 的 amw_zenoh 回退模式天然支持大规模分布式部署，这一点已对齐。
 
-#### 7.1.3 在线迁移（On-Process Migration）vs. AUDESYS Config Barrier
+#### 7.1.3 在线迁移（On-Process Migration）vs. Weftik Config Barrier
 
-Honeywell CEE 的 OPM（在线迁移）允许在不中断控制的情况下升级到新软件版本。AUDESYS 的 Config Barrier + LockLevel 机制采取了不同的哲学：
+Honeywell CEE 的 OPM（在线迁移）允许在不中断控制的情况下升级到新软件版本。Weftik 的 Config Barrier + LockLevel 机制采取了不同的哲学：
 
-| | Honeywell OPM | AUDESYS Config Barrier |
+| | Honeywell OPM | Weftik Config Barrier |
 |---|---|---|
 | 变更排队 | 冗余控制器接管后主控制器升级 | 所有配置变更排队到 RT 周期边界批量应用 |
 | 安全性 | 依赖冗余硬件 | LockLevel 分级管理（Run 级别拒绝所有 RPC 配置） |
 | 运行中升级 | 支持（需冗余配置） | Phase 1 不支持（Config Barrier 主要解决多进程竞争） |
 
-**启示：** 如果 AUDESYS Runtime 未来支持冗余控制器仿真，OPM 是一个有价值的参考模式。但当前 AUDESYS 聚焦仿真平台，Config Barrier 的三层执行面（RT 数据面/控制面/配置面）与 Honeywell 的 FTE 网络分层理念一致，设计已足够。
+**启示：** 如果 Weftik Runtime 未来支持冗余控制器仿真，OPM 是一个有价值的参考模式。但当前 Weftik 聚焦仿真平台，Config Barrier 的三层执行面（RT 数据面/控制面/配置面）与 Honeywell 的 FTE 网络分层理念一致，设计已足够。
 
-#### 7.1.4 FTE 双冗余网络 vs. AUDESYS HAL StreamChannel 可靠性
+#### 7.1.4 FTE 双冗余网络 vs. Weftik HAL StreamChannel 可靠性
 
-Honeywell FTE 的双网冗余 + 毫秒级故障切换是一个非常成熟的控制网络可靠性模式。AUDESYS HAL 的 StreamChannel 虽然支持 circuit_breaker（熔断器）和 error_policy（错误策略），但**缺乏链路级别的冗余支持**。
+Honeywell FTE 的双网冗余 + 毫秒级故障切换是一个非常成熟的控制网络可靠性模式。Weftik HAL 的 StreamChannel 虽然支持 circuit_breaker（熔断器）和 error_policy（错误策略），但**缺乏链路级别的冗余支持**。
 
 **具体建议：**
 - StreamChannel 可考虑支持 `redundancy: DualLink` 配置选项（Phase 2+），使一个 StreamChannel 可以绑定两条底层传输路径（如双网卡）
-- 这对 AUDESYS 作为仿真平台很有价值：用户可以模拟 Honeywell FTE 级别的网络冗余行为，测试控制策略在链路故障场景下的容错能力
+- 这对 Weftik 作为仿真平台很有价值：用户可以模拟 Honeywell FTE 级别的网络冗余行为，测试控制策略在链路故障场景下的容错能力
 
 ### 7.2 通信模式对比
 
-#### 7.2.1 Honeywell CDA vs. AUDESYS Signal
+#### 7.2.1 Honeywell CDA vs. Weftik Signal
 
-Honeywell 控制器之间的数据交换主要通过 CDA（Control Data Access）协议实现，支持 Pull/Get 模式。这映射到 AUDESYS HAL 的 Signal pull 模式：
+Honeywell 控制器之间的数据交换主要通过 CDA（Control Data Access）协议实现，支持 Pull/Get 模式。这映射到 Weftik HAL 的 Signal pull 模式：
 
-| Honeywell CDA | AUDESYS HAL Signal |
+| Honeywell CDA | Weftik HAL Signal |
 |---------------|-------------------|
 | Peer Update Rate（可配置周期） | pull 模式下消费者自定频率 |
 | Whole Array Transfer（最大 8KB） | Signal typical_size < 1KB（Signal 语义上更建议拆分为多个 Signal） |
 | 点对点 Pull/Get | read_signal / pull_batch snapshot_signals |
 | Push 通知（周期广播） | push 模式（subscribe 注册回调，publish 同步调用） |
 
-**启示：** AUDESYS HAL Signal 的 push/pull 双模式已经完整覆盖了 CDA 的使用场景。Honeywell 的 Whole Array Transfer 值得关注——对于批量数据快照（如全厂轴位置快照），HAL 的 pull_batch 模式已提供了等价能力。
+**启示：** Weftik HAL Signal 的 push/pull 双模式已经完整覆盖了 CDA 的使用场景。Honeywell 的 Whole Array Transfer 值得关注——对于批量数据快照（如全厂轴位置快照），HAL 的 pull_batch 模式已提供了等价能力。
 
-#### 7.2.2 Honeywell 同级通信 vs. AUDESYS StreamChannel
+#### 7.2.2 Honeywell 同级通信 vs. Weftik StreamChannel
 
 Honeywell C300 之间的同级通信（peer-to-peer）依赖于 CEE 的对等通信机制（CDA Peer Update）。这本质上是固定周期的数据同步，而非事件驱动的流式通信。
 
-AUDESYS HAL 的 StreamChannel 面向"多写多读、有缓冲队列、反压"的场景。在 Honeywell 架构中，没有直接对应的同级别数据流通道——C300 之间的数据交换更偏向 Signal 的周期性刷新模式。
+Weftik HAL 的 StreamChannel 面向"多写多读、有缓冲队列、反压"的场景。在 Honeywell 架构中，没有直接对应的同级别数据流通道——C300 之间的数据交换更偏向 Signal 的周期性刷新模式。
 
-**这是一个有意义的观察：** AUDESYS 的三种原语（Signal / StreamChannel / RPC）覆盖了比传统 DCS 更广的通信模式空间。传统 DCS 控制器之间的通信多为 Signal 式或低速 RPC 式，StreamChannel 式的高吞吐流通道在传统 DCS 中较少见（更接近 ROS2 topic 或 dora-rs 的流式数据）。这反映了 AUDESYS 不仅要仿真传统 DCS，还要支持 ROS2/dora-rs 等新型机器人/自主系统通信模式的设计目标。
+**这是一个有意义的观察：** Weftik 的三种原语（Signal / StreamChannel / RPC）覆盖了比传统 DCS 更广的通信模式空间。传统 DCS 控制器之间的通信多为 Signal 式或低速 RPC 式，StreamChannel 式的高吞吐流通道在传统 DCS 中较少见（更接近 ROS2 topic 或 dora-rs 的流式数据）。这反映了 Weftik 不仅要仿真传统 DCS，还要支持 ROS2/dora-rs 等新型机器人/自主系统通信模式的设计目标。
 
 ### 7.3 安全性架构参考
 
@@ -685,18 +685,18 @@ L3/L2 监控层 ─→ CF9 控制防火墙
 L1 控制层 ─── → FTE 内网 + 设备索引锁定
 ```
 
-AUDESYS HAL 的 HalQoS security_domain（安全域标记）虽然为这种分层提供了基础抽象，但当前设计仅支持 keyexpr 静态标记。**改进思路：**
+Weftik HAL 的 HalQoS security_domain（安全域标记）虽然为这种分层提供了基础抽象，但当前设计仅支持 keyexpr 静态标记。**改进思路：**
 - HalQoS security_domain 应支持层级化安全域（security_domain: "l1.control" vs. "l3.supervisory"），而非平面标签
 - 仿照 Honeywell CF9 的概念，在 amw 传输层提供逻辑"防火墙"——即某些安全域的 Signal 不能跨层发布/订阅
 
 ### 7.4 工程工具启示
 
-Honeywell Control Builder 的 "软接线" 图形化控制策略开发模式值得 AUDESYS Studio IDE 参考：
+Honeywell Control Builder 的 "软接线" 图形化控制策略开发模式值得 Weftik Studio IDE 参考：
 
 - **功能块库：** Studio 应提供可搜索、拖拽式的功能块目录
 - **在线监控：** 仿真运行时，Studio 应能实时显示功能块的执行状态、输入/输出值和周期执行时间
 - **文档内嵌：** 在控制策略图中嵌入设计注释、计算书、参考文档——这是 Control Builder 的一个实用特性
-- **版本管理：** 控制策略的版本控制和差异对比（Control Builder 目前在这方面的能力有限，AUDESYS Studio 有机会做得更好）
+- **版本管理：** 控制策略的版本控制和差异对比（Control Builder 目前在这方面的能力有限，Weftik Studio 有机会做得更好）
 
 ### 7.5 迁移/兼容性启示
 
@@ -706,11 +706,11 @@ Honeywell 处理传统系统迁移的经验（TPS → EHPM → C300PM → C300�
 - **逐步演进：** 允许不同代控制器在同一 FTE 网络上共存
 - **统一工具：** 迁移后所有控制器使用同一 Control Builder 配置
 
-**对 AUDESYS 的建议：** 当 AUDESYS 未来支持从传统 DCS（如 Experion、DeltaV）导入/移植控制策略时，应设计一个"迁移层"——将传统 DCS 的控制策略翻译为 HAL 原语，保留原始语义而非要求完全重写。这与 HAL 设计原则（"移植的代码改造后以 HAL 为原生通信层"）一致。
+**对 Weftik 的建议：** 当 Weftik 未来支持从传统 DCS（如 Experion、DeltaV）导入/移植控制策略时，应设计一个"迁移层"——将传统 DCS 的控制策略翻译为 HAL 原语，保留原始语义而非要求完全重写。这与 HAL 设计原则（"移植的代码改造后以 HAL 为原生通信层"）一致。
 
 ### 7.6 关键经验总结
 
-| Honeywell 特征 | 对 AUDESYS 的启示 | 优先级 |
+| Honeywell 特征 | 对 Weftik 的启示 | 优先级 |
 |---------------|-------------------|:---:|
 | CEE 确定性运行时 + XU/PU 容量模型 | Runtime 提供控制策略的计算成本预算和超量检查 | 中 |
 | I/O HIVE 软件定义 I/O | Signal 命名空间已覆盖，但 Simulator 可借鉴"边缘控制" | 低 |
@@ -780,7 +780,7 @@ Honeywell Forge 是一个企业级 IIoT SaaS 平台，与 Experion PKS 集成提
 - 支持从实时装置导入当前状态作为初始条件
 - 与 UniSim 或第三方流程模拟器集成以提供虚拟过程响应
 
-> **对于 AUDESYS 的启示：** Shadow Plant 的概念与 AUDESYS Simulator 的目标高度一致——提供一个与真实控制环境行为完全一致的仿真沙箱。关键设计原则：控制策略代码在仿真和真实环境中应该是完全相同的（这已被 CEE 的平台无关性验证）。
+> **对于 Weftik 的启示：** Shadow Plant 的概念与 Weftik Simulator 的目标高度一致——提供一个与真实控制环境行为完全一致的仿真沙箱。关键设计原则：控制策略代码在仿真和真实环境中应该是完全相同的（这已被 CEE 的平台无关性验证）。
 
 ---
 
@@ -808,7 +808,7 @@ Honeywell 在中国 DCS 市场面临独特的竞争环境：
 
 ---
 
-### 7.4.1 Honeywell LEAP 方法论对 AUDESYS Studio 的启示
+### 7.4.1 Honeywell LEAP 方法论对 Weftik Studio 的启示
 
 Honeywell 的 LEAP（Lean Execution Automation Project，精益执行自动化项目）方法论是一套系统化的自动化项目交付最佳实践，核心理念包括：
 
@@ -817,7 +817,7 @@ Honeywell 的 LEAP（Lean Execution Automation Project，精益执行自动化�
 2. **并行工程：** I/O 设计、控制策略开发、HMI 图形构建可并行进行，缩短项目周期
 3. **虚拟 FAT：** 在物理硬件到货前，利用仿真环境提前进行工厂验收测试
 
-**对 AUDESYS Studio IDE 的具体建议：**
+**对 Weftik Studio IDE 的具体建议：**
 
 1. **控制策略模板库：** 
    - 预构建行业典型流程的控制策略模板（加热炉、反应器、蒸馏塔、压缩机等）
@@ -836,6 +836,6 @@ Honeywell 的 LEAP（Lean Execution Automation Project，精益执行自动化�
 
 4. **模板市场：**
    - 考虑建立开放的模板共享生态（类似 VS Code Extension Marketplace）
-   - 社区贡献的行业模板可显著降低 AUDESYS 用户的学习和工程成本
-   - Honeywell 的 LEAP 模板是封闭生态——AUDESYS 有机会在开放性上形成差异化
+   - 社区贡献的行业模板可显著降低 Weftik 用户的学习和工程成本
+   - Honeywell 的 LEAP 模板是封闭生态——Weftik 有机会在开放性上形成差异化
 

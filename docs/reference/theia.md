@@ -1,6 +1,6 @@
 # Eclipse Theia — 工业 IDE 平台分析
 
-> 数据来源：Eclipse Theia 官方网站、GitHub 仓库（theia-ide/theia, 20K+ stars）、官方文档、AUDESYS Theia 迁移经验、社区案例（Espressif IDF, YottaDB, Neuron Automation）
+> 数据来源：Eclipse Theia 官方网站、GitHub 仓库（theia-ide/theia, 20K+ stars）、官方文档、Weftik Theia 迁移经验、社区案例（Espressif IDF, YottaDB, Neuron Automation）
 
 ## 1. 产品画像
 
@@ -139,7 +139,7 @@ Client (Browser/Electron)          Server (Node.js/Java)
 - **DiagramModule**：DI 容器绑定配置
 - **ToolPaletteItemProvider**：自定义工具面板项
 
-**关键教训（来自 AUDESYS）**：
+**关键教训（来自 Weftik）**：
 - `@eclipse-glsp/sprotty` 是 GLSP 对 Sprotty 的 fork，使用不同的 DI Symbol
 - 导入必须从 `@eclipse-glsp/sprotty` 而非 `sprotty`（否则视图注册不可见）
 - `StatusAction`、`SetDirtyStateAction` 等框架 action 需注册 no-op handler
@@ -201,7 +201,7 @@ Theia 的扩展系统比 VS Code 更深层：
 | **YottaDB Dashboard** | 数据库管理面板 | 1.x |
 | **Neuron Automation** | IEC 61131-3 工业编程 | 1.x |
 | **Eclipse GLSP** | 图形语言服务器平台 | 1.73+ |
-| **AUDESYS Studio** | 工业控制 IDE | 1.73.0 |
+| **Weftik Studio** | 工业控制 IDE | 1.73.0 |
 | **STMicroelectronics** | 嵌入式开发工具 | 1.x |
 | **TI (Texas Instruments)** | 嵌入式开发工具 | 1.x |
 | **Arm** | 嵌入式开发 IDE | 1.x |
@@ -271,11 +271,11 @@ InversifyJS DI 容器：
 - Singleton/Transient 作用域控制
 - Symbol-based 标识符（避免命名冲突）
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
 ### 7.1 架构决策参考
 
-| AUDESYS 决策 | Theia 参考价值 | 评级 |
+| Weftik 决策 | Theia 参考价值 | 评级 |
 |-------------|--------------|:----:|
 | **D71: Tauri→Theia 迁移** | 验证 Web-native 架构选择 | ✅ 已验证 |
 | **D97: 模块 Symbols 唯一性** | Symbol-based DI 必须确保单例 | ✅ 已验证 |
@@ -284,10 +284,10 @@ InversifyJS DI 容器：
 
 ### 7.2 技术模式借鉴
 
-1. **DI 容器模式**：Theia 的 `ContainerModule` + `@injectable()` 模式是 AUDESYS Studio 扩展系统的基础
+1. **DI 容器模式**：Theia 的 `ContainerModule` + `@injectable()` 模式是 Weftik Studio 扩展系统的基础
 2. **GLSP 图编辑**：GLSP 2.x 的 `DiagramModule` → `SourceModelStorage` → `GModelFactory` → `OperationHandler` 管线是 LD/FBD 编辑器的核心架构
 3. **双端部署**：`theia.target = "browser"` + Electron 壳模式实现了思源笔记式的 PC+Web 共存
-4. **扩展兼容**：Open VSX 兼容性为 AUDESYS Studio 提供了 3000+ 扩展的生态基础
+4. **扩展兼容**：Open VSX 兼容性为 Weftik Studio 提供了 3000+ 扩展的生态基础
 
 ### 7.3 坑点与教训
 
@@ -306,4 +306,4 @@ InversifyJS DI 容器：
 
 > **文档版本**: v1.0
 > **生成日期**: 2026-07-30
-> **参考来源**: Eclipse Theia 官网、GitHub 仓库、AUDESYS Theia 迁移文档（D71）、AUDESYS GLSP 调试经验
+> **参考来源**: Eclipse Theia 官网、GitHub 仓库、Weftik Theia 迁移文档（D71）、Weftik GLSP 调试经验

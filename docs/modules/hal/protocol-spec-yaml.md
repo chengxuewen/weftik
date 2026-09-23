@@ -1,4 +1,4 @@
-# AUDESYS HAL 协议规格 (YAML)
+# Weftik HAL 协议规格 (YAML)
 
 > 拆分自 docs/hal-detailed-design.md（2026-07-15）
 

@@ -1,7 +1,7 @@
 ---
 name: openspec-verify
 description: >-
-  Verify that an AUDESYS change proposal was implemented correctly. Use after
+  Verify that an Weftik change proposal was implemented correctly. Use after
   implementation tasks are complete to ensure code compiles, tests pass, and
   the change meets design requirements.
 license: MIT
@@ -11,12 +11,12 @@ metadata:
   author: openspec
   version: "1.0"
   category: workflow
-  project: AUDESYS
+  project: Weftik
 ---
 
-# OpenSpec Verify — AUDESYS
+# OpenSpec Verify — Weftik
 
-Verify that an AUDESYS change proposal was implemented correctly. This is the quality gate before archiving.
+Verify that an Weftik change proposal was implemented correctly. This is the quality gate before archiving.
 
 ---
 
@@ -86,7 +86,7 @@ For each changed Rust trait method or FlatBuffers schema, grep openspec/specs/*.
 **b. Cross-layer verification**
 | Layer | Location | Check |
 |-------|----------|-------|
-| HAL traits | crates/audesys-hal-core/src/ | grep method name in spec |
+| HAL traits | crates/weftik-hal-core/src/ | grep method name in spec |
 | FlatBuffers | crates/hal-flatbuffers/ | schema fields match spec type definitions |
 | amw | crates/amw_inproc/ | transport trait impls match spec |
 

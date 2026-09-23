@@ -27,18 +27,18 @@ pub enum Token {
     Jmpcn,
     Cal,
     Ret,
-    S,      // Set
-    R,      // Reset
-    Not,    // Not
-    Ton,    // Timer On-Delay
-    Tof,    // Timer Off-Delay
-    Tp,     // Timer Pulse
-    Ctu,    // Counter Up
-    Ctd,    // Counter Down
-    RTrig,  // Rising Edge
-    FTrig,  // Falling Edge
-    Sr,     // Set-dominant Flip-Flop
-    Rs,     // Reset-dominant Flip-Flop
+    S,     // Set
+    R,     // Reset
+    Not,   // Not
+    Ton,   // Timer On-Delay
+    Tof,   // Timer Off-Delay
+    Tp,    // Timer Pulse
+    Ctu,   // Counter Up
+    Ctd,   // Counter Down
+    RTrig, // Rising Edge
+    FTrig, // Falling Edge
+    Sr,    // Set-dominant Flip-Flop
+    Rs,    // Reset-dominant Flip-Flop
     Ident(String),
     Label(String),
 }

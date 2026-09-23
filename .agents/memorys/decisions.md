@@ -1,9 +1,9 @@
-# AUDESYS 架构决策
+# Weftik 架构决策
 
-## D1: 项目命名规范 = AUDESYS
+## D1: 项目命名规范 = Weftik
 - **日期**: 2026-07-08
-- **决定**: 全大写 `AUDESYS`，npm scope 用 `@audesys/`
-- **理由**: 与 `package.json`（name="AUDESYS"）和 git remote 一致
+- **决定**: 全大写 `Weftik`，npm scope 用 `@weftik/`
+- **理由**: 与 `package.json`（name="Weftik"）和 git remote 一致
 
 ## D2: 缺失依赖文件 = 移除引用
 - **日期**: 2026-07-08
@@ -23,17 +23,17 @@
 
 ## D5: design-system SKILL.md = 保留并重品牌
 - **日期**: 2026-07-08
-- **决定**: 保留设计系统技能，重新品牌为 AUDESYS
-- **理由**: AUDESYS 是工业控制平台，需要 UI 一致性
+- **决定**: 保留设计系统技能，重新品牌为 Weftik
+- **理由**: Weftik 是工业控制平台，需要 UI 一致性
 
 ## D6: architecture.md = 骨架占位
 - **日期**: 2026-07-08
-- **决定**: 去 MODACS 化后内容不足 50% 的章节用 `TODO: 为 AUDESYS 重写此节` 占位
+- **决定**: 去 MODACS 化后内容不足 50% 的章节用 `TODO: 为 Weftik 重写此节` 占位
 - **理由**: 保留有效技术内容，标记需重写的章节
 
 ## D7: agent-guide.md = 精简为空项目指南
 - **日期**: 2026-07-08
-- **决定**: 简化为匹配 AUDESYS 当前空项目状态
+- **决定**: 简化为匹配 Weftik 当前空项目状态
 - **理由**: 移除 MODACS 7 阶段工作流、不存在的路径引用
 
 ## D8: D4 规则 = 无操作仅扫描
@@ -43,8 +43,8 @@
 
 ## D9: @modacs/* 命名空间 = 移除引用
 - **日期**: 2026-07-08
-- **决定**: 移除所有 `@modacs/*` 引用，不替换为 `@audesys/*`
-- **理由**: AUDESYS 尚无自己的包命名空间
+- **决定**: 移除所有 `@modacs/*` 引用，不替换为 `@weftik/*`
+- **理由**: Weftik 尚无自己的包命名空间
 
 ## D10: HAL 通信原语 = Signal / StreamChannel / RPC 三分法
 - **日期**: 2026-07-09
@@ -54,7 +54,7 @@
 
 ## D11: amw 中间件抽象层 = HalTransport + HalDiscovery + HalQoS
 - **日期**: 2026-07-09
-- **决定**: 参考 ROS2 rmw 模式，定义 amw（AUDESYS Middleware）三极 trait，传输/发现/QoS 实现可替换
+- **决定**: 参考 ROS2 rmw 模式，定义 amw（Weftik Middleware）三极 trait，传输/发现/QoS 实现可替换
 - **理由**: 不绑死 Zenoh/DDS/MQTT，换实现不换 API。Phase 1 用 amw_inproc，Phase 2+ 用 amw_zenoh
 - **参考**: `docs/modules/hal/amw-middleware-design.md`
 
@@ -109,14 +109,14 @@
 ## D20: 参考文档库 = 41 篇竞品分析（含两轮扩展，22→41）
 - **日期**: 2026-07-13
 - **决定**: 建立 `docs/reference/` 参考文档库，覆盖 12 大类别 41 个工业自动化产品/项目（原 22 篇，2026-07-15 扩展至 41 篇）
-- **理由**: 为 AUDESYS HAL/Studio/Runtime 设计提供竞品架构参考，避免闭门造车。每篇含"对 AUDESYS 参考价值"章节，直接将竞品架构映射到 AUDESYS 设计
+- **理由**: 为 Weftik HAL/Studio/Runtime 设计提供竞品架构参考，避免闭门造车。每篇含"对 Weftik 参考价值"章节，直接将竞品架构映射到 Weftik 设计
 - **覆盖范围**: DCS（中控/和利时/Honeywell/Emerson）、软PLC（truST/QiTech/OpenPLC）、SCADA/组态（Ignition/KingView/FUXA/InTouch/LabVIEW）、仪器仪表/通信（HART/FF/PROFIBUS/OPC UA/RuSTy）、IDE/平台（CODESYS/Qtouch/Beckhoff/Siemens）、机器人/数据流（ROS2/dora-rs/LinuxCNC）、3D打印机固件（Klipper/Marlin/Smoothieware/RepRapFirmware）、CNC控制器（Machinekit/GRBL/GRBLHAL/LinuxCNC-STM32）、FPGA运动控制卡（Pico-PPMC/RMC）、MCU智能固件（SimpleFOC/FluidNC）、现场总线协议栈（Beremiz/Forklift-PLC/4diac-FORTE/SOES/IgH EtherCAT/CANopenNode/CANfestival）
-- **文档格式**: 统一 7 章节（产品画像、技术特性、功能概览、现状与生态、市场定位、产品特色、对AUDESYS参考价值），≥800 行，中文撰写，技术术语保留英文原文
+- **文档格式**: 统一 7 章节（产品画像、技术特性、功能概览、现状与生态、市场定位、产品特色、对Weftik参考价值），≥800 行，中文撰写，技术术语保留英文原文
 
 ## D21: Studio IDE 技术栈 = Tauri + React + TypeScript
 - **日期**: 2026-07-13
 > ⚠️ **已弃用** — 此决策于 2026-07-21 被 D71 取代。Studio 已从 Tauri+React 迁移到 Eclipse Theia。
-- **决定**: AUDESYS Studio 使用 Tauri (Rust 后端) + React + TypeScript 构建桌面 IDE。Phase 2 增加 PWA 辅助访问。CI/CD 同时验证 macOS/Windows/Linux 三平台 Playwright E2E 测试。
+- **决定**: Weftik Studio 使用 Tauri (Rust 后端) + React + TypeScript 构建桌面 IDE。Phase 2 增加 PWA 辅助访问。CI/CD 同时验证 macOS/Windows/Linux 三平台 Playwright E2E 测试。
 - **理由**: Tauri Rust 后端与 HAL 开发语言一致，包体积（~5-10MB）远小于 Electron（~120MB），内存占用（~50MB）远低于 Electron（~150MB）。工业 HMI 以表单/图表/SVG 为主，跨平台 WebView 差异（≤3% 像素级）不影响核心功能。
 - **参考**: Beckhoff TwinCAT 3 (VS Shell 不自研 IDE 的模式验证), Ignition Perspective (Web 原生可行性验证), QiTech Control (Electron→Tauri 迁移趋势验证)
 
@@ -258,7 +258,7 @@
 ## D43: AI 辅助工具集成 = Plugin（ponytail）+ MCP（openspace）
 - **日期**: 2026-07-14
 - **决定**: ponytail 作为 OpenCode plugin 集成（`@dietrichgebert/ponytail`），每次推理自动注入防过度工程规则。OpenSpace 作为开发辅助 MCP 启用，需 Python 3.11+ + API Key
-- **理由**: ponytail plugin 方式与现有 superpowers/oh-my-opencode 一致。OpenSpace（AI agent 技能进化引擎）作为辅助开发工具启用，不进入 AUDESYS 核心架构
+- **理由**: ponytail plugin 方式与现有 superpowers/oh-my-opencode 一致。OpenSpace（AI agent 技能进化引擎）作为辅助开发工具启用，不进入 Weftik 核心架构
 - **参考**: opencode.json plugin 数组、init-mcp-openspace.mjs
 
 ## D44: D14/D15 逆转 = hal-detailed-design.md 拆分为 19 份独立子文档
@@ -299,14 +299,14 @@
 
 ## D51: 技能库扩展 = skill-creator + 7 Studio 参考技能
 - **日期**: 2026-07-15
-- **决定**: 新增 skill-creator（从 webrtc-kit 移植，适配 AUDESYS HAL/FlatBuffers/Rust）和 7 个 Studio 参考技能（ref-codesys/ref-beckhoff/ref-qtouch/ref-ignition/ref-fuxa/ref-intouch/ref-labview）
+- **决定**: 新增 skill-creator（从 webrtc-kit 移植，适配 Weftik HAL/FlatBuffers/Rust）和 7 个 Studio 参考技能（ref-codesys/ref-beckhoff/ref-qtouch/ref-ignition/ref-fuxa/ref-intouch/ref-labview）
 - **理由**: skill-creator 支持从 HAL traits/SDD specs/FlatBuffers schemas/Cargo crates 自动生成技能。7 参考技能为 Studio IDE 设计提供竞品参考（D21/D22/D25）
 - **参考**: .agents/skills/skill-creator/SKILL.md，.agents/skills/ 下 7 个 ref-* 技能目录
 
 ## D52: 参考模式缺口识别 = 41 篇竞品交叉验证
 - **日期**: 2026-07-15
 - **决定**: 41 篇竞品交叉验证识别 3 CRITICAL（OPC UA 内置、Web-first HMI、模板驱动 HMI）+ 6 HIGH（数字孪生、多人工程、包管理器、诊断链、CEE 容量模型、PLCopen XML）+ 8 MEDIUM 模式缺口。CRITICAL 项列入 Architecture 待评估，HIGH 项列入 Phase 2+ 路线图。
-- **理由**: 避免闭门造车，确保 AUDESYS 不与工业主流实践脱节。
+- **理由**: 避免闭门造车，确保 Weftik 不与工业主流实践脱节。
 - **参考**: docs/reference/ 41 篇竞品分析，模式缺口报告
 
 ## D53: Phase 0 完成定义修订 = CI 就绪，crate 骨架 Phase 1 M0.3
@@ -318,31 +318,31 @@
 ## D54: 技能移植 = 7 项 openspec 技能从 webrtc-kit 增强
 - **日期**: 2026-07-15
 - **决定**: 从 webrtc-kit 项目对比分析移植 7 项增强：skill-creator 新建（HAL trait/SDD spec/FlatBuffers/Cargo crate 四种输入源），test-harness 新增 Mode 7 选择性测试运行（git diff → cargo test -p），openspec-propose 结构化升级（强制名称确认+上下文收集+layer/backend 评估+结构化模板），openspec-apply TDD 支持（test-first 执行+7 门禁验证+spec 交叉引用+规则层级），doc-audit 三项增强（孤立测试检测+决策新鲜度+CROSS-CHECK.md），openspec-verify 交叉层验证（spec 一致性检查+孤立测试检测），openspec-explore 4-source 知识源模型（Specs/Design Docs/Project Memory/Codebase）
-- **理由**: webrtc-kit 技能在结构化程度、验证严密性和知识组织方面优于 AUDESYS 原有版本。并行移植 7 项实现技能库同步升级。
+- **理由**: webrtc-kit 技能在结构化程度、验证严密性和知识组织方面优于 Weftik 原有版本。并行移植 7 项实现技能库同步升级。
   - **参考**: .agents/skills/ 下 7 个 openspec 技能文件，webrtc-kit/.agents/skills/ 对比分析
 
 ## D55: CNC 系统策略 = G-code→HAL IR 编译器 + 运动规划器 + 轴组
 - **日期**: 2026-07-19
-- **决定**: AUDESYS CNC 系统分为三个构件：G-code 编译器（第 6 种源码语言，与 ST/IL/LD/FBD/SFC 并列）、运动规划器（梯形/S曲线速度剖面，Phase 1 逐周期步进，Phase 2 Runtime 协处理器）、轴组（坐标系统、回零、软限位、反向间隙）。采用 LinuxCNC 4 层模型作为主参考架构（UI→Task→Motion→HAL），GRBL 逐周期步进作为 Phase 1 运动实现参考，Klipper 分布式 Host/MCU 模型作为 Phase 2+ 架构参考，TwinCAT CNC PLC+CNC 统一作为产品愿景参考。
-- **理由**: CNC 是 AUDESYS tier-1 应用场景，HAL 已预留 motion.axis.N.pos Signal 约定。以最低架构开销建立 G-code 编译管道，后续运动规划器、插补引擎、运动学模型渐进叠加。G-code 编译器作为第 6 种源码语言与现有 5 种 IEC 61131-3 编译器共享 HalProgram 后端，零 VM 变更。
+- **决定**: Weftik CNC 系统分为三个构件：G-code 编译器（第 6 种源码语言，与 ST/IL/LD/FBD/SFC 并列）、运动规划器（梯形/S曲线速度剖面，Phase 1 逐周期步进，Phase 2 Runtime 协处理器）、轴组（坐标系统、回零、软限位、反向间隙）。采用 LinuxCNC 4 层模型作为主参考架构（UI→Task→Motion→HAL），GRBL 逐周期步进作为 Phase 1 运动实现参考，Klipper 分布式 Host/MCU 模型作为 Phase 2+ 架构参考，TwinCAT CNC PLC+CNC 统一作为产品愿景参考。
+- **理由**: CNC 是 Weftik tier-1 应用场景，HAL 已预留 motion.axis.N.pos Signal 约定。以最低架构开销建立 G-code 编译管道，后续运动规划器、插补引擎、运动学模型渐进叠加。G-code 编译器作为第 6 种源码语言与现有 5 种 IEC 61131-3 编译器共享 HalProgram 后端，零 VM 变更。
 - **参考**: `docs/modules/cnc/` 4 份设计文档，`docs/modules/cnc/cnc-reference-models.md`，`.sisyphus/plans/add-gcode-compiler/`
 
 ## D56: IEC 61131-3 编译器策略偏差 = RuSTy→直接自研
 - **日期**: 2026-07-19
 - **决定**: 记录 D22 决策与实际实现的偏离。D22 原定 Phase 1 使用 RuSTy（Rust+LLVM IEC 61131-3 编译器）编译 ST 源码，HAL Binding Generator 映射到 HAL 原语。实际实现路径：直接自研 5 种 IEC 61131-3 编译器（ST/IL/LD/FBD/SFC），全部编译到 HalProgram 后端，零外部依赖。
 - **理由**: RuSTy 评估后发现集成复杂度高于自研。自研编译器与 HAL IR/VM 共享类型系统，接口零摩擦。CODESYS 的「所有图形语言编译为 ST 内部表示」模式已通过 LD→IL→HalProgram 两步转换实现，完全等价。
-- **参考**: D22, `crates/audesys-hal-binding-gen/` (ST 编译器), `crates/audesys-il-compiler/`, `crates/audesys-ld-compiler/`, `crates/audesys-fbd-compiler/`, `crates/audesys-sfc-compiler/`
+- **参考**: D22, `crates/weftik-hal-binding-gen/` (ST 编译器), `crates/weftik-il-compiler/`, `crates/weftik-ld-compiler/`, `crates/weftik-fbd-compiler/`, `crates/weftik-sfc-compiler/`
 
 ## D57: Studio 编程模式偏差 = ST Only→6 语言全实现
 - **日期**: 2026-07-19
 - **决定**: 记录 D25 决策与实际实现的偏离。D25 原定 Phase 1 仅支持 ST 文本编程和 HMI 可视化设计，Phase 2 增加 FBD 编辑器（FBD→ST 转换器复用编译管线）。实际实现路径：Phase 1 即完成 5 种 IEC 61131-3 语言（ST/IL/LD/FBD/SFC）全实现，外加 G-code 编译器作为第 6 种源码语言。
 - **理由**: 编译器实现速度超出预期（D22 自研决策降低摩擦）。FBD 编辑器（@xyflow/react 流程图→IL 文本）意外发现实现简单（~200 行转换逻辑），无需等待 Phase 2。CNC 需求推动 G-code 编译器作为额外语言加入管线，与 5 种 IEC 语言共享 HalProgram 后端。
-- **参考**: D25, `crates/audesys-gcode-compiler/`, `docs/modules/cnc/gcode-compiler-design.md`
+- **参考**: D25, `crates/weftik-gcode-compiler/`, `docs/modules/cnc/gcode-compiler-design.md`
 
 ## D58: Studio 插件架构 = PluginRegistry + CommandRegistry + PlatformAdapter + PanelSystem
 - **日期**: 2026-07-19
-- **决定**: AUDESYS Studio 采用四层插件架构。参考 VS Code Extension API（activate/deactivate 模式、25 种 activationEvents、20+ 种 Contribution Points），但 P1 仅实现核心：PluginRegistry (Manifest Scan + Lifecycle)、CommandRegistry (37 命令 7 命名空间)、PanelSystem (PanelDescriptor 布局引擎)、PlatformAdapter (PC/Web 双模式)。
-- **理由**: VS Code 的插件架构经过 10 年验证，是最成熟的 IDE 扩展模型。AUDESYS 不需要重造轮子——直接采用 activate/deactivate 模式、activationEvents 延迟加载、commands 统一入口。Tauri 不支持运行时动态加载，因此 P1 使用静态 JSON manifests + lazy import 组件。
+- **决定**: Weftik Studio 采用四层插件架构。参考 VS Code Extension API（activate/deactivate 模式、25 种 activationEvents、20+ 种 Contribution Points），但 P1 仅实现核心：PluginRegistry (Manifest Scan + Lifecycle)、CommandRegistry (37 命令 7 命名空间)、PanelSystem (PanelDescriptor 布局引擎)、PlatformAdapter (PC/Web 双模式)。
+- **理由**: VS Code 的插件架构经过 10 年验证，是最成熟的 IDE 扩展模型。Weftik 不需要重造轮子——直接采用 activate/deactivate 模式、activationEvents 延迟加载、commands 统一入口。Tauri 不支持运行时动态加载，因此 P1 使用静态 JSON manifests + lazy import 组件。
 - **参考**: docs/modules/studio/plugin-architecture-design.md, docs/reference/vscode.md
 
 ## D59: Studio PC/Web 双模式 = PlatformAdapter 抽象层
@@ -464,7 +464,7 @@
 
 ## D77: 机器人架构扩展 — 分层渐进
 - **日期**: 2026-07-24
-- **决定**: 采用分层渐进架构：Phase 1 桥接 ROS2 → Phase 2 自研关键算法 → Phase 3 全栈 AUDESYS。功能块粒度替换，FBD 程序零修改。
+- **决定**: 采用分层渐进架构：Phase 1 桥接 ROS2 → Phase 2 自研关键算法 → Phase 3 全栈 Weftik。功能块粒度替换，FBD 程序零修改。
 - **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §1, §5
 
 ## D78: 容器化部署 — Podman Pod + Quadlet
@@ -572,7 +572,7 @@
 
 ## D97: Bundle Symbol 去重 = 删除扩展本地 node_modules
 - **日期**: 2026-07-28
-- **决定**: 删除所有扩展的 `node_modules/`，让所有依赖通过 `apps/studio/node_modules/` 解析（Theia 官方标准模式）。`preserveSymlinks=true` 保留（file: link 解析需要）。`@audesys/theia-bridge` 添加到 studio 的 dependencies。
+- **决定**: 删除所有扩展的 `node_modules/`，让所有依赖通过 `apps/studio/node_modules/` 解析（Theia 官方标准模式）。`preserveSymlinks=true` 保留（file: link 解析需要）。`@weftik/theia-bridge` 添加到 studio 的 dependencies。
 - **理由**: 扩展本地 node_modules 含 @theia、@eclipse-glsp、inversify 物理副本，esbuild 将不同路径视为不同模块 → Symbol 重复 → DI 静默失效。删除后 `Symbol("FrontendApplicationContribution")` = 1，LD/FBD 图标正常显示。
 - **已废弃方案**: bundler resolve alias（alias 导致 DI 崩溃）；nodePaths（DI 错误）；只删部分 symlink（不一致）
 - **诊断**: `grep -c 'Symbol("FrontendApplicationContribution")' lib/frontend/bundle.js` 必须为 1
@@ -632,10 +632,10 @@
 
 ## D106: HMI Designer 暂时禁用
 - 日期: 2026-07-31
-- 决定: 从 apps/studio/package.json 移除 audesys-hmi-designer 及相关依赖（echarts, echarts-for-react, react-rnd）
+- 决定: 从 apps/studio/package.json 移除 weftik-hmi-designer 及相关依赖（echarts, echarts-for-react, react-rnd）
 - 理由: yarn workspaces 迁移后 vitest 依赖解析失败（@testing-library/dom 缺失），先禁用 HMI 功能以确保核心构建稳定
 - 后续: 待 vitest 依赖问题解决后重新启用
-- 参考: theia-extensions/audesys-hmi-designer/
+- 参考: theia-extensions/weftik-hmi-designer/
 
 ## D107: FBD GLSP 迁移 = 完整 GLSP 架构（参照 LD）
 - 日期: 2026-07-31
@@ -665,7 +665,7 @@
   - FBD: graph → IL 文本 → HalProgram（经 IL）
   - SFC: source → IL 文本 → HalProgram（经 IL）
 - 改进方向: Phase 3+ 让 LD/FBD/SFC 支持直接编译到 HalIR，IL 保留为可选调试输出
-- 参考: crates/audesys-il-compiler/, crates/audesys-hal-binding-gen/, crates/audesys-gcode-compiler/
+- 参考: crates/weftik-il-compiler/, crates/weftik-hal-binding-gen/, crates/weftik-gcode-compiler/
 
 ## D109: LD 网格编辑 = 40×40 网格 + GGraphView + GridSnapper
 - 日期: 2026-08-03
@@ -689,8 +689,8 @@
 - **决定**: 完全移除 GLSP 技术栈（LD/FBD 编辑器），前端采用 React Flow（@xyflow/react），后端复用已有 Rust 编译器（napi-rs bridge）
 - **理由**: (a) GLSP LD 编辑器点击创建 3+ 轮调试失败（82 条 pitfalls、34 提交），机制链分析全部正常但创建不工作——GLSP 黑盒典型症状（minified bundle、5 层抽象、无断点、5min/轮调试）；(b) React Flow 25K+ stars、MIT、OpenPLC 生产验证（LD+FBD）；(c) React Flow = 标准 DOM，Playwright E2E 原生支持 + HMR 调试 <30s/轮；(d) 全语言覆盖（LD/FBD/SFC/IEC 61499 共享画布）
 - **架构**: Theia → React Flow Widget → LdOperationHandler（前端内存，纯 TS，零 GLSP 依赖）→ napi-rs → Rust 编译器。无 GLSP 服务器进程、无 JSON-RPC 协议层
-- **移除**: `theia-extensions/audesys-ld-glsp/`（4442 行）+ `audesys-fbd-glsp/`（2928 行）+ 10 个 @eclipse-glsp/sprotty 依赖
-- **新建**: `theia-extensions/audesys-ld-editor/`（3710 行，提取 LdOperationHandler/model/LdGModelState + React Flow 组件）
+- **移除**: `theia-extensions/weftik-ld-glsp/`（4442 行）+ `weftik-fbd-glsp/`（2928 行）+ 10 个 @eclipse-glsp/sprotty 依赖
+- **新建**: `theia-extensions/weftik-ld-editor/`（3710 行，提取 LdOperationHandler/model/LdGModelState + React Flow 组件）
 - **测试**: vitest 44/44 + Playwright E2E 13 场景
 - **废弃决策**: D92, D93, D97, D99, D101, D103, D104, D107（纯 GLSP）
 - **保留决策**: D95, D96, D98, D105, D106, D108（非 GLSP 或通用）
@@ -735,10 +735,10 @@
 - **实现**: A7 New IEC Project wizard + project.yaml manifest（commit 61f3963）；设计文档 docs/modules/studio/iec-project-organization.md（commit 38a9560）。
 - **参考**: .sisyphus/plans/text-first-iec-editor/plan.md，docs/modules/studio/iec-project-organization.md
 
-## D115: New AUDESYS Project 菜单放置 = File 顶层（对齐 CODESYS/TwinCAT）
+## D115: New Weftik Project 菜单放置 = File 顶层（对齐 CODESYS/TwinCAT）
 - **日期**: 2026-08-10
-- **决定**: 新建工程命令从 File ▸ IEC 61131-3 子菜单上浮到 File 顶层，命名从"New IEC Project"改为"New AUDESYS Project"，category 改为 AUDESYS。保留 IEC 61131-3 子菜单（8 个文件类型 + POU 向导仍在内）。
-- **理由**: (a) 主流工业 IDE 一致用 File 顶层新建工程——CODESYS File ▸ New Project、TwinCAT File ▸ New ▸ Project (New TwinCAT Project)、TIA Portal Project ▸ New；(b) 品牌命名——工程是 AUDESYS 全平台工程（6 种语言 + G-code + CNC），非仅 IEC 61131-3，"IEC Project"过窄；(c) TwinCAT "New TwinCAT Project"先例直接支持 AUDESYS 命名；(d) VS Code/Theia 官方模式（PR #12819/#13344）用 File ▸ New File... quickpick 而非带名子菜单，子菜单只放文件级命令。
+- **决定**: 新建工程命令从 File ▸ IEC 61131-3 子菜单上浮到 File 顶层，命名从"New IEC Project"改为"New Weftik Project"，category 改为 Weftik。保留 IEC 61131-3 子菜单（8 个文件类型 + POU 向导仍在内）。
+- **理由**: (a) 主流工业 IDE 一致用 File 顶层新建工程——CODESYS File ▸ New Project、TwinCAT File ▸ New ▸ Project (New TwinCAT Project)、TIA Portal Project ▸ New；(b) 品牌命名——工程是 Weftik 全平台工程（6 种语言 + G-code + CNC），非仅 IEC 61131-3，"IEC Project"过窄；(c) TwinCAT "New TwinCAT Project"先例直接支持 Weftik 命名；(d) VS Code/Theia 官方模式（PR #12819/#13344）用 File ▸ New File... quickpick 而非带名子菜单，子菜单只放文件级命令。
 - **参考**: CODESYS helpme New Project command、Beckhoff InfoSys File▸New▸Project、Siemens TIA docs、Theia PR #12819/#13344；commit 7392f4a
 
 ## D116: 工程项目管理人工验证 = 预置示例工程 + G1-G6 工作流清单
@@ -750,7 +750,14 @@
 
 ## D117: AUDEDeck + Studio HMI UI 移除；Runtime HMI 通道保留为对外契约
 - **日期**: 2026-09-23
-- **决定**: 删除 `3rdparty/AUDEDeck/`（43 文件）、`theia-extensions/audesys-hmi-designer/`、`packages/studio-core/`、napi `deploy/save/load_hmi_layout`、`openspec/specs/hmi-designer-spec.md`、HMI-VAL 规范段。**保留为对外契约**：IPC 0x16 SIGNAL_PUSH / 0x17 DEPLOY_HMI_LAYOUT / 0x18 GET_HMI_LAYOUT、`RuntimeEngine::{deploy,get}_hmi_layout`（Config Barrier 内存储）、`RuntimeClient` 对应方法、`Role::Hmi` RBAC。Panel/UI 实现由外部项目主导（用户决策 2026-09-23：本项目专注平台侧）。契约验收依据迁至 `openspec/specs/hmi-spec.md`；`docs/modules/runtime/panel-architecture-design.md` 降为契约参考文档。
-- **理由**: UI 主导权移交外部项目；Studio 侧三块均为死代码（D106 已摸出 designer、studio-core 零外部消费者）；先删后改名（改名前移除 ≈ 27.5k 行 audesys 引用面）。
+- **决定**: 删除 `3rdparty/AUDEDeck/`（43 文件）、`theia-extensions/weftik-hmi-designer/`、`packages/studio-core/`、napi `deploy/save/load_hmi_layout`、`openspec/specs/hmi-designer-spec.md`、HMI-VAL 规范段。**保留为对外契约**：IPC 0x16 SIGNAL_PUSH / 0x17 DEPLOY_HMI_LAYOUT / 0x18 GET_HMI_LAYOUT、`RuntimeEngine::{deploy,get}_hmi_layout`（Config Barrier 内存储）、`RuntimeClient` 对应方法、`Role::Hmi` RBAC。Panel/UI 实现由外部项目主导（用户决策 2026-09-23：本项目专注平台侧）。契约验收依据迁至 `openspec/specs/hmi-spec.md`；`docs/modules/runtime/panel-architecture-design.md` 降为契约参考文档。
+- **理由**: UI 主导权移交外部项目；Studio 侧三块均为死代码（D106 已摸出 designer、studio-core 零外部消费者）；先删后改名（改名前移除 ≈ 27.5k 行 weftik 引用面）。
 - **取代**: D60、D61、D65、D67 全量；D66/D68/D69 降级为契约条款。
 - **参考**: .sisyphus/plans/weftik-rename/plan.md §三决策 1 + §四 Phase -1；提交 2958f54
+
+## D118: 品牌改名 AUDESYS → Weftik（全栈命名空间 + 单主线公开仓）
+- **日期**: 2026-09-23
+- **决定**: 项目整体改名 Weftik（商标检索 0 命中，见 .sisyphus/plans/weftik-rename/plan.md §一）。命名规范：品牌显示名 `Weftik`（唯一大写层）；仓库/npm/crates/目录全小写 `weftik`；Rust crate `weftik-<module>`（kebab）；Rust/C++/FlatBuffers 用语言级命名空间（类型名**永不**加 Weftik 前缀，防 stuttering）；C ABI `weftik_`；npm scope `@weftik/`；环境变量 `WEFTIK_*`；Prometheus 指标 `weftik_runtime_*`；CLI `weftik`。同时采纳**单主线模式**：公开仓 gitee.com/chengxuewen/weftik = 唯一开发主线，双仓脱敏管线退役（历史脱敏已完成；内部残篇留 AUDESYS 工作区）；CI 暂不要（本地 qa-fast 把关）。
+- **理由**: 与 CODESYS 结构同构的商标混淆风险 + 旧展开式自相矛盾；改名同时统一命名空间；管线退役后增量提交天然干净，不再交双仓同步税。
+- **执行**: 代码改名 66e46d4/44f2546（git mv 保 rename 追踪）；25 个既有回归测试隔离待修（见 pitfalls）；历史提交不重写（rebrand 由提交如实记录）。
+- **参考**: .sisyphus/plans/weftik-rename/plan.md（v2 执行差分）+ plan.md（v1 依据）

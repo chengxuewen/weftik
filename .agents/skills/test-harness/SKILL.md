@@ -1,11 +1,11 @@
 ---
 name: test-harness
-description: "AUDESYS 多语言自动化测试工具架。从 SDD 规范生成测试骨架 (Rust/TS/Python/C++/C)、AAA 模式强制执行、测试→规范反向追溯、覆盖率报告。交互式菜单驱动。支持 Phase 感知 (跳过未就绪模块)。"
+description: "Weftik 多语言自动化测试工具架。从 SDD 规范生成测试骨架 (Rust/TS/Python/C++/C)、AAA 模式强制执行、测试→规范反向追溯、覆盖率报告。交互式菜单驱动。支持 Phase 感知 (跳过未就绪模块)。"
 ---
 
 # 测试工具架 (Test Harness)
 
-为 AUDESYS 多语言项目提供自动化测试生成与验证。从 SDD 规范直接产出测试代码，确保 AAA 模式、Phase 对齐、语言惯例一致。
+为 Weftik 多语言项目提供自动化测试生成与验证。从 SDD 规范直接产出测试代码，确保 AAA 模式、Phase 对齐、语言惯例一致。
 
 **哲学**: 测试不是写完代码再补的东西，是从规范直接长出来的。一个好测试文件 = 规范的可执行副本。
 
@@ -39,7 +39,7 @@ description: "AUDESYS 多语言自动化测试工具架。从 SDD 规范生成�
 
 ## 多语言策略
 
-AUDESYS 是一个多语言项目 (D19, D21)。测试生成必须适配各语言惯例。
+Weftik 是一个多语言项目 (D19, D21)。测试生成必须适配各语言惯例。
 
 ### 语言检测
 
@@ -325,7 +325,7 @@ hal-protocol       | 88%      | 82%      | 34/37
 
 | 变更路径匹配 | 测试命令 |
 |---|---|
-| `crates/audesys-hal-core/` | `cargo test -p audesys-hal-core` |
+| `crates/weftik-hal-core/` | `cargo test -p weftik-hal-core` |
 | `crates/amw_inproc/` | `cargo test -p amw_inproc`（Phase 1, stub only） |
 | `crates/hal-flatbuffers/` | `cargo test -p hal-flatbuffers`（Phase 1, stub only） |
 | `*.fbs` (FlatBuffers schema) | `cargo test -p hal-flatbuffers` |
@@ -339,7 +339,7 @@ hal-protocol       | 88%      | 82%      | 34/37
 
 ---
 
-## AUDESYS 特定测试模式
+## Weftik 特定测试模式
 
 ### HAL Trait 测试
 
@@ -415,7 +415,7 @@ fn test_halvalue_fbs_roundtrip() {
 
 ```
 将生成以下变更:
-  crates/audesys-hal-core/src/types.rs +45 (内联测试模块)
+  crates/weftik-hal-core/src/types.rs +45 (内联测试模块)
   tests/integration/test_type_roundtrip.rs (新文件, 150行)
   tests/integration/test_qos_security.rs (新文件, 80行)
 

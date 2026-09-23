@@ -18,13 +18,13 @@ node_id = "AGV-01"
 [[components]]
 id = "runtime"
 type = "process"
-binary = "/opt/audesys/bin/audesys-runtime"
+binary = "/opt/weftik/bin/weftik-runtime"
 restart = { max_retries = 3, backoff_ms = [100, 500, 2000] }
 
 [[components]]
 id = "ros2-bridge"
 type = "container"
-image = "ghcr.io/audesys/ros2-bridge:humble"
+image = "ghcr.io/weftik/ros2-bridge:humble"
 restart = { max_retries = 3, backoff_ms = [1000, 2000] }
 ```
 
@@ -61,7 +61,7 @@ restart = { max_retries = 3, backoff_ms = [1000, 2000] }
 
 ## 参考
 
-- 架构 spec: §3 audesys-supervisor, §32 部署形态, §31 平台适配
+- 架构 spec: §3 weftik-supervisor, §32 部署形态, §31 平台适配
 - 决策: D81 命名为 Agent
 
 ## 交叉引用

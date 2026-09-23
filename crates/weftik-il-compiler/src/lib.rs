@@ -17,8 +17,8 @@ mod parser;
 
 use std::collections::HashSet;
 use weftik_hal_core::HalPinType;
-use weftik_hal_ir::program::HalProgram;
 use weftik_hal_ir::instruction::Opcode;
+use weftik_hal_ir::program::HalProgram;
 use weftik_hal_ir::types::{Direction, Operand, SignalBinding};
 
 /// Compile IEC 61131-3 IL source text to a HAL IR program.

@@ -1131,22 +1131,22 @@ MCU 侧:
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 分布式架构对 Runtime 和 HAL 设计
 
-Klipper 的 **Host (Linux) + MCU (8/32-bit) 分布式** 架构为 AUDESYS Runtime 提供了三种直接参考：
+Klipper 的 **Host (Linux) + MCU (8/32-bit) 分布式** 架构为 Weftik Runtime 提供了三种直接参考：
 
 #### 1) Host-MCU 分离模型
 
-Klipper 将计算和执行的物理分离对应到 AUDESYS Runtime 的"控制面"与"实时面"分离：
+Klipper 将计算和执行的物理分离对应到 Weftik Runtime 的"控制面"与"实时面"分离：
 
 ```
-AUDESYS Runtime 的 Host-MCU 分离设想:
+Weftik Runtime 的 Host-MCU 分离设想:
 
 Host Layer (Linux Application)
   +----------------------------------+
-  | AUDESYS Studio IDE / Simulator   |
+  | Weftik Studio IDE / Simulator   |
   | Python / C++  Runtime Logic      |
   |  - Control Logic Execution       |
   |  - 宏 / 脚本引擎                 |
@@ -1157,7 +1157,7 @@ Host Layer (Linux Application)
         v
 MCU Layer (Real-time HAL)
   +----------------------------------+
-  | AUDESYS HAL MCU (STM32/ESP32)    |
+  | Weftik HAL MCU (STM32/ESP32)    |
   |  - 定时 I/O                      |
   |  - 精确 Timer (PWM/GPIO)         |
   |  - 传感器 Polling                |
@@ -1165,16 +1165,16 @@ MCU Layer (Real-time HAL)
   +----------------------------------+
 ```
 
-Klipper 的经验说明：将实时控制路径与非实时管理路径分离是可行的，并且可以在资源受限的 MCU 上实现确定性行为。AUDESYS Runtime 可以将复杂的控制逻辑（脚本、配置、HMI）放在 Host 层，而将确定性的 I/O 扫描和实时响应放在 MCU 层。
+Klipper 的经验说明：将实时控制路径与非实时管理路径分离是可行的，并且可以在资源受限的 MCU 上实现确定性行为。Weftik Runtime 可以将复杂的控制逻辑（脚本、配置、HMI）放在 Host 层，而将确定性的 I/O 扫描和实时响应放在 MCU 层。
 
 #### 2) MCU 协议设计参考
 
-Klipper MCU 协议的关键设计决策值得 AUDESYS HAL 参考：
+Klipper MCU 协议的关键设计决策值得 Weftik HAL 参考：
 
-| Klipper MCU Protocol | AUDESYS HAL 参考 |
+| Klipper MCU Protocol | Weftik HAL 参考 |
 |---------------------|----------------------|
 | 轻量级 RPC 机制 | HalTransport 可在 RPC + Signal/StreamChannel 中选择 |
-| DECL_COMMAND / sendf 宏 | AUDESYS 可参考 MCU 侧的 HAL API 声明语法 |
+| DECL_COMMAND / sendf 宏 | Weftik 可参考 MCU 侧的 HAL API 声明语法 |
 | VLQ 编码 — 最小带宽 | FlatBuffers 也需要关注 MCU 侧的最小 footprint |
 | Data Dictionary — 动态生成 | HalDiscovery 的设备发现和数据类型描述机制 |
 | CRC + sequence number => error-free channel | 实时 + 仿真双模式的 reliability 策略 |
@@ -1188,11 +1188,11 @@ Klipper 通过切换 UART/USB/SPI/CAN 来实现 Host-MCU 通信而不修改 MCU 
 MCU <-> Host: Serial => USB => CANBus => SPI =>（仅改 Makefile 的通信接口配置）
 ```
 
-AUDESYS HAL 可同样实现 `HalTransport` 的统一通信抽象，通过切换 Transport Backend 来支持 UART / USB / CAN / TCP / UDS 等多种物理链路，而不修改上层的控制逻辑。
+Weftik HAL 可同样实现 `HalTransport` 的统一通信抽象，通过切换 Transport Backend 来支持 UART / USB / CAN / TCP / UDS 等多种物理链路，而不修改上层的控制逻辑。
 
 ### 7.2 实时运动规划分离
 
-Klipper 的关键技术创新在于 **"非实时计算由上位机完成，实时执行由 MCU 完成"**。这直接对应到 AUDESYS Runtime 设计的核心问题 — "实时性和仿真模式的分离"：
+Klipper 的关键技术创新在于 **"非实时计算由上位机完成，实时执行由 MCU 完成"**。这直接对应到 Weftik Runtime 设计的核心问题 — "实时性和仿真模式的分离"：
 
 ```
 Klipper 的分层:
@@ -1206,7 +1206,7 @@ Klipper 的分层:
 | MCU     | Step pulse generation   | 硬实时   | C ISR   |
 ```
 
-**AUDESYS Runtime 的分层建议**:
+**Weftik Runtime 的分层建议**:
 
 ```
 | 层       | 功能                    | 实时性    |
@@ -1216,16 +1216,16 @@ Klipper 的分层:
 | 实时面  | HAL Transport, ASIC    | 硬实时   |
 ```
 
-Klipper 的这套 "Host + MCU" 设计 + C Helper 库 + Python 管理 = AUDESYS Runtime 可以借鉴 **同一 CPU 上的分层**（SCHED_OTHER + SCHED_FIFO）**或不同 CPU 上的分离**（Host + MCU）架构。
+Klipper 的这套 "Host + MCU" 设计 + C Helper 库 + Python 管理 = Weftik Runtime 可以借鉴 **同一 CPU 上的分层**（SCHED_OTHER + SCHED_FIFO）**或不同 CPU 上的分离**（Host + MCU）架构。
 
 ### 7.3 Input Shaper 对 HAL 设计的参考
 
 Input Shaper 的实现位于 `klippy/chelper/input_shaper.c`，通过 ffi 桥接 Python <-> C：
 
-AUDESYS HAL 如果需要在多个节点间进行运动规划/控制/响应，可以采用 **Filter Chain 设计** — 在每个 Motion Generator → Actuator 之间串联 filter：
+Weftik HAL 如果需要在多个节点间进行运动规划/控制/响应，可以采用 **Filter Chain 设计** — 在每个 Motion Generator → Actuator 之间串联 filter：
 
 ```
-AUDESYS HAL Filter Chain 设计:
+Weftik HAL Filter Chain 设计:
 
 Sensor Input -> Kinematic -> Filter 1 (Input Shaper)
                              -> Filter 2 (Low-pass)
@@ -1233,7 +1233,7 @@ Sensor Input -> Kinematic -> Filter 1 (Input Shaper)
                                 -> Actuator Output
 ```
 
-这也符合 Klipper 的 "Kinematics + Input Shaper" 模式：先解运动学 → 再过 Input Shaper 的 filter。AUDESYS HAL 如果处理运动控制类任务，可以借鉴这种链式滤波架构。
+这也符合 Klipper 的 "Kinematics + Input Shaper" 模式：先解运动学 → 再过 Input Shaper 的 filter。Weftik HAL 如果处理运动控制类任务，可以借鉴这种链式滤波架构。
 
 ### 7.4 Python 扩展生态
 
@@ -1254,14 +1254,14 @@ class MyModule:
         pass
 ```
 
-**AUDESYS 参考**: AUDESYS Studio IDE / Simulator 可以用 Python 作为脚本/扩展语言：
+**Weftik 参考**: Weftik Studio IDE / Simulator 可以用 Python 作为脚本/扩展语言：
 
 - Klipper 的 extras/ — Python 脚本可动态加载到 Runtime
 - Moonraker 的 plugins/ — JSON-RPC API 扩展
 - Mainsail + Fluidd — Vue.js/React Web UI 前端
 
 ```
-AUDESYS Python 扩展架构设想:
+Weftik Python 扩展架构设想:
 
   Base Runtime (C++/Rust)
     |
@@ -1277,14 +1277,14 @@ AUDESYS Python 扩展架构设想:
           (Plugin-based IDE 扩展)
 ```
 
-### 7.5 G-code 宏系统对 AUDESYS 脚本引擎的参考
+### 7.5 G-code 宏系统对 Weftik 脚本引擎的参考
 
-Klipper 的 `[gcode_macro]` + Jinja2 模板引擎提供了一个强大的、无需编译的脚本系统，这对 AUDESYS Studio IDE 的脚本引擎设计有直接参考：
+Klipper 的 `[gcode_macro]` + Jinja2 模板引擎提供了一个强大的、无需编译的脚本系统，这对 Weftik Studio IDE 的脚本引擎设计有直接参考：
 
-**AUDESYS 参考**: AUDESYS Studio IDE 可以设计类似的宏/脚本系统，用于编写控制逻辑序列：
+**Weftik 参考**: Weftik Studio IDE 可以设计类似的宏/脚本系统，用于编写控制逻辑序列：
 
 ```jinja2
-# AUDESYS 可能的宏语法（参考 Klipper 的 Jinja2 模式）
+# Weftik 可能的宏语法（参考 Klipper 的 Jinja2 模式）
 [macro START_CYCLE]
 type: motor_control
 description: 启动控制循环
@@ -1299,11 +1299,11 @@ script:
     {% endif %}
 ```
 
-AUDESYS 的脚本系统不需要完整 Python，可以像 Klipper 一样使用轻量级模板语言 + 预定义的控制命令来组合逻辑。这比 IEC 61131-3 的完整语言覆盖更轻量、更易学。
+Weftik 的脚本系统不需要完整 Python，可以像 Klipper 一样使用轻量级模板语言 + 预定义的控制命令来组合逻辑。这比 IEC 61131-3 的完整语言覆盖更轻量、更易学。
 
-### 7.6 Klipper MCU 协议与 AUDESYS HAL 的详细对比
+### 7.6 Klipper MCU 协议与 Weftik HAL 的详细对比
 
-| 维度 | Klipper MCU Protocol | AUDESYS HAL（设计） |
+| 维度 | Klipper MCU Protocol | Weftik HAL（设计） |
 |------|---------------------|-------------------|
 | 通信目标 | Host <-> MCU 实时步进控制 | 分布式节点间实时数据交换 |
 | 原语 | step/endstop/pwm/temperature | Signal + StreamChannel + RPC 三原语 |
@@ -1314,16 +1314,16 @@ AUDESYS 的脚本系统不需要完整 Python，可以像 Klipper 一样使用�
 | 发现机制 | clock sync / timer | HalDiscovery（anycast/group/unicast） |
 | 可靠性 | CRC + Seq + Ack/Nak | amw 传输层决定 |
 
-Klipper MCU Protocol 的精髓是 **"简单可靠"**：每个消息块 5-64 字节，VLQ 编码，CRC 校验，Sequence Number 确认。这与 AUDESYS HAL 设计中的 Signal（单写多读最新值）和 StreamChannel（多写多读有缓冲队列）形成了有趣的对比：
+Klipper MCU Protocol 的精髓是 **"简单可靠"**：每个消息块 5-64 字节，VLQ 编码，CRC 校验，Sequence Number 确认。这与 Weftik HAL 设计中的 Signal（单写多读最新值）和 StreamChannel（多写多读有缓冲队列）形成了有趣的对比：
 
 - Klipper 的协议本质是 RPC 风格（命令-响应）
-- AUDESYS HAL 提供了更丰富的原语集（Signal + StreamChannel + RPC）
+- Weftik HAL 提供了更丰富的原语集（Signal + StreamChannel + RPC）
 - Klipper 证明了在 MCU 侧实现极简协议栈是可行的
-- AUDESYS HAL 的 FlatBuffers + HalDiscovery 提供了更强大的异构互操作性
+- Weftik HAL 的 FlatBuffers + HalDiscovery 提供了更强大的异构互操作性
 
 ### 7.7 分布式架构在工业控制中的映射
 
-| 维度 | Klipper | AUDESYS |
+| 维度 | Klipper | Weftik |
 |------|---------|---------|
 | 架构模式 | Host + MCU（分布式 + 嵌入式） | Host + HAL（分布式 + 实时层） |
 | 目标领域 | 3D 打印运动控制 | 工业控制系统仿真/运行 |
@@ -1337,15 +1337,15 @@ Klipper MCU Protocol 的精髓是 **"简单可靠"**：每个消息块 5-64 字�
 
 ### 7.8 核心参考价值总结
 
-Klipper 为 AUDESYS 提供了四个层面的参考价值：
+Klipper 为 Weftik 提供了四个层面的参考价值：
 
-1. **架构设计**: 分布式 Host-MCU 分离模式可直接映射到 AUDESYS Runtime 的 Management + Control 分层设计。Klipper 证明了将计算密集型任务（运动规划、脚本引擎）放在 Host 层、精确实时执行放在 MCU 层的可行性。
+1. **架构设计**: 分布式 Host-MCU 分离模式可直接映射到 Weftik Runtime 的 Management + Control 分层设计。Klipper 证明了将计算密集型任务（运动规划、脚本引擎）放在 Host 层、精确实时执行放在 MCU 层的可行性。
 
-2. **通信协议**: Klipper MCU Protocol 的极简 RPC 设计（消息块 5-64B、VLQ 编码、CRC 校验、Data Dictionary 动态类型描述）为 AUDESYS HAL 的 MCU 侧通信提供了"最少字节原则"的参考。AUDESYS HAL 的 HalTransport 需要同时管理 RPC（控制命令）和 Signal/StreamChannel（数据流），Klipper 证明了在 MCU 侧保持协议栈精简的重要性。
+2. **通信协议**: Klipper MCU Protocol 的极简 RPC 设计（消息块 5-64B、VLQ 编码、CRC 校验、Data Dictionary 动态类型描述）为 Weftik HAL 的 MCU 侧通信提供了"最少字节原则"的参考。Weftik HAL 的 HalTransport 需要同时管理 RPC（控制命令）和 Signal/StreamChannel（数据流），Klipper 证明了在 MCU 侧保持协议栈精简的重要性。
 
-3. **Python 扩展生态**: Klipper 的 extras/ 架构证明 Python 作为上位机脚本/扩展语言完全可行。AUDESYS Studio IDE 和 Simulator 可以参考此模式，将 Python 作为扩展接口语言（非实时路径），降低控制逻辑开发的灵活性和门槛。
+3. **Python 扩展生态**: Klipper 的 extras/ 架构证明 Python 作为上位机脚本/扩展语言完全可行。Weftik Studio IDE 和 Simulator 可以参考此模式，将 Python 作为扩展接口语言（非实时路径），降低控制逻辑开发的灵活性和门槛。
 
-4. **Input Shaper 的 Filter Chain**: Klipper 的 Input Shaper 链式架构（kinematics -> shaper -> stepgen）可推广到 AUDESYS HAL 的通用 Filter Chain 设计，用于处理信号的滤波、补偿、限幅等预处理。
+4. **Input Shaper 的 Filter Chain**: Klipper 的 Input Shaper 链式架构（kinematics -> shaper -> stepgen）可推广到 Weftik HAL 的通用 Filter Chain 设计，用于处理信号的滤波、补偿、限幅等预处理。
 
 ---
 

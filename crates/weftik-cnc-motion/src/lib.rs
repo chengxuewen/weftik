@@ -6,4 +6,4 @@
 
 mod profile;
 
-pub use profile::{generate_trapezoidal_program, TrapezoidalProfile};
+pub use profile::{TrapezoidalProfile, generate_trapezoidal_program};

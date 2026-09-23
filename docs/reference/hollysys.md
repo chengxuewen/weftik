@@ -126,7 +126,7 @@ MACS-K 采用**三层网络架构 + 全冗余设计 + 多域扩展**：
 | INNER-BUS | 内部总线 | 100M 专用以太网 | 100Mbps | 星型（通过 Opal8 交换机） | 双冗余 |
 | CNET/IO-BUS | Control Network | Profibus-DP | 1.5Mbps（默认）/ 500kbps / 187.5kbps | 星型或总线型 | 双冗余 |
 
-**AUDESYS 关联分析**：
+**Weftik 关联分析**：
 - SNET → **StreamChannel**：操作站与控制站之间的实时数据订阅/发布
 - IO-BUS → **Signal**：控制器周期性轮询 I/O 模块获取最新采样值
 - INNER-BUS → 内部通信（K-CU03 与 K-BUS04 之间），属于 MACS-K 内部实现细节，HAL 层面无需直接对应
@@ -321,7 +321,7 @@ MACS-K 的虚拟工厂仿真（Virtual-Plant Simulation）是亮点功能：
 - 支持全流程仿真验证
 - 大幅降低现场测试和调试成本
 
-**对 AUDESYS 的直接启示**：这是理想的对标功能——AUDESYS Simulator 应实现类似能力。
+**对 Weftik 的直接启示**：这是理想的对标功能——Weftik Simulator 应实现类似能力。
 
 ### 3.5 铁路信号控制功能（行业独有）
 
@@ -549,7 +549,7 @@ MACS IC 的全自主可控不仅是芯片/操作系统的国产替代，更强�
 - CTCS-2/3 级兼容：支持既有线提速和高铁新建线路
 - ERTMS/ETCS 兼容能力：满足国际铁路信号标准
 
-**对 AUDESYS 的意义**：SIL4 级别的安全关键系统是 HAL 安全设计的上限参考。虽然 AUDESYS Phase 1 不需要 SIL4 认证，但 Security Domain 的隔离设计和故障模式处理可以借鉴铁路信号的 Fail-Safe 哲学。
+**对 Weftik 的意义**：SIL4 级别的安全关键系统是 HAL 安全设计的上限参考。虽然 Weftik Phase 1 不需要 SIL4 认证，但 Security Domain 的隔离设计和故障模式处理可以借鉴铁路信号的 Fail-Safe 哲学。
 
 ### 6.5 核电仪控国产化突破
 
@@ -577,11 +577,11 @@ MACS-K 的供电设计是与 ECS-700 的一个重要差异点：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 HAL 通信模型与 MACS-K 内部通信对照
 
-MACS-K 的三层网络（SNET/INNER-BUS/IO-BUS）与 AUDESYS HAL 三原语的对应关系：
+MACS-K 的三层网络（SNET/INNER-BUS/IO-BUS）与 Weftik HAL 三原语的对应关系：
 
 | HAL 原语 | MACS-K 对应通信 | 特征 | 与 ECS-700 对照的差异 |
 |---------|----------------|------|---------------------|
@@ -591,17 +591,17 @@ MACS-K 的三层网络（SNET/INNER-BUS/IO-BUS）与 AUDESYS HAL 三原语的对
 
 **关键差异点**：
 
-1. **INNER-BUS 的引入**：MACS-K 在主控制器（K-CU03）与 IO-BUS 模块（K-BUS04）之间引入了 INNER-BUS（100M 专用以太网交换机）。这是 MACS-K 独有的网络层，ECS-700 没有此层。对 AUDESYS 而言，INNER-BUS 是系统内部实现细节，HAL 不需要直接建模此层。
+1. **INNER-BUS 的引入**：MACS-K 在主控制器（K-CU03）与 IO-BUS 模块（K-BUS04）之间引入了 INNER-BUS（100M 专用以太网交换机）。这是 MACS-K 独有的网络层，ECS-700 没有此层。对 Weftik 而言，INNER-BUS 是系统内部实现细节，HAL 不需要直接建模此层。
 
-2. **IO-BUS 的 Profibus-DP 协议绑定**：MACS-K 的 IO-BUS 直接绑定 Profibus-DP 协议，而 ECS-700 使用自定义确定性以太网协议。这意味着 AUDESYS 如果要模拟 MACS-K 的 I/O 通信，需要支持 Profibus-DP 主站协议（作为 amw_transport 的一种实现）。
+2. **IO-BUS 的 Profibus-DP 协议绑定**：MACS-K 的 IO-BUS 直接绑定 Profibus-DP 协议，而 ECS-700 使用自定义确定性以太网协议。这意味着 Weftik 如果要模拟 MACS-K 的 I/O 通信，需要支持 Profibus-DP 主站协议（作为 amw_transport 的一种实现）。
 
-3. **SNET 的安全增强**：HollySys Safety Switch 仅在 SNET 层实现数据包过滤。这提示 AUDESYS 的 StreamChannel 可能需要支持**传输层安全过滤**（在 amw_transport 层面而非 HAL 协议层面）。
+3. **SNET 的安全增强**：HollySys Safety Switch 仅在 SNET 层实现数据包过滤。这提示 Weftik 的 StreamChannel 可能需要支持**传输层安全过滤**（在 amw_transport 层面而非 HAL 协议层面）。
 
 ### 7.2 冗余模型的额外启示
 
-MACS-K 的冗余设计与 ECS-700 的差异点对 AUDESYS 有额外启示：
+MACS-K 的冗余设计与 ECS-700 的差异点对 Weftik 有额外启示：
 
-| MACS-K 设计 | AUDESYS 启示 |
+| MACS-K 设计 | Weftik 启示 |
 |-------------|-------------|
 | 三电源隔离（系统/现场/辅助） | Signal 原语的 QoS 可扩展**电源域**（power_domain）属性，标识信号属于哪个电源域 |
 | TC/RTD 冗余（行业首创） | 模拟信号（F32）的物理冗余需要考虑传感器冗余场景（如三取二表决） |
@@ -609,37 +609,37 @@ MACS-K 的冗余设计与 ECS-700 的差异点对 AUDESYS 有额外启示：
 | 二乘二取二铁路安全架构 | amw 的 Security Domain 可扩展支持 SIL4 级别的安全通信（远期目标） |
 | 主从热备（< 3 IEC 周期）vs ECS-700 的 < 1 扫描周期 | 冗余切换时间的差异取决于具体实现，HAL 协议层不应硬编码切换时间 |
 
-### 7.3 跨行业平台策略对 AUDESYS 的启示
+### 7.3 跨行业平台策略对 Weftik 的启示
 
-和利时"同一平台服务四行业"的策略对 AUDESYS 的设计哲学有深刻启发：
+和利时"同一平台服务四行业"的策略对 Weftik 的设计哲学有深刻启发：
 
-| 和利时策略 | AUDESYS 启示 |
+| 和利时策略 | Weftik 启示 |
 |-----------|-------------|
-| 核心安全计算机平台跨行业复用 | AUDESYS Runtime 核心应保持行业无关性，行业特性通过"配置+库"注入 |
+| 核心安全计算机平台跨行业复用 | Weftik Runtime 核心应保持行业无关性，行业特性通过"配置+库"注入 |
 | 不同行业的不同安全等级（SIL3/SIL4） | HalQoS 的 Security Domain 应支持多级安全等级配置 |
 | 工程工具链跨行业共享 | Studio IDE 应是行业无关的通用平台，行业模板作为插件加载 |
-| 供应链跨行业规模经济 | 不绑定特定行业硬件——这是 AUDESYS 作为"仿真平台"的天然优势 |
+| 供应链跨行业规模经济 | 不绑定特定行业硬件——这是 Weftik 作为"仿真平台"的天然优势 |
 
-**核心理念**：AUDESYS 应设计为**通用工业控制仿真平台**，而非针对特定行业的仿真器。行业差异化通过"行业库（Industry Library）"而非核心代码实现。
+**核心理念**：Weftik 应设计为**通用工业控制仿真平台**，而非针对特定行业的仿真器。行业差异化通过"行业库（Industry Library）"而非核心代码实现。
 
 ### 7.4 安全通信模型的深度分析
 
-和利时的铁路 SIL4 和核电安全系统为 AUDESYS 的 Security Domain 设计提供了极端场景参考：
+和利时的铁路 SIL4 和核电安全系统为 Weftik 的 Security Domain 设计提供了极端场景参考：
 
-| 安全等级 | 危险故障概率/h | AUDESYS Security Domain | 典型通信要求 |
+| 安全等级 | 危险故障概率/h | Weftik Security Domain | 典型通信要求 |
 |---------|---------------|------------------------|-------------|
 | SIL1 | < 10⁻⁶ | security_domain: "standard" | 标准 TCP/IP |
 | SIL2 | < 10⁻⁷ | security_domain: "enhanced" | CRC 校验 + 序列号 |
 | SIL3 | < 10⁻⁷ | security_domain: "safety" | 安全通信层（如 PROFIsafe） |
 | SIL4 | < 10⁻⁹ | security_domain: "critical" | 二取二/三取二冗余 + 故障安全 |
 
-**AUDESYS Phase 1 策略**：在 HAL 层面只需支持 security_domain 标记（如 "standard" 和 "safety" 两级），具体的安全通信协议实现（如 PROFIsafe, CIP Safety）放在 amw_transport 实现层。这是 D16 决策的正确方向。
+**Weftik Phase 1 策略**：在 HAL 层面只需支持 security_domain 标记（如 "standard" 和 "safety" 两级），具体的安全通信协议实现（如 PROFIsafe, CIP Safety）放在 amw_transport 实现层。这是 D16 决策的正确方向。
 
 ### 7.5 虚拟工厂仿真对 Simulator 的具体启示
 
-MACS-K 的虚拟工厂仿真是对 AUDESYS Simulator 最有价值的对标功能：
+MACS-K 的虚拟工厂仿真是对 Weftik Simulator 最有价值的对标功能：
 
-| MACS-K 虚拟仿真 | AUDESYS Simulator 兑现方式 |
+| MACS-K 虚拟仿真 | Weftik Simulator 兑现方式 |
 |----------------|--------------------------|
 | 一台 PC 完成全流程仿真 | Simulator 单机模式 |
 | 完全等同真实控制逻辑 | Runtime 运行与实际 Runtime 完全相同的控制代码 |
@@ -647,18 +647,18 @@ MACS-K 的虚拟工厂仿真是对 AUDESYS Simulator 最有价值的对标功能
 | 离线仿真 | Simulator 的加速模式（Fast-Forward） |
 | 大幅降低测试成本 | TDD 工作流：先在 Simulator 中测试，再部署 |
 
-**AUDESYS 的核心价值**：为工程师提供"零硬件成本"的控制策略开发和验证环境。
+**Weftik 的核心价值**：为工程师提供"零硬件成本"的控制策略开发和验证环境。
 
 ### 7.6 铁路信号 Fail-Safe 哲学对 HAL 的启示
 
-铁路信号的"故障-安全"原则对 AUDESYS HAL 的故障处理设计有参考价值：
+铁路信号的"故障-安全"原则对 Weftik HAL 的故障处理设计有参考价值：
 
 1. **任何故障导向安全侧**：HAL 的 Signal 原语在通信故障时应返回**预定义的 Fail-Safe Value**，而非上一周期值或默认零值
 2. **输出必须可验证**：RPC 的输出指令应支持"回读验证"（Read-back Verification）
 3. **双通道比较**：SIL4 级别的安全输出需要两个独立通道的计算结果一致才输出
 4. **看门狗机制**：每个 RT 周期结束后，需检查所有安全关键 Signal 是否在预期范围内更新
 
-虽然 AUDESYS Phase 1 不追求 SIL 认证，但在 Signal 和 RPC 原语中预留 Fail-Safe 回调机制，可以避免后期需要安全认证时的架构重构。
+虽然 Weftik Phase 1 不追求 SIL 认证，但在 Signal 和 RPC 原语中预留 Fail-Safe 回调机制，可以避免后期需要安全认证时的架构重构。
 
 ### 7.7 OCS 光总线对 HAL 物理层抽象的启示
 
@@ -670,31 +670,31 @@ MACS-K 的虚拟工厂仿真是对 AUDESYS Simulator 最有价值的对标功能
 
 ### 7.8 HOLLiAS Bridge 对 amw 互操作性的启示
 
-HOLLiAS Bridge 作为"通用互联平台"提示 AUDESYS 的 amw 层需要：
+HOLLiAS Bridge 作为"通用互联平台"提示 Weftik 的 amw 层需要：
 
 1. **协议适配器模式**：amw_transport 可以设计为适配器模式（Adapter Pattern），一个 transport 实例封装一个协议栈（Profibus-DP/Modbus/HART/OPC UA）
-2. **统一数据模型**：不同协议的数据在进入 HAL 之前应归一化为 AUDESYS 的 14 种统一类型（D12 决策）
+2. **统一数据模型**：不同协议的数据在进入 HAL 之前应归一化为 Weftik 的 14 种统一类型（D12 决策）
 3. **地址映射**：HAL 的 Pin 命名（component.interface.name）可以映射到 Profibus-DP 的槽/索引地址
 
 ### 7.9 不推荐直接复制的部分
 
 | MACS-K 设计 | 不推荐原因 |
 |-------------|-----------|
-| IO-BUS 直接绑定 Profibus-DP 协议 | AUDESYS 应保持协议无关，通过 amw_transport 适配 |
+| IO-BUS 直接绑定 Profibus-DP 协议 | Weftik 应保持协议无关，通过 amw_transport 适配 |
 | INNER-BUS 三层架构（控制器-交换机-IO-BUS 模块） | 额外的网络层增加了复杂性和故障点 |
-| 二乘二取二铁路安全架构 | 过于复杂，AUDESYS 仿真场景不需要 |
+| 二乘二取二铁路安全架构 | 过于复杂，Weftik 仿真场景不需要 |
 | 三电源隔离的供电复杂性 | 仿真平台直接由宿主机供电，无需电源隔离设计 |
-| 专有的 HollySys Safety Switch 硬件 | AUDESYS 不应绑定特定硬件 |
+| 专有的 HollySys Safety Switch 硬件 | Weftik 不应绑定特定硬件 |
 
 ### 7.10 专用控制器 DEH/ETS 对 Runtime 模块化的启示
 
-和利时在火电领域的 DEH（汽轮机控制）和 ETS（紧急跳闸）作为独立于通用 DCS 的专用控制器，提示 AUDESYS Runtime 的模块化设计：
+和利时在火电领域的 DEH（汽轮机控制）和 ETS（紧急跳闸）作为独立于通用 DCS 的专用控制器，提示 Weftik Runtime 的模块化设计：
 
 - Runtime 核心：通用控制执行引擎（支持标准 IEC 61131-3 逻辑）
 - Runtime 扩展：行业专用模块（如 DEH 转速控制模块、ETS 跳闸逻辑模块）
 - 扩展方式：通过 HAL 的 RPC 原语调用，而非直接耦合
 
-### 7.11 总结：和利时对 AUDESYS 的关键参考权重
+### 7.11 总结：和利时对 Weftik 的关键参考权重
 
 | 参考领域 | 重要性 | 适用阶段 | 优先级 |
 |---------|--------|---------|--------|
@@ -716,14 +716,14 @@ HOLLiAS Bridge 作为"通用互联平台"提示 AUDESYS 的 amw 层需要：
 3. 长期研发投入需要私有化环境：工业控制系统的研发周期长（5-10 年），公开市场短期业绩压力不利于长期投入
 4. 与中控的技术路线分化：中控选择 AI+云化（UCS/TPT），和利时选择安全合规+跨行业深耕
 
-对 AUDESYS 的启示：
+对 Weftik 的启示：
 - 工业软件/仿真平台的发展需要长期主义
 - 开源模式可以解决"长期投入 vs 短期回报"的矛盾
-- AUDESYS 应避免过度依赖单一资本模式
+- Weftik 应避免过度依赖单一资本模式
 
 ### 7.13 铁路信号场景的 HAL 建模探索
 
-如果 AUDESYS 未来扩展到铁路信号仿真，HAL 需要以下扩展：
+如果 Weftik 未来扩展到铁路信号仿真，HAL 需要以下扩展：
 
 | 铁路信号场景 | HAL 对应 | 挑战 |
 |-------------|---------|------|
@@ -732,7 +732,7 @@ HOLLiAS Bridge 作为"通用互联平台"提示 AUDESYS 的 amw 层需要：
 | 临时限速服务器→列控中心 | RPC（限速指令下发+确认） | 需要操作审计和数字签名 |
 | 联锁→信号机/道岔 | Signal（状态周期性刷新） | 需要 Fail-Safe 值（故障时引导至安全状态） |
 
-虽然铁路信号仿真暂不在 AUDESYS Phase 1 范围内，但 HAL 原语的设计已经可以覆盖这些场景（Signal/RPC 的组合），不需要引入第 4 种原语。这验证了 D10 决策的正确性。
+虽然铁路信号仿真暂不在 Weftik Phase 1 范围内，但 HAL 原语的设计已经可以覆盖这些场景（Signal/RPC 的组合），不需要引入第 4 种原语。这验证了 D10 决策的正确性。
 
 ---
 
@@ -745,12 +745,12 @@ HOLLiAS Bridge 作为"通用互联平台"提示 AUDESYS 的 amw 层需要：
 
 ### 本文档编写说明
 
-本文档是和利时集团 Hollysys 产品的参考研究报告，属于 AUDESYS 项目"工业控制系统竞品/标杆参考"系列文档之一。
+本文档是和利时集团 Hollysys 产品的参考研究报告，属于 Weftik 项目"工业控制系统竞品/标杆参考"系列文档之一。
 
 编写时重点关注的维度：
-- 跨行业平台策略（对 AUDESYS 通用仿真平台架构的参考）
+- 跨行业平台策略（对 Weftik 通用仿真平台架构的参考）
 - 安全通信与冗余模型（从 SIL3 DCS 到 SIL4 铁路信号的完整安全谱系）
-- 虚拟工厂仿真功能（直接对标 AUDESYS Simulator 模块）
+- 虚拟工厂仿真功能（直接对标 Weftik Simulator 模块）
 - 铁路信号 Fail-Safe 哲学（对 HAL 故障处理的极端场景参考）
 - 核电国产化突破（对实时性和可靠性验证的边界参考）
 
@@ -784,9 +784,9 @@ HOLLiAS Bridge 作为"通用互联平台"提示 AUDESYS 的 amw 层需要：
 
 ### 编写方法论说明
 
-本文档的编写遵循 AUDESYS 项目的以下原则：
-- 技术维度优先：重点关注架构、通信模型、冗余策略等对AUDESYS有参考价值的技术层面
-- HAL对照分析：每个主要技术特性都尝试与AUDESYS HAL三原语（Signal/StreamChannel/RPC）进行映射
+本文档的编写遵循 Weftik 项目的以下原则：
+- 技术维度优先：重点关注架构、通信模型、冗余策略等对Weftik有参考价值的技术层面
+- HAL对照分析：每个主要技术特性都尝试与Weftik HAL三原语（Signal/StreamChannel/RPC）进行映射
 - 去品牌中立：对和利时和中控的优劣分析保持客观中立
 - <待确认>标注：不确定信息明确标注
 - 英语术语保留：关键技术术语保留英文原名并附加中文注释
@@ -795,6 +795,6 @@ HOLLiAS Bridge 作为"通用互联平台"提示 AUDESYS 的 amw 层需要：
 
 ---
 
-本文档属于 AUDESYS 项目参考研究系列，由 AI 代理基于公开信息编写，用于架构研究和设计参考。如需引用其中技术数据，请交叉验证原始来源。
+本文档属于 Weftik 项目参考研究系列，由 AI 代理基于公开信息编写，用于架构研究和设计参考。如需引用其中技术数据，请交叉验证原始来源。
 
 文档编写日期：2026-07-13 | 数据截止：2026 Q2

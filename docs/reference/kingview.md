@@ -30,7 +30,7 @@
 ### 1.3 目标用户群体
 
 | 用户群体 | 典型需求 | 组态王优势 |
-|> 本文档与 ignition.md、fuxa.md 共同构成 AUDESYS 项目的 SCADA/组态软件参考体系，为 Studio IDE 的 HMI 设计器、设备驱动架构和生态建设提供行业对照。
+|> 本文档与 ignition.md、fuxa.md 共同构成 Weftik 项目的 SCADA/组态软件参考体系，为 Studio IDE 的 HMI 设计器、设备驱动架构和生态建设提供行业对照。
 
 ---------|---------|-----------|
 | 中小型工厂 | 低成本 HMI/SCADA 系统 | 价格远低于进口产品，入门门槛低 |
@@ -613,20 +613,20 @@ KingView 8.0 云版组态王全面支持信创环境：
 
 这种"低价换市场"的战略在中国工业自动化市场取得了巨大成功，直接导致 Wonderware、iFIX 等进口品牌在中国中小型项目市场的份额大幅下降。
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 驱动架构设计
 
-组态王 6000+ 驱动的架构是 AUDESYS HAL 设备驱动设计的最直接参考：
+组态王 6000+ 驱动的架构是 Weftik HAL 设备驱动设计的最直接参考：
 
-| 组态王驱动设计 | AUDESYS HAL 参考点 |
+| 组态王驱动设计 | Weftik HAL 参考点 |
 |-------------|-----------------|
-| 每个驱动为独立 DLL，通过统一 IO 接口通信 | AUDESYS HAL Driver 作为独立插件（动态加载），实现统一的 Driver trait |
-| 驱动持续独立更新 | AUDESYS 驱动插件独立版本管理和热更新 |
-| 设备厂商可自行开发驱动 | AUDESYS 提供 Driver SDK，开放第三方驱动开发 |
-| 驱动按协议类型分类（串口/TCP/UDP/USB） | AUDESYS 驱动接口抽象链路层（Serial、TCP、UDP、CAN 等） |
+| 每个驱动为独立 DLL，通过统一 IO 接口通信 | Weftik HAL Driver 作为独立插件（动态加载），实现统一的 Driver trait |
+| 驱动持续独立更新 | Weftik 驱动插件独立版本管理和热更新 |
+| 设备厂商可自行开发驱动 | Weftik 提供 Driver SDK，开放第三方驱动开发 |
+| 驱动按协议类型分类（串口/TCP/UDP/USB） | Weftik 驱动接口抽象链路层（Serial、TCP、UDP、CAN 等） |
 
-**AUDESYS HAL 驱动接口设计建议**：
+**Weftik HAL 驱动接口设计建议**：
 
 ```
 // 参考组态王驱动分层思想
@@ -649,83 +649,83 @@ enum LinkType {
 }
 ```
 
-### 7.2 在线组态——AUDESYS 运行时热更新
+### 7.2 在线组态——Weftik 运行时热更新
 
-组态王云版的在线组态（配置变更无需重启）是 AUDESYS Runtime 的关键参考：
+组态王云版的在线组态（配置变更无需重启）是 Weftik Runtime 的关键参考：
 
 - **传统模型**：配置变更 → 重启 Runtime → 服务中断 → 生产影响
 - **目标模型**：配置变更 → Config Barrier（配置屏障）→ RT 周期边界应用 → 无中断
 
-这与 AUDESYS 已有的 D17 决策（Config Barrier + LockLevel）完全吻合。组态王云版通过 FU 模型+数据模型分离实现了类似的能力，AUDESYS 可以在 HAL 配置管理层面借鉴。
+这与 Weftik 已有的 D17 决策（Config Barrier + LockLevel）完全吻合。组态王云版通过 FU 模型+数据模型分离实现了类似的能力，Weftik 可以在 HAL 配置管理层面借鉴。
 
 ### 7.3 多协议数据采集的中间件抽象
 
-组态王需要同时与 Modbus、S7、OPC UA、MQTT、电力规约等多种协议通信，其"统一 IO 接口 + 独立驱动 DLL"的架构模式与 AUDESYS HAL 的 amw（AUDESYS Middleware）抽象层设计理念一致：
+组态王需要同时与 Modbus、S7、OPC UA、MQTT、电力规约等多种协议通信，其"统一 IO 接口 + 独立驱动 DLL"的架构模式与 Weftik HAL 的 amw（Weftik Middleware）抽象层设计理念一致：
 
-- 组态王的统一 IO 接口 ↔ AUDESYS 的 amw Transport trait
-- 组态王的设备驱动 DLL ↔ AUDESYS 的 amw Implementation（amw_inproc、amw_zenoh 等）
-- 组态王的对外数据接口（OPC UA Server、MQTT、WebService）↔ AUDESYS 的 OPC UA Server + MQTT Bridge 规划
+- 组态王的统一 IO 接口 ↔ Weftik 的 amw Transport trait
+- 组态王的设备驱动 DLL ↔ Weftik 的 amw Implementation（amw_inproc、amw_zenoh 等）
+- 组态王的对外数据接口（OPC UA Server、MQTT、WebService）↔ Weftik 的 OPC UA Server + MQTT Bridge 规划
 
 ### 7.4 可视化引擎设计对比
 
-| 组态王 HMI 特性 | AUDESYS Studio 参考 |
+| 组态王 HMI 特性 | Weftik Studio 参考 |
 |---------------|-------------------|
-| 拖拽式编辑器 + 图库系统 | AUDESYS Studio HMI 设计器的基础交互模式 |
-| 精灵图（Sprite）动画系统 | AUDESYS HMI 复合组件的动画状态机设计 |
-| 属性绑定 + 动画 | AUDESYS HMI 数据绑定和动画系统 |
-| 3D 设备图素 | AUDESYS Studio 可以考虑 WebGL/Three.js 的 3D 图素 |
-| 控件库（曲线、报表、报警、视频） | AUDESYS Studio 的标准组件库设计 |
-| 分辨率和 DPI 适配 | AUDESYS 前端自适应布局策略 |
+| 拖拽式编辑器 + 图库系统 | Weftik Studio HMI 设计器的基础交互模式 |
+| 精灵图（Sprite）动画系统 | Weftik HMI 复合组件的动画状态机设计 |
+| 属性绑定 + 动画 | Weftik HMI 数据绑定和动画系统 |
+| 3D 设备图素 | Weftik Studio 可以考虑 WebGL/Three.js 的 3D 图素 |
+| 控件库（曲线、报表、报警、视频） | Weftik Studio 的标准组件库设计 |
+| 分辨率和 DPI 适配 | Weftik 前端自适应布局策略 |
 
 ### 7.5 B/S vs C/S 架构抉择
 
-组态王的 C/S（传统版）→ B/S（云版）演进路径为 AUDESYS Studio 提供了明确的参考：
+组态王的 C/S（传统版）→ B/S（云版）演进路径为 Weftik Studio 提供了明确的参考：
 
 - **传统版 C/S**（TouchExplorer + TouchView）：成熟稳定，但依赖 Windows、客户端需安装
 - **云版 B/S**（KingStudio 浏览器化 + FU 运行时）：零安装、跨平台，但功能可能不如桌面版完善
 
-**AUDESYS 的推荐策略**：
+**Weftik 的推荐策略**：
 - **Phase 1**：桌面优先（Electron 封装），保证核心功能（PLC 编程、HMI 设计、仿真调试）
 - **Phase 2**：关键模块 Web 化（HMI 设计器、监控画面运行时）
 - **Phase 3**：全栈 Web 化（含 PLC 编程的 Web IDE）
 
 ### 7.6 从组态到开放自动化
 
-组态王 8.0 引入软 PLC/虚拟 PLC 的路径与 AUDESYS 的 Runtime 定位高度吻合：
+组态王 8.0 引入软 PLC/虚拟 PLC 的路径与 Weftik 的 Runtime 定位高度吻合：
 
-| 组态王 8.0 能力 | AUDESYS 对应能力 |
+| 组态王 8.0 能力 | Weftik 对应能力 |
 |----------------|----------------|
-| 虚拟 PLC（IEC 61131-3） | AUDESYS Runtime（控制程序执行引擎） |
-| FU 从云端部署到现场 | AUDESYS Runtime 远程部署和管理 |
-| FU 独立运行和更新 | AUDESYS 模块热加载 |
-| 云商店交易 FU | AUDESYS Marketplace（插件/模板/驱动） |
+| 虚拟 PLC（IEC 61131-3） | Weftik Runtime（控制程序执行引擎） |
+| FU 从云端部署到现场 | Weftik Runtime 远程部署和管理 |
+| FU 独立运行和更新 | Weftik 模块热加载 |
+| 云商店交易 FU | Weftik Marketplace（插件/模板/驱动） |
 
 ### 7.7 生态策略——"让 4000 万自动化工程师成为开发者"
 
-组态王云商店的"社会化分工"理念为 AUDESYS 的生态建设提供了启发：
+组态王云商店的"社会化分工"理念为 Weftik 的生态建设提供了启发：
 
-- 组态王吸引设备厂商自研驱动 → AUDESYS 吸引硬件厂商适配 HAL 驱动
-- 组态王云商店允许交易 FU → AUDESYS Marketplace 允许交易插件、模板、HMI 组件
-- 组态王降低开发门槛（KingStudio） → AUDESYS Studio 降低工业软件开发门槛
+- 组态王吸引设备厂商自研驱动 → Weftik 吸引硬件厂商适配 HAL 驱动
+- 组态王云商店允许交易 FU → Weftik Marketplace 允许交易插件、模板、HMI 组件
+- 组态王降低开发门槛（KingStudio） → Weftik Studio 降低工业软件开发门槛
 
 ### 7.8 信创/国产化路径
 
-如果 AUDESYS 未来考虑中国市场，组态王在信创适配方面的经验具有参考价值：
+如果 Weftik 未来考虑中国市场，组态王在信创适配方面的经验具有参考价值：
 - 操作系统适配：Linux（银河麒麟、统信 UOS）
 - CPU 适配：ARM64（飞腾、鲲鹏）、x86_64
 - 审计支持：国产加密算法（SM2/SM3/SM4）
 
 ### 7.9 需警惕的陷阱
 
-1. **Windows 依赖**：传统组态王深度绑定 Windows（MFC/GDI+/DLL 架构），Web 化转型困难。AUDESYS 应从第一天就跨平台设计。
-2. **闭源驱动的维护负担**：6000+ 驱动由一家公司维护，随着设备更新换代，维护成本极高。AUDESYS 应优先支持标准协议（OPC UA、Modbus、MQTT），鼓励社区贡献驱动。
-3. **类 C 脚本语言的限制**：非标准脚本语言导致的学习成本和可移植性问题。AUDESYS 应选择通用语言（Python/Lua/JavaScript）或支持多语言。
-4. **云版与旧版的断层**：KingView 7.5 SP6 和 8.0 的架构完全不同，老用户迁移成本高。AUDESYS 应在架构设计早期就考虑向后兼容策略。
+1. **Windows 依赖**：传统组态王深度绑定 Windows（MFC/GDI+/DLL 架构），Web 化转型困难。Weftik 应从第一天就跨平台设计。
+2. **闭源驱动的维护负担**：6000+ 驱动由一家公司维护，随着设备更新换代，维护成本极高。Weftik 应优先支持标准协议（OPC UA、Modbus、MQTT），鼓励社区贡献驱动。
+3. **类 C 脚本语言的限制**：非标准脚本语言导致的学习成本和可移植性问题。Weftik 应选择通用语言（Python/Lua/JavaScript）或支持多语言。
+4. **云版与旧版的断层**：KingView 7.5 SP6 和 8.0 的架构完全不同，老用户迁移成本高。Weftik 应在架构设计早期就考虑向后兼容策略。
 
 ---
 
-> 组态王 30 年的发展历程为 AUDESYS 提供了一个完整的参考坐标系：从组态软件起步，到产品矩阵扩张，再到云原生转型。
-> AUDESYS 不需要重复组态王的 Windows 时代，而应直接跳到云原生、跨平台、多语言、信创兼容的新一代架构。
+> 组态王 30 年的发展历程为 Weftik 提供了一个完整的参考坐标系：从组态软件起步，到产品矩阵扩张，再到云原生转型。
+> Weftik 不需要重复组态王的 Windows 时代，而应直接跳到云原生、跨平台、多语言、信创兼容的新一代架构。
 > 这正是后发优势的体现——站在 30 年行业积累的肩膀上，用现代技术栈重新定义工业 SCADA 平台。
 > 这需要勇气，但不需要从头摸索——因为组态王已经用三十年时间验证了哪些功能是工业现场真正需要的。
 
@@ -792,7 +792,7 @@ enum LinkType {
 
 - 文档版本: 1.0
 - 生成日期: 2026-07-13
-- 作者: AUDESYS Team
+- 作者: Weftik Team
 - 审核状态: 草稿
 - 信息来源: 亚控科技官方网站 (kingview.com)、产品发布公告、驱动下载中心、行业评测和技术博客
 - 标注"待确认"的信息需进一步验证

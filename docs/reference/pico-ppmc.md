@@ -384,7 +384,7 @@ W5500 以太网控制器的硬件 TCP/IP offload 引擎减轻了 RP2040 的协�
 - 丢包计数器递增，达到阈值后触发 I/O 错误标志
 - 错误状态可由用户配置的 packet-error-decrement 参数自动恢复
 
-这种设计确保在噪声环境下 Ethernet 通信的可靠性，是 AUDESYS 设计分布式 HAL 通信时值得参考的机制。
+这种设计确保在噪声环境下 Ethernet 通信的可靠性，是 Weftik 设计分布式 HAL 通信时值得参考的机制。
 
 #### 实时性能分析
 
@@ -632,33 +632,33 @@ hm2-rp2040 的 RP2040 双核使用方案值得关注：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
 ### 7.1 低成本 HAL 硬件的实现思路
 
 hm2-rp2040 项目展示了 **MCU 级 HAL 硬件** 如何替代 FPGA/ASIC 级专用 I/O 控制器的设计理念：
 
-AUDESYS 的 HAL 层设计主要面向仿真环境（软件 HAL），但最终可能需要物理 I/O 接口。hm2-rp2040 提供了一个极低成本（$10）的参考路径 — 使用通用 MCU 而非专用 FPGA 实现运动控制 I/O。
+Weftik 的 HAL 层设计主要面向仿真环境（软件 HAL），但最终可能需要物理 I/O 接口。hm2-rp2040 提供了一个极低成本（$10）的参考路径 — 使用通用 MCU 而非专用 FPGA 实现运动控制 I/O。
 
-| 维度 | Mesa FPGA | hm2-rp2040 (RP2040) | 对 AUDESYS 启示 |
+| 维度 | Mesa FPGA | hm2-rp2040 (RP2040) | 对 Weftik 启示 |
 |------|-----------|---------------------|----------------|
 | 成本 | $150-500+ | $10 | 低成本 MCU 方案可行 |
 | 时序 | FPGA 提供精确逻辑 | PIO 提供精确时序 | 需嵌入式 PIO 或等效外设 |
-| 开发工具 | Xilinx ISE（复杂）| ARM GCC + Pico SDK（免费）| 降低 AUDESYS 硬件准入门槛 |
+| 开发工具 | Xilinx ISE（复杂）| ARM GCC + Pico SDK（免费）| 降低 Weftik 硬件准入门槛 |
 | IP 复用 | Verilog | C 代码 + PIO 程序 | C/PIO 组合更具可移植性 |
 
-### 7.2 双核架构 vs AUDESYS 线程模型
+### 7.2 双核架构 vs Weftik 线程模型
 
-AUDESYS 的 HAL 设计包含多类型线程：RT（实时）、I/O、事件驱动。hm2-rp2040 的双核分工（hm2 逻辑 + 通信 I/O）提供了 MCU 级别上 **任务隔离** 的参考：
+Weftik 的 HAL 设计包含多类型线程：RT（实时）、I/O、事件驱动。hm2-rp2040 的双核分工（hm2 逻辑 + 通信 I/O）提供了 MCU 级别上 **任务隔离** 的参考：
 
 **hm2-rp2040 启示**：
-- 实时 I/O 循环（核心 0 的 Module Handler）可作为 AUDESYS `RT` 线程的原型
-- 核心 1 的 Ethernet/SPI 通信栈对应 AUDESYS `I/O` 线程
-- 共享内存（64kB 寄存器文件）是 AUDESYS Signal/RPC 原语的极简实现：无锁原子读写
+- 实时 I/O 循环（核心 0 的 Module Handler）可作为 Weftik `RT` 线程的原型
+- 核心 1 的 Ethernet/SPI 通信栈对应 Weftik `I/O` 线程
+- 共享内存（64kB 寄存器文件）是 Weftik Signal/RPC 原语的极简实现：无锁原子读写
 
 **差异分析**：
 
-| 维度 | hm2-rp2040 | AUDESYS HAL（设计） |
+| 维度 | hm2-rp2040 | Weftik HAL（设计） |
 |------|-----------|-------------------|
 | CPU 架构 | Cortex-M0+ 双核 SMP | Linux x86_64 / ARM |
 | RT 实现 | Cortex-M0+ 确定性（无 OS） | PREEMPT_RT + SCHED_FIFO |
@@ -666,18 +666,18 @@ AUDESYS 的 HAL 设计包含多类型线程：RT（实时）、I/O、事件驱�
 | 隔离 | 硬件缓存无关（M0+ 无 cache） | Linux cache thrashing 需关注 |
 | 扩展 | 2 核固定 | 任意多线程 |
 
-### 7.3 寄存器文件 vs AUDESYS 信号原语
+### 7.3 寄存器文件 vs Weftik 信号原语
 
-hm2-rp2040 使用的 hostmot2 64kB **寄存器文件**（register file）与 AUDESYS 的信号原语（Signal / StreamChannel / RPC）在设计理念上有共通之处：
+hm2-rp2040 使用的 hostmot2 64kB **寄存器文件**（register file）与 Weftik 的信号原语（Signal / StreamChannel / RPC）在设计理念上有共通之处：
 
-| hostmot2 概念 | AUDESYS 等价 |
+| hostmot2 概念 | Weftik 等价 |
 |-------------|-------------|
 | IDROM + 寄存器偏移 | Signal 命名空间 |
 | 32-bit 寄存器 | 14 种类型 (int/float/string/blob) |
 | Module 实例 -> 寄存器区域 | Signal group / StreamChannel |
 | FIFO 寄存器（未实现）| RPC 调用 |
 
-AUDESYS 可借鉴 hostmot2 的 **寄存器映射** 设计优势：
+Weftik 可借鉴 hostmot2 的 **寄存器映射** 设计优势：
 - **确定性访问**: 32-bit 寄存器的偏移量计算简单（无动态内存分配）
 - **可预测延迟**: 共享内存的 R/W 时间恒定（O(1)）
 - **结构透明**: IDROM 使运行时能够自描述寄存器布局
@@ -693,16 +693,16 @@ RP2040 的 **PIO (Programmable I/O)** 是 hm2-rp2040 未来的核心技术优势
 | PWM 生成 | pwmgen | 1us-1ms 分辨率 |
 | UART/SPI/I2C 协议 | uart/bspi | 标准协议 |
 
-AUDESYS 在未来设计嵌入式 I/O 子系统时，可考虑以下路径：
-1. **PIO 级抽象**: 如果 AUDESYS Simulator 未来需要硬件 I/O 接口，可采用类似 PIO 的灵活时序单元
-2. **RP2040/RP2350 集成**: Pico 平台的广泛可用性使其成为 AUDESYS physical I/O 的理想候选项
+Weftik 在未来设计嵌入式 I/O 子系统时，可考虑以下路径：
+1. **PIO 级抽象**: 如果 Weftik Simulator 未来需要硬件 I/O 接口，可采用类似 PIO 的灵活时序单元
+2. **RP2040/RP2350 集成**: Pico 平台的广泛可用性使其成为 Weftik physical I/O 的理想候选项
 3. **litehm2 对比**: LiteX FPGA 生态 vs RP2040 PIO — PIO 更低成本且无 FPGA 工具链依赖
 
 ### 7.5 hostmot2 模块化设计的借鉴
 
-Mesa hostmot2 的 **模块化 FPGA 配置** 设计为 AUDESYS 的 HAL 模块构成提供了架构参考：
+Mesa hostmot2 的 **模块化 FPGA 配置** 设计为 Weftik 的 HAL 模块构成提供了架构参考：
 
-| hostmot2 概念 | AUDESYS 等价（规划）| 借鉴 |
+| hostmot2 概念 | Weftik 等价（规划）| 借鉴 |
 |-------------|-------------------|------|
 | Module Descriptor | HAL 模块定义 | 编译时注册 vs 动态加载 |
 | Pin Descriptor | Signal 路由 | 灵活性 = 配置复杂度 |
@@ -715,7 +715,7 @@ Mesa hostmot2 的 **模块化 FPGA 配置** 设计为 AUDESYS 的 HAL 模块构�
 
 RP2040 的成功已催生了 Raspberry Pi 的第二代产品 — **RP2350**。RP2350 相比 RP2040 的关键升级：
 
-| 特性 | RP2040 | RP2350 | AUDESYS 意义 |
+| 特性 | RP2040 | RP2350 | Weftik 意义 |
 |------|--------|--------|--------------|
 | 双核 | Cortex-M0+ @ 133MHz | Cortex-M33 @ 150MHz + FPU | FPU 对浮点 RT 计算至关重要 |
 | PIO 数量 | 8 个 | 8 个（增强指令集） | 同等的灵活 I/O 可编程性 |
@@ -723,22 +723,22 @@ RP2040 的成功已催生了 Raspberry Pi 的第二代产品 — **RP2350**。RP
 | 安全 | 无 | TrustZone + Crypto Cell | RT 代码保护 |
 | 价格 | $1-4 | 待定（预计相近）| 成本基本不变 |
 
-**RP2350 对 AUDESYS 的意义**：RP2350 的 TrustZone 安全机制和硬件加密单元（Crypto Cell）为嵌入式 HAL 设备提供了 RT 代码保护能力。对于 AUDESYS 的物理 I/O 原型，RP2350 是一个比 RP2040 更适合长期使用的平台，特别是当 HAL 设备需要安全启动和安全通信时。
+**RP2350 对 Weftik 的意义**：RP2350 的 TrustZone 安全机制和硬件加密单元（Crypto Cell）为嵌入式 HAL 设备提供了 RT 代码保护能力。对于 Weftik 的物理 I/O 原型，RP2350 是一个比 RP2040 更适合长期使用的平台，特别是当 HAL 设备需要安全启动和安全通信时。
 
-RP2040/RP2350 生态为 AUDESYS 提供了一条 **渐进式硬件 HAL 演进路径**：
+RP2040/RP2350 生态为 Weftik 提供了一条 **渐进式硬件 HAL 演进路径**：
 
 1. **Phase 0 原型阶段**：RP2040 + W5500-EVB-Pico，$10 成本，纯数字 I/O，验证 hm2-rp2040 协议栈
 2. **Phase 1 验证阶段**：RP2350 开发板，增加 FPU 浮点运算能力，支持更复杂的实时控制算法
 3. **Phase 2 生产阶段**：定制 RP2350 PCB，集成 TrustZone 安全、加密通信、多协议 I/O
 
-这条路径与 AUDESYS 的 Phase 0 → Phase 1 → Phase 2 演进完全吻合，RP2040/RP2350 可作为 AUDESYS 物理 HAL 的标准硬件平台。
-AUDESYS 可借鉴 Mesa hostmot2 的设计哲学 — **编译时确定 I/O 布局** 而非动态发现/绑定（对于 RT 部分），以牺牲灵活性换取确定性和 RT 性能。
+这条路径与 Weftik 的 Phase 0 → Phase 1 → Phase 2 演进完全吻合，RP2040/RP2350 可作为 Weftik 物理 HAL 的标准硬件平台。
+Weftik 可借鉴 Mesa hostmot2 的设计哲学 — **编译时确定 I/O 布局** 而非动态发现/绑定（对于 RT 部分），以牺牲灵活性换取确定性和 RT 性能。
 
 ### 7.6 Ethernet 实时通信对比
 
-hm2-rp2040 使用的 **hm2_eth 协议** 与 AUDESYS 的 JSON-RPC/REST 规划在通信目标上有本质区别：
+hm2-rp2040 使用的 **hm2_eth 协议** 与 Weftik 的 JSON-RPC/REST 规划在通信目标上有本质区别：
 
-| 维度 | hm2_eth | AUDESYS（规划）|
+| 维度 | hm2_eth | Weftik（规划）|
 |------|---------|---------------|
 | 延迟目标 | < 0.1ms (RT servo) | ~ms (simulation debug) |
 | 协议 | 自定义 UDP | JSON-RPC / REST |
@@ -746,57 +746,57 @@ hm2-rp2040 使用的 **hm2_eth 协议** 与 AUDESYS 的 JSON-RPC/REST 规划在�
 | 丢失策略 | 超时 + 错误计数器 | 请求重试 |
 | 多路复用 | 点对点专用网线 | JSON / HTTP 多设备 |
 
-hm2_eth 使用 `iptables` 链 `hm2-eth-rules-output` 隔离 LinuxCNC 的网络流量，确保 RT 线程不被其他网络干扰。AUDESYS 在设计实时通信时可借鉴**专用网卡/接口 + 通信隔离**的理念。
+hm2_eth 使用 `iptables` 链 `hm2-eth-rules-output` 隔离 LinuxCNC 的网络流量，确保 RT 线程不被其他网络干扰。Weftik 在设计实时通信时可借鉴**专用网卡/接口 + 通信隔离**的理念。
 
 ### 7.7 嵌入式实时 I/O 的设计启示
 
 hm2-rp2040 展示了 **MCU 级 I/O 设备** 如何通过简单协议与主机连接:
 
-| 启示 | 说明 | AUDESYS 应用 |
+| 启示 | 说明 | Weftik 应用 |
 |------|------|-------------|
-| 内核分离 | I/O 逻辑 vs 应用逻辑 | AUDESYS 可将 HAL 部署在独立 MCU |
-| 简单协议 | hostmot2 寄存器映射 = 强类型 RPC proto | AUDESYS HAL 可定义二进制协议 |
-| 配置过滤 | iptables 隔离 RT 流量 | AUDESYS 需网络 QoS |
+| 内核分离 | I/O 逻辑 vs 应用逻辑 | Weftik 可将 HAL 部署在独立 MCU |
+| 简单协议 | hostmot2 寄存器映射 = 强类型 RPC proto | Weftik HAL 可定义二进制协议 |
+| 配置过滤 | iptables 隔离 RT 流量 | Weftik 需网络 QoS |
 | 成本效率 | $10 的 W5500-EVB-Pico | 物理 HAL 原型的最佳起点 |
 
-### 7.7.5 RP2040/RP2350 作为 AUDESYS 物理 HAL 硬件平台
+### 7.7.5 RP2040/RP2350 作为 Weftik 物理 HAL 硬件平台
 
-hm2-rp2040 项目的最大参考价值在于它证明了 **$10 的 RP2040 芯片可以承载 hostmot2 运动控制协议栈**。这为 AUDESYS 的物理 HAL 硬件实现提供了一条低成本、可验证的参考路径：
+hm2-rp2040 项目的最大参考价值在于它证明了 **$10 的 RP2040 芯片可以承载 hostmot2 运动控制协议栈**。这为 Weftik 的物理 HAL 硬件实现提供了一条低成本、可验证的参考路径：
 
-1. **协议栈移植参考**：hm2-rp2040 的 W5500 Ethernet 驱动（W5500 ioLibrary_Driver）和 SPI Slave 实现，可直接作为 AUDESYS 物理 I/O 芯片的通信层参考
-2. **双核任务隔离**：核心 0 的 Module Handler 循环对应 AUDESYS 的 RT 线程，核心 1 的通信栈对应 I/O 线程 — 这是 MCU 级别 RT/I/O 隔离的极简实现
-3. **PIO 作为 I/O 加速器**：RP2040 的 PIO 状态机（8 个）可替代 FPGA 的部分功能，生成精确时序的 Step/Dir 脉冲，为 AUDESYS 物理 HAL 提供确定性 I/O
-4. **渐进式硬件演进**：RP2040 → RP2350 的升级路径（FPU、TrustZone、安全启动）与 AUDESYS 的 Phase 0 → Phase 1 → Phase 2 演进完全吻合
+1. **协议栈移植参考**：hm2-rp2040 的 W5500 Ethernet 驱动（W5500 ioLibrary_Driver）和 SPI Slave 实现，可直接作为 Weftik 物理 I/O 芯片的通信层参考
+2. **双核任务隔离**：核心 0 的 Module Handler 循环对应 Weftik 的 RT 线程，核心 1 的通信栈对应 I/O 线程 — 这是 MCU 级别 RT/I/O 隔离的极简实现
+3. **PIO 作为 I/O 加速器**：RP2040 的 PIO 状态机（8 个）可替代 FPGA 的部分功能，生成精确时序的 Step/Dir 脉冲，为 Weftik 物理 HAL 提供确定性 I/O
+4. **渐进式硬件演进**：RP2040 → RP2350 的升级路径（FPU、TrustZone、安全启动）与 Weftik 的 Phase 0 → Phase 1 → Phase 2 演进完全吻合
 
-对于 AUDESYS 的硬件 HAL 原型开发，RP2040 + W5500-EVB-Pico 是目前性价比最高的起点 — $10 成本即可获得完整的 Ethernet 运动控制 I/O 能力。
+对于 Weftik 的硬件 HAL 原型开发，RP2040 + W5500-EVB-Pico 是目前性价比最高的起点 — $10 成本即可获得完整的 Ethernet 运动控制 I/O 能力。
 
-hm2-rp2040 的 W5500 通信架构特别值得 AUDESYS 关注：W5500 是一个 8 Socket 的硬件 TCP/IP 控制器，所有协议栈处理（ARP、IP、TCP/UDP）均在硬件级别完成，RP2040 仅需通过 SPI 读写 Socket 寄存器。这意味着：
+hm2-rp2040 的 W5500 通信架构特别值得 Weftik 关注：W5500 是一个 8 Socket 的硬件 TCP/IP 控制器，所有协议栈处理（ARP、IP、TCP/UDP）均在硬件级别完成，RP2040 仅需通过 SPI 读写 Socket 寄存器。这意味着：
 
-| 层面 | W5500 实现 | AUDESYS 启示 |
+| 层面 | W5500 实现 | Weftik 启示 |
 |------|-----------|-------------|
 | 物理层 | SPI（MCU ↔ W5500）| 嵌入式 HAL 设备可用 SPI/Ethernet 通用接口 |
 | 数据链路层 | W5500 硬件 MAC | 嵌入式 HAL 无需实现 MAC 驱动 |
 | 网络层 | W5500 硬件 IP | 嵌入式 HAL 无需实现 IP 协议栈 |
 | 传输层 | W5500 硬件 UDP | 嵌入式 HAL 仅需 UDP 应用层逻辑 |
-| 应用层 | hostmot2 寄存器映射 | AUDESYS HAL 可定义简洁的二进制协议 |
+| 应用层 | hostmot2 寄存器映射 | Weftik HAL 可定义简洁的二进制协议 |
 
-这种分层解耦使嵌入式 HAL 设备的软件实现极简化 — RP2040 核心 1 仅需约 2000 行 C 代码即可完成完整的 Ethernet 通信，包括 UDP 协议、序列号管理、丢包检测。AUDESYS 在设计嵌入式 HAL 设备时，可参考这种 **硬件卸载 + 极简软件** 的分层架构。
+这种分层解耦使嵌入式 HAL 设备的软件实现极简化 — RP2040 核心 1 仅需约 2000 行 C 代码即可完成完整的 Ethernet 通信，包括 UDP 协议、序列号管理、丢包检测。Weftik 在设计嵌入式 HAL 设备时，可参考这种 **硬件卸载 + 极简软件** 的分层架构。
 ### 7.8 综合评价
 
 | 维度 | 评分 | 说明 |
 |------|------|------|
 | 成熟度 | 低 | GPIO 仅实现，核心模块 (stepgen/pwmgen/encoder) 未完成 |
 | 开发活跃 | 中 | Seb 持续维护 hm2-rp2040/ping tests |
-| AUDESYS HAL 参考 | 高 | 双核隔离 + 寄存器映射 + PIO 加速 |
-| AUDESYS 物理 I/O 候选 | 很高 | $10 成本 + 开源 + hm2_eth 兼容 |
+| Weftik HAL 参考 | 高 | 双核隔离 + 寄存器映射 + PIO 加速 |
+| Weftik 物理 I/O 候选 | 很高 | $10 成本 + 开源 + hm2_eth 兼容 |
 | 学习价值 | 高 | hostmot2 协议、RP2040 双核编程 |
 | 生产准备 | 否 | 仅适合实验/开发，不建议生产部署 |
 
-hm2-rp2040 项目当前虽处于早期阶段（仅 GPIO 实现），但其**双核架构、共享内存协议**对 AUDESYS 的设计参考价值远超过当前功能实现。它展示了一个实时通信中间件的 MCU 微缩实现，与 AUDESYS 的 HAL Signal/StreamChannel 在设计理念上高度契合。
+hm2-rp2040 项目当前虽处于早期阶段（仅 GPIO 实现），但其**双核架构、共享内存协议**对 Weftik 的设计参考价值远超过当前功能实现。它展示了一个实时通信中间件的 MCU 微缩实现，与 Weftik 的 HAL Signal/StreamChannel 在设计理念上高度契合。
 
-AUDESYS 可将 hm2-rp2040 + W5500-EVB-Pico 作为：
-1. **物理 HAL 的原型平台**: $10 成本即可开始 AUDESYS 硬件 I/O 实验
-2. **通信协议参考**: hostmot2 的寄存器文件映射 vs AUDESYS 的 Signal/StreamChannel
+Weftik 可将 hm2-rp2040 + W5500-EVB-Pico 作为：
+1. **物理 HAL 的原型平台**: $10 成本即可开始 Weftik 硬件 I/O 实验
+2. **通信协议参考**: hostmot2 的寄存器文件映射 vs Weftik 的 Signal/StreamChannel
 3. **RT/I/O 任务隔离**: 双核分工的 MCU 参考
 
 ---

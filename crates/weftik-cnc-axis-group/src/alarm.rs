@@ -79,10 +79,7 @@ pub fn generate_alarm_program(cfg: &AxisGroupConfig) -> HalProgram {
         // Load pos_fault → if non-zero, set R_ANY_FAULT = 1
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_SCRATCH),
-                Operand::SignalName(format!("{}.pos_fault", pfx)),
-            ],
+            vec![Operand::Register(R_SCRATCH), Operand::SignalName(format!("{}.pos_fault", pfx))],
         ));
         cmp_ne_imm(&mut instructions, R_SCRATCH, 0.0, R_SCRATCH);
         let skip_pos = emit_jump_if_not(&mut instructions, R_SCRATCH, 0);
@@ -93,10 +90,7 @@ pub fn generate_alarm_program(cfg: &AxisGroupConfig) -> HalProgram {
         // Load vel_fault → if non-zero, set R_ANY_FAULT = 1
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_SCRATCH),
-                Operand::SignalName(format!("{}.vel_fault", pfx)),
-            ],
+            vec![Operand::Register(R_SCRATCH), Operand::SignalName(format!("{}.vel_fault", pfx))],
         ));
         cmp_ne_imm(&mut instructions, R_SCRATCH, 0.0, R_SCRATCH);
         let skip_vel = emit_jump_if_not(&mut instructions, R_SCRATCH, 0);
@@ -118,10 +112,7 @@ pub fn generate_alarm_program(cfg: &AxisGroupConfig) -> HalProgram {
     // Load current state
     instructions.push(Instruction::new(
         Opcode::Load,
-        vec![
-            Operand::Register(R_STATE),
-            Operand::SignalName(format!("{}.alarm_state", cfg.name)),
-        ],
+        vec![Operand::Register(R_STATE), Operand::SignalName(format!("{}.alarm_state", cfg.name))],
     ));
 
     // Default: new_state = R_ANY_FAULT ? WARNING : NORMAL
@@ -159,10 +150,8 @@ fn cmp_ne_imm(instructions: &mut Vec<Instruction>, reg: u8, imm: f64, dst: u8) {
     let temp = R_SCRATCH; // use it as temp before overwriting
     instructions.push(Instruction::load_imm(temp, HalValue::F64(imm)));
     copy_reg(instructions, reg, dst, R_ZERO);
-    instructions.push(Instruction::new(
-        Opcode::Neq,
-        vec![Operand::Register(dst), Operand::Register(temp)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Neq, vec![Operand::Register(dst), Operand::Register(temp)]));
 }
 
 fn emit_jump_if_not(instructions: &mut Vec<Instruction>, cond_reg: u8, _placeholder: u32) -> usize {
@@ -206,10 +195,7 @@ mod tests {
     fn test_alarm_state_signal_present() {
         let cfg = AxisGroupConfig::default_xyz();
         let prog = generate_alarm_program(&cfg);
-        let has_alarm = prog
-            .signals
-            .iter()
-            .any(|s| s.hal_signal_name == "group.0.alarm_state");
+        let has_alarm = prog.signals.iter().any(|s| s.hal_signal_name == "group.0.alarm_state");
         assert!(has_alarm);
     }
 
@@ -217,10 +203,7 @@ mod tests {
     fn test_any_fault_signal_present() {
         let cfg = AxisGroupConfig::default_xyz();
         let prog = generate_alarm_program(&cfg);
-        let has_any = prog
-            .signals
-            .iter()
-            .any(|s| s.hal_signal_name == "group.0.any_fault");
+        let has_any = prog.signals.iter().any(|s| s.hal_signal_name == "group.0.any_fault");
         assert!(has_any);
     }
 
@@ -228,16 +211,10 @@ mod tests {
     fn test_per_axis_fault_signals() {
         let cfg = AxisGroupConfig::default_xyz();
         let prog = generate_alarm_program(&cfg);
-        let pos_faults: Vec<_> = prog
-            .signals
-            .iter()
-            .filter(|s| s.hal_signal_name.ends_with(".pos_fault"))
-            .collect();
-        let vel_faults: Vec<_> = prog
-            .signals
-            .iter()
-            .filter(|s| s.hal_signal_name.ends_with(".vel_fault"))
-            .collect();
+        let pos_faults: Vec<_> =
+            prog.signals.iter().filter(|s| s.hal_signal_name.ends_with(".pos_fault")).collect();
+        let vel_faults: Vec<_> =
+            prog.signals.iter().filter(|s| s.hal_signal_name.ends_with(".vel_fault")).collect();
         assert_eq!(pos_faults.len(), 3);
         assert_eq!(vel_faults.len(), 3);
     }

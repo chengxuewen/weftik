@@ -112,7 +112,7 @@ If count is 0, the change was NOT compiled. `theia build` only bundles pre-compi
 # Option 1: App-level build (compiles all linked extensions)
 cd apps/studio && npm run build
 # Option 2: Manual compilation (needs node_modules symlink)
-cd theia-extensions/audesys-xx && ln -sf ../../apps/studio/node_modules/@types node_modules/ && npm run build
+cd theia-extensions/weftik-xx && ln -sf ../../apps/studio/node_modules/@types node_modules/ && npm run build
 ```
 **Seen**: 2026-07-29 — LD palette fix was source-only for hours because lib/ was stale.
 

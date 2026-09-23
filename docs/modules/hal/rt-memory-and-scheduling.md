@@ -1,4 +1,4 @@
-# AUDESYS 实时内存与可调度性设计
+# Weftik 实时内存与可调度性设计
 
 > 生成日期：2026-07-09
 > 设计目标：RT 热路径零堆分配 + Rate Monotonic 可调度性保证
@@ -30,9 +30,9 @@ LinuxCNC 是所有参考系统中 RT 内存管理最成熟的方案。核心特�
 - `mlockall(MCL_CURRENT|MCL_FUTURE)` 防缺页
 - RTAPI task 创建时验证所有内存已锁定
 
-### 1.2 AUDESYS 方案：预分配池 + mlockall
+### 1.2 Weftik 方案：预分配池 + mlockall
 
-借鉴 LinuxCNC 的"预分配—热路径零分配"模式，AUDESYS 用 Rust 的 `PreAllocPool` 替代 C 的共享内存段。
+借鉴 LinuxCNC 的"预分配—热路径零分配"模式，Weftik 用 Rust 的 `PreAllocPool` 替代 C 的共享内存段。
 
 #### 数据结构
 
@@ -176,7 +176,7 @@ hal:
 
 ### 1.4 与 LinuxCNC 差异
 
-| | LinuxCNC `hal_malloc` | AUDESYS `PreAllocPool` |
+| | LinuxCNC `hal_malloc` | Weftik `PreAllocPool` |
 |---|---|---|
 | 分配时机 | `initf` 初始化函数 | `activateComponent()` / YAML 配置 |
 | RT 热路径 | ❌ 永不分配 | ❌ 永不分配 |
@@ -203,7 +203,7 @@ if (period_ns % base_period_ns != 0) {
 
 没有这个约束，无法保证低优先级长周期线程不被高优先级短周期线程饿死。
 
-### 2.2 AUDESYS 方案：声明式 + 编译时验证
+### 2.2 Weftik 方案：声明式 + 编译时验证
 
 ```rust
 impl HalCore {

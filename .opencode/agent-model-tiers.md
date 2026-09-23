@@ -1,11 +1,11 @@
-# AUDESYS 模型分层体系
+# Weftik 模型分层体系
 
 > 五层模型映射: premium-max / premium / fast / vision / lite
 > 双供应商架构: DeepSeek 官方直连 + New API 网关聚合
 
 ## 架构
 
-AUDESYS 通过两条独立路径接入大模型:
+Weftik 通过两条独立路径接入大模型:
 
 | 供应商 | 接入方式 | 特点 |
 |--------|----------|------|

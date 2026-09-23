@@ -1,7 +1,7 @@
 ---
 name: openspec-apply
 description: >-
-  Implement tasks from an AUDESYS change proposal. Use when the user wants to
+  Implement tasks from an Weftik change proposal. Use when the user wants to
   start implementing, continue implementation, or work through tasks in the
   Rust + HAL + amw_inproc (multi-language) codebase.
   Cross-references openspec/specs/ for API contracts, test-first execution
@@ -13,12 +13,12 @@ metadata:
   author: openspec
   version: "2.0"
   category: workflow
-  project: AUDESYS
+  project: Weftik
 ---
 
-# OpenSpec Apply — AUDESYS
+# OpenSpec Apply — Weftik
 
-Implement tasks from an AUDESYS change proposal. Work through design-specified tasks in the AUDESYS codebase (Rust + HAL + amw_inproc — multi-language, D10/D11/D19).
+Implement tasks from an Weftik change proposal. Work through design-specified tasks in the Weftik codebase (Rust + HAL + amw_inproc — multi-language, D10/D11/D19).
 
 ---
 
@@ -45,7 +45,7 @@ Read these files in order to understand the full scope:
 - `.sisyphus/plans/<change-name>/design.md` — How
 - `.sisyphus/plans/<change-name>/tasks.md` — Tasks
 
-Also read relevant AUDESYS source files referenced in the design for context.
+Also read relevant Weftik source files referenced in the design for context.
 
 ### 3. Show current progress
 
@@ -170,19 +170,19 @@ If a task adds a new cross-crate API and no spec exists in `openspec/specs/`:
 
 ---
 
-## AUDESYS Build & Verification Commands
+## Weftik Build & Verification Commands
 
 For use during implementation:
 
 ```bash
 # Build specific crate
-cargo build --package audesys-hal-core
+cargo build --package weftik-hal-core
 
 # Debug build
 cargo build
 
 # Run tests
-cargo test --package audesys-hal-core
+cargo test --package weftik-hal-core
 
 # Check formatting
 cargo fmt --check

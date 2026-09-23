@@ -25,7 +25,7 @@
 | Liveliness 在控制面 | 组件心跳丢失不是微秒级事件；Zenoh 原生处理，100ms 级足够 |
 | Security Domain 在配置面 | 纯 meta 标记，zero runtime overhead；静态隔离，不参与 RT 路径 |
 | 各 amw 实现自行解释 HalQoS | 同 HalTransport/HalDiscovery 哲学。inproc 无 Liveliness 是语义正确，不是缺失 |
-| 不做 DDS 式 QoS 映射（reliable/best-effort 等） | AUDESYS 的 Signal 天然 latest-value, StreamChannel 有 QueuePolicy。那是另一个维度，不混合 |
+| 不做 DDS 式 QoS 映射（reliable/best-effort 等） | Weftik 的 Signal 天然 latest-value, StreamChannel 有 QueuePolicy。那是另一个维度，不混合 |
 
 ### 17.3 类型系统
 
@@ -71,7 +71,7 @@
 | 决策 | 理由 |
 |------|------|
 | Config Barrier 而非实时应用 | mid-cycle 配置变更 = segfault 风险。队列 + 周期边界批量应用是最小化安全保证 |
-| LockLevel 从运行时锁 → 权限分级 | LinuxCNC 的 LockLevel 依赖开发者自觉在正确时机调用；AUDESYS 作为多进程系统必须强制 |
+| LockLevel 从运行时锁 → 权限分级 | LinuxCNC 的 LockLevel 依赖开发者自觉在正确时机调用；Weftik 作为多进程系统必须强制 |
 | `Run` 级别拒绝所有 RPC（含参数修改） | LinuxCNC 允许 Run 时改参数（hal_set_pin），但那是单进程模型的安全默认。多进程 Supervisor 应显式降级为 `Params` 才允许 |
 | Config Generation 递增 + Signal 确认 | 异步系统必须可观测——Supervisor 不能靠"大概生效了"。G 数递增 + Signal 提供确定性确认 |
 | pending_config 用 bounded channel | 防止 Supervisor 无限堆积配置命令。队列满 → ConfigQueueFull error（Supervisor 自行重试） |

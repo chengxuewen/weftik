@@ -136,9 +136,9 @@ ECS-700 的控制网络设计体现了大型 DCS 的典型分层冗余架构：
 - **Pnet（过程信息网）**：连接数据服务器、历史服务器到上层管理系统（MES/ERP）的千兆以太网。
 - **MNET（管理网）**：企业级网络，连接 ERP/Business Intelligence 等。
 
-#### AUDESYS 关联分析：控制系统内部通信模型
+#### Weftik 关联分析：控制系统内部通信模型
 
-ECS-700 的操作站与控制站之间的 SCnet 通信模式实质上对应 AUDESYS HAL 的 **StreamChannel** 原语：
+ECS-700 的操作站与控制站之间的 SCnet 通信模式实质上对应 Weftik HAL 的 **StreamChannel** 原语：
 - 操作站持续订阅多个控制站的实时过程变量（PV）
 - 数据流是时间序列化的、有缓冲的多写多读模式
 - SCnet 的网络负载控制在 30% 以内，确保确定性
@@ -478,7 +478,7 @@ TPT（Time-series Pre-trained Transformer）是中控在工业 AI 领域的旗�
 | 本地部署 | 云化部署（Cloud-based） | UCS云化控制架构 |
 | 定期维护合同 | 全生命周期管家服务 | PlantMate 5S店 |
 
-这种转型对AUDESYS的启示：仿真平台也可以考虑SaaS化交付模式（Simulation as a Service），降低用户初始采用门槛。
+这种转型对Weftik的启示：仿真平台也可以考虑SaaS化交付模式（Simulation as a Service），降低用户初始采用门槛。
 1. **海外品牌认知度**：仍处于品牌建设早期，中东和东南亚以外市场认知有限
 2. **极端高端市场**：在超大型乙烯（200 万吨级）、深海石油平台等领域的业绩积累少于 Honeywell/Emerson
 3. **功能安全认证深度**：TCS-900 虽已有 TÜV SIL3 认证，但缺少核电仪控（IEC 61513）的完整认证体系
@@ -509,7 +509,7 @@ UCS（Universal Control System，产品名 Nyx）是 2024 年发布的颠覆性�
 - **弹性伸缩**：计算资源可根据需求自动扩缩容
 - **OPAF 合规**：积极推动 UCS 实现 O-PAS（Open Process Automation Standard）合规
 
-**对 AUDESYS 的意义**：UCS 的软件定义控制理念与 AUDESYS Runtime 的设计空间高度相关——将控制执行从专用硬件迁移到标准计算平台上，正是"模拟仿真平台"需要解决的难题。
+**对 Weftik 的意义**：UCS 的软件定义控制理念与 Weftik Runtime 的设计空间高度相关——将控制执行从专用硬件迁移到标准计算平台上，正是"模拟仿真平台"需要解决的难题。
 
 ### 6.3 工业 AI 先发战略
 
@@ -557,24 +557,24 @@ PlantMate 是中控独创的 "产品+服务" 融合模式：
 - 生态开放性：积极参与 OPAF、NAMUR 等国际标准组织，推动 UCS 实现 O-PAS 合规，体现与封闭式 DCS 不同的开放理念
 - AI 激进策略：在工业 AI 领域的"All in AI"战略远超同等规模的国际竞争对手（2024 年即推出 TPT 大模型）
 
-### 6.8 与 AUDESYS 设计哲学的异同
+### 6.8 与 Weftik 设计哲学的异同
 
-| 维度 | 中控哲学 | AUDESYS 哲学 | 对比 |
+| 维度 | 中控哲学 | Weftik 哲学 | 对比 |
 |------|---------|-------------|------|
 | 目标领域 | 流程工业 DCS（运行态） | 模拟仿真平台（开发态+运行态） | 互补关系 |
-| 开放性 | 半开放（支持标准协议，核心自研） | 全开放（开源平台，标准化接口） | AUDESYS 更开放 |
-| 冗余策略 | 全硬件冗余 | 软件层可复用的冗余抽象 | AUDESYS 更灵活 |
+| 开放性 | 半开放（支持标准协议，核心自研） | 全开放（开源平台，标准化接口） | Weftik 更开放 |
+| 冗余策略 | 全硬件冗余 | 软件层可复用的冗余抽象 | Weftik 更灵活 |
 | 实时性 | 硬实时（20ms 下限） | 软实时（可配置，仿真可加速） | 不同定位 |
 | AI 集成 | 原生 AI（TPT + UCS） | Phase 3 目标（预留 AI 接口） | 中控更激进 |
-| 跨行业覆盖 | 流程工业为主 | 通用仿真（流程+离散+混合） | AUDESYS 更广 |
+| 跨行业覆盖 | 流程工业为主 | 通用仿真（流程+离散+混合） | Weftik 更广 |
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 HAL 通信模型与 DCS 内部通信对照
 
-AUDESYS HAL 定义的三种通信原语（Signal / StreamChannel / RPC）与 ECS-700 的内部通信模型存在精确的结构映射：
+Weftik HAL 定义的三种通信原语（Signal / StreamChannel / RPC）与 ECS-700 的内部通信模型存在精确的结构映射：
 
 | HAL 原语 | ECS-700 对应通信 | 写入者 | 读取者 | 模式 |
 |---------|-----------------|--------|--------|------|
@@ -584,21 +584,21 @@ AUDESYS HAL 定义的三种通信原语（Signal / StreamChannel / RPC）与 ECS
 
 **关键建筑洞察**：
 
-1. **Signal 与 StreamChannel 不可合并**：ECS-700 的设计验证了 AUDESYS 的 D10 决策——控制器通过 L-BUS 快速轮询 I/O 模块获取最新值（Signal 语义），而操作站订阅控制站数据时需要通过 SCnet 获取时间序列化的缓冲数据（StreamChannel 语义）。两者的服务质量要求（QoS）、延迟预算、通信语义完全不同。
+1. **Signal 与 StreamChannel 不可合并**：ECS-700 的设计验证了 Weftik 的 D10 决策——控制器通过 L-BUS 快速轮询 I/O 模块获取最新值（Signal 语义），而操作站订阅控制站数据时需要通过 SCnet 获取时间序列化的缓冲数据（StreamChannel 语义）。两者的服务质量要求（QoS）、延迟预算、通信语义完全不同。
 
-2. **RPC 的跨域扩展**：ECS-700 的"分域控制"（Matrix Control）要求跨域 RPC 调用支持实时数据跨域通信管理。对 AUDESYS 的启发是，RPC 原语需要考虑**跨域路由**和**操作审计**的能力。
+2. **RPC 的跨域扩展**：ECS-700 的"分域控制"（Matrix Control）要求跨域 RPC 调用支持实时数据跨域通信管理。对 Weftik 的启发是，RPC 原语需要考虑**跨域路由**和**操作审计**的能力。
 
-3. **安全隔离**：TCS-900 SIS 的 SafeEthernet 与 SCnet 是物理隔离的，安全关键通信（Safety-Critical Communication）不能与非安全通信共用同一物理介质。AUDESYS 的 amw（AUDESYS Middleware）需要支持**Security Domain**维度的隔离，这与 D16 决策中的 Security Domain 在配置面静态标记一致。
+3. **安全隔离**：TCS-900 SIS 的 SafeEthernet 与 SCnet 是物理隔离的，安全关键通信（Safety-Critical Communication）不能与非安全通信共用同一物理介质。Weftik 的 amw（Weftik Middleware）需要支持**Security Domain**维度的隔离，这与 D16 决策中的 Security Domain 在配置面静态标记一致。
 
 ### 7.2 冗余模型对 HAL 的启示
 
-ECS-700 的全冗余理念为 AUDESYS HAL 的 **amw 中间件抽象层**提供参考：
+ECS-700 的全冗余理念为 Weftik HAL 的 **amw 中间件抽象层**提供参考：
 
-| ECS-700 设计 | AUDESYS 启示 |
+| ECS-700 设计 | Weftik 启示 |
 |-------------|-------------|
 | 控制器 1:1 热备（Hot-Standby） | amw 传输层（HalTransport）需支持主备切换，但设计为**可插拔实现**（amw_inproc 无需冗余） |
 | 双机同步通道（10Mbps 专用） | HAL 层面不实现冗余（属于 amw 实现层的职责），但需提供**故障通知回调**给上层 |
-| I/O 模块冗余（双模块同时工作+无扰切换） | Signal 写入者的物理冗余对订阅者透明。AUDESYS 的 Signal 原语应支持**多物理路径到同一逻辑 Pin 的合并** |
+| I/O 模块冗余（双模块同时工作+无扰切换） | Signal 写入者的物理冗余对订阅者透明。Weftik 的 Signal 原语应支持**多物理路径到同一逻辑 Pin 的合并** |
 | SCnet A/B 双网并行 | StreamChannel 应具备**多路径传输**的抽象能力 |
 | 网络故障时输出安全值 | RPC 调用失败时的**超时+退化处理**机制 |
 
@@ -607,13 +607,13 @@ ECS-700 的全冗余理念为 AUDESYS HAL 的 **amw 中间件抽象层**提供�
 - 超时配置（Timeout Config）
 - 故障切换无需上层感知的透明语义
 
-这与 AUDESYS 的 D11 决策（amw 三极 trait：HalTransport / HalDiscovery / HalQoS）一致——冗余是 Transport 的实现细节，不是协议的一部分。
+这与 Weftik 的 D11 决策（amw 三极 trait：HalTransport / HalDiscovery / HalQoS）一致——冗余是 Transport 的实现细节，不是协议的一部分。
 
 ### 7.3 调度模型的跨领域参考
 
-ECS-700 的调度策略对 AUDESYS 的 D13 决策（四系统混合线程调度）有参考价值：
+ECS-700 的调度策略对 Weftik 的 D13 决策（四系统混合线程调度）有参考价值：
 
-| ECS-700 调度层 | 周期 | AUDESYS 对应 |
+| ECS-700 调度层 | 周期 | Weftik 对应 |
 |---------------|------|-------------|
 | 快速逻辑控制 | 20ms | RT 线程（LinuxCNC 显式函数列表） |
 | 标准 PID 回路 | 100ms | RT 线程（LinuxCNC read→update→write 管线） |
@@ -621,15 +621,15 @@ ECS-700 的调度策略对 AUDESYS 的 D13 决策（四系统混合线程调度�
 | 历史数据/报表 | 异步 | dora-rs 事件驱动 I/O 线程 |
 | 组态下载 | 按需 | RPC 线程（非实时） |
 
-**关键发现**：ECS-700 的 20ms 与 100ms 周期是**硬性的**（受控制器硬件保证），而 500ms-1s 是**柔性的**（由操作系统的普通任务调度负责）。这种"硬+软"混合调度策略与 AUDESYS 的 D13（RT 线程/I/O 线程/流线程 三分）思路一致。
+**关键发现**：ECS-700 的 20ms 与 100ms 周期是**硬性的**（受控制器硬件保证），而 500ms-1s 是**柔性的**（由操作系统的普通任务调度负责）。这种"硬+软"混合调度策略与 Weftik 的 D13（RT 线程/I/O 线程/流线程 三分）思路一致。
 
-**AUDESYS 需要注意**：
-- ECS-700 的 20ms 快周期依赖于**专用确定性以太网协议**，AUDESYS 如果使用标准协议（如 EtherCAT 或 TSN），需要在 amw 抽象层屏蔽协议差异
+**Weftik 需要注意**：
+- ECS-700 的 20ms 快周期依赖于**专用确定性以太网协议**，Weftik 如果使用标准协议（如 EtherCAT 或 TSN），需要在 amw 抽象层屏蔽协议差异
 - 诊断和监控任务（500ms-1s）不能抢占 RT 线程，需要严格的优先级隔离
 
 ### 7.4 类型系统对照
 
-ECS-700 的 I/O 信号类型映射到 AUDESYS 的 14 种统一类型（D12 决策）：
+ECS-700 的 I/O 信号类型映射到 Weftik 的 14 种统一类型（D12 决策）：
 
 | ECS-700 I/O 类型 | HAL 类型 | 备注 |
 |-----------------|---------|------|
@@ -643,41 +643,41 @@ ECS-700 的 I/O 信号类型映射到 AUDESYS 的 14 种统一类型（D12 决�
 | SOE 时间戳 | S64 | 毫秒/微秒精度时间戳 |
 | HART 数字量 | F32 + String（第二变量） | 需扩展支持 |
 
-**启示**：AUDESYS 的 14 种类型对 DCS 领域是充分且必要的。但需注意：
+**启示**：Weftik 的 14 种类型对 DCS 领域是充分且必要的。但需注意：
 - HART 设备同时输出模拟量（4-20mA）+ 数字诊断信息（String），需要 HAL 支持"一个物理通道映射多个逻辑 Pin"
 - SOE 事件需要**纳秒级时间戳**，当前 F64 可满足但需专门约定时间基准
 
 ### 7.5 工程组态平台的参考
 
-ECS-700 的多工程师协同组态平台对 AUDESYS 的 Studio IDE 设计有直接参考：
+ECS-700 的多工程师协同组态平台对 Weftik 的 Studio IDE 设计有直接参考：
 
-| ECS-700 组态特性 | AUDESYS Studio 启示 |
+| ECS-700 组态特性 | Weftik Studio 启示 |
 |-----------------|-------------------|
 | 分布式组态（多人协同） | Studio 需要支持**多人协作编辑**，参考 VS Code Live Share 模式 |
 | 在线单点下载（无扰） | Studio 的 Runtime 部署需要支持**增量更新**，非全量下载 |
 | 组态完整性检查 | Studio 应在编译时执行**拓扑完整性校验**（Pin 连接、类型匹配） |
-| 虚拟工厂仿真 | AUDESYS Simulator 是天然优势——组态完成后可以在仿真环境中验证后再部署到实际 Runtime |
+| 虚拟工厂仿真 | Weftik Simulator 是天然优势——组态完成后可以在仿真环境中验证后再部署到实际 Runtime |
 | 权限管理（操作/组态分离） | Studio 的工程管理需要**RBAC 权限模型** |
-| 硬件配置自动生成 | AUDESYS 的 HAL 拓扑配置应考虑**自动发现**（Discovery）+ **手动配置**双模式 |
+| 硬件配置自动生成 | Weftik 的 HAL 拓扑配置应考虑**自动发现**（Discovery）+ **手动配置**双模式 |
 
 ### 7.6 安全隔离的 HAL 层面考虑
 
 TCS-900 与 ECS-700 的隔离设计对 HAL 的 Security Domain（D16 决策）有参考价值：
 
-- **物理隔离不可行**：AUDESYS 是仿真平台，不可能为安全和非安全通信提供物理隔离的网卡
+- **物理隔离不可行**：Weftik 是仿真平台，不可能为安全和非安全通信提供物理隔离的网卡
 - **标记隔离可行**：在 HAL 层面，通过 amw 的 Security Domain 标记区分安全关键通信（HalQoS.security_domain: "safety"）与普通通信
 - **RT 线程中不检查**：安全域检查应该在配置面（Config Barrier 的 D17 决策），而非 RT 数据面
 - **降级模式**：安全通信路径故障时，应触发配置的安全状态（Fail-Safe Value），而非静默失败
 
 ### 7.7 向 UCS（软件定义控制）的演进启示
 
-UCS (Nyx) 的 "软件定义控制" 理念对 AUDESYS 的长远架构有深远影响：
+UCS (Nyx) 的 "软件定义控制" 理念对 Weftik 的长远架构有深远影响：
 
-1. **当前阶段**：AUDESYS 的 Runtime 模块模拟传统 DCS 控制站的行为（固定循环周期、确定 I/O 映射），这正是 ECS-700 模式
-2. **中期方向**：AUDESYS 的 Simulator 模块天然适合"虚拟 DCS" 概念——在通用计算平台上运行控制逻辑，这正是 UCS 的模式
-3. **长期演进**：如果 AUDESYS 的 Runtime 能实现 UCS 式的"弹性伸缩"（根据负载动态调整计算资源分配），将是从"模拟仿真平台"向"云化控制平台"的跨越
+1. **当前阶段**：Weftik 的 Runtime 模块模拟传统 DCS 控制站的行为（固定循环周期、确定 I/O 映射），这正是 ECS-700 模式
+2. **中期方向**：Weftik 的 Simulator 模块天然适合"虚拟 DCS" 概念——在通用计算平台上运行控制逻辑，这正是 UCS 的模式
+3. **长期演进**：如果 Weftik 的 Runtime 能实现 UCS 式的"弹性伸缩"（根据负载动态调整计算资源分配），将是从"模拟仿真平台"向"云化控制平台"的跨越
 
-**AUDESYS 不应在 Phase 1 追求 UCS 的所有特性**，但应在架构上预留：
+**Weftik 不应在 Phase 1 追求 UCS 的所有特性**，但应在架构上预留：
 - 控制逻辑与物理 I/O 的解耦接口（软件定义 I/O 映射）
 - 计算资源的弹性分配抽象（"控制容器"概念）
 - 确定性网络的抽象层（使 amw_transport 可替换为光纤确定性网络）
@@ -686,24 +686,24 @@ UCS (Nyx) 的 "软件定义控制" 理念对 AUDESYS 的长远架构有深远影
 
 | ECS-700 设计 | 不推荐原因 |
 |-------------|-----------|
-| 专用确定性以太网协议（非标准） | AUDESYS 应基于开放标准（EtherCAT/TSN/OPC UA），有利生态兼容 |
-| 紧耦合的冗余架构（双机同步通道） | AUDESYS 是仿真平台，冗余应在 amw 实现层，HAL 保持简洁 |
+| 专用确定性以太网协议（非标准） | Weftik 应基于开放标准（EtherCAT/TSN/OPC UA），有利生态兼容 |
+| 紧耦合的冗余架构（双机同步通道） | Weftik 是仿真平台，冗余应在 amw 实现层，HAL 保持简洁 |
 | 固定 1:1 热备冗余模式 | 过于僵化，不支持 N:1 或动态故障切换（Phase 1 不需要，但架构应可扩展） |
-| 独有组态文件格式 | AUDESYS 应使用开放格式（JSON/YAML + FlatBuffers），便于互操作 |
-| 硬编码的行业特化功能块 | AUDESYS 应保持通用性，行业特化通过"库"（Library）机制而非核心代码实现 |
+| 独有组态文件格式 | Weftik 应使用开放格式（JSON/YAML + FlatBuffers），便于互操作 |
+| 硬编码的行业特化功能块 | Weftik 应保持通用性，行业特化通过"库"（Library）机制而非核心代码实现 |
 
-### 7.9 对 AUDESYS 战略路线的关键洞察
+### 7.9 对 Weftik 战略路线的关键洞察
 
-1. **中控的 "DCS→UCS→AI" 路径**映射到 AUDESYS 的 "仿真→运行时→AI 集成" 路径：Phase 1 提供传统 DCS 仿真，Phase 2-3 考虑软件定义控制和 AI 辅助优化
-2. **中控的 PlantMate 5S 店模式**提示 AUDESYS 未来可考虑"仿真平台即服务"（Simulation as a Service）的商业模式
-3. **中控的 "4+1" 数据平台战略**提示 AUDESYS 的 Simulator 需要内置**数据采集和回放**功能，为 AI 训练提供数据基础
-4. **中控在 OPAF 中的角色**提示 AUDESYS 应关注 O-PAS 标准，确保 HAL 通信模型与开放自动化标准兼容
+1. **中控的 "DCS→UCS→AI" 路径**映射到 Weftik 的 "仿真→运行时→AI 集成" 路径：Phase 1 提供传统 DCS 仿真，Phase 2-3 考虑软件定义控制和 AI 辅助优化
+2. **中控的 PlantMate 5S 店模式**提示 Weftik 未来可考虑"仿真平台即服务"（Simulation as a Service）的商业模式
+3. **中控的 "4+1" 数据平台战略**提示 Weftik 的 Simulator 需要内置**数据采集和回放**功能，为 AI 训练提供数据基础
+4. **中控在 OPAF 中的角色**提示 Weftik 应关注 O-PAS 标准，确保 HAL 通信模型与开放自动化标准兼容
 
 ### 7.10 实时性保障
 
-ECS-700 的实时性声明（20ms 控制周期、< 1ms 端到端延迟）为 AUDESYS 的延迟预算设计提供了参考基准。根据 D13 决策中的延迟声明规范，每条延迟声明需附带前提条件和验证方法：
+ECS-700 的实时性声明（20ms 控制周期、< 1ms 端到端延迟）为 Weftik 的延迟预算设计提供了参考基准。根据 D13 决策中的延迟声明规范，每条延迟声明需附带前提条件和验证方法：
 
-| ECS-700 延迟声明 | 前提条件 | AUDESYS 对应 | 验证方法 |
+| ECS-700 延迟声明 | 前提条件 | Weftik 对应 | 验证方法 |
 |------------------|---------|-------------|---------|
 | 20ms 控制周期 | 快速逻辑控制任务，非标准 PID | RT 线程周期（configurable） | cyclictest / linux-perf |
 | < 1ms 端到端延迟 | 中控专用确定性以太网协议 | amw_inproc < 1us / amw_zenoh ~100us | rdtsc 打点 + Wireshark 抓包 |
@@ -711,13 +711,13 @@ ECS-700 的实时性声明（20ms 控制周期、< 1ms 端到端延迟）为 AUD
 | 100ms 标准控制周期 | 绝大多数 PID 回路 | 标准 RT 线程 | cyclictest |
 | 控制器 CPU < 40% 负荷 | 满配 I/O 负载 | 模拟信号 | top / htop / perf |
 
-AUDESYS 的仿真场景不需要与物理 DCS 完全一致的延迟保证，但需要提供可配置的延迟模型，使用户能够在仿真环境中模拟不同的实时性条件。
+Weftik 的仿真场景不需要与物理 DCS 完全一致的延迟保证，但需要提供可配置的延迟模型，使用户能够在仿真环境中模拟不同的实时性条件。
 
 ### 7.11 协议栈抽象
 
-ECS-700 的多协议支持策略（Modbus, PROFIBUS, FF, HART, EtherNet/IP, PROFINET 等）对 AUDESYS 的 amw 设计启示：
+ECS-700 的多协议支持策略（Modbus, PROFIBUS, FF, HART, EtherNet/IP, PROFINET 等）对 Weftik 的 amw 设计启示：
 
-| ECS-700 协议 | 实现方式 | AUDESYS amw 启示 |
+| ECS-700 协议 | 实现方式 | Weftik amw 启示 |
 |-------------|---------|-----------------|
 | PROFIBUS-DP | 专用 COM721-S 硬件模块 | amw_transport trait 对应不同协议栈实现 |
 | Modbus RTU/ASCII | COM741-S 串行通信模块 | amw_serial transport 实现 |
@@ -726,26 +726,26 @@ ECS-700 的多协议支持策略（Modbus, PROFIBUS, FF, HART, EtherNet/IP, PROF
 | EtherNet/IP / PROFINET | 通信模块支持 | 标准工业以太网协议栈 |
 | OPC UA | 软件接口（OMC/UCS） | amw 对外接口可基于 OPC UA Pub/Sub 模型 |
 
-AUDESYS 的 amw 三极 trait（HalTransport/HalDiscovery/HalQoS）必须足够通用，以支持多种协议的 transport 实现。但 Phase 1 只需实现 amw_inproc 和 amw_zenoh。
+Weftik 的 amw 三极 trait（HalTransport/HalDiscovery/HalQoS）必须足够通用，以支持多种协议的 transport 实现。但 Phase 1 只需实现 amw_inproc 和 amw_zenoh。
 
 ### 7.12 Config Barrier 在 DCS 场景的对应
 
-ECS-700 的在线单点下载（Online Single-Point Download）特性与 AUDESYS 的 D17 决策（Config Barrier + LockLevel）存在对偶关系：
+ECS-700 的在线单点下载（Online Single-Point Download）特性与 Weftik 的 D17 决策（Config Barrier + LockLevel）存在对偶关系：
 
-| ECS-700 在线修改 | AUDESYS 对应 |
+| ECS-700 在线修改 | Weftik 对应 |
 |-------------------|-------------|
 | 组态在线修改（无扰） | Config Barrier：变更排队到周期边界批量应用 |
 | 操作权限管理（组态/操作分离） | LockLevel：Run 级别拒绝所有 RPC，Config 级别允许安全变更 |
 | 组态完整性管理 | Config Barrier 应用前执行完整性校验 |
 | 在线下载需工程师权限 | LockLevel 权限分级（Admin/Engineer/Operator/Viewer） |
 
-ECS-700 的在线修改实际是在离线环境中完成组态修改，然后通过增量下载应用到运行系统——这与 AUDESYS 的 Config Barrier 模型完全一致。修改不在运行态直接生效，而是在周期边界批量提交。
+ECS-700 的在线修改实际是在离线环境中完成组态修改，然后通过增量下载应用到运行系统——这与 Weftik 的 Config Barrier 模型完全一致。修改不在运行态直接生效，而是在周期边界批量提交。
 
 ### 7.13 仿真器设计的行业对标
 
-AUDESYS 的 Simulator 模块可以参考 ECS-700 中的虚拟工厂仿真功能：
+Weftik 的 Simulator 模块可以参考 ECS-700 中的虚拟工厂仿真功能：
 
-| ECS-700 虚拟仿真 | AUDESYS Simulator 启示 |
+| ECS-700 虚拟仿真 | Weftik Simulator 启示 |
 |-------------------|---------------------|
 | 完全等同真实控制逻辑和 HMI 界面 | 仿真 Runtime 运行与真实 Runtime 完全相同的控制逻辑 |
 | 在一台 PC 上完成全流程仿真 | Phase 1 支持单机仿真，Phase 2+ 考虑分布式仿真 |
@@ -753,19 +753,19 @@ AUDESYS 的 Simulator 模块可以参考 ECS-700 中的虚拟工厂仿真功能�
 | 与真实组态工程兼容 | 仿真工程文件格式与生产工程一致 |
 | 离线仿真（无实时性要求） | Simulator 提供加速和实时两种仿真模式 |
 
-AUDESYS Simulator 最适合 TDD（测试驱动开发）工作流——工程师编写控制逻辑后，先在 Simulator 中运行测试案例，验证通过后再部署到实际 Runtime 硬件。
+Weftik Simulator 最适合 TDD（测试驱动开发）工作流——工程师编写控制逻辑后，先在 Simulator 中运行测试案例，验证通过后再部署到实际 Runtime 硬件。
 
 ### 7.14 对 Studio IDE 的额外启示
 
 从 ECS-700 工程环境中学到的额外经验：
 
-1. 硬件配置自动生成：AUDESYS Studio 应支持从 HAL 拓扑描述文件（如 YAML/JSON）自动生成硬件配置视图，减少手动组态错误
+1. 硬件配置自动生成：Weftik Studio 应支持从 HAL 拓扑描述文件（如 YAML/JSON）自动生成硬件配置视图，减少手动组态错误
 2. 在线仿真一体化：Studio 应内置"编辑-编译-仿真"一体化工作流，无需切换工具
-3. 多语言支持：ECS-700 支持 FBD/LD/ST/SFC 四种 IEC 61131-3 语言。AUDESYS Studio 应考虑类似的多语言程序组织（CFC + LD + ST 混合编辑）
+3. 多语言支持：ECS-700 支持 FBD/LD/ST/SFC 四种 IEC 61131-3 语言。Weftik Studio 应考虑类似的多语言程序组织（CFC + LD + ST 混合编辑）
 4. 版本控制集成：组态完整性管理提示 Studio 需要与 Git 等版本控制系统深度集成
 5. 编译时类型检查：HalQoS 配置（deadline/liveliness/security_domain）应在编译时静态验证，而非运行时发现错误
 
-### 7.15 总结：中控对 AUDESYS 的关键参考权重
+### 7.15 总结：中控对 Weftik 的关键参考权重
 
 | 参考领域 | 重要性 | 适用阶段 | 优先级 |
 |---------|--------|---------|--------|
@@ -789,14 +789,14 @@ AUDESYS Simulator 最适合 TDD（测试驱动开发）工作流——工程师�
 
 ### 本文档编写说明
 
-本文档是中控技术 SUPCON 产品的参考研究报告，属于 AUDESYS 项目"工业控制系统竞品/标杆参考"系列文档之一。
+本文档是中控技术 SUPCON 产品的参考研究报告，属于 Weftik 项目"工业控制系统竞品/标杆参考"系列文档之一。
 
 编写时重点关注的维度：
-- 产品架构描述（便于与 AUDESYS 架构对照）
-- 通信模型分析（便于与 AUDESYS HAL 三原语对照）
-- 冗余与实时性机制（便于设计 AUDESYS amw 中间件）
-- 工程化实践（便于设计 AUDESYS Studio IDE）
-- 战略路线（便于 AUDESYS 长期规划参考）
+- 产品架构描述（便于与 Weftik 架构对照）
+- 通信模型分析（便于与 Weftik HAL 三原语对照）
+- 冗余与实时性机制（便于设计 Weftik amw 中间件）
+- 工程化实践（便于设计 Weftik Studio IDE）
+- 战略路线（便于 Weftik 长期规划参考）
 
 本文档不是中控技术的官方文档，所有信息均来自公开来源。如有误差或需更新，请联系项目维护者。
 

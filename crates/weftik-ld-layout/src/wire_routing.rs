@@ -39,9 +39,7 @@ pub fn route_wires(
                 // Power connections: always straight horizontal
                 vec![]
             }
-            "edge:wire" => {
-                compute_wire_route(src, tgt)
-            }
+            "edge:wire" => compute_wire_route(src, tgt),
             _ => {
                 // Unknown edge type: straight line
                 vec![]
@@ -75,10 +73,7 @@ fn compute_wire_route(src: &LayoutNode, tgt: &LayoutNode) -> Vec<Point> {
 
     // L-shaped path: bend at the midpoint
     let mid_x = (src_cx + tgt_cx) / 2.0;
-    vec![
-        Point::new(mid_x, src_cy),
-        Point::new(mid_x, tgt_cy),
-    ]
+    vec![Point::new(mid_x, src_cy), Point::new(mid_x, tgt_cy)]
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -142,8 +137,7 @@ mod tests {
     #[test]
     fn missing_nodes_dont_panic() {
         let nodes = vec![node_at("c1", 100.0, 50.0, 36.0, 36.0)];
-        let node_map: HashMap<String, usize> =
-            [("c1".into(), 0)].into_iter().collect();
+        let node_map: HashMap<String, usize> = [("c1".into(), 0)].into_iter().collect();
 
         // Edge referencing a non-existent node
         let edge = LayoutEdge {

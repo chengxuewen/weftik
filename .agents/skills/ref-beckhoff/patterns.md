@@ -6,7 +6,7 @@
 
 **Solution**: Run real-time control software on standard industrial PC hardware. Software defines function, hardware defines performance. Upgrade IPC independently of software.
 
-**When to use in AUDESYS**: HAL-centric architecture where runtime is decoupled from specific hardware. This validates AUDESYS's approach of abstracting hardware via HAL and running on generic hardware.
+**When to use in Weftik**: HAL-centric architecture where runtime is decoupled from specific hardware. This validates Weftik's approach of abstracting hardware via HAL and running on generic hardware.
 
 **Trade-offs**: PC hardware has lower reliability specifications than dedicated PLC hardware (wider temperature range, vibration tolerance). Mitigated by industrial-grade IPC components.
 
@@ -26,7 +26,7 @@ Task Scheduler (fixed cycle)
   -> Output update (shared process image)
 ```
 
-**When to use in AUDESYS**: AUDESYS mixed thread scheduling (D13). All runtime modules (PLC, NC, CNC, Safety) should mount to the same scheduler with fixed execution order for deterministic behavior.
+**When to use in Weftik**: Weftik mixed thread scheduling (D13). All runtime modules (PLC, NC, CNC, Safety) should mount to the same scheduler with fixed execution order for deterministic behavior.
 
 **Trade-offs**: A single misbehaving runtime can block the entire Task cycle. Each runtime must complete within its allocated time slice. Requires rigorous testing of worst-case execution time (WCET).
 
@@ -36,7 +36,7 @@ Task Scheduler (fixed cycle)
 
 **Solution**: Embed an existing mature IDE Shell (Visual Studio) and focus engineering on automation-specific extensions: PLC editors, hardware configurator, scope view, safety configurator.
 
-**When to use in AUDESYS**: Studio IDE Shell strategy. Use VS Code or Theia as container, develop IEC 61131-3 language server, HAL configuration plugin, and HMI designer as extensions.
+**When to use in Weftik**: Studio IDE Shell strategy. Use VS Code or Theia as container, develop IEC 61131-3 language server, HAL configuration plugin, and HMI designer as extensions.
 
 **Trade-offs**: Dependency on the Shell vendor's ecosystem (VS Shell tied to Microsoft). Shell version upgrades can break extensions. Mitigated by choosing open-source shells (VS Code, Theia) and using well-defined extension APIs.
 
@@ -51,7 +51,7 @@ Open: EtherCAT protocol (ETG standard), ADS spec, TcCOM interface
 Closed: TwinCAT runtime engine, real-time scheduler, compiler
 ```
 
-**When to use in AUDESYS**: HAL protocol (Signal / StreamChannel / RPC) should be publicly specified. amw (AUDESYS Middleware) interface should be open for third-party transport implementations. Core runtime can remain closed-source.
+**When to use in Weftik**: HAL protocol (Signal / StreamChannel / RPC) should be publicly specified. amw (Weftik Middleware) interface should be open for third-party transport implementations. Core runtime can remain closed-source.
 
 **Trade-offs**: Interface changes require strict version management. Once open, interfaces are hard to change. Requires rigorous API design upfront.
 
@@ -61,7 +61,7 @@ Closed: TwinCAT runtime engine, real-time scheduler, compiler
 
 **Solution**: License by hardware CPU core count (Platform Level 10-94). Higher levels unlock more features. Users choose hardware, then license matches.
 
-**When to use in AUDESYS**: If commercializing, structure licensing by deployment scale (cores, instances) rather than per-feature or per-tag. Lower-level license covers basic functionality; higher levels unlock advanced features.
+**When to use in Weftik**: If commercializing, structure licensing by deployment scale (cores, instances) rather than per-feature or per-tag. Lower-level license covers basic functionality; higher levels unlock advanced features.
 
 **Trade-offs**: 10 levels with 100+ TFxxxx modules creates confusing SKU matrix. Users may overbuy to avoid future upgrade costs.
 
@@ -71,7 +71,7 @@ Closed: TwinCAT runtime engine, real-time scheduler, compiler
 
 **Solution**: Every performance claim explicitly states dependency conditions: hardware platform, core isolation, slave count, bus bandwidth utilization, and OS configuration.
 
-**When to use in AUDESYS**: Every latency/throughput specification in HAL docs must include conditions and verification methods. This is exactly what AUDESYS audit found and fixed (see pitfalls.md "unverifiable latency claims").
+**When to use in Weftik**: Every latency/throughput specification in HAL docs must include conditions and verification methods. This is exactly what Weftik audit found and fixed (see pitfalls.md "unverifiable latency claims").
 
 **Trade-offs**: Conditional claims are harder to market. Competitors may cite unqualified best-case numbers. Requires discipline to maintain.
 
@@ -81,7 +81,7 @@ Closed: TwinCAT runtime engine, real-time scheduler, compiler
 
 **Solution**: Use numeric binary addressing: (AMS Port, IndexGroup, IndexOffset) triple. Fixed-size, deterministic lookup time, no string parsing.
 
-**When to use in AUDESYS**: HAL Signal naming (component.interface.name) could be compiled to numeric pairs internally for efficient runtime lookup, while keeping human-readable names for configuration.
+**When to use in Weftik**: HAL Signal naming (component.interface.name) could be compiled to numeric pairs internally for efficient runtime lookup, while keeping human-readable names for configuration.
 
 **Trade-offs**: Binary addressing is harder to debug without a lookup table. Requires a symbol table or dictionary to map between human names and numeric addresses.
 
@@ -91,6 +91,6 @@ Closed: TwinCAT runtime engine, real-time scheduler, compiler
 
 **Solution**: Integrate IPC, EtherCAT coupler, I/O, and servo drives into a single IP67-rated pluggable system (MX-System). No cabinet needed. All functionality defined by software configuration.
 
-**When to use in AUDESYS**: Future hardware integration phases. The pattern validates that software abstraction can reduce physical complexity.
+**When to use in Weftik**: Future hardware integration phases. The pattern validates that software abstraction can reduce physical complexity.
 
 **Trade-offs**: Single-point integration risk. Repair requires replacing the entire module. Higher per-unit cost than discrete components.

@@ -2,7 +2,7 @@
 
 > 来源：CODESYS Ladder 官方文档、TwinCAT 3 Infosys、TIA Portal V21 文档、AutomationDirect、contactandcoil.com 教程
 > 日期：2026-08-05
-> 用途：为 AUDESYS LD 编辑器 React Flow 拓扑化重构提供可执行交互规格
+> 用途：为 Weftik LD 编辑器 React Flow 拓扑化重构提供可执行交互规格
 
 ---
 

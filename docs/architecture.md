@@ -1,4 +1,4 @@
-# AUDESYS 架构文档
+# Weftik 架构文档
 
 > **更新日期**: 2026-07-24
 > **状态**: 架构文档 — 反映当前 MVP 实现状态。待重写对齐新版架构设计。
@@ -11,10 +11,10 @@
 
 ## 目录
 
-- [AUDESYS 架构文档](#audesys-架构文档)
+- [Weftik 架构文档](#weftik-架构文档)
   - [目录](#目录)
-  - [AUDESYS 概述](#audesys-概述)
-    - [什么是 AUDESYS](#什么是-audesys)
+  - [Weftik 概述](#weftik-概述)
+    - [什么是 Weftik](#什么是-weftik)
     - [应用场景](#应用场景)
     - [产品线](#产品线)
     - [术语速查](#术语速查)
@@ -48,12 +48,12 @@
       - [8.1 核心功能设计](#81-核心功能设计)
       - [8.2 数据流](#82-数据流)
     - [9. Edge 模块](#9-edge-模块)
-    - [10. AUDESYS Link 通信中间件](#10-audesys-link-通信中间件)
+    - [10. Weftik Link 通信中间件](#10-weftik-link-通信中间件)
       - [10.1 定位](#101-定位)
       - [10.2 架构分层](#102-架构分层)
       - [10.3 使用者](#103-使用者)
     - [11. IPC 通信分层](#11-ipc-通信分层)
-      - [UDS JSON-RPC（AUDESYS 标准进程间通信）](#uds-json-rpcaudesys-标准进程间通信)
+      - [UDS JSON-RPC（Weftik 标准进程间通信）](#uds-json-rpcweftik-标准进程间通信)
     - [12. 多实例隔离](#12-多实例隔离)
       - [隔离维度](#隔离维度)
     - [13. 崩溃恢复与安全状态](#13-崩溃恢复与安全状态)
@@ -67,7 +67,7 @@
     - [2. 现状评估](#2-现状评估)
       - [已设计（文档层面）](#已设计文档层面)
       - [关键发现](#关键发现)
-    - [3. Studio 在 AUDESYS 中的位置](#3-studio-在-audesys-中的位置)
+    - [3. Studio 在 Weftik 中的位置](#3-studio-在-weftik-中的位置)
     - [4. 三层架构](#4-三层架构)
     - [5. 内置编辑器](#5-内置编辑器)
       - [插件编辑器（v2+）](#插件编辑器v2)
@@ -101,7 +101,7 @@
     - [1. 协议 - DAP 子集 + 工业扩展](#1-协议---dap-子集--工业扩展)
     - [2. 三类断点 + Log Points](#2-三类断点--log-points)
     - [3. DAP 兼容子集](#3-dap-兼容子集)
-    - [4. AUDESYS 工业调试扩展](#4-audesys-工业调试扩展)
+    - [4. Weftik 工业调试扩展](#4-weftik-工业调试扩展)
     - [5. 调试 UX 关键模式](#5-调试-ux-关键模式)
     - [6. 与 HAL Protocol 集成](#6-与-hal-protocol-集成)
   - [六、Web 迁移路径](#六web-迁移路径)
@@ -115,11 +115,11 @@
 
 
 
-## AUDESYS 概述
+## Weftik 概述
 
-### 什么是 AUDESYS
+### 什么是 Weftik
 
-**AUDESYS**（**Au**tomation **De**velopment **Sys**tem）是一个面向工业自动化的通用开发与运行时平台，覆盖**工业控制**、**软 PLC**、**测控与数据采集**、**上位机（HMI/SCADA）**、**机器人控制**和**数控加工**等应用场景。
+**Weftik** 是一个面向工业自动化与机器人的统一开发与运行时框架，覆盖**工业控制**、**软 PLC**、**测控与数据采集**、**上位机（HMI/SCADA）**、**机器人控制**和**数控加工**等应用场景。
 
 传统上，这些领域各自发展出独立的工具链，开发者不得不在多个平台之间切换：
 
@@ -128,15 +128,15 @@
 - **LinuxCNC** — 自研实时 HAL 与 G-code 解释器，深耕数控机床
 - **CODESYS / TwinCAT** — 软 PLC 标准（IEC 61131-3），将 PLC 运行时移植到通用 PC
 
-AUDESYS 借鉴了 Android Studio 的"**IDE + Runtime + Emulator + Debug Bridge**"分层模型，将其应用于工业自动化领域。通过统一的 **HAL 硬件抽象系统**（受 LinuxCNC HAL 和 dora-rs 数据流范式启发）、**Runtime 多进程套件**、**Simulator 设备仿真器**和**工业调试桥**，提供一条龙开发体验——编写软 PLC 梯形图逻辑、搭建机器人控制图、开发测控上位机、调试数控设备 G-code，均在同一平台内完成。
+Weftik 借鉴了 Android Studio 的"**IDE + Runtime + Emulator + Debug Bridge**"分层模型，将其应用于工业自动化领域。通过统一的 **HAL 硬件抽象系统**（受 LinuxCNC HAL 和 dora-rs 数据流范式启发）、**Runtime 多进程套件**、**Simulator 设备仿真器**和**工业调试桥**，提供一条龙开发体验——编写软 PLC 梯形图逻辑、搭建机器人控制图、开发测控上位机、调试数控设备 G-code，均在同一平台内完成。
 
-AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS Runtime（PC 应用套件）、AUDESYS HAL（硬件抽象层协议）、AUDESYS Simulator（设备模拟器）、AUDESYS Debug（调试桥）。Runtime 套件包含 Controller、Gateway、Remote、Edge、Supervisor 五个核心组件，HMI UI 由外部 Panel 项目实现（本仓库保留 IPC 契约 0x16/0x17/0x18，D117）。
+Weftik 的产品线包括：Weftik Studio（统一编辑器/IDE）、Weftik Runtime（PC 应用套件）、Weftik HAL（硬件抽象层协议）、Weftik Simulator（设备模拟器）、Weftik Debug（调试桥）。Runtime 套件包含 Controller、Gateway、Remote、Edge、Supervisor 五个核心组件，HMI UI 由外部 Panel 项目实现（本仓库保留 IPC 契约 0x16/0x17/0x18，D117）。
 
 技术栈方面，实时控制路径采用 Rust/C/C++（子毫秒确定性），进程管理使用 Node.js，协议网关使用 Python。
 
 ### 应用场景
 
-| 场景 | 核心需求 | AUDESYS 对应模块 |
+| 场景 | 核心需求 | Weftik 对应模块 |
 |------|----------|-------------------|
 | **工业控制** | 实时 I/O、确定性时序、多轴联动 | Controller + HAL + Studio + 外部 Panel |
 | **软 PLC** | IEC 61131-3 运行时、梯形图/ST 编辑器 | Controller + HAL + Studio + 外部 Panel |
@@ -150,10 +150,10 @@ AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS R
 
 | 产品 | 描述 | 技术栈 | 状态 |
 |------|------|--------|------|
-| AUDESYS Studio | 统一编辑器/IDE | TypeScript + Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + napi-rs | ✅ 已实现（Theia 迁移完成） |
-| AUDESYS HAL | 硬件抽象层协议 | Rust + FlatBuffers | 🟡 详细设计完成 |
-| AUDESYS Simulator | 设备模拟器 | Rust + SimulationHarness | 🟡 Inproc MVP |
-| AUDESYS Debug | 调试桥 | Rust + DAP | ✅ DAP 已实现 |
+| Weftik Studio | 统一编辑器/IDE | TypeScript + Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + napi-rs | ✅ 已实现（Theia 迁移完成） |
+| Weftik HAL | 硬件抽象层协议 | Rust + FlatBuffers | 🟡 详细设计完成 |
+| Weftik Simulator | 设备模拟器 | Rust + SimulationHarness | 🟡 Inproc MVP |
+| Weftik Debug | 调试桥 | Rust + DAP | ✅ DAP 已实现 |
 
 ### 术语速查
 
@@ -187,10 +187,10 @@ AUDESYS 的产品线包括：AUDESYS Studio（统一编辑器/IDE）、AUDESYS R
 
 ### 1. 架构概览
 
-HAL 是 AUDESYS 的多语言通信核心，用 **三种正交原语**（Signal、StreamChannel、RPC）覆盖四种参考系统（LinuxCNC、OpenPLC、ROS2、dora-rs）的全部通信模式。
+HAL 是 Weftik 的多语言通信核心，用 **三种正交原语**（Signal、StreamChannel、RPC）覆盖四种参考系统（LinuxCNC、OpenPLC、ROS2、dora-rs）的全部通信模式。
 
 ```
-                     AUDESYS HAL Protocol
+                     Weftik HAL Protocol
   ┌──────────────────────────────────────────────────┐
   │  ┌──────────┐  ┌──────────────┐  ┌───────────┐  │
   │  │  Signal  │  │StreamChannel │  │    RPC    │  │
@@ -200,7 +200,7 @@ HAL 是 AUDESYS 的多语言通信核心，用 **三种正交原语**（Signal�
   │       └───────────────┬────────────────┘         │
   │                       │                          │
   │    ┌──────────────────┴──────────────────┐       │
-  │    │  amw (AUDESYS Middleware)           │       │
+  │    │  amw (Weftik Middleware)           │       │
   │    │  HalTransport │ HalDiscovery │ HalQoS│       │
   │    └──────────────────┬──────────────────┘       │
   │                       │                          │
@@ -230,7 +230,7 @@ Signal 与 StreamChannel **不可合并**——这是 ROS2 社区十年验证的
 
 ### 3. amw 中间件抽象层
 
-参考 ROS2 `rmw`（ROS Middleware）设计模式，`amw`（AUDESYS Middleware）将 HAL 三种通信原语与具体传输实现解耦——换实现不换 API。由三个平级 trait 组成：
+参考 ROS2 `rmw`（ROS Middleware）设计模式，`amw`（Weftik Middleware）将 HAL 三种通信原语与具体传输实现解耦——换实现不换 API。由三个平级 trait 组成：
 
 | Trait | 职责 | 执行位置 |
 |-------|------|---------|
@@ -245,7 +245,7 @@ Signal 与 StreamChannel **不可合并**——这是 ROS2 社区十年验证的
 
 ### 4. 工业 QoS
 
-AUDESYS 只定义三个最小维度（不引入完整 DDS QoS），各维度在不同执行位置实现：
+Weftik 只定义三个最小维度（不引入完整 DDS QoS），各维度在不同执行位置实现：
 
 | 维度 | 执行位置 | amw_inproc 实现 | amw_zenoh 实现 | 说明 |
 |------|---------|----------------|---------------|------|
@@ -289,7 +289,7 @@ Config Barrier 与扫描屏障是两个独立但协同的机制：Config Barrier
 
 ### 7. 移植对接
 
-移植外部系统功能时，被移植代码改造后以 AUDESYS HAL 为原生通信层，不桥接外部协议：
+移植外部系统功能时，被移植代码改造后以 Weftik HAL 为原生通信层，不桥接外部协议：
 
 | 参考系统 | 原始概念 | HAL 原语映射 | 消息大小 |
 |---------|---------|------------|---------|
@@ -373,7 +373,7 @@ HAL 分 8 个 Phase 实施。详见 `docs/modules/hal/implementation-roadmap.md`
 7. [Gateway 模块](#7-gateway-模块)
 8. [Remote 模块](#8-remote-模块)
 9. [Edge 模块](#9-edge-模块)
-10. [AUDESYS Link 通信中间件](#10-audesys-link-通信中间件)
+10. [Weftik Link 通信中间件](#10-weftik-link-通信中间件)
 11. [IPC 通信分层](#11-ipc-通信分层)
 12. [多实例隔离](#12-多实例隔离)
 13. [崩溃恢复与安全状态](#13-崩溃恢复与安全状态)
@@ -400,16 +400,16 @@ HAL 分 8 个 Phase 实施。详见 `docs/modules/hal/implementation-roadmap.md`
 > - 升级策略：`docs/modules/runtime/upgrade-strategy.md`
 ### 1. Runtime 套件概览
 
-AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态。Runtime 套件是一个**多进程实时控制系统**，由五个核心模块组成。HMI UI 由外部项目实现（D117），本仓库保留 IPC 契约（0x16/0x17/0x18）。
+Weftik Runtime 套件是面向工业控制场景的完整运行时产品形态。Runtime 套件是一个**多进程实时控制系统**，由五个核心模块组成。HMI UI 由外部项目实现（D117），本仓库保留 IPC 契约（0x16/0x17/0x18）。
 
 | 模块 | 产品名 | 职责 | 技术栈 |
 |------|--------|------|--------|
-| **Supervisor** | AUDESYS Supervisor | 进程/参数/配置/更新管理器 | Node.js (`child_process.fork`) + UDS JSON-RPC |
-| **Controller** | AUDESYS Controller | 实时控制（PLC/CNC/运动控制） | Rust + HAL Core + amw_inproc（子毫秒确定性控制） |
+| **Supervisor** | Weftik Supervisor | 进程/参数/配置/更新管理器 | Node.js (`child_process.fork`) + UDS JSON-RPC |
+| **Controller** | Weftik Controller | 实时控制（PLC/CNC/运动控制） | Rust + HAL Core + amw_inproc（子毫秒确定性控制） |
 | **Panel (外部)** | 外部 Panel 项目 | HMI 操作员界面（Runtime IPC 契约保留，实现属外部项目） | 外部项目自定 |
-| **Gateway** | AUDESYS Gateway | 外部通信（MES/ERP/云对接） | Node.js + Link SDK |
-| **Remote** | AUDESYS Remote | 远程访问（WebRTC 浏览器 B/S） | 屏幕采集 + GPU 编码 + WebRTC |
-| **Edge** | AUDESYS Edge | 边缘采集（7×24 独立运行） | 独立进程 + 轻量 Web 配置 |
+| **Gateway** | Weftik Gateway | 外部通信（MES/ERP/云对接） | Node.js + Link SDK |
+| **Remote** | Weftik Remote | 远程访问（WebRTC 浏览器 B/S） | 屏幕采集 + GPU 编码 + WebRTC |
+| **Edge** | Weftik Edge | 边缘采集（7×24 独立运行） | 独立进程 + 轻量 Web 配置 |
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -423,7 +423,7 @@ AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态�
 │    ─────────┼──────────────────────────────────────────────  │
 │    通信层    │  Gateway (MES/ERP/云)                         │
 │    ─────────┼──────────────────────────────────────────────  │
-│    中间件    │  AUDESYS Link (进程间共享内存/主机间通信)       │
+│    中间件    │  Weftik Link (进程间共享内存/主机间通信)       │
 │    ─────────┼──────────────────────────────────────────────  │
 │    硬件层    │  Servo | Stepper | CAN | GPIO | Modbus | RS485│
 └──────────────────────────────────────────────────────────────┘
@@ -502,13 +502,13 @@ AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态�
 
 | 属性 | 值 |
 |------|-----|
-| **产品名** | AUDESYS Supervisor |
+| **产品名** | Weftik Supervisor |
 | **职责** | Runtime 套件的进程/参数/配置/更新管理器 |
 | **管理对象** | Controller / Panel / Gateway / Remote / Edge 子进程 |
 | **技术** | Node.js (`child_process.fork`) + UDS JSON-RPC |
 | **兜底** | systemd watchdog（Supervisor 自身崩溃时） |
 
-> AUDESYS 尚未开始实现。Supervisor 是全新模块，将管理完整 Runtime 套件。
+> Weftik 尚未开始实现。Supervisor 是全新模块，将管理完整 Runtime 套件。
 
 #### 4.1 进程生命周期管理
 
@@ -579,10 +579,10 @@ AUDESYS Runtime 套件是面向工业控制场景的完整运行时产品形态�
 
 | 属性 | 值 |
 |------|-----|
-| **产品名** | AUDESYS Controller |
+| **产品名** | Weftik Controller |
 | **职责** | 实时控制（PLC/CNC/运动控制） |
 | **技术** | Rust + HAL Core + amw_inproc（子毫秒确定性控制），Podman 隔离可选 |
-| **通信** | 通过 AUDESYS Link 库与设备通信；UDS JSON-RPC 与 Supervisor |
+| **通信** | 通过 Weftik Link 库与设备通信；UDS JSON-RPC 与 Supervisor |
 
 #### 5.1 核心循环
 
@@ -634,9 +634,9 @@ RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法。`Role::Hmi`
 
 | 属性 | 值 |
 |------|-----|
-| **产品名** | AUDESYS Gateway |
+| **产品名** | Weftik Gateway |
 | **职责** | 外部通信应用（使用 Link 库） |
-| **技术** | Node.js，`import { Link } from '@audesys/link'` |
+| **技术** | Node.js，`import { Link } from '@weftik/link'` |
 | **与 Link 的关系** | Link 是基础设施库，Gateway 是使用 Link 的运行端应用 |
 
 **功能清单**:
@@ -663,7 +663,7 @@ RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法。`Role::Hmi`
 
 | 属性 | 值 |
 |------|-----|
-| **产品名** | AUDESYS Remote |
+| **产品名** | Weftik Remote |
 | **职责** | 远程访问（浏览器 B/S 架构） |
 | **功能** | 远程监控、远程操作、远程调试 |
 
@@ -692,7 +692,7 @@ GPU 编码:  VAAPI (Intel/AMD) / NVENC (NVIDIA) - H.264/H.265, 零拷贝
 
 | 属性 | 值 |
 |------|-----|
-| **产品名** | AUDESYS Edge |
+| **产品名** | Weftik Edge |
 | **职责** | 边缘采集（7×24 独立运行） |
 | **技术** | 独立进程，带轻量 Web 配置界面 |
 | **功能** | 数据采集、设备协议适配（通过 Link）、本地缓存、断网续传 |
@@ -701,18 +701,18 @@ Edge 模块设计为完全独立运行，即使 Supervisor 和 Controller 都停
 
 ---
 
-### 10. AUDESYS Link 通信中间件
+### 10. Weftik Link 通信中间件
 
-> **已决策**: Link 中间件基于 amw（AUDESYS Middleware）抽象架构。Phase 1 用 amw_inproc（同进程 Typed API），Phase 2+ 用 amw_zenoh（Zenoh PubSub），编码层定为 FlatBuffers。详见 `docs/modules/hal/amw-middleware-design.md`。
+> **已决策**: Link 中间件基于 amw（Weftik Middleware）抽象架构。Phase 1 用 amw_inproc（同进程 Typed API），Phase 2+ 用 amw_zenoh（Zenoh PubSub），编码层定为 FlatBuffers。详见 `docs/modules/hal/amw-middleware-design.md`。
 
 #### 10.1 定位
 
 ```
-AUDESYS Link ≠ 运行端应用
-AUDESYS Link = 通信中间件库 / SDK (packages/link/)
+Weftik Link ≠ 运行端应用
+Weftik Link = 通信中间件库 / SDK (packages/link/)
 ```
 
-Link 是基础设施库，不是独立运行的进程。Runtime 套件中的 Gateway、Controller、Edge 通过 `import { Link } from '@audesys/link'` 使用其通信能力。
+Link 是基础设施库，不是独立运行的进程。Runtime 套件中的 Gateway、Controller、Edge 通过 `import { Link } from '@weftik/link'` 使用其通信能力。
 
 #### 10.2 架构分层
 
@@ -729,7 +729,7 @@ packages/link/
 #### 10.3 使用者
 
 ```
-apps/runtime/gateway/    - import { Link } from '@audesys/link' (与 MES/云通信)
+apps/runtime/gateway/    - import { Link } from '@weftik/link' (与 MES/云通信)
 apps/runtime/controller/ - 通过 Link 的 Serial/Modbus adapter 与设备通信
 apps/runtime/edge/       - 通过 Link 采集数据
 ```
@@ -748,13 +748,13 @@ Layer 2: 进程间通信 (Runtime 模块之间)
   └── UDS JSON-RPC (~20µs) - Supervisor ↔ Controller/Panel/Gateway/Remote/Edge
 
 Layer 3: 对外通信 (Gateway)
-  └── AUDESYS Link (Zenoh) - 与 MES/运维/Studio
+  └── Weftik Link (Zenoh) - 与 MES/运维/Studio
 
 Layer 4: 远程媒体 (Remote)
   └── WebRTC - 视频流 + 输入事件
 ```
 
-#### UDS JSON-RPC（AUDESYS 标准进程间通信）
+#### UDS JSON-RPC（Weftik 标准进程间通信）
 
 | 属性 | 值 |
 |------|-----|
@@ -763,7 +763,7 @@ Layer 4: 远程媒体 (Remote)
 | 延迟 | ~20µs 控制面 JSON-RPC（本机）/ ~10µs 数据面 FlatBuffers（PREEMPT_RT） |
 | 特性 | `container.resolve<T>()` 返回透明 Proxy，无需额外 broker |
 | 录制 | RPC Hub 旁路录制所有调用（MCAP 格式） |
-| 调试 | Foxglove Bridge（WebSocket, `AUDESYS_DEBUG=1`） |
+| 调试 | Foxglove Bridge（WebSocket, `WEFTIK_DEBUG=1`） |
 
 ---
 
@@ -876,19 +876,19 @@ Web 模式:
 
 ### 1. 产品定位
 
-**AUDESYS Studio** 是统一编辑器/IDE，受 UE（项目类型驱动）、VS Code（插件扩展）、TIA Portal（工业组态）启发。它通过可视化编辑器配置设备模板、流程逻辑和 HMI 界面，一键打包为桌面应用或部署为 Web 服务。
+**Weftik Studio** 是统一编辑器/IDE，受 UE（项目类型驱动）、VS Code（插件扩展）、TIA Portal（工业组态）启发。它通过可视化编辑器配置设备模板、流程逻辑和 HMI 界面，一键打包为桌面应用或部署为 Web 服务。
 
 **技术栈**: Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + Rust napi-rs
 
 #### 创建端 vs 运行端
 
 ```
-AUDESYS
-├── 创建端: AUDESYS Studio (统一编辑器/IDE)
+Weftik
+├── 创建端: Weftik Studio (统一编辑器/IDE)
 │   ├── 内置: Scene Designer, Flow Designer, Data Designer, Debug
 │   └── 插件: Logic Designer (v2+), App Builder (v2+)
 │
-└── 运行端: AUDESYS Runtime (PC 应用套件)
+└── 运行端: Weftik Runtime (PC 应用套件)
     ├── Supervisor   - 进程/参数/配置/更新管理器
     ├── Controller   - 实时控制
     ├── Panel        - 触摸 HMI
@@ -918,8 +918,8 @@ AUDESYS
 |------|---------|:----:|
 | **Theia 迁移设计** | 三审修订完成（15 项 MUST-FIX），总估时 22-31 周（5-8 月） | 📄 设计完成 |
 | **Theia 骨架** | `apps/studio/` — Electron + Theia 1.73.0 应用 | ✅ 已完成 |
-| **napi-rs 绑定层** | `crates/audesys-theia-bridge/` — ~25 函数，编译为 `.node` 原生二进制 | ✅ 已完成 |
-| **Theia Backend Service** | `theia-extensions/audesys-backend/` — JSON-RPC 代理 + RBAC + 审计 | ✅ 已完成 |
+| **napi-rs 绑定层** | `crates/weftik-theia-bridge/` — ~25 函数，编译为 `.node` 原生二进制 | ✅ 已完成 |
+| **Theia Backend Service** | `theia-extensions/weftik-backend/` — JSON-RPC 代理 + RBAC + 审计 | ✅ 已完成 |
 | **10 Theia 扩展** | `theia-extensions/` — core/backend/st/il/gcode/sfc/ld/fbd/debug | ✅ 已完成（LD/FBD 已迁移至 React Flow，D110） |
 
 #### 关键发现
@@ -934,11 +934,11 @@ RBAC 代码:   ██████████████░░░░░░░�
 
 ---
 
-### 3. Studio 在 AUDESYS 中的位置
+### 3. Studio 在 Weftik 中的位置
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        AUDESYS Studio                                 │
+│                        Weftik Studio                                 │
 │                (Theia 框架 / Electron + 浏览器)                        │
 │                                                                     │
 │  ┌──────────────────────────────────────────────────────────────┐   │
@@ -954,7 +954,7 @@ RBAC 代码:   ██████████████░░░░░░░�
 │  ┌──────────────────────┴───────────────────────────────────┐     │   │
 │  │  Theia Backend (Node.js + napi-rs)                       │     │   │
 │  │  ┌──────────────────────────────────────────────────┐   │     │   │
-│  │  │  Audesys Bridge (napi-rs native addon)           │   │     │   │
+│  │  │  Weftik Bridge (napi-rs native addon)           │   │     │   │
 │  │  │  ┌──────────────┐ ┌──────────────┐              │   │     │   │
 │  │  │  │ Rust IPC     │ │ Rust Compiler│              │   │     │   │
 │  │  │  │ (UDS,信号)   │ │ (6 语言+CNC) │              │   │     │   │
@@ -1015,7 +1015,7 @@ RBAC 代码:   ██████████████░░░░░░░�
 │  │          │  │ Scope    │  │ CRUD     │  │ Extensions│  │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
 │                      │                                       │
-│           audesys-theia-bridge (napi-rs)                    │
+│           weftik-theia-bridge (napi-rs)                    │
 ├─────────────────────────────────────────────────────────────┤
 │            Layer 3: Rust Runtime（原生进程）                  │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
@@ -1067,7 +1067,7 @@ HMI UI 由外部 Panel 项目实现（D117），本仓库保留 Runtime 侧部�
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    AUDESYS Studio RBAC 四层模型                │
+│                    Weftik Studio RBAC 四层模型                │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  Layer 1: 平台级 (Platform-level)                           │
@@ -1142,7 +1142,7 @@ HMI UI 由外部 Panel 项目实现（D117），本仓库保留 Runtime 侧部�
 │  (检查项目类型 P001.type='hmi' -> scene 可用)     │
 ├──────────────────────────────────────────────────┤
 │ Step 5: 加载编辑器                               │
-│  registry.load('@audesys/scene-designer')        │
+│  registry.load('@weftik/scene-designer')        │
 │  -> 渲染 Scene Designer UI                        │
 └──────────────────────────────────────────────────┘
 ```
@@ -1174,7 +1174,7 @@ HMI UI 由外部 Panel 项目实现（D117），本仓库保留 Runtime 侧部�
 
 #### 两层项目模型：Firmware + Engineering
 
-AUDESYS 将传统工业控制项目拆分为两层：
+Weftik 将传统工业控制项目拆分为两层：
 
 - **Firmware Project（固件项目）** — 定义控制器的运行时配置：硬件接口、通信协议、周期参数。固件项目定义 HAL 信号接口（如 `sensor.temp.pt100`），配置 Modbus/HART 适配器，声明组件和线程调度。
 - **Engineering Project（工程项目）** — ST 源代码（含 HMI 布局契约），仅能消费固件暴露的信号。编译时通过 `expects_signals` 验证信号契约。
@@ -1223,11 +1223,11 @@ AUDESYS 将传统工业控制项目拆分为两层：
 > ⚠️ **已弃用** — 此节描述的四层插件架构（PluginRegistry + CommandRegistry + PanelSystem + PlatformAdapter）已被 Eclipse Theia 迁移计划取代。当前活跃文档：docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md。本文保留作为 D58 决策的历史记录。
 
 
-AUDESYS Studio 采用四层插件架构，参考 VS Code Extension API，支持 PC (Electron，已弃用) / Web 双模式。This architecture is superseded by the Theia Extension System (D71).
+Weftik Studio 采用四层插件架构，参考 VS Code Extension API，支持 PC (Electron，已弃用) / Web 双模式。This architecture is superseded by the Theia Extension System (D71).
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                  AUDESYS Studio Shell                         │
+│                  Weftik Studio Shell                         │
 │                                                               │
 │  ┌──────────────┐  ┌──────────────────┐  ┌──────────────┐    │
 │  │ Plugin       │  │ Command          │  │ Panel        │    │
@@ -1267,7 +1267,7 @@ AUDESYS Studio 采用四层插件架构，参考 VS Code Extension API，支持 
 
 ```typescript
 interface PluginManifest {
-  id: string;                    // "audesys.hal-binding-gen"
+  id: string;                    // "weftik.hal-binding-gen"
   displayName: string;
   version: string;
   engines: { studio: string };
@@ -1379,7 +1379,7 @@ RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法，`Role::Hmi`
 #### 桌面端特殊能力
 
 ```
-✅ 本地文件系统访问 (项目可保存为 .audesys-project 文件)
+✅ 本地文件系统访问 (项目可保存为 .weftik-project 文件)
 ✅ 离线开发 (无网络时使用本地 SQLite)
 ✅ 本地 Git 集成 (项目版本控制)
 ✅ 硬件调试 (直接访问串口/USB)
@@ -1390,7 +1390,7 @@ RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法，`Role::Hmi`
 
 ### 10. 平台集成
 
-> **TODO: 为 AUDESYS 重写此节** — 平台集成方案依赖 Studio Phase 2 实现细节，当前保留占位
+> **TODO: 为 Weftik 重写此节** — 平台集成方案依赖 Studio Phase 2 实现细节，当前保留占位
 
 ---
 
@@ -1454,7 +1454,7 @@ S3: 运行时编辑           S4: 协同 + 生态
 | **身份系统** | Studio: JWT (OIDC) → Casdoor / Runtime: HMAC (已实现) | Studio Web 前端用 JWT 快速启动后接 Casdoor；Runtime IPC 已用 HMAC+SO_PEERCRED |
 | **项目存储** | 双模式（文件系统 + DB） | 桌面端用文件，Web 端用 DB，Drizzle 抽象 |
 | **协同编辑** | Yjs (CRDT) | 无需中央服务器，离线友好，生态成熟 |
-| **编辑器框架** | 自研 | AUDESYS 编辑器是图形化组态，非文本编辑 |
+| **编辑器框架** | 自研 | Weftik 编辑器是图形化组态，非文本编辑 |
 | **插件分发** | npm registry | 复用 npm 生态，Phase 4+ 再考虑自建 |
 | **桌面端框架** | Theia (Electron) ⚠️ 已弃用 D21 (Tauri) | D71 迁移至 Theia，原 Tauri 选择已被取代 |
 | **RBAC 粒度** | 细粒度 (Action+Scope) | Grafana 模式，扩展性好 |
@@ -1468,7 +1468,7 @@ S3: 运行时编辑           S4: 协同 + 生态
   1. 创建 packages/studio-core/ 包骨架
   2. 定义 StudioEditor 接口和 EditorRegistry
   3. 将 PanelRegistry 提取为通用注册器
-  4. 设计 .audesys-project 文件格式 (JSON schema)
+  4. 设计 .weftik-project 文件格式 (JSON schema)
 
 需要数据库完成后:
   5. 项目 CRUD API (Drizzle + PostgreSQL)
@@ -1680,10 +1680,10 @@ interface DAPSubset {
 
 ---
 
-### 4. AUDESYS 工业调试扩展
+### 4. Weftik 工业调试扩展
 
 ```typescript
-interface AUDESYSDebugExtensions {
+interface WeftikDebugExtensions {
   // 蓝图断点
   setBlueprintBreakpoint(graphId: string, nodeId: string,
     condition?: string): void;
@@ -1722,9 +1722,9 @@ interface AUDESYSDebugExtensions {
 }
 ```
 
-**DAP 标准 vs AUDESYS 扩展对比**：
+**DAP 标准 vs Weftik 扩展对比**：
 
-| 能力 | DAP 标准 | AUDESYS 扩展 |
+| 能力 | DAP 标准 | Weftik 扩展 |
 |------|---------|------------|
 | 源码断点 | ✅ | ✅ |
 | 单步调试 | ✅ | ✅ |
@@ -1773,7 +1773,7 @@ Debug Bridge 通过 HAL Client 访问 Controller 的 HAL Core：
 
 ### 1. 桌面版 vs Web 版差异
 
-AUDESYS 支持桌面版（Theia Electron + 浏览器）和纯 Web 版两种部署模式。Theia 双端可用（Electron 窗口 + 浏览器，3层token + 38 API polyfill）。以下是核心技术差异：
+Weftik 支持桌面版（Theia Electron + 浏览器）和纯 Web 版两种部署模式。Theia 双端可用（Electron 窗口 + 浏览器，3层token + 38 API polyfill）。以下是核心技术差异：
 
 | 能力 | 桌面版 | Web 版 |
 |------|--------|--------|
@@ -1881,7 +1881,7 @@ P1 已实现 Theia Backend napi-rs bridge (21/30 函数)。Web 浏览器模式�
 
 ## 七、CNC 系统
 
-AUDESYS 以 G-code（RS274/NGC）编译器作为第 6 种源码语言，与现有 5 种 IEC 61131-3 语言
+Weftik 以 G-code（RS274/NGC）编译器作为第 6 种源码语言，与现有 5 种 IEC 61131-3 语言
 （ST/IL/LD/FBD/SFC）共享 HalProgram 后端，实现 CNC 运动控制能力。新增 `docs/modules/cnc/ 下 5 份子文档（含 interpolation-engine-design.md），`
 子文档模块，覆盖 G-code 编译管道、运动规划器、轴组管理三构件。
 
@@ -1902,7 +1902,7 @@ AUDESYS 以 G-code（RS274/NGC）编译器作为第 6 种源码语言，与现�
         ▼
 ┌───────────────────────────────────────┐
 │  G-code Compiler                      │
-│  crates/audesys-gcode-compiler/       │
+│  crates/weftik-gcode-compiler/       │
 │  Lexer → Two-Pass Parser → IR Gen     │
 └──────────────────┬────────────────────┘
                    │
@@ -1922,7 +1922,7 @@ AUDESYS 以 G-code（RS274/NGC）编译器作为第 6 种源码语言，与现�
 
 - **D55**: G-code→HAL IR 编译策略 — 编译器作为独立管道，输入 G-code 文本，输出 HalProgram，
   零 VM 变更。Phase 1 覆盖 G0/G1/G2/G3 运动指令 + M3/M4/M5/M30 辅助指令。
-- **参考模型**: LinuxCNC 4 层架构（UI→Task→Motion→HAL）映射到 AUDESYS
+- **参考模型**: LinuxCNC 4 层架构（UI→Task→Motion→HAL）映射到 Weftik
   （Studio↔UI, Controller↔Task, Runtime Engine↔Motion, HAL Transport↔HAL pins）。
 - **运动规划器**: Phase 1 使用逐周期步进逼近（步长 = 进给率 × 周期时间），
   Phase 2 迁移至 Runtime 协处理器实现梯形/S 曲线速度剖面。
@@ -1933,12 +1933,12 @@ AUDESYS 以 G-code（RS274/NGC）编译器作为第 6 种源码语言，与现�
 
 | 源语言 | 编译器 Crate | 输出类型 |
 |--------|-------------|----------|
-| ST | `audesys-hal-binding-gen` | HalProgram |
-| IL | `audesys-il-compiler` | HalProgram |
-| LD | `audesys-ld-compiler` | HalProgram |
-| FBD | `audesys-fbd-compiler` | HalProgram |
-| SFC | `audesys-sfc-compiler` | HalProgram |
-| **G-code** | **`audesys-gcode-compiler`** | **HalProgram** |
+| ST | `weftik-hal-binding-gen` | HalProgram |
+| IL | `weftik-il-compiler` | HalProgram |
+| LD | `weftik-ld-compiler` | HalProgram |
+| FBD | `weftik-fbd-compiler` | HalProgram |
+| SFC | `weftik-sfc-compiler` | HalProgram |
+| **G-code** | **`weftik-gcode-compiler`** | **HalProgram** |
 
 所有 6 种编译器输出相同的 `HalProgram` 类型，VM 不感知源码语言。
 

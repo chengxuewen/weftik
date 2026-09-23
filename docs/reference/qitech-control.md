@@ -54,9 +54,9 @@ QiTech Control 的定位清晰有力：
 | 自动化集成商 | 为客户部署整套控制系统 | 生产可靠性、远程运维、标准化硬件、快速复制部署 |
 | 开源社区开发者 | 学习或贡献现代工业控制技术 | 完善的文档和视频教程、清晰的代码架构、活跃的社区 |
 
-### 1.5 与 AUDESYS 的关系定位
+### 1.5 与 Weftik 的关系定位
 
-QiTech Control 对 AUDESYS 的参考价值主要在 **HAL 硬件抽象层设计** 和 **生产部署模式**。ethercat-hal 是 HAL 抽象概念的具体实现参考，其多层抽象设计（PDO → 设备 → IO trait → MachineAct）直接验证了 AUDESYS HAL 设计理念的可行性。参考价值评分：⭐⭐⭐⭐⭐ (5/5)。
+QiTech Control 对 Weftik 的参考价值主要在 **HAL 硬件抽象层设计** 和 **生产部署模式**。ethercat-hal 是 HAL 抽象概念的具体实现参考，其多层抽象设计（PDO → 设备 → IO trait → MachineAct）直接验证了 Weftik HAL 设计理念的可行性。参考价值评分：⭐⭐⭐⭐⭐ (5/5)。
 
 ---
 
@@ -234,9 +234,9 @@ PDO 传输周期性过程数据，而 SDO（Service Data Object，服务数据�
 3. **配置 CoE 对象字典**：SDO 访问设备的内存对象字典，修改参数（如滤波器时间常数、死区阈值、量程选择）
 4. **状态机控制**：通过 CoE 状态机（Init → Pre-Op → Safe-Op → Op）控制设备启动流程
 
-**与 AUDESYS Config Barrier 的对照**：
+**与 Weftik Config Barrier 的对照**：
 
-SDO 配置操作需要在设备启动前（Pre-Op 状态）完成，设备进入 Op 状态后不允许修改 PDO 映射。这与 AUDESYS D17 决策（Config Barrier：配置变更排队到周期边界批量应用）的语义完全一致——配置在"离线"阶段完成，运行时只能通过有限的参数进行微调。
+SDO 配置操作需要在设备启动前（Pre-Op 状态）完成，设备进入 Op 状态后不允许修改 PDO 映射。这与 Weftik D17 决策（Config Barrier：配置变更排队到周期边界批量应用）的语义完全一致——配置在"离线"阶段完成，运行时只能通过有限的参数进行微调。
 
 ### 2.11 终端抽象模型（Terminal Abstraction）
 
@@ -276,7 +276,7 @@ QiTech 使用 'Terminal'（端子）概念抽象一个 EtherCAT 从站的物理 
 
 ### 2.12 control-core: 控制执行引擎
 
-control-core crate 实现了 QiTech 的实时控制循环。这是 QiTech 版本的 "RT thread"（对应 AUDESYS D13 决策中的 RT 线程）：
+control-core crate 实现了 QiTech 的实时控制循环。这是 QiTech 版本的 "RT thread"（对应 Weftik D13 决策中的 RT 线程）：
 
 **控制循环的精确时序**（1ms 周期为例）：
 
@@ -456,11 +456,11 @@ ethercat-hal 四层抽象（PDO→Device→IO Trait→MachineAct）是核心创�
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 ethercat-hal 抽象模型 (⭐⭐⭐⭐⭐)
 
-ethercat-hal 是 AUDESYS HAL 设计的最直接参考：
+ethercat-hal 是 Weftik HAL 设计的最直接参考：
 - PDO 编解码 ↔ HAL 类型系统序列化/反序列化层
 - IO trait ↔ HAL 组件接口模型 (component.interface.name)
 - CoE 配置 ↔ Config Barrier 机制
@@ -469,19 +469,19 @@ ethercat-hal 是 AUDESYS HAL 设计的最直接参考：
 
 ### 7.2 实时 Linux 集成 (⭐⭐⭐⭐)
 
-NixOS+PREEMPT_RT 经验：实际循环时间、抖动特性、硬件兼容性数据。AUDESYS Phase 1 PREEMPT_RT 部署直接可参考。
+NixOS+PREEMPT_RT 经验：实际循环时间、抖动特性、硬件兼容性数据。Weftik Phase 1 PREEMPT_RT 部署直接可参考。
 
 ### 7.3 生产部署模式 (⭐⭐⭐⭐⭐)
 
-10+ 机器真实工厂运行验证 Rust 工业控制可行性。NixOS ISO→安装→运行的部署流程为 AUDESYS 提供成熟模板。
+10+ 机器真实工厂运行验证 Rust 工业控制可行性。NixOS ISO→安装→运行的部署流程为 Weftik 提供成熟模板。
 
 ### 7.4 前端通信模式 (⭐⭐⭐⭐)
 
-SocketIO 实时 + REST 写入可直接用于 AUDESYS HMI 架构。
+SocketIO 实时 + REST 写入可直接用于 Weftik HMI 架构。
 
 ### 7.5 对 HAL 协议设计的具体启示
 
-| QiTech ethercat-hal | AUDESYS HAL 启示 |
+| QiTech ethercat-hal | Weftik HAL 启示 |
 |-------------------|-----------------|
 | PDO bit→typed 编解码 | 14 种类型的序列化层 |
 | 6 种 IO trait | Signal 读写方向分类 |
@@ -492,25 +492,25 @@ SocketIO 实时 + REST 写入可直接用于 AUDESYS HMI 架构。
 
 ### 7.6 总结
 
-QiTech Control 在 HAL 设计和生产部署方面为 AUDESYS 提供最高价值的参考。ethercat-hal 的多层抽象模型直接验证了 AUDESYS HAL 设计理念。10+ 台生产机器为 Rust 工业控制提供可信的技术可行性证明。
+QiTech Control 在 HAL 设计和生产部署方面为 Weftik 提供最高价值的参考。ethercat-hal 的多层抽象模型直接验证了 Weftik HAL 设计理念。10+ 台生产机器为 Rust 工业控制提供可信的技术可行性证明。
 
-### 7.7 QiTech ethercat-hal vs AUDESYS HAL 详细架构对比
+### 7.7 QiTech ethercat-hal vs Weftik HAL 详细架构对比
 
-| 维度 | QiTech ethercat-hal | AUDESYS HAL | 分析 |
+| 维度 | QiTech ethercat-hal | Weftik HAL | 分析 |
 |------|-------------------|------------|------|
-| 第一层: 数据编解码 | PDO bit-typed Rust | FlatBuffers 14 种类型序列化 | AUDESYS 更通用——不绑定 EtherCAT |
+| 第一层: 数据编解码 | PDO bit-typed Rust | FlatBuffers 14 种类型序列化 | Weftik 更通用——不绑定 EtherCAT |
 | 第二层: 设备抽象 | 设备层 (EL2004, WAGO 750...) | 组件模型 (component.interface) | QiTech 设备与硬件 1:1 |
-| 第三层: IO 接口 | 6 种 IO trait | Signal 原语 (单写多读) | QiTech 更向物理 IO, AUDESYS Signal 更通用 |
+| 第三层: IO 接口 | 6 种 IO trait | Signal 原语 (单写多读) | QiTech 更向物理 IO, Weftik Signal 更通用 |
 | 第四层: 业务逻辑 | MachineAct trait | FUNCTION_BLOCK + RT 线程 | MachineAct 函数式, FB 是 IEC 标准模型 |
 | 配置管理 | device-presets YAML + CoE | Config Barrier (YAML/JSON) | QiTech 更贴近硬件部署 |
-| 硬件发现 | 手动 YAML 列出设备 | HalDiscovery trait (动态) | AUDESYS 更灵活 |
+| 硬件发现 | 手动 YAML 列出设备 | HalDiscovery trait (动态) | Weftik 更灵活 |
 
 **PDO 编码 vs Signal 原语**：
 
-QiTech 的 PDO 编解码是设备特定的位域映射（偏移量+位宽由 ESI 文件定义），AUDESYS 的 Signal 是独立 Pin 值通过 FlatBuffers 序列化。两者在不同层次上解决类似问题：
-- PDO 保证整个帧的原子性（同一个 EtherCAT 周期），AUDESYS 需要通过 Config Barrier (D17) 保证批量配置一致性
-- QiTech 编解码手写 per-device，AUDESYS 通过 FlatBuffers schema 自动生成
-- QiTech 错误检测靠 EtherCAT CRC，AUDESYS 靠 FlatBuffers 内建校验 + HalQoS
+QiTech 的 PDO 编解码是设备特定的位域映射（偏移量+位宽由 ESI 文件定义），Weftik 的 Signal 是独立 Pin 值通过 FlatBuffers 序列化。两者在不同层次上解决类似问题：
+- PDO 保证整个帧的原子性（同一个 EtherCAT 周期），Weftik 需要通过 Config Barrier (D17) 保证批量配置一致性
+- QiTech 编解码手写 per-device，Weftik 通过 FlatBuffers schema 自动生成
+- QiTech 错误检测靠 EtherCAT CRC，Weftik 靠 FlatBuffers 内建校验 + HalQoS
 
 **6 IO trait vs Signal 分类**：
 
@@ -525,7 +525,7 @@ QiTech 的 PDO 编解码是设备特定的位域映射（偏移量+位宽由 ESI
 
 **MachineAct vs FUNCTION_BLOCK**：
 
-| 维度 | QiTech MachineAct | AUDESYS FB |
+| 维度 | QiTech MachineAct | Weftik FB |
 |------|------------------|----------|
 | 周期接口 | act(&mut self, io: &dyn MachineIO) | 标准 FB 方法 |
 | 异步消息 | act_machine_message(&mut self, msg) | RPC 调用 |
@@ -535,21 +535,21 @@ QiTech 的 PDO 编解码是设备特定的位域映射（偏移量+位宽由 ESI
 
 ### 7.8 NixOS 部署参考
 
-QiTech NixOS 方案的 AUDESYS 采纳建议：
+QiTech NixOS 方案的 Weftik 采纳建议：
 
-| QiTech NixOS | AUDESYS 采纳 |
+| QiTech NixOS | Weftik 采纳 |
 |-------------|------------|
 | flake.nix 声明式配置 | 直接采纳——定义内核、驱动、包依赖 |
 | CPU 隔离 (isolcpus, nohz_full) | 直接采纳——PREEMPT_RT 最佳实践 |
 | IRQ 亲和性 | 直接采纳 |
-| nixos-build-iso.sh | 参考——构建 AUDESYS Runtime ISO |
+| nixos-build-iso.sh | 参考——构建 Weftik Runtime ISO |
 | nixos-install.sh | 参考——自动安装脚本 |
 | 原子升级回滚 | 采纳——`nixos-rebuild switch --rollback` |
 | flake.lock 版本锁定 | 采纳——确保部署环境一致 |
 
 ### 7.9 生产验证的量化价值
 
-| 验证维度 | QiTech 数据 | AUDESYS 参考价值 |
+| 验证维度 | QiTech 数据 | Weftik 参考价值 |
 |---------|-----------|----------------|
 | 生产机器 | 10+ 台 | Rust 控制系统达到生产级可靠性的证明 |
 | 控制周期 | 1ms | PREEMPT_RT 可满足毫秒级实时控制 |
@@ -561,8 +561,8 @@ QiTech NixOS 方案的 AUDESYS 采纳建议：
 
 | 参考领域 | 重要性 | 关键行动 |
 |---------|--------|---------|
-| ethercat-hal 四层抽象 | P0 | AUDESYS HAL 组件模型的直接设计参考 |
-| NixOS 实时部署 | P0 | 直接采纳核心参数，构建 AUDESYS ISO |
+| ethercat-hal 四层抽象 | P0 | Weftik HAL 组件模型的直接设计参考 |
+| NixOS 实时部署 | P0 | 直接采纳核心参数，构建 Weftik ISO |
 | PDO 编解码 | P0 | 参考位域映射，设计 FlatBuffers 序列化层 |
 | IO trait → Signal | P1 | 参考 6 种 IO trait 定义 Signal 分类 |
 | MachineAct → FB | P1 | 参考接口设计 RT 线程任务调度 |
@@ -584,22 +584,22 @@ QiTech Control 使用的 LGPL-3.0 许可证在开源工业控制领域有特定�
 
 - LGPL-3.0 允许商业使用，但要求：对 QiTech 本身的修改必须开源（以 LGPL-3.0 或 GPL-3.0 发布）。但如果仅通过动态链接使用 QiTech（如调用其库的 API），则不需要开源自有代码
 - QiTech 的 crate 结构（独立的 ethercat-hal、control-core、server）允许使用者仅依赖核心库，而不需要开源自有的 MachineAct 实现
-- 对 AUDESYS 的启示：如果 AUDESYS 采用 Apache 2.0 许可证（比 LGPL-3.0 更宽松），将消除商业用户对许可证感染的顾虑。Apache 2.0 允许闭源商业使用且不要求衍生作品开源（仅要求保留版权声明和免责声明）
+- 对 Weftik 的启示：如果 Weftik 采用 Apache 2.0 许可证（比 LGPL-3.0 更宽松），将消除商业用户对许可证感染的顾虑。Apache 2.0 允许闭源商业使用且不要求衍生作品开源（仅要求保留版权声明和免责声明）
 
 #### 关于 Electron 前端 vs Web 原生
 
 QiTech 选择 Electron（桌面端框架）而非浏览器原生的 Web 技术。这一选择的利弊：
 - 优势：可访问系统级资源（文件系统、串口、USB 设备）、不受浏览器安全沙箱限制
 - 劣势：桌面端应用需要安装和更新（无法像浏览器 HMI 那样"零安装"访问）、Electron 体积庞大（通常 50-100MB）
-- AUDESYS 选择：Phase 1 建议采用 Web 原生（浏览器 HMI），避免 Electron 的安装负担和桌面端维护负担
+- Weftik 选择：Phase 1 建议采用 Web 原生（浏览器 HMI），避免 Electron 的安装负担和桌面端维护负担
 
 #### 关于 ethercrab-rs 的技术评估
 
-QiTech 使用 ethercrab-rs（纯 Rust 实现的 EtherCAT 主站）作为底层驱动。对 AUDESYS 的参考：
+QiTech 使用 ethercrab-rs（纯 Rust 实现的 EtherCAT 主站）作为底层驱动。对 Weftik 的参考：
 - ethercrab-rs 证明纯 Rust 可以实现 EtherCAT 主站的完整功能（DC 同步、PDO 编解码、CoE 配置）
 - 性能：典型 EtherCAT 周期 1ms（使用 DC 同步），实测抖动 < 50μs（Raspberry Pi 上的 PREEMPT_RT 内核）
 - ethercrab-rs 的维护活跃度：GitHub Stars 数百，定期发布。但不如 IgH EtherCAT Master（C 实现、20 年历史）成熟
-- AUDESYS 如果未来需要支持 EtherCAT，可评估 ethercrab-rs 或通过 FFI 桥接 IgH EtherCAT Master
+- Weftik 如果未来需要支持 EtherCAT，可评估 ethercrab-rs 或通过 FFI 桥接 IgH EtherCAT Master
 
 #### QiTech 与 truST 的互补关系
 
@@ -611,7 +611,7 @@ QiTech 使用 ethercrab-rs（纯 Rust 实现的 EtherCAT 主站）作为底层�
 | 部署方式 | NixOS ISO 安装到物理 PC | 预编译二进制 + Docker | QiTech 与 OS 紧耦合，truST 更通用 |
 | 社区规模 | 319 Stars, 30+ contributors | 204 Stars, 1 core maintainer | QiTech 有更大团队和更多贡献者 |
 
-AUDESYS 可以同时借鉴两者的优点：truST 的 IDE 和编译管线设计 + QiTech 的 HAL 抽象和生产部署方案。
+Weftik 可以同时借鉴两者的优点：truST 的 IDE 和编译管线设计 + QiTech 的 HAL 抽象和生产部署方案。
 
 #### 关于生产机器的实际可靠性数据
 
@@ -621,7 +621,7 @@ QiTech GmbH 的 YouTube 频道公开了一些生产机器的运行数据（需�
 - 激光设备：位置控制精度达到亚毫米级（机械精度大于控制精度）
 - 所有机器使用相同的 EtherCAT 周期（1ms），证明了控制软件（而非硬件）的统一性
 
-这些数据为 Rust 工业控制平台的可信度提供了有力支撑。AUDESYS 可以引用这些数据作为 Rust 技术栈在工业控制领域可行性的辅助证据（但需要明确标注数据来源为厂商自我报告）。
+这些数据为 Rust 工业控制平台的可信度提供了有力支撑。Weftik 可以引用这些数据作为 Rust 技术栈在工业控制领域可行性的辅助证据（但需要明确标注数据来源为厂商自我报告）。
 
 #### QiTech Rust 依赖分析
 
@@ -637,11 +637,11 @@ QiTech GmbH 的 YouTube 频道公开了一些生产机器的运行数据（需�
 
 #### QiTech CI/CD 模式
 
-PR 检查 (fmt/clippy/test) → nightly 构建 → Release 二进制 + NixOS ISO → Docker 镜像。AUDESYS Phase 1 应建立同等多层 CI 流水线。
+PR 检查 (fmt/clippy/test) → nightly 构建 → Release 二进制 + NixOS ISO → Docker 镜像。Weftik Phase 1 应建立同等多层 CI 流水线。
 
 #### QiTech 与商业 PLC 的共存
 
-QiTech 的务实定位：不是替代所有 PLC，而是在深度定制场景中替代专有 PLC。新老系统通过 Modbus/EtherCAT 互联。AUDESYS Simulator 可成为传统 DCS 的数字孪生，而非要求完全替换。
+QiTech 的务实定位：不是替代所有 PLC，而是在深度定制场景中替代专有 PLC。新老系统通过 Modbus/EtherCAT 互联。Weftik Simulator 可成为传统 DCS 的数字孪生，而非要求完全替换。
 
 #### QiTech 未来路线图（推测）
 
@@ -651,26 +651,26 @@ QiTech 的务实定位：不是替代所有 PLC，而是在深度定制场景中
 - OPC UA Server 集成
 - Profinet / EtherNet/IP 辅助协议支持
 
-#### QiTech 与 AUDESYS 的互补合作关系
+#### QiTech 与 Weftik 的互补合作关系
 
-QiTech 和 AUDESYS 不是竞争关系——它们解决的问题不同：
+QiTech 和 Weftik 不是竞争关系——它们解决的问题不同：
 - QiTech 解决：如何用 Rust 构建生产就绪的 EtherCAT 控制系统
-- AUDESYS 解决：如何构建通用的工业控制仿真和开发平台
+- Weftik 解决：如何构建通用的工业控制仿真和开发平台
 
-QiTech 的 ethercat-hal 可以成为 AUDESYS Simulator 的一个设备仿真驱动（EtherCAT 设备模型），使 Simulator 能够模拟真实的 WAGO/Beckhoff 设备行为。反之，AUDESYS 的 Studio IDE 可以为 QiTech 用户提供更好的 IEC 61131-3 编辑和仿真体验。两个项目的技术栈高度兼容（均为 Rust），协作的摩擦成本极低。
+QiTech 的 ethercat-hal 可以成为 Weftik Simulator 的一个设备仿真驱动（EtherCAT 设备模型），使 Simulator 能够模拟真实的 WAGO/Beckhoff 设备行为。反之，Weftik 的 Studio IDE 可以为 QiTech 用户提供更好的 IEC 61131-3 编辑和仿真体验。两个项目的技术栈高度兼容（均为 Rust），协作的摩擦成本极低。
 
-#### 对 AUDESYS 的最终建议
+#### 对 Weftik 的最终建议
 
 从 QiTech Control 的深度分析中得出的最关键启示：
 1. HAL 抽象必须是多层的——直接从应用逻辑跳到硬件寄存器的"扁平 HAL"不可行。QiTech 的四层抽象（PDO→Device→IO Trait→MachineAct）验证了多层次的必要性
 2. 生产部署的可靠性需要通过实际机器运行来证明——QiTech 的 10+ 台机器比任何基准测试都更有说服力
-3. 实时 Linux 的部署需要一个可复现的系统配置方案——NixOS 是目前最成熟的方案，AUDESYS 应从 Phase 1 就规划 NixOS 集成
+3. 实时 Linux 的部署需要一个可复现的系统配置方案——NixOS 是目前最成熟的方案，Weftik 应从 Phase 1 就规划 NixOS 集成
 4. 设备配置应该声明式（YAML/JSON）而非代码式——QiTech 的设备预设系统直接验证了这一原则
 5. 不要尝试替代所有现有系统——共存策略比"全栈替代"更务实且更容易被客户接受
 
-#### QiTech 与 AUDESYS 关键技术选型对照总结
+#### QiTech 与 Weftik 关键技术选型对照总结
 
-| 技术维度 | QiTech 实现 | AUDESYS 映射 | 验证程度 |
+| 技术维度 | QiTech 实现 | Weftik 映射 | 验证程度 |
 |---------|-----------|-------------|---------|
 | 全栈 Rust | 59.4% Rust | 100% Rust (D19) | 已验证 |
 | EtherCAT 主站 | ethercrab-rs | amw_ethercat transport (未来) | 已验证 |
@@ -684,7 +684,7 @@ QiTech 的 ethercat-hal 可以成为 AUDESYS Simulator 的一个设备仿真驱�
 | OPC UA | 计划中 | 规划 OPC UA Gateway | 未验证 |
 | 仿真器 | 无 | AVD Manager | 未验证 |
 
-QiTech 为 AUDESYS 验证了 HAL 抽象、PREEMPT_RT 部署、设备配置管理和多协议支持四大核心技术假设。特别是在 HAL 抽象的生产级实现方面，QiTech 提供了目前唯一经过生产验证的 Rust 参考。
+QiTech 为 Weftik 验证了 HAL 抽象、PREEMPT_RT 部署、设备配置管理和多协议支持四大核心技术假设。特别是在 HAL 抽象的生产级实现方面，QiTech 提供了目前唯一经过生产验证的 Rust 参考。
 
 #### 文档维护说明
 
@@ -701,32 +701,32 @@ QiTech 为 AUDESYS 验证了 HAL 抽象、PREEMPT_RT 部署、设备配置管理
 | ui | Electron + React 前端 | 20,000-40,000 (JS/TS) |
 | 各种 MachineAct 实现 | 生产机器逻辑 | 10,000-30,000 |
 
-总代码量估算：50,000-100,000 行（Rust + TypeScript）。AUDESYS Phase 1 预期代码量约为 QiTech 的 2-3 倍。
+总代码量估算：50,000-100,000 行（Rust + TypeScript）。Weftik Phase 1 预期代码量约为 QiTech 的 2-3 倍。
 
-### 附录：QiTech 开发路线图对 AUDESYS 的借鉴
+### 附录：QiTech 开发路线图对 Weftik 的借鉴
 
-| QiTech 经验 | AUDESYS Phase 1 策略 |
+| QiTech 经验 | Weftik Phase 1 策略 |
 |-----------|--------------------|
 | 先构建核心 HAL，再构建具体机器 | 先完善 HAL 协议规范，再实现 Runtime 和 Studio |
-| dogfooding（自用产品）是质量保障 | 从 Phase 1 开始就用 AUDESYS 构建内部测试和仿真 |
+| dogfooding（自用产品）是质量保障 | 从 Phase 1 开始就用 Weftik 构建内部测试和仿真 |
 | NixOS 从项目早期就集成 | Phase 1 启动即规划 NixOS 集成 |
-| YouTube 视频提升社区认知 | AUDESYS 可考虑技术博客或视频教程 |
+| YouTube 视频提升社区认知 | Weftik 可考虑技术博客或视频教程 |
 | 59 页 Wiki 作为文档基础 | Phase 1 配套在线文档站点 (MkDocs/Docusaurus) |
 | 30+ contributors 团队协作 | Phase 1 建立清晰的 CONTRIBUTING.md 和 issue 模板 |
 | 10+ 生产机器作为可信度证明 | Phase 2 寻求首个生产场景的参考用户 |
 
-### 附录：QiTech 对 AUDESYS 设计风险的预警
+### 附录：QiTech 对 Weftik 设计风险的预警
 
 从 QiTech 的实践中学到的警示信号：
-1. LGPL-3.0 许可证可能导致商业用户犹豫——AUDESYS 的 Apache 2.0 许可证是更明智的选择
-2. Electron 桌面端的安装负担——AUDESYS 应优先 Web 原生 HMI
-3. 仅支持 EtherCAT 限制了硬件选择——AUDESYS amw transport trait 应支持多种现场总线
-4. 团队内部机器逻辑代码可能紧耦合到 EtherCAT 细节——AUDESYS 的 HAL 必须严格隔离控制逻辑和硬件细节
-5. 产品预设系统虽然方便，但过多预设会膨胀维护负担——AUDESYS 预设库应做最小集，鼓励社区贡献扩展
+1. LGPL-3.0 许可证可能导致商业用户犹豫——Weftik 的 Apache 2.0 许可证是更明智的选择
+2. Electron 桌面端的安装负担——Weftik 应优先 Web 原生 HMI
+3. 仅支持 EtherCAT 限制了硬件选择——Weftik amw transport trait 应支持多种现场总线
+4. 团队内部机器逻辑代码可能紧耦合到 EtherCAT 细节——Weftik 的 HAL 必须严格隔离控制逻辑和硬件细节
+5. 产品预设系统虽然方便，但过多预设会膨胀维护负担——Weftik 预设库应做最小集，鼓励社区贡献扩展
 
-### 附录：QiTech 项目管理对 AUDESYS 的启示
+### 附录：QiTech 项目管理对 Weftik 的启示
 
-| 管理维度 | QiTech 实践 | AUDESYS 策略 |
+| 管理维度 | QiTech 实践 | Weftik 策略 |
 |---------|-----------|------------|
 | 版本策略 | 持续迭代 (v3.0.0-rc2) | 稳定周期 (每 2-4 周) |
 | CI/CD | GitHub Actions 全自动 | Phase 1 即建立 CI |
@@ -746,7 +746,7 @@ QiTech GmbH 的 YouTube 频道提供了丰富的技术展示和开发过程视�
 - EtherCAT 设备配置教程
 - NixOS 安装和配置指南
 
-这些视频材料为 AUDESYS 团队理解 Rust 工业控制的实际工作流提供了直观参考。
+这些视频材料为 Weftik 团队理解 Rust 工业控制的实际工作流提供了直观参考。
 
 ### 附录：综合评估总结
 
@@ -763,12 +763,12 @@ QiTech GmbH 的 YouTube 频道提供了丰富的技术展示和开发过程视�
 | CoE SDO 配置 | P1 | — | ✅ 验证 D17 Config Barrier | — |
 | SocketIO + REST | P2 | — | ✅ Studio 通信模式参考 | — |
 | 生产部署数据 | P0 | ✅ 作为 Rust 可信度证据 | — | — |
-| Dogfooding 实践 | P1 | — | ✅ AUDESYS 自用仿真 | — |
+| Dogfooding 实践 | P1 | — | ✅ Weftik 自用仿真 | — |
 | 团队协作模式 | P2 | — | — | ✅ 参考 30+ 人团队实践 |
 
 ### 附录：QiTech 项目最终评估
 
-QiTech Control 在 HAL 抽象层设计和生产部署方面为 AUDESYS 提供最高价值参考。其核心创新 ethercat-hal 的四层抽象模型、NixOS 声明式实时部署方案、10+ 生产机器的可信度证明，三大支柱使 QiTech 成为 AUDESYS HAL 设计的首选参考。建议 AUDESYS 团队深入研读 QiTech 的 ethercat-hal 源码和 NixOS 配置（flake.nix），将其作为 AUDESYS HAL 组件模型和实时部署方案的直接参考模板。与 truST Platform 的 IDE/编译管线优势形成互补——truST 指导 AUDESYS Studio 和编译器设计，QiTech 指导 AUDESYS HAL 和部署方案。
+QiTech Control 在 HAL 抽象层设计和生产部署方面为 Weftik 提供最高价值参考。其核心创新 ethercat-hal 的四层抽象模型、NixOS 声明式实时部署方案、10+ 生产机器的可信度证明，三大支柱使 QiTech 成为 Weftik HAL 设计的首选参考。建议 Weftik 团队深入研读 QiTech 的 ethercat-hal 源码和 NixOS 配置（flake.nix），将其作为 Weftik HAL 组件模型和实时部署方案的直接参考模板。与 truST Platform 的 IDE/编译管线优势形成互补——truST 指导 Weftik Studio 和编译器设计，QiTech 指导 Weftik HAL 和部署方案。
 
 ---
 
@@ -776,19 +776,19 @@ QiTech Control 在 HAL 抽象层设计和生产部署方面为 AUDESYS 提供最
 > **数据源**：https://github.com/qitechgmbh/control (README, Wiki, source tree, YouTube), https://github.com/johannesPettersson80/trust-platform
 > **状态**：QiTech v3.0.0-rc2 (2026-06-29) | truST v0.24.32 (2026-07-11) | OPC UA 1.05 (2022)
 
-QiTech Control 是 AUDESYS 目前发现的 HAL 抽象层设计和生产部署方面价值最高的参考项目。其核心创新 ethercat-hal 的多层抽象（PDO→Device→IO Trait→MachineAct）直接验证了 AUDESYS HAL 设计中"多层次抽象"的必要性。NixOS 声明式部署方案为 AUDESYS 提供了一键可复现的实时 Linux 环境模板。10+ 台生产机器的运行数据为 Rust 工业控制提供了有力的可信度支撑。AUDESYS 应深度借鉴 QiTech 的 HAL 抽象模型和 NixOS 部署方案，同时在许可证、前端技术栈、多协议支持方面做出差异化选择。
+QiTech Control 是 Weftik 目前发现的 HAL 抽象层设计和生产部署方面价值最高的参考项目。其核心创新 ethercat-hal 的多层抽象（PDO→Device→IO Trait→MachineAct）直接验证了 Weftik HAL 设计中"多层次抽象"的必要性。NixOS 声明式部署方案为 Weftik 提供了一键可复现的实时 Linux 环境模板。10+ 台生产机器的运行数据为 Rust 工业控制提供了有力的可信度支撑。Weftik 应深度借鉴 QiTech 的 HAL 抽象模型和 NixOS 部署方案，同时在许可证、前端技术栈、多协议支持方面做出差异化选择。
 
 > 完整参考系列：truST Platform | QiTech Control (本文档) | OPC UA | NI LabVIEW
 
-> 本文档记录了 AUDESYS 团队对 QiTech Control 的全面技术评估。评估时间 2026-07-13，基于 QiTech v3.0.0-rc2。
+> 本文档记录了 Weftik 团队对 QiTech Control 的全面技术评估。评估时间 2026-07-13，基于 QiTech v3.0.0-rc2。
 
 > **主要参考来源**：QiTech GitHub 仓库 (README, Wiki, source tree), QiTech GmbH YouTube 频道, QiTech NixOS 配置文件, ethercrab-rs 文档
 
-> QiTech 与 truST 是 AUDESYS 参考体系中最核心的两个互补项目：truST 验证了 IDE/编译管线/全栈 Rust 的可行性，QiTech 验证了 HAL 抽象层/生产部署/NixOS 实时环境的可行性。建议 AUDESYS 团队结合两者优势，构建完整的工业控制仿真与开发平台。
+> QiTech 与 truST 是 Weftik 参考体系中最核心的两个互补项目：truST 验证了 IDE/编译管线/全栈 Rust 的可行性，QiTech 验证了 HAL 抽象层/生产部署/NixOS 实时环境的可行性。建议 Weftik 团队结合两者优势，构建完整的工业控制仿真与开发平台。
 
 > 本文档将持续更新以反映 QiTech Control 和 truST Platform 项目的迭代发展。建议每季度审查一次以确保内容时效性。
 
-> 在 AUDESYS 参考体系中的评估排名：
+> 在 Weftik 参考体系中的评估排名：
 
 > 1. truST Platform (⭐⭐⭐⭐⭐) — IDE/编译管线/全栈 Rust 验证
   > 2. QiTech Control (⭐⭐⭐⭐⭐) — HAL 抽象/生产部署/NixOS 集成

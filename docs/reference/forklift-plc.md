@@ -262,7 +262,7 @@ MCU 端 Forklift PLC Runtime
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计
 
@@ -270,7 +270,7 @@ MCU 端 Forklift PLC Runtime
 
 Forklift PLC 展示了在 MCU 资源限制下设计 PLC 运行时的关键约束：
 
-| 资源约束 | Forklift PLC 方案 | AUDESYS 参考 |
+| 资源约束 | Forklift PLC 方案 | Weftik 参考 |
 |---------|------------------|-------------|
 | Flash 空间 | 20-60 KB 运行时 | 嵌入式 HAL 的代码量控制 |
 | RAM 限制 | 4-16 KB 映像表 | 最小化 I/O 缓冲区 |
@@ -285,7 +285,7 @@ Forklift PLC 在 RTOS 使用上采用极简策略：
 - 避免使用动态内存分配、消息队列、信号量等重量级 RTOS 组件
 - 扫描周期通过硬件定时器中断直接驱动，不经过 RTOS 调度器
 
-**AUDESYS 参考**: 对于嵌入式 HAL 和轻量级 Runtime，可参考 Forklift PLC 的 RTOS 最小化策略，避免不必要的 RTOS 抽象层。
+**Weftik 参考**: 对于嵌入式 HAL 和轻量级 Runtime，可参考 Forklift PLC 的 RTOS 最小化策略，避免不必要的 RTOS 抽象层。
 
 #### 3. 硬件抽象层（HAL）设计
 
@@ -301,11 +301,11 @@ HAL Interface:
   - serialWrite(port, data)
 ```
 
-**AUDESYS 参考**: Forklift PLC 的 HAL 简洁性提醒 AUDESYS HAL 设计避免过度工程化。虽然 AUDESYS HAL 需要完整的通信原语（Signal/StreamChannel/RPC），但嵌入式 HAL 子集可以借鉴 Forklift PLC 的极简接口设计。
+**Weftik 参考**: Forklift PLC 的 HAL 简洁性提醒 Weftik HAL 设计避免过度工程化。虽然 Weftik HAL 需要完整的通信原语（Signal/StreamChannel/RPC），但嵌入式 HAL 子集可以借鉴 Forklift PLC 的极简接口设计。
 
-### 7.2 与 AUDESYS 定位的差异与互补
+### 7.2 与 Weftik 定位的差异与互补
 
-| 维度 | Forklift PLC | AUDESYS |
+| 维度 | Forklift PLC | Weftik |
 |------|-------------|---------|
 | 核心定位 | MCU 嵌入式软 PLC | 工业控制系统模拟平台 |
 | 目标硬件 | ARM Cortex-M MCU | Linux PC + 嵌入式 |
@@ -316,14 +316,14 @@ HAL Interface:
 | HAL | 极简 I/O 驱动 | 完整通信中间件 |
 
 **互补关系**:
-- Forklift PLC 展示了 **MCU 级别 PLC 运行时的最小实现**，对 AUDESYS 嵌入式 HAL 和轻量级 Runtime 设计有直接参考价值
-- AUDESYS 的 HAL 设计（Signal/StreamChannel/RPC）提供 Forklift PLC 所缺少的通信抽象能力
-- Forklift PLC 的 **确定性执行策略**（硬件定时器驱动）对 AUDESYS RT 调度设计有参考意义
-- Forklift PLC 的 **资源受限经验** 可为 AUDESYS 的嵌入式部署场景提供优化指导
+- Forklift PLC 展示了 **MCU 级别 PLC 运行时的最小实现**，对 Weftik 嵌入式 HAL 和轻量级 Runtime 设计有直接参考价值
+- Weftik 的 HAL 设计（Signal/StreamChannel/RPC）提供 Forklift PLC 所缺少的通信抽象能力
+- Forklift PLC 的 **确定性执行策略**（硬件定时器驱动）对 Weftik RT 调度设计有参考意义
+- Forklift PLC 的 **资源受限经验** 可为 Weftik 的嵌入式部署场景提供优化指导
 
-### 7.3 对 AUDESYS 嵌入式 HAL 的启示
+### 7.3 对 Weftik 嵌入式 HAL 的启示
 
-Forklift PLC 的嵌入式设计经验可直接应用于 AUDESYS 的嵌入式 HAL 设计：
+Forklift PLC 的嵌入式设计经验可直接应用于 Weftik 的嵌入式 HAL 设计：
 
 1. **静态内存分配**: 所有数据结构在编译时确定大小，避免运行时动态分配
 2. **中断驱动 I/O**: 使用 MCU 外设中断直接驱动 I/O，减少轮询开销
@@ -652,35 +652,35 @@ Forklift PLC 代表了一类嵌入式 PLC 的设计哲学，与桌面 PLC 有本
 
 ---
 
-## 7. 对 AUDESYS 的参考价值（续）
+## 7. 对 Weftik 的参考价值（续）
 
 ### 7.4 嵌入式 Runtime 设计原则
 
-从 Forklift PLC 的设计中，可以提炼出嵌入式 PLC 运行时设计的核心原则，这些原则对 AUDESYS 的嵌入式 HAL 设计有直接参考价值：
+从 Forklift PLC 的设计中，可以提炼出嵌入式 PLC 运行时设计的核心原则，这些原则对 Weftik 的嵌入式 HAL 设计有直接参考价值：
 
 **原则 1: 编译时确定一切**
 - 变量地址、内存布局、I/O 映射都在编译时确定
 - 运行时零配置、零解析
-- 类比：AUDESYS 的 Config Barrier + LockLevel 设计
+- 类比：Weftik 的 Config Barrier + LockLevel 设计
 
 **原则 2: 中断是唯一的实时保证**
 - 硬件定时器中断决定扫描周期精度
 - 中断 ISR 尽可能短，仅在主循环中执行 PLC 逻辑
-- 类比：AUDESYS 的 RT 线程设计（SCHED_FIFO）
+- 类比：Weftik 的 RT 线程设计（SCHED_FIFO）
 
 **原则 3: 最小化协议栈**
 - Modbus RTU 是嵌入式 PLC 的基本通信协议
 - 不需要完整的 TCP/IP 栈（除非必需）
-- 类比：AUDESYS Phase 1 选择 Modbus RTU/TCP + HART
+- 类比：Weftik Phase 1 选择 Modbus RTU/TCP + HART
 
 **原则 4: 可预测性优先于功能丰富性**
 - 每个代码路径的执行时间可预先计算
 - 避免动态内存分配和递归调用
-- 类比：AUDESYS RT 路径的确定性要求
+- 类比：Weftik RT 路径的确定性要求
 
-### 7.5 Forklift PLC 与 AUDESYS 嵌入式 HAL 的映射
+### 7.5 Forklift PLC 与 Weftik 嵌入式 HAL 的映射
 
-| Forklift PLC 概念 | AUDESYS 嵌入式 HAL 对应概念 |
+| Forklift PLC 概念 | Weftik 嵌入式 HAL 对应概念 |
 |------------------|---------------------------|
 | GPIO 驱动 | HalTransport 的 Signal 原语 |
 | 硬件定时器中断 | RT 线程 + SCHED_FIFO 调度 |
@@ -690,11 +690,11 @@ Forklift PLC 代表了一类嵌入式 PLC 的设计哲学，与桌面 PLC 有本
 | 串口调试 | 工业调试桥（规划中） |
 | 裸机/FreeRTOS | amw_inproc 传输层（Phase 1） |
 
-### 7.6 对 AUDESYS 资源规划的建议
+### 7.6 对 Weftik 资源规划的建议
 
-基于 Forklift PLC 的资源占用经验，AUDESYS 的嵌入式 HAL 部署可以参考以下资源规划：
+基于 Forklift PLC 的资源占用经验，Weftik 的嵌入式 HAL 部署可以参考以下资源规划：
 
-| AUDESYS 组件 | 估算 Flash | 估算 RAM | 说明 |
+| Weftik 组件 | 估算 Flash | 估算 RAM | 说明 |
 |-------------|-----------|---------|------|
 | HAL Core (Signal/StreamChannel/RPC) | 8-16 KB | 2-4 KB | 核心原语 |
 | amw_inproc 传输层 | 4-8 KB | 1-2 KB | 进程内通信 |
@@ -705,10 +705,10 @@ Forklift PLC 代表了一类嵌入式 PLC 的设计哲学，与桌面 PLC 有本
 
 ### 7.7 嵌入式 PLC 运行时的未来方向
 
-Forklift PLC 代表的嵌入式软 PLC 方向与 AUDESYS 的轻量级 Runtime 设计有共同的未来趋势：
+Forklift PLC 代表的嵌入式软 PLC 方向与 Weftik 的轻量级 Runtime 设计有共同的未来趋势：
 
-1. **Rust 在嵌入式 PLC 中的应用**: Rust 的内存安全特性适合嵌入式实时控制，AUDESYS 使用 Rust 作为核心语言（D19），与嵌入式 Rust 生态（RTIC、embassy）天然契合
-2. **RISC-V 支持**: 开源指令集架构 RISC-V 正在改变嵌入式 MCU 格局，AUDESYS HAL 应设计为支持多架构
+1. **Rust 在嵌入式 PLC 中的应用**: Rust 的内存安全特性适合嵌入式实时控制，Weftik 使用 Rust 作为核心语言（D19），与嵌入式 Rust 生态（RTIC、embassy）天然契合
+2. **RISC-V 支持**: 开源指令集架构 RISC-V 正在改变嵌入式 MCU 格局，Weftik HAL 应设计为支持多架构
 3. **TinyML 集成**: 嵌入式 PLC 中集成轻量级机器学习推理（如 TensorFlow Lite Micro），实现预测性维护
 4. **无线通信**: 嵌入式 PLC 需要支持 LoRa、BLE Mesh 等无线协议以适应工业 IoT 场景
 5. **OTA 更新**: 安全的无线固件更新能力对嵌入式 PLC 的长期部署至关重要
@@ -762,11 +762,11 @@ Forklift PLC 充分利用 MCU 生态的现有工具链：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值（续）
+## 7. 对 Weftik 的参考价值（续）
 
 ### 7.8 综合参考要点
 
-| Forklift PLC 特性 | AUDESYS 对应模块 | 参考价值等级 |
+| Forklift PLC 特性 | Weftik 对应模块 | 参考价值等级 |
 |------------------|----------------|-------------|
 | 硬件定时器驱动扫描周期 | RT 线程调度（D13） | 高 |
 | 静态内存布局 | HAL 嵌入式内存管理 | 高 |

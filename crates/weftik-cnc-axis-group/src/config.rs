@@ -93,22 +93,12 @@ impl Default for AxisConfig {
 impl AxisConfig {
     /// Create a linear axis with the given index and label.
     pub fn linear(index: u8, label: impl Into<String>) -> Self {
-        AxisConfig {
-            index,
-            label: label.into(),
-            axis_type: AxisType::Linear,
-            ..Default::default()
-        }
+        AxisConfig { index, label: label.into(), axis_type: AxisType::Linear, ..Default::default() }
     }
 
     /// Create a rotary axis with the given index and label.
     pub fn rotary(index: u8, label: impl Into<String>) -> Self {
-        AxisConfig {
-            index,
-            label: label.into(),
-            axis_type: AxisType::Rotary,
-            ..Default::default()
-        }
+        AxisConfig { index, label: label.into(), axis_type: AxisType::Rotary, ..Default::default() }
     }
 }
 

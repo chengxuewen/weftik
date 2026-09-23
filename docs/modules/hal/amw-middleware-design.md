@@ -4,7 +4,7 @@
 
 ### 2.1 设计目标
 
-参考 ROS2 `rmw`（ROS Middleware）的设计哲学，AUDESYS 定义 `amw`（AUDESYS Middleware）抽象层，将 HAL 的三种通信原语和发现机制与具体传输实现解耦。换实现不换 API，为未来替换 Zenoh（如 DDS、MQTT）预留空间。
+参考 ROS2 `rmw`（ROS Middleware）的设计哲学，Weftik 定义 `amw`（Weftik Middleware）抽象层，将 HAL 的三种通信原语和发现机制与具体传输实现解耦。换实现不换 API，为未来替换 Zenoh（如 DDS、MQTT）预留空间。
 
 amw 由三个平级 trait 组成：
 - **HalTransport**：数据面 — Signal / StreamChannel / RPC 的底层运输

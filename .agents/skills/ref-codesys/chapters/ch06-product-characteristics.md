@@ -48,14 +48,14 @@ Single development environment unites logic and motion control:
 - Reduces OEM safety certification workload and cost
 - Safety applications isolated from standard applications
 
-## 6.7 AUDESYS Relevance — Design Philosophy
+## 6.7 Weftik Relevance — Design Philosophy
 
-| CODESYS Characteristic | AUDESYS Design Implication |
+| CODESYS Characteristic | Weftik Design Implication |
 |-----------------------|---------------------------|
-| Hardware-independent SoftPLC | Validates AUDESYS's HAL-first architecture |
-| Language Model as central IR | Design AUDESYS's internal representation (HAL IR / Device Config Model) |
+| Hardware-independent SoftPLC | Validates Weftik's HAL-first architecture |
+| Language Model as central IR | Design Weftik's internal representation (HAL IR / Device Config Model) |
 | Native code gen (not interpretation) | HAL Runtime should execute native Rust, not interpret configs |
-| HMI shares variable space with PLC | AUDESYS Studio's HMI should directly access Runtime state |
-| Plugin architecture | AUDESYS Studio should be built as extensible from day one |
-| TÜV pre-certified safety | AUDESYS Safety runtime (if needed) should pursue certification |
-| SoftMotion + logic unified | AUDESYS Simulator virtual devices + Runtime logic unified |
+| HMI shares variable space with PLC | Weftik Studio's HMI should directly access Runtime state |
+| Plugin architecture | Weftik Studio should be built as extensible from day one |
+| TÜV pre-certified safety | Weftik Safety runtime (if needed) should pursue certification |
+| SoftMotion + logic unified | Weftik Simulator virtual devices + Runtime logic unified |

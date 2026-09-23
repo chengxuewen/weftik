@@ -1,6 +1,6 @@
 # LD 编辑器差距分析（Gap Analysis）与弥补计划
 
-> AUDESYS LD Editor — 与主流工业 PLC IDE 的差距分析与演进路线
+> Weftik LD Editor — 与主流工业 PLC IDE 的差距分析与演进路线
 >
 > **生成日期**: 2026-08-07
 > **对标对象**: 三菱 GX Works3 / CODESYS / OpenPLC Editor / 西门子 TIA Portal / cdilga/ladder-logic-editor
@@ -10,11 +10,11 @@
 
 ## 1. 概览
 
-本文档系统性对比 AUDESYS LD 编辑器与四家主流工业 PLC IDE（三菱 GX Works3、CODESYS、OpenPLC Editor、西门子 TIA Portal）的 LD/LAD 梯形图编辑能力，识别差距、给出弥补计划，并划分实施优先级。
+本文档系统性对比 Weftik LD 编辑器与四家主流工业 PLC IDE（三菱 GX Works3、CODESYS、OpenPLC Editor、西门子 TIA Portal）的 LD/LAD 梯形图编辑能力，识别差距、给出弥补计划，并划分实施优先级。
 
-AUDESYS LD 编辑器当前是一个**单文件、拓扑化、纯编辑**的 IEC 61131-3 梯形图编辑器（React Flow + 引入 Rust 编译器到 HalProgram）。定位为商业编辑器的"编辑核心"子集 —— **项目结构、在线调试、文档导出三大块几乎空白**。
+Weftik LD 编辑器当前是一个**单文件、拓扑化、纯编辑**的 IEC 61131-3 梯形图编辑器（React Flow + 引入 Rust 编译器到 HalProgram）。定位为商业编辑器的"编辑核心"子集 —— **项目结构、在线调试、文档导出三大块几乎空白**。
 
-**对标结论先行**：在"编辑画布"这一层，AUDESYS 已接近甚至部分超越商业编辑器（拓扑插入点、▲▼ 分支标记、实时校验、迷你地图、Git 友好格式）；但在"工程化"三层 —— 在线监控、工程树/变量表、PLCopen 互操作 —— 差距达 90%+，是当前的核心短板。
+**对标结论先行**：在"编辑画布"这一层，Weftik 已接近甚至部分超越商业编辑器（拓扑插入点、▲▼ 分支标记、实时校验、迷你地图、Git 友好格式）；但在"工程化"三层 —— 在线监控、工程树/变量表、PLCopen 互操作 —— 差距达 90%+，是当前的核心短板。
 
 ---
 
@@ -51,13 +51,13 @@ AUDESYS LD 编辑器当前是一个**单文件、拓扑化、纯编辑**的 IEC 
 | 西门子 TIA Portal | 商业（S7-1200/1500） | `docs/reference/siemens.md`、`ld-editor-ui-spec.md` |
 | cdilga/ladder-logic-editor | 开源（ST↔LD） | `docs/reference/ladder-logic-editor.md` |
 
-方法：逐厂商功能清单（元素/编辑 UX/分支/导航/在线/导出）→ 与 AUDESYS 逐项对照 → 识别跨厂商共识差距 → 制定弥补计划。
+方法：逐厂商功能清单（元素/编辑 UX/分支/导航/在线/导出）→ 与 Weftik 逐项对照 → 识别跨厂商共识差距 → 制定弥补计划。
 
 ---
 
 ## 4. 四厂商共识差距总表
 
-所有主流 PLC IDE 共有的能力中，AUDESYS 缺失的按影响排序：
+所有主流 PLC IDE 共有的能力中，Weftik 缺失的按影响排序：
 
 | # | 差距 | 三菱 | CODESYS | OpenPLC | 西门子 | 当前状态 | 优先级 |
 |---|------|:---:|:---:|:---:|:---:|---------|:---:|
@@ -86,7 +86,7 @@ AUDESYS LD 编辑器当前是一个**单文件、拓扑化、纯编辑**的 IEC 
 | 采样追踪 / 波形 | ✅ | ✅ | ❌ | ✅ | ❌ | 有 Scope View widget，未接 LD |
 | 仿真联动 | ✅ Simulator3 | ✅ | ❌ | ✅ PLCSIM | 🟡 | SimulationHarness 存在，未集成编辑器 |
 
-**接入路径**：复用已有的 Runtime IPC / SignalBridge（`crates/audesys-runtime-client`）、监控骨架（`monitoring` 状态 + `monitorValues` + `ld-edge--active`/`ld-value-badge` CSS）。这是"看起来像工业编辑器"的分水岭。
+**接入路径**：复用已有的 Runtime IPC / SignalBridge（`crates/weftik-runtime-client`）、监控骨架（`monitoring` 状态 + `monitorValues` + `ld-edge--active`/`ld-value-badge` CSS）。这是"看起来像工业编辑器"的分水岭。
 
 ### 5.2 项目结构 / 工程树（Project Management）
 
@@ -235,4 +235,4 @@ AUDESYS LD 编辑器当前是一个**单文件、拓扑化、纯编辑**的 IEC 
 - `docs/reference/codesys.md` — CODESYS 产品分析
 - `docs/reference/ld-editor-ui-spec.md` — LD 编辑器 UI 规范（CODESYS/TwinCAT/TIA/OpenPLC）
 - `docs/reference/ladder-logic-editor.md` — cdilga/ladder-logic-editor 参考（ST↔LD 双向转换 + 仿真）
-- `theia-extensions/audesys-ld-editor/` — 当前 LD 编辑器源码
+- `theia-extensions/weftik-ld-editor/` — 当前 LD 编辑器源码

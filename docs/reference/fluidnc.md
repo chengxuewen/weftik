@@ -333,7 +333,7 @@ FluidNC 的定时器系统是实时性能的核心：
 POSIX 构建目标的意义：
 - 不需要 ESP32 硬件即可测试 G-code 解析、Planner 算法、配置加载等核心逻辑
 - 可以在 CI/CD 中集成 FluidNC 的单元测试
-- 为 AUDESYS Simulator 的设计提供了直接参考——在仿真模式下运行相同的控制逻辑
+- 为 Weftik Simulator 的设计提供了直接参考——在仿真模式下运行相同的控制逻辑
 
 ## 三、功能概览
 
@@ -600,119 +600,119 @@ FluidNC 的 Channel 系统将串口/WiFi/蓝牙/SD 卡封装为统一的输入�
 
 探针事件由步进 ISR（中断服务程序）直接检测，不依赖主循环轮询。这保证了探针触发的低延迟（微秒级），对于高精度探测操作（如工件找正、刀具长度测量）至关重要。探针位置在触发时刻被精确记录，不受主循环延迟影响。
 
-## 七、对AUDESYS参考价值
+## 七、对Weftik参考价值
 
 ### 7.1 配置文件驱动设计的借鉴
 
-FluidNC 的 YAML 配置驱动设计对 AUDESYS 的配置格式决策（D24：开发 YAML + 运行时 FlatBuffers）提供了直接参考：
+FluidNC 的 YAML 配置驱动设计对 Weftik 的配置格式决策（D24：开发 YAML + 运行时 FlatBuffers）提供了直接参考：
 
 - **运行时配置可行性验证**：FluidNC 证明了在 ESP32 这种资源受限的 MCU 上运行时解析 YAML 配置是完全可行的
-- **配置热更新**：FluidNC 支持通过 WiFi 更新配置文件——AUDESYS 的 Config Barrier（D17）可以参考这种模式
-- **错误反馈**：FluidNC 在配置解析错误时输出详细的错误信息，这对 AUDESYS 的 YAML→FlatBuffers 编译错误处理有参考价值
+- **配置热更新**：FluidNC 支持通过 WiFi 更新配置文件——Weftik 的 Config Barrier（D17）可以参考这种模式
+- **错误反馈**：FluidNC 在配置解析错误时输出详细的错误信息，这对 Weftik 的 YAML→FlatBuffers 编译错误处理有参考价值
 
-AUDESYS 可以借鉴的配置设计原则：
+Weftik 可以借鉴的配置设计原则：
 1. 配置文件是"机器描述"，而非"代码配置"
 2. 用户接口与实现细节分离（YAML 配置对用户友好，FlatBuffers 对运行时友好）
 3. 配置验证在加载时执行，错误立即暴露
 
 ### 7.2 通信架构的参考
 
-FluidNC 的 Channel 系统为 AUDESYS 的 HAL 通信原语（Signal/StreamChannel/RPC）设计提供了参考：
+FluidNC 的 Channel 系统为 Weftik 的 HAL 通信原语（Signal/StreamChannel/RPC）设计提供了参考：
 
-- **统一抽象**：FluidNC 将串口、WiFi、蓝牙、SD 卡统一为 Channel——这正是 AUDESYS 的 amw 中间件（D11）的设计目标
-- **多个输入源同时活跃**：FluidNC 支持所有 Channel 同时工作——AUDESYS 的 StreamChannel 应支持类似的多源地写入
-- **实时命令通道**：FluidNC 的实时命令通过中断处理而不是主循环轮询——AUDESYS 的 RT 数据面（D16）需要类似的优先级分离
+- **统一抽象**：FluidNC 将串口、WiFi、蓝牙、SD 卡统一为 Channel——这正是 Weftik 的 amw 中间件（D11）的设计目标
+- **多个输入源同时活跃**：FluidNC 支持所有 Channel 同时工作——Weftik 的 StreamChannel 应支持类似的多源地写入
+- **实时命令通道**：FluidNC 的实时命令通过中断处理而不是主循环轮询——Weftik 的 RT 数据面（D16）需要类似的优先级分离
 
 ### 7.3 步进引擎的硬件加速模式
 
-FluidNC 的四种步进引擎展示了"硬件抽象 + 可替换实现"的设计模式，这正是 AUDESYS 的 HAL 设计核心思想：
+FluidNC 的四种步进引擎展示了"硬件抽象 + 可替换实现"的设计模式，这正是 Weftik 的 HAL 设计核心思想：
 
-- **RMT 引擎 = 硬件卸载模式**：专用外设处理精确时序，CPU 专注于计算任务——与 AUDESYS 的 amw 传输层抽象类似
-- **I2S_STREAM 引擎 = 高性能模式**：使用高速外设流式输出——对应 AUDESYS 的 amw_zenoh 高性能实现
-- **Timed 引擎 = 兼容模式**：纯 GPIO 实现，无需特殊硬件——对应 AUDESYS 的 amw_inproc 简单实现
+- **RMT 引擎 = 硬件卸载模式**：专用外设处理精确时序，CPU 专注于计算任务——与 Weftik 的 amw 传输层抽象类似
+- **I2S_STREAM 引擎 = 高性能模式**：使用高速外设流式输出——对应 Weftik 的 amw_zenoh 高性能实现
+- **Timed 引擎 = 兼容模式**：纯 GPIO 实现，无需特殊硬件——对应 Weftik 的 amw_inproc 简单实现
 
-AUDESYS 的 HAL 可以从这种"多实现、统一接口"的模式中汲取设计思路。
+Weftik 的 HAL 可以从这种"多实现、统一接口"的模式中汲取设计思路。
 
 ### 7.4 实时性与运动控制
 
-FluidNC 在主循环+ISR 混合模式下实现了硬实时响应的步进输出，这为 AUDESYS 的 RT 调度（D13）提供了参考：
+FluidNC 在主循环+ISR 混合模式下实现了硬实时响应的步进输出，这为 Weftik 的 RT 调度（D13）提供了参考：
 
 - **ISR 处理时间关键操作**：步进脉冲和探针触发等时间关键操作在 ISR 中处理
 - **主循环处理非关键操作**：G-code 解析、配置管理等在后台优先级执行
 - **实时命令位图**：通过 `sys.realtime_request` 位图实现快速的全局状态通信
 
-AUDESYS 的 RT 调度可以借鉴这种优先级分离模式，但需要加强到 SCHED_FIFO 级别（D37）以满足硬实时要求。
+Weftik 的 RT 调度可以借鉴这种优先级分离模式，但需要加强到 SCHED_FIFO 级别（D37）以满足硬实时要求。
 
 ### 7.5 轨迹规划算法的参考
 
-FluidNC 的 Planner 算法对 AUDESYS Runtime 的运动控制模块有直接参考价值：
+FluidNC 的 Planner 算法对 Weftik Runtime 的运动控制模块有直接参考价值：
 
-- **Look-ahead 前瞻算法**：通过预读多个运动线段计算最优过弯速度——AUDESYS 的 RT 运动控制需要类似的算法
+- **Look-ahead 前瞻算法**：通过预读多个运动线段计算最优过弯速度——Weftik 的 RT 运动控制需要类似的算法
 - **向心加速度近似**：使用简单的数学公式实现复杂的加加速度控制——在实时约束下，简单算法比复杂算法更可靠
 - **Planner 重算**：新线段加入时自动重算所有连接点——保证全局约束一致性
 
-AUDESYS 的 Runtime 运动控制模块可以将 FluidNC 的 Planner 算法作为参考实现进行移植。
+Weftik 的 Runtime 运动控制模块可以将 FluidNC 的 Planner 算法作为参考实现进行移植。
 
 ### 7.6 运动学系统的架构借鉴
 
-FluidNC 的 `KinematicSystem` 抽象为 AUDESYS 的机器模型设计提供了参考：
+FluidNC 的 `KinematicSystem` 抽象为 Weftik 的机器模型设计提供了参考：
 
 - **坐标变换与运动规划分离**：运动学只负责坐标变换，不参与轨迹规划——低耦合设计
-- **通过配置文件选择运动学**：无需编译时配置——AUDESYS 的 Config Barrier 可以考虑类似的设计
+- **通过配置文件选择运动学**：无需编译时配置——Weftik 的 Config Barrier 可以考虑类似的设计
 - **接口简洁**：`cartesian_to_motors()` 单一接口覆盖所有运动学类型
 
-AUDESYS 的 HAL Device Object 模型可以参考这种"定义少量标准接口，支持多样化实现"的设计模式。
+Weftik 的 HAL Device Object 模型可以参考这种"定义少量标准接口，支持多样化实现"的设计模式。
 
-### 7.7 WebUI 对 AUDESYS Studio 的参考
+### 7.7 WebUI 对 Weftik Studio 的参考
 
-FluidNC 的 WebUI 实现为 AUDESYS Studio（D21：Tauri + React + TypeScript）提供了参考：
+FluidNC 的 WebUI 实现为 Weftik Studio（D21：Tauri + React + TypeScript）提供了参考：
 
-- **嵌入式 Web 服务器**：ESP32 运行 Web 服务器提供机器控制界面——AUDESYS 的 Studio 可以通过 WebSocket 与 Runtime 通信
+- **嵌入式 Web 服务器**：ESP32 运行 Web 服务器提供机器控制界面——Weftik 的 Studio 可以通过 WebSocket 与 Runtime 通信
 - **实时状态更新**：WebUI 使用 AJAX/WebSocket 实现位置和状态的实时更新
 - **响应式设计**：一套 UI 适配 PC/手机/平板
 
-AUDESYS Studio 的初期原型可能不需要完全的桌面应用——FluidNC 的模式证明，Web 界面足以提供 90% 的功能。
+Weftik Studio 的初期原型可能不需要完全的桌面应用——FluidNC 的模式证明，Web 界面足以提供 90% 的功能。
 
-### 7.8 对 AUDESYS Simulator 的参考
+### 7.8 对 Weftik Simulator 的参考
 
-FluidNC 的 POSIX 构建目标（由 Mitch Bradley 贡献）支持在 Linux 上运行 FluidNC 进行集成测试——这为 AUDESYS Simulator 提供了直接参考：
+FluidNC 的 POSIX 构建目标（由 Mitch Bradley 贡献）支持在 Linux 上运行 FluidNC 进行集成测试——这为 Weftik Simulator 提供了直接参考：
 
 - **Simulator 架构**：FluidNC 的 POSIX 目标可以在没有硬件的情况下运行规划器和 G-code 解析器
-- **AUDESYS Simulator 可以**：在仿真模式下运行同样的 HAL 协议栈，验证控制逻辑而不需要真实硬件
+- **Weftik Simulator 可以**：在仿真模式下运行同样的 HAL 协议栈，验证控制逻辑而不需要真实硬件
 - **G-code 模拟**：FluidNC 的 `$C` G-code 检查模式验证 G-code 的正确性而不执行运动
 
 ### 7.9 局限性与警示
 
-1. **ESP32 平台局限**：FluidNC 绑定了 ESP32 平台，不能迁移到其他 MCU/MPU。AUDESYS 的 HAL 必须保持平台无关。
+1. **ESP32 平台局限**：FluidNC 绑定了 ESP32 平台，不能迁移到其他 MCU/MPU。Weftik 的 HAL 必须保持平台无关。
 
-2. **无安全性**：FluidNC 没有功能安全特性。AUDESYS 必须从设计开始就考虑 IEC 61508 兼容性。
+2. **无安全性**：FluidNC 没有功能安全特性。Weftik 必须从设计开始就考虑 IEC 61508 兼容性。
 
-3. **GPLv3 vs MIT**：FluidNC 的 GPLv3 限制了商业生态。AUDESYS 的许可证策略需要平衡开放性和商业化。
+3. **GPLv3 vs MIT**：FluidNC 的 GPLv3 限制了商业生态。Weftik 的许可证策略需要平衡开放性和商业化。
 
-4. **无闭环控制**：FluidNC 仅支持开环步进控制。AUDESYS 必须同时支持开环步进和闭环伺服。
+4. **无闭环控制**：FluidNC 仅支持开环步进控制。Weftik 必须同时支持开环步进和闭环伺服。
 
-5. **多语言支持**：FluidNC 完全在 C++/ESP-IDF/Arduino 生态中。AUDESYS 必须支持多语言（D19）。
+5. **多语言支持**：FluidNC 完全在 C++/ESP-IDF/Arduino 生态中。Weftik 必须支持多语言（D19）。
 
 
 
-### 7.10 总结：FluidNC 对 AUDESYS 的整体价值
+### 7.10 总结：FluidNC 对 Weftik 的整体价值
 
 FluidNC 代表了 CNC 控制固件从 Grbl 的"编译时配置"到"运行时配置"的演进。其最核心的贡献是证明了：在资源受限的嵌入式平台上，面向对象架构、YAML 配置、Web 界面、可插拔硬件抽象可以同时实现，而不会牺牲实时性能。
 
-对于 AUDESYS，FluidNC 的核心参考价值在于：
-1. 配置文件驱动的设计模式——与 AUDESYS 的 D24 决策方向一致
-2. 统一通信抽象（Channels）——与 AUDESYS 的 amw 中间件设计思想一致
-3. 可插拔步进引擎——与 AUDESYS 的 HAL 多实现策略一致
-4. 运动学抽象——为 AUDESYS 的机器模型设计提供参考
-5. 轨迹规划算法——可直接移植到 AUDESYS Runtime
-6. WebUI 模式——为 AUDESYS Studio 的初期原型提供参考
+对于 Weftik，FluidNC 的核心参考价值在于：
+1. 配置文件驱动的设计模式——与 Weftik 的 D24 决策方向一致
+2. 统一通信抽象（Channels）——与 Weftik 的 amw 中间件设计思想一致
+3. 可插拔步进引擎——与 Weftik 的 HAL 多实现策略一致
+4. 运动学抽象——为 Weftik 的机器模型设计提供参考
+5. 轨迹规划算法——可直接移植到 Weftik Runtime
+6. WebUI 模式——为 Weftik Studio 的初期原型提供参考
 
 
-### 7.11 FluidNC 到 AUDESYS HAL 的详细映射
+### 7.11 FluidNC 到 Weftik HAL 的详细映射
 
-将 FluidNC 的各个子系统映射到 AUDESYS 的 HAL 概念体系，可以更清晰地看出参考价值：
+将 FluidNC 的各个子系统映射到 Weftik 的 HAL 概念体系，可以更清晰地看出参考价值：
 
-| FluidNC 子系统 | FluidNC 功能 | AUDESYS 对应 | 映射参考 |
+| FluidNC 子系统 | FluidNC 功能 | Weftik 对应 | 映射参考 |
 |---------------|-------------|-------------|----------|
 | Stepping Engine | RMT/Timed/I2S 步进脉冲生成 | amw 传输层 (D11) | 硬件卸载+软件回退多实现策略 |
 | MotionControl mc_linear() | 笛卡尔直线运动 | HAL RPC Action | 运动控制通道的 RPC 接口 |
@@ -724,11 +724,11 @@ FluidNC 代表了 CNC 控制固件从 Grbl 的"编译时配置"到"运行时配�
 | WebUI ESP3D | 浏览器控制界面 | Studio IDE (D21) | Tauri+React 调试面板 |
 | Channel 实时命令 | 带外实时命令处理 | RPC 实时面 (D16) | 优先级分级的通信面 |
 
-这个映射表可以作为 AUDESYS 参考文档的交叉引用索引使用。
+这个映射表可以作为 Weftik 参考文档的交叉引用索引使用。
 
-### 7.12 对 AUDESYS Runtime 运动控制模块的参考
+### 7.12 对 Weftik Runtime 运动控制模块的参考
 
-AUDESYS Runtime 的运动控制模块是 Phase 1 的核心组件之一（D34：hal-core 驱动并行）。FluidNC 的 Planner 算法可以直接复用：
+Weftik Runtime 的运动控制模块是 Phase 1 的核心组件之一（D34：hal-core 驱动并行）。FluidNC 的 Planner 算法可以直接复用：
 
 **Planner 移植点**：
 1. `plan_buffer_line()` 算法的 Rust 移植——前瞻算法和加加速度规划可以直接翻译为 Rust
@@ -736,43 +736,43 @@ AUDESYS Runtime 的运动控制模块是 Phase 1 的核心组件之一（D34：h
 3. `junction_speed` 算法——基于向心加速度的弯道速度计算
 
 **需要考虑的差异**：
-- FluidNC 的 Planner 针对开环步进电机优化，AUDESYS Runtime 需要同时支持步进和伺服
-- FluidNC 使用浮点数，AUDESYS 的 RT 路径可能需要考虑定点数（CORDIC 或无 FPU 的 MCU）
+- FluidNC 的 Planner 针对开环步进电机优化，Weftik Runtime 需要同时支持步进和伺服
+- FluidNC 使用浮点数，Weftik 的 RT 路径可能需要考虑定点数（CORDIC 或无 FPU 的 MCU）
 - FluidNC 的环形缓冲区设计在 Rust 中需要改写为 safe Rust 的环形缓冲区实现
 
-### 7.13 对 AUDESYS 配置设计的参考
+### 7.13 对 Weftik 配置设计的参考
 
-FluidNC 的 YAML 配置系统设计对 AUDESYS 的配置格式（D24）有多点参考：
+FluidNC 的 YAML 配置系统设计对 Weftik 的配置格式（D24）有多点参考：
 
-**成功的做法（AUDESYS 可以借鉴）**：
+**成功的做法（Weftik 可以借鉴）**：
 1. YAML 配置描述机器拓扑（轴/电机/驱动器/传感器）
 2. 配置错误在加载时立即报告，带行号和错误描述
 3. 配置文件有版本号，支持向后兼容
 4. 配置文件模板（参考 fluidnc-config-files 仓库）降低上手难度
 
-**需改进的做法（AUDESYS 应该避免）**：
-1. FluidNC 在运行时解析 YAML（在 MCU 上）——这不是最佳实践，解析开销影响启动时间。AUDESYS 的 D24 决策（YAML → FlatBuffers 编译）更适合 RT 场景。
-2. FluidNC 的配置更新需要重启——AUDESYS 的 Config Barrier（D17）支持运行时配置变更，无需重启。
-3. FluidNC 缺少配置版本管理——AUDESYS 应在 YAML 配置中嵌入 schema 版本，支持自动升级。
+**需改进的做法（Weftik 应该避免）**：
+1. FluidNC 在运行时解析 YAML（在 MCU 上）——这不是最佳实践，解析开销影响启动时间。Weftik 的 D24 决策（YAML → FlatBuffers 编译）更适合 RT 场景。
+2. FluidNC 的配置更新需要重启——Weftik 的 Config Barrier（D17）支持运行时配置变更，无需重启。
+3. FluidNC 缺少配置版本管理——Weftik 应在 YAML 配置中嵌入 schema 版本，支持自动升级。
 
-### 7.14 对 AUDESYS 通信架构的参考
+### 7.14 对 Weftik 通信架构的参考
 
-FluidNC 的 Channel 系统和实时命令处理对 AUDESYS 的通信面（data/control/configuration three-plane model）有参考价值：
+FluidNC 的 Channel 系统和实时命令处理对 Weftik 的通信面（data/control/configuration three-plane model）有参考价值：
 
 **Three-plane 通信模型自 FluidNC 视角**：
-- **数据面（Data Plane）**：G-code 运动命令 → AUDESYS Signal（传感器数据）+ StreamChannel（运动指令流）
-- **控制面（Control Plane）**：实时命令（Feed Hold/Cycle Start/Kill） → AUDESYS RPC（控制通道）+ HalQoS Liveliness（D16）
-- **配置面（Configuration Plane）**：YAML 配置文件 → AUDESYS Config Barrier（D17）+ HalQoS Security Domain（D27）
+- **数据面（Data Plane）**：G-code 运动命令 → Weftik Signal（传感器数据）+ StreamChannel（运动指令流）
+- **控制面（Control Plane）**：实时命令（Feed Hold/Cycle Start/Kill） → Weftik RPC（控制通道）+ HalQoS Liveliness（D16）
+- **配置面（Configuration Plane）**：YAML 配置文件 → Weftik Config Barrier（D17）+ HalQoS Security Domain（D27）
 
-FluidNC 展示了这些通信面在嵌入式平台上的共存模式——三个面共享同一物理通道（串口/WiFi），通过协议层分离（实时命令在 G-code 流中带外传输）。AUDESYS 的 amw 中间件应该在此基础上更进一步，使用逻辑通道分离三个通信面。
+FluidNC 展示了这些通信面在嵌入式平台上的共存模式——三个面共享同一物理通道（串口/WiFi），通过协议层分离（实时命令在 G-code 流中带外传输）。Weftik 的 amw 中间件应该在此基础上更进一步，使用逻辑通道分离三个通信面。
 
-### 7.15 对 AUDESYS Simulator 的详细参考
+### 7.15 对 Weftik Simulator 的详细参考
 
-FluidNC 的 POSIX 构建目标为 AUDESYS Simulator 提供了直接架构参考：
+FluidNC 的 POSIX 构建目标为 Weftik Simulator 提供了直接架构参考：
 
 **Simulator 架构对比**：
 
-| 层面 | FluidNC POSIX 目标 | AUDESYS Simulator |
+| 层面 | FluidNC POSIX 目标 | Weftik Simulator |
 |------|-------------------|-------------------|
 | 控制逻辑 | 相同的 Planner+GCode 处理 | 相同的 HAL API 调用 |
 | 硬件接口 | 无（POSIX 空实现） | 虚拟设备（模拟器） |
@@ -784,11 +784,11 @@ FluidNC 的 POSIX 构建目标为 AUDESYS Simulator 提供了直接架构参考�
 2. Phase 2：添加虚拟设备模拟器（模拟电机、传感器、IO行为）
 3. Phase 3：添加回归测试套件，在 CI 中自动运行
 
-FluidNC 的 POSIX 构建用不到 200 行代码实现了无硬件测试能力——AUDESYS 的 Simulator 在 Phase 1 可以遵循同样的"轻量级实现"路径。
+FluidNC 的 POSIX 构建用不到 200 行代码实现了无硬件测试能力——Weftik 的 Simulator 在 Phase 1 可以遵循同样的"轻量级实现"路径。
 
-### 7.16 对 AUDESYS Studio 的 Web 架构参考
+### 7.16 对 Weftik Studio 的 Web 架构参考
 
-FluidNC 的 WebUI 虽然简单（ESPN3D-WebUI 是单页 HTML+JS），但它验证了"嵌入式设备 + Web 界面"作为远程控制手段的可行性。对于 AUDESYS Studio（D21：Tauri + React + TypeScript）：
+FluidNC 的 WebUI 虽然简单（ESPN3D-WebUI 是单页 HTML+JS），但它验证了"嵌入式设备 + Web 界面"作为远程控制手段的可行性。对于 Weftik Studio（D21：Tauri + React + TypeScript）：
 
 **WebUI 到 Tauri 的功能映射**：
 - WebUI 点动控制 → Tauri 的 Tauri Command 调用 Rust 后端发送 Dot Control 命令
@@ -796,19 +796,19 @@ FluidNC 的 WebUI 虽然简单（ESPN3D-WebUI 是单页 HTML+JS），但它验�
 - WebUI 文件上传 → Tauri 的文件系统 API
 - WebUI 配置编辑 → Tauri 的代码编辑器组件
 
-**AUDESYS Studio 可以超越 FluidNC WebUI 的地方**：
+**Weftik Studio 可以超越 FluidNC WebUI 的地方**：
 1. 完整的 G-code 编辑器（语法高亮、行号、自动完成）
 2. 2D/3D 加工路径预览（Three.js 或专用渲染器）
-3. 多机管理（一个 Studio 实例管理多台 FluidNC/AUDESYS 设备）
+3. 多机管理（一个 Studio 实例管理多台 FluidNC/Weftik 设备）
 4. 插件系统（自定义面板和扩展）
 
-### 7.17 总结：FluidNC 在 AUDESYS 参考文档体系中的位置
+### 7.17 总结：FluidNC 在 Weftik 参考文档体系中的位置
 
-FluidNC 填补了 AUDESYS 参考文档体系中"桌面级 CNC 固件"的空白。它与 LinuxCNC（完整工业级 CNC 系统）、SimpleFOC（MCU 级 FOC 电机控制库）一起，覆盖了从工业级到桌面级到芯片级的完整运动控制谱系。
+FluidNC 填补了 Weftik 参考文档体系中"桌面级 CNC 固件"的空白。它与 LinuxCNC（完整工业级 CNC 系统）、SimpleFOC（MCU 级 FOC 电机控制库）一起，覆盖了从工业级到桌面级到芯片级的完整运动控制谱系。
 
 FluidNC 的核心经验教训：
-1. **配置文件驱动设计**：YAML 使固件适配任何机器——这一模式已被 AUDESYS 采纳为 D24
-2. **网络原生接入**：WiFi 和 WebUI 是 FluIne NC 最强差异化——AUDESYS Studio 应至少提供 Web 接入选项
-3. **可插拔架构**：步进引擎和运动学的多实现策略——AUDESYS HAL 的 amw 三重实现（D11）是同一模式
-4. **实时性与灵活性并存**：C++ OO + ISR 实时处理——AUDESYS 的 RT 线程（D13）应参考这种设计
-5. **POSIX 模拟测试**：无硬件测试模式——AUDESYS Simulator Phase 1 的架构模板
+1. **配置文件驱动设计**：YAML 使固件适配任何机器——这一模式已被 Weftik 采纳为 D24
+2. **网络原生接入**：WiFi 和 WebUI 是 FluIne NC 最强差异化——Weftik Studio 应至少提供 Web 接入选项
+3. **可插拔架构**：步进引擎和运动学的多实现策略——Weftik HAL 的 amw 三重实现（D11）是同一模式
+4. **实时性与灵活性并存**：C++ OO + ISR 实时处理——Weftik 的 RT 线程（D13）应参考这种设计
+5. **POSIX 模拟测试**：无硬件测试模式——Weftik Simulator Phase 1 的架构模板

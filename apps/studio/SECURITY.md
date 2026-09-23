@@ -1,4 +1,4 @@
-# AUDESYS Studio — Plugin Host Security Configuration
+# Weftik Studio — Plugin Host Security Configuration
 
 **Phase 1: Zero Third-Party Extensions**
 
@@ -15,7 +15,7 @@ code can enter the plugin process, regardless of how it is packaged or obtained.
 
 ## Electron Security (Theia Defaults)
 
-Theia 1.73.0 applies these defaults for Electron `webPreferences`. AUDESYS
+Theia 1.73.0 applies these defaults for Electron `webPreferences`. Weftik
 keeps them at their secure defaults, no relaxation:
 
 | Setting | Value | Notes |
@@ -42,7 +42,7 @@ Electron security defaults above.
 
 ## Phase 2 Whitelist Process (Future)
 
-When AUDESYS moves to Phase 2 and needs sanctioned extensions:
+When Weftik moves to Phase 2 and needs sanctioned extensions:
 
 1. Specific extension IDs are added to `theiaPlugins` in `package.json`.
 2. Extensions are placed in the `theia-plugins/` directory under version control.

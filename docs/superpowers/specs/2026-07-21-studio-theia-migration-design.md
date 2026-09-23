@@ -1,4 +1,4 @@
-# AUDESYS Studio → Eclipse Theia 迁移架构设计
+# Weftik Studio → Eclipse Theia 迁移架构设计
 
 **创建日期**: 2026-07-21  
 **决策**: 从 Tauri+React 自建架构迁移到 Eclipse Theia 框架  
@@ -31,7 +31,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                  AUDESYS Studio (Theia)                        │
+│                  Weftik Studio (Theia)                        │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐ │
 │  │  Theia Frontend (Electron Renderer / Browser)            │ │
@@ -46,7 +46,7 @@
 │  ┌──────────────────────┴───────────────────────────────────┐ │
 │  │  Theia Backend (Node.js + Express)                       │ │
 │  │  ┌──────────────────────────────────────────────────┐   │ │
-│  │  │  Audesys Bridge Service (napi-rs)                │   │ │
+│  │  │  Weftik Bridge Service (napi-rs)                │   │ │
 │  │  │  ┌──────────────┐ ┌──────────────┐               │   │ │
 │  │  │  │ Rust IPC     │ │ Rust Compiler│               │   │ │
 │  │  │  │ (UDS,信号)   │ │ (6 语言+CNC) │               │   │ │
@@ -68,7 +68,7 @@
 
 ## 2. 模块映射：当前 → Theia
 
-| 当前 AUDESYS 组件 | Theia 对应 | 迁移方式 |
+| 当前 Weftik 组件 | Theia 对应 | 迁移方式 |
 |---|---|---|
 | **Shell** (Tool+Slot+Mode) | Theia Workbench | 直接替换——Theia 提供 Dock/Tab/Menu/StatusBar |
 | **NavBar** | Activity Bar (Theia 内置) | 替换——ViewContainer 贡献点注册工具图标 |
@@ -113,13 +113,13 @@ Rust crates (~50% 需适配：纯逻辑代码零修改，34 个 Tauri 命令需�
 *注：需适配部分详见 §10.2-10.4。纯逻辑代码（编译器、VM、Engine）零修改。34 个 Tauri 命令重写为 ~25 个 napi-rs 函数。*
 
 **新增**：
-- `crates/audesys-theia-bridge/` — napi-rs 绑定层（~500-1000 行）
-- `theia-extensions/audesys-backend/` — Theia Backend Service（~300 行）
+- `crates/weftik-theia-bridge/` — napi-rs 绑定层（~500-1000 行）
+- `theia-extensions/weftik-backend/` — Theia Backend Service（~300 行）
 
 ### 3.2 napi-rs 绑定层接口
 
 ```rust
-// crates/audesys-theia-bridge/src/lib.rs
+// crates/weftik-theia-bridge/src/lib.rs
 use napi_derive::napi;
 
 #[napi]
@@ -144,10 +144,10 @@ pub async fn health_query() -> Result<String> { ... }
 ### 3.3 Theia Backend Service
 
 ```typescript
-// theia-extensions/audesys-backend/src/node/audesys-backend-service.ts
+// theia-extensions/weftik-backend/src/node/weftik-backend-service.ts
 @injectable()
-export class AudesysBackendService {
-    private bridge = require('audesys-theia-bridge'); // napi-rs binary
+export class WeftikBackendService {
+    private bridge = require('weftik-theia-bridge'); // napi-rs binary
 
     async compileSt(source: string): Promise<CompileResult> {
         return JSON.parse(await this.bridge.compileSt(source, '{}'));
@@ -171,7 +171,7 @@ export class AudesysBackendService {
 
 ```
 Theia Monaco Editor
-  → AudesysLanguageServer (napi-rs)
+  → WeftikLanguageServer (napi-rs)
     → Rust 编译器（诊断、自动补全、跳转）
 ```
 
@@ -187,7 +187,7 @@ Theia GLSP Editor
     → Layout Engine (Rust napi-rs)
 ```
 
-GLSP 提供：节点+连线画布、拖拽、选择、撤销/重做、属性面板。AUDESYS 提供：LD/FBD 特定的图形模型（Rust 布局引擎）。
+GLSP 提供：节点+连线画布、拖拽、选择、撤销/重做、属性面板。Weftik 提供：LD/FBD 特定的图形模型（Rust 布局引擎）。
 
 ### 4.3 HMI 设计器
 
@@ -202,8 +202,8 @@ GLSP 提供：节点+连线画布、拖拽、选择、撤销/重做、属性面�
 | 任务 | 产出 | 估时 |
 |------|------|:--:|
 | Theia 应用骨架搭建 | `apps/studio-theia/` 目录 | 3 天 |
-| napi-rs 绑定层 | `crates/audesys-theia-bridge/` | 5 天 |
-| Theia Backend Service | `theia-extensions/audesys-backend/` | 3 天 |
+| napi-rs 绑定层 | `crates/weftik-theia-bridge/` | 5 天 |
+| Theia Backend Service | `theia-extensions/weftik-backend/` | 3 天 |
 | CI/CD 适配（Electron 构建） | `.github/workflows/` | 3 天 |
 | Rust 测试验证（737 测试仍通过） | 回归测试 | 2 天 |
 

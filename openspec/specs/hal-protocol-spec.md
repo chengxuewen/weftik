@@ -1,11 +1,11 @@
-# AUDESYS HAL Protocol Specification
+# Weftik HAL Protocol Specification
 
 **Spec ID**: HAL-PROTOCOL-v1
 **Status**: Draft
 **Source**: `docs/modules/hal/hal-protocol-design.md`
 **Date**: 2026-07-15
 
-This document defines the normative specification for AUDESYS HAL
+This document defines the normative specification for Weftik HAL
 communication primitives: Signal, StreamChannel, and RPC. Each spec
 item is numbered and serves as a single source of truth for
 implementation, testing, and conformance verification.

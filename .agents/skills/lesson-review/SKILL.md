@@ -85,9 +85,9 @@ think-before-act  →  [行动]  →  lesson-memory  →  doc-audit
 适用任何项目，修改路径即可：
 
 ```
-- 技术陷阱 → {pitfall_log}      # AUDESYS: .agents/memorys/pitfalls.md
-- 开发约束 → {conventions}        # AUDESYS: .agents/memorys/conventions.md
-- 架构决策 → {decisions}          # AUDESYS: .agents/memorys/decisions.md
-- 可执行检查 → {checks}           # AUDESYS: .agents/rules/common/edit-safety.md
-- 测试要求 → {test_rules}         # AUDESYS: .agents/rules/common/testing.md
+- 技术陷阱 → {pitfall_log}      # Weftik: .agents/memorys/pitfalls.md
+- 开发约束 → {conventions}        # Weftik: .agents/memorys/conventions.md
+- 架构决策 → {decisions}          # Weftik: .agents/memorys/decisions.md
+- 可执行检查 → {checks}           # Weftik: .agents/rules/common/edit-safety.md
+- 测试要求 → {test_rules}         # Weftik: .agents/rules/common/testing.md
 ```

@@ -1,4 +1,4 @@
-# AUDESYS Runtime IPC 安全设计
+# Weftik Runtime IPC 安全设计
 
 > 生成日期：2026-07-15
 > 设计目标：定义 Runtime 进程间通信的安全模型，覆盖 UDS 认证、Zenoh 传输加密、ConfigCommand 权限控制、审计追踪
@@ -7,7 +7,7 @@
 
 ## 设计原则
 
-AUDESYS Runtime 是多进程架构：Agent（控制面）、Runtime（RT 数据面）、HMI 面板、调试桥各自运行在不同进程甚至不同主机上。IPC 安全的核心原则：
+Weftik Runtime 是多进程架构：Agent（控制面）、Runtime（RT 数据面）、HMI 面板、调试桥各自运行在不同进程甚至不同主机上。IPC 安全的核心原则：
 
 1. **最小权限**：每个进程只拥有完成其功能所需的最小权限
 2. **纵深防御**：传输层认证 + 消息层授权 + 操作审计，三层互不依赖
@@ -82,14 +82,14 @@ fn peer_cred(stream: &UnixStream) -> Result<(u32, u32, u32)> {
 Agent 维护一个静态的进程白名单，定义了哪些 UID 可以扮演哪些角色：
 
 ```yaml
-# /etc/audesys/security.yaml
+# /etc/weftik/security.yaml
 roles:
   controller:
     allowed_uids: [0]                 # 仅 root 可运行 RT Runtime
-    allowed_paths: ["/usr/lib/audesys/controller"]
+    allowed_paths: ["/usr/lib/weftik/controller"]
   supervisor:
-    allowed_uids: [0, 1000]           # root 或 audesys 用户
-    allowed_paths: ["/usr/lib/audesys/supervisor"]
+    allowed_uids: [0, 1000]           # root 或 weftik 用户
+    allowed_paths: ["/usr/lib/weftik/supervisor"]
   hmi:
     allowed_uids: [1000, 1001]        # 操作员用户
     allow_unauthenticated: false      # 不允许匿名连接
@@ -210,7 +210,7 @@ fn revoke_session(&self, session_id: u64) -> Result<()> {
 
 ## 4. Zenoh mTLS（跨主机传输）
 
-Phase 3 跨主机通信使用 Zenoh 的 mTLS 传输层。每个节点持有由 AUDESYS CA 签发的证书，证书中嵌入角色信息。
+Phase 3 跨主机通信使用 Zenoh 的 mTLS 传输层。每个节点持有由 Weftik CA 签发的证书，证书中嵌入角色信息。
 
 ### 证书结构
 
@@ -218,15 +218,15 @@ Phase 3 跨主机通信使用 Zenoh 的 mTLS 传输层。每个节点持有由 A
 # Zenoh mTLS 证书扩展
 subject:
   commonName: "controller-01.factory-a"
-  organization: "AUDESYS"
+  organization: "Weftik"
   organizationalUnit: "Runtime"
 
 x509_extensions:
   # 自定义 X.509 v3 扩展：角色声明
-  audesys_role: "controller"    # supervisor | controller | hmi | debug
-  audesys_node_id: "ctrl-01"
+  weftik_role: "controller"    # supervisor | controller | hmi | debug
+  weftik_node_id: "ctrl-01"
   # 约束：只允许连接特定域
-  audesys_domain: "l1.control.reactor_a"
+  weftik_domain: "l1.control.reactor_a"
 ```
 
 ### Zenoh 配置
@@ -238,11 +238,11 @@ transport:
   tls:
     # mTLS: 双向证书验证
     client_auth: required
-    trusted_ca: /etc/audesys/ca.crt
-    client_cert: /etc/audesys/node.crt
-    client_key: /etc/audesys/node.key
+    trusted_ca: /etc/weftik/ca.crt
+    client_cert: /etc/weftik/node.crt
+    client_key: /etc/weftik/node.key
     # 证书吊销列表
-    crl: /etc/audesys/ca.crl
+    crl: /etc/weftik/ca.crl
     # 密码套件限制
     ciphersuites: "TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
     # 最小 TLS 版本
@@ -259,9 +259,9 @@ fn verify_peer_cert(cert: &x509::Certificate) -> Result<()> {
     // 1. 标准 X.509 链验证（CA 签名 + 有效期 + CRL）
     cert.verify_chain(&trusted_ca)?;
 
-    // 2. 提取 AUDESYS 自定义扩展
-    let role = cert.extension("audesys_role")?;
-    let domain = cert.extension("audesys_domain")?;
+    // 2. 提取 Weftik 自定义扩展
+    let role = cert.extension("weftik_role")?;
+    let domain = cert.extension("weftik_domain")?;
 
     // 3. 角色匹配检查
     //    Runtime 只允许连接同域的 Agent

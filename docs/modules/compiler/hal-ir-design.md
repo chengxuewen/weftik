@@ -1,7 +1,7 @@
 # HAL IR — Intermediate Representation Design
 
 > 生成日期：2026-07-16
-> 设计目标：定义 AUDESYS HAL IR 格式——ST 编译器输出与 HAL Runtime 之间的稳定接口
+> 设计目标：定义 Weftik HAL IR 格式——ST 编译器输出与 HAL Runtime 之间的稳定接口
 > 依赖决策：D10 (通信原语), D12 (14类型系统), D19 (FlatBuffers), D22 (编译器策略), D24 (运行时 FlatBuffers)
 
 ---
@@ -51,7 +51,7 @@ ST 程序中的变量 counter AT %IW0 : INT;
 
 ## 2. FlatBuffers Schema
 
-以下是 HAL IR 的 FlatBuffers schema。该 schema 将添加到现有 `crates/audesys-hal-flatbuffers/schema/` 目录（与 `hal_value.fbs` 并存）。
+以下是 HAL IR 的 FlatBuffers schema。该 schema 将添加到现有 `crates/weftik-hal-flatbuffers/schema/` 目录（与 `hal_value.fbs` 并存）。
 
 ### 2.1 主程序表
 
@@ -60,7 +60,7 @@ ST 程序中的变量 counter AT %IW0 : INT;
 // Schema: hal_ir.fbs
 // Phase 1: simple ST programs only
 
-namespace audesys.hal.ir;
+namespace weftik.hal.ir;
 
 // ── Program entry point ──
 
@@ -364,7 +364,7 @@ lbl_end:
 ### 4.3 构建流水线
 
 ```
-YAML 项目文件 (.audesys.yml)
+YAML 项目文件 (.weftik.yml)
     │
     ├── ST 源码 (.st)
     │       │
@@ -390,10 +390,10 @@ YAML 项目文件 (.audesys.yml)
 
 | Crate | 角色 | HAL IR 如何对接 |
 |-------|------|----------------|
-| `audesys-hal-core` | HalTransport trait、HalValue enum、HalPinType | IR Engine 调用 `HalTransport::publish_signal()` / `read_signal()` 执行 Load/Store |
-| `audesys-hal-flatbuffers` | `hal_value.fbs` (HalType, HalValue, HalSignal) | IR schema (`hal_ir.fbs`) 复用 `hal_value.fbs` 中的 `HalType` 枚举和 `HalValue` 表。通过 `include "hal_value.fbs"` 引用 |
+| `weftik-hal-core` | HalTransport trait、HalValue enum、HalPinType | IR Engine 调用 `HalTransport::publish_signal()` / `read_signal()` 执行 Load/Store |
+| `weftik-hal-flatbuffers` | `hal_value.fbs` (HalType, HalValue, HalSignal) | IR schema (`hal_ir.fbs`) 复用 `hal_value.fbs` 中的 `HalType` 枚举和 `HalValue` 表。通过 `include "hal_value.fbs"` 引用 |
 | `amw_inproc` | HalTransport 实现 (in-process) | IR Engine 不感知传输实现——仅依赖 `HalTransport` trait |
-| (新增 crate, Phase 1 M0.4) | IR Engine — 解释 HalProgram 的 Rust VM | 新 crate: `audesys-hal-ir`，放在 `crates/audesys-hal-ir/` |
+| (新增 crate, Phase 1 M0.4) | IR Engine — 解释 HalProgram 的 Rust VM | 新 crate: `weftik-hal-ir`，放在 `crates/weftik-hal-ir/` |
 
 ### 5.2 Schema 复用方式
 
@@ -403,14 +403,14 @@ YAML 项目文件 (.audesys.yml)
 // hal_ir.fbs 顶部
 include "hal_value.fbs";
 
-namespace audesys.hal.ir;
+namespace weftik.hal.ir;
 
 // ...使用 hal_value.fbs 中的 HalType 枚举
 table SignalBinding {
   hal_signal_name: string;
   program_var: string;
   direction: Direction;
-  hal_type: audesys.hal.HalType;  // 引用 hal_value.fbs 的类型
+  hal_type: weftik.hal.HalType;  // 引用 hal_value.fbs 的类型
 }
 ```
 
@@ -474,7 +474,7 @@ table SignalBinding {
 - D19: 多语言策略 (Rust + FlatBuffers) — `docs/modules/hal/multi-language-strategy.md`
 - D22: 编译器策略 (RuSTy → HAL IR → 自研) — `.agents/memorys/decisions.md`
 - D24: 配置格式 (YAML + FlatBuffers) — `.agents/memorys/decisions.md`
-- HalValue 枚举 — `crates/audesys-hal-core/src/value.rs`
-- HalTransport trait — `crates/audesys-hal-core/src/transport.rs`
-- FlatBuffers Schema — `crates/audesys-hal-flatbuffers/schema/hal_value.fbs`
+- HalValue 枚举 — `crates/weftik-hal-core/src/value.rs`
+- HalTransport trait — `crates/weftik-hal-core/src/transport.rs`
+- FlatBuffers Schema — `crates/weftik-hal-flatbuffers/schema/hal_value.fbs`
 - 线程调度 — `docs/modules/hal/thread-scheduling-design.md`

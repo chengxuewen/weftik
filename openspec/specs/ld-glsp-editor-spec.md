@@ -1,6 +1,6 @@
-# AUDESYS LD GLSP Editor SDD 规范
+# Weftik LD GLSP Editor SDD 规范
 
-> **来源**: `theia-extensions/audesys-ld-glsp/` (client/ + server/ + gmodel/ + theia/) + `docs/reference/glsp.md` + `docs/reference/theia-architecture.md`
+> **来源**: `theia-extensions/weftik-ld-glsp/` (client/ + server/ + gmodel/ + theia/) + `docs/reference/glsp.md` + `docs/reference/theia-architecture.md`
 > **总项数**: 33
 > **Phase**: P2
 > **当前状态**: 基础实现完成 (GLSP 2.x 客户端 + 服务端, 7 种节点类型, 5 种视图渲染, 4 个操作处理器, Theia 集成)
@@ -324,7 +324,7 @@ GLSP 工具面板渲染 7 个可点击的工具项：NO Contact, NC Contact, Nor
 
 ## 5. LD-BUILD — 构建验证 (4 项)
 
-> **组件**: `apps/studio/lib/frontend/bundle.js` + `theia-extensions/audesys-ld-glsp/`
+> **组件**: `apps/studio/lib/frontend/bundle.js` + `theia-extensions/weftik-ld-glsp/`
 
 ### LD-BUILD-030: Symbol("OpenHandler") = 1
 
@@ -352,7 +352,7 @@ GLSP 工具面板渲染 7 个可点击的工具项：NO Contact, NC Contact, Nor
 
 - **前置条件**: Theia 后端已启动，`LdServerContribution` 已注册
 - **操作**: 打开 `.ld` 文件
-- **期望**: `LdServerContribution.createContributionOptions()` 返回 `executable` 指向 `audesys-ld-glsp/lib/server/index`，新 Node.js 进程启动，`launch()` 函数执行，`SocketServerLauncher` 开始监听
+- **期望**: `LdServerContribution.createContributionOptions()` 返回 `executable` 指向 `weftik-ld-glsp/lib/server/index`，新 Node.js 进程启动，`launch()` 函数执行，`SocketServerLauncher` 开始监听
 - **边界**: 服务端进程崩溃 — `GLSPSocketServerContribution` 应自动重启；端口被占用 — 服务端启动失败，编辑器显示错误
 - **测试映射**: `ld-server-contribution.ts::15-27`, `server/index.ts::386-397`
 
@@ -385,7 +385,7 @@ for s in OpenHandler FrontendApplicationContribution OpenerService; do
 done
 
 # sprotty 导入检查 (LD-CLIENT-002)
-grep -rn "from 'sprotty'" theia-extensions/audesys-ld-glsp/src --include="*.ts" --include="*.tsx"
+grep -rn "from 'sprotty'" theia-extensions/weftik-ld-glsp/src --include="*.ts" --include="*.tsx"
 
 # GLSP 服务端进程检查 (LD-BUILD-032)
 ps aux | grep 'ld-glsp.*server/index' | grep -v grep | wc -l
@@ -394,7 +394,7 @@ ps aux | grep 'ld-glsp.*server/index' | grep -v grep | wc -l
 
 ## 6. LD-RF — React Flow 布局与验证 (2026-08-04, D110 后)
 
-> **状态标注**: 上文 LD-CLIENT/LD-VIEW/LD-SERVER/LD-E2E/LD-BUILD 章节为 GLSP 时代规范（D110 已完全移除 GLSP，GLSP 相关条目仅供历史参考）。本章节是 React Flow 编辑器（`theia-extensions/audesys-ld-editor/`）的现行规范。
+> **状态标注**: 上文 LD-CLIENT/LD-VIEW/LD-SERVER/LD-E2E/LD-BUILD 章节为 GLSP 时代规范（D110 已完全移除 GLSP，GLSP 相关条目仅供历史参考）。本章节是 React Flow 编辑器（`theia-extensions/weftik-ld-editor/`）的现行规范。
 > **组件**: `src/components/LdCanvas.tsx` + `src/components/nodes/` + `src/model/grid.ts` + `src/model/serialization.ts` + `src/model/validation-ui.ts` + `src/backend/ld-operation-handler.ts`
 
 ### LD-RF-034: 电源轨框定 rung 容器（右轨贴合右边缘）

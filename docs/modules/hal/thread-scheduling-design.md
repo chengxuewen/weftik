@@ -1,4 +1,4 @@
-# AUDESYS 线程调度模型设计
+# Weftik 线程调度模型设计
 
 > 生成日期：2026-07-09
 > 设计目标：融合 LinuxCNC 函数列表 + ROS2 control 管线 + OpenPLC 扫描屏障 + dora-rs 事件驱动，形成工业确定性调度的统一模型
@@ -9,7 +9,7 @@
 
 ### 1.1 LinuxCNC — 显式有序函数列表
 
-LinuxCNC 的 HAL 线程模型是所有参考系统中**最接近 AUDESYS 需求的**。
+LinuxCNC 的 HAL 线程模型是所有参考系统中**最接近 Weftik 需求的**。
 
 **数据结构**：
 
@@ -163,7 +163,7 @@ while let Some(event) = event_stream.next().await {
 
 ---
 
-## 3. AUDESYS 混合方案
+## 3. Weftik 混合方案
 
 ### 3.1 设计原则
 
@@ -176,7 +176,7 @@ while let Some(event) = event_stream.next().await {
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                  AUDESYS Thread Model                    │
+│                  Weftik Thread Model                    │
 │                                                          │
 │  ┌──────────────────────────────────────────────────┐   │
 │  │  RT 线程 (SCHED_FIFO, CPU pin, mlockall)          │   │
@@ -440,7 +440,7 @@ threads:
 
 ### 3.7 与纯 LinuxCNC 的差异
 
-| | LinuxCNC | AUDESYS |
+| | LinuxCNC | Weftik |
 |---|---|---|
 | 执行模型 | `void funct(void *arg)` 无阶段区分 | `read()` → `update()` → `write()` 三阶段 |
 | I/O 一致性 | 信号随时可读/写，无屏障 | 显式 read_barrier / write_barrier |
@@ -454,7 +454,7 @@ threads:
 
 ### 3.8 移植对照
 
-| 来源系统 | 原来机制 | AUDESYS 对应 |
+| 来源系统 | 原来机制 | Weftik 对应 |
 |----------|---------|-------------|
 | LinuxCNC `addf motion-controller servo-thread` | `hal_add_funct_to_thread` | `ThreadFunction { component, phase, after }` + YAML |
 | LinuxCNC `halcmd show thread` | `do_show_cmd` → 格式化 `hal_thread_t` | `getSnapshot` → `ThreadMetrics` |

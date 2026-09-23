@@ -457,7 +457,7 @@ Prove that the eight conflicts have working resolution strategies before committ
 
 ### Setup (Morning, 2h)
 
-1. **Create Theia extension skeleton**: `theia-extensions/audesys-hmi-designer/` with minimal `package.json`, `tsconfig.json`, `src/browser/hmi-designer-frontend-module.ts`
+1. **Create Theia extension skeleton**: `theia-extensions/weftik-hmi-designer/` with minimal `package.json`, `tsconfig.json`, `src/browser/hmi-designer-frontend-module.ts`
 2. **Install deps**: `@luplex/core`, `react`, `react-dom`, `react-rnd` (existing versions)
 3. **Copy 1 widget**: Copy `GaugeWidget.tsx` to the Theia extension, rename CSS classes to `.hmiapp-*` prefix
 4. **Stub HmiCanvasWidget**: Implement the class from §2.2, but with only GaugeWidget rendering
@@ -537,7 +537,7 @@ apps/studio-theia/
 ## Appendix B: Napi-rs Bridge Functions (HMI-specific)
 
 ```rust
-// crates/audesys-theia-bridge/src/hmi.rs
+// crates/weftik-theia-bridge/src/hmi.rs
 
 #[napi]
 pub fn export_hmi_yaml(layout_json: String) -> Result<String> {

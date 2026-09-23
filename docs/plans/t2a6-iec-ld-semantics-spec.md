@@ -3,7 +3,7 @@
 **Status:** Draft for review  
 **Date:** 2026-07-21  
 **Task:** T2a.6 from `docs/plans/p1-execution-refinement.md` Phase 2a  
-**Output crate:** `crates/audesys-ld-semantics/`  
+**Output crate:** `crates/weftik-ld-semantics/`  
 **Depends:** T2a.2 (LD GLSP Server)  
 **IEC 61131-3 Reference:** Edition 3.0 (2013-02), Section 4 — Ladder Diagram (LD)
 
@@ -12,7 +12,7 @@
 ## 1. Overview
 
 This document defines the **power flow semantics** for IEC 61131-3 Ladder Diagram (LD) as implemented
-by the `audesys-ld-semantics` crate. It covers:
+by the `weftik-ld-semantics` crate. It covers:
 
 - Contact element power flow: NO, NC, rising/falling edge detection
 - Coil behavior: OUT, SET, RESET, negated coil
@@ -817,7 +817,7 @@ Rung:    +-- X1 -- X2 --+
 
 ## 11. Implementation Notes
 
-### 11.1 Current LD Compiler (audesys-ld-compiler)
+### 11.1 Current LD Compiler (weftik-ld-compiler)
 
 The current LD compiler supports **serial-only rungs** (no parallel branches) with these elements:
 
@@ -835,9 +835,9 @@ Mapping to IL:
 - Subsequent NO → `AND var`, subsequent NC → `ANDN var`
 - OUT → `ST var`, SET → `S var`, RESET → `R var`
 
-### 11.2 T2a.6 Scope: audesys-ld-semantics Crate
+### 11.2 T2a.6 Scope: weftik-ld-semantics Crate
 
-The new `audesys-ld-semantics` crate extends the current flat-serial model to support:
+The new `weftik-ld-semantics` crate extends the current flat-serial model to support:
 
 1. **Parallel branches:** `OR`/`ORN` IL instructions via branch detection in the contact network graph
 2. **EN/ENO propagation:** power flow tracking through function block chains

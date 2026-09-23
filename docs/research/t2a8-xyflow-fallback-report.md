@@ -2,11 +2,11 @@
 
 **Date:** 2026-07-21
 **Context:** D71 Phase 2a GLSP risk mitigation. Task T2a.8 from Phase2a-Wave1 team.
-**Finding:** @xyflow/react is NOT used in AUDESYS. Both editors are self-contained React components.
+**Finding:** @xyflow/react is NOT used in Weftik. Both editors are self-contained React components.
 
 ---
 
-## 1. Critical Correction: No @xyflow/react in AUDESYS
+## 1. Critical Correction: No @xyflow/react in Weftik
 
 The task description assumes `@xyflow/react` is used for the LD editor. **It is not.** 
 
@@ -69,7 +69,7 @@ Reasons:
 
 **Both editors can be wrapped in Theia ReactWidget with ZERO component code changes.** The only adaptation needed is in the tool wrapper layer:
 
-- **LD:** Replace `PlatformAdapter.invoke("compile_ld")` → `AudesysBackendService.compileLd()`
+- **LD:** Replace `PlatformAdapter.invoke("compile_ld")` → `WeftikBackendService.compileLd()`
 - **FBD:** Already platform-agnostic — just wrap and register
 
 ---
@@ -82,8 +82,8 @@ Reasons:
 |-------|-----------------|------:|-------------|
 | **ReactWidget wrapper** | `ld-editor-widget.tsx` | ~60 | `ReactWidget` subclass wrapping `<LdEditor>` |
 | | `fbd-editor-widget.tsx` | ~60 | `ReactWidget` subclass wrapping `<FbdEditor>` |
-| **Theia registration** | `audesys-editors-contribution.ts` | ~120 | `OpenHandler` + `CommandContribution` for both editors |
-| **Container module** | `audesys-editors-frontend-module.ts` | ~40 | DI bindings for widgets and contributions |
+| **Theia registration** | `weftik-editors-contribution.ts` | ~120 | `OpenHandler` + `CommandContribution` for both editors |
+| **Container module** | `weftik-editors-frontend-module.ts` | ~40 | DI bindings for widgets and contributions |
 | **LD backend adapter** | `ld-compile-service.ts` (in backend module) | ~50 | Route `compile_ld` call through napi-rs bridge |
 | **CSS migration** | (copy) | 0 | `LdEditor.css` + `FbdEditor.css` copied as-is |
 | **Component migration** | (copy) | 0 | `LdEditor.tsx` + `FbdEditor.tsx` copied as-is |
@@ -96,7 +96,7 @@ Reasons:
 |------|---------------:|--------|
 | `LdCompilerTool.tsx` (32 lines) | ~10 | Replace `usePlatform()` → use Theia backend service |
 | `FbdCompilerTool.tsx` (32 lines) | ~5 | Replace tool wrapper shell (eventBus → Theia callback) |
-| `theia-extensions/audesys-core/package.json` | +5 | Add `react`, `react-dom` dependencies |
+| `theia-extensions/weftik-core/package.json` | +5 | Add `react`, `react-dom` dependencies |
 | **Total adapted** | **~20** | |
 
 ### 3.3 What Does NOT Change (Zero Modification)
@@ -119,7 +119,7 @@ BEFORE (Tauri):
 
 AFTER (Theia):
   LdEditor → ldCompileService.compile(source)
-           → Theia Backend Service → AudesysBackendService
+           → Theia Backend Service → WeftikBackendService
            → napi-rs bridge → LD compiler crate
 ```
 
@@ -143,18 +143,18 @@ The `usePlatform()` abstraction (D59) was designed exactly for this — the comp
 ### 4.2 DI Registrations
 
 ```typescript
-// audesys-editors-frontend-module.ts
+// weftik-editors-frontend-module.ts
 export default new ContainerModule((bind) => {
     // Widget factory
     bind(LdEditorWidgetFactory).toFactory<LdEditorWidget>(...);
     bind(FbdEditorWidgetFactory).toFactory<FbdEditorWidget>(...);
     
     // Open handler
-    bind(OpenHandler).to(AudesysEditorOpenHandler).inSingletonScope();
+    bind(OpenHandler).to(WeftikEditorOpenHandler).inSingletonScope();
     
     // Contributions
-    bind(CommandContribution).to(AudesysEditorContribution);
-    bind(MenuContribution).to(AudesysEditorContribution);
+    bind(CommandContribution).to(WeftikEditorContribution);
+    bind(MenuContribution).to(WeftikEditorContribution);
 });
 ```
 
@@ -164,8 +164,8 @@ export default new ContainerModule((bind) => {
 // Associate .ld files with the LD editor widget
 const ldFileType: FileType = {
     extension: '.ld',
-    icon: 'audesys-ld-icon',
-    editor: 'audesys-ld-editor'
+    icon: 'weftik-ld-icon',
+    editor: 'weftik-ld-editor'
 };
 ```
 
@@ -313,7 +313,7 @@ The Theia extension uses CommonJS (`module: "commonjs"`). React components use E
 
 | Risk | Probability | Severity | Mitigation |
 |------|:---:|:---:|------|
-| **CSS conflicts with Theia theme** | Medium | Low | `.ld-editor` and `.fbd-editor` classes are already scoped. Theia's CSS variables use `--theia-*` prefix; AUDESYS uses `--color-*`. No conflict. |
+| **CSS conflicts with Theia theme** | Medium | Low | `.ld-editor` and `.fbd-editor` classes are already scoped. Theia's CSS variables use `--theia-*` prefix; Weftik uses `--color-*`. No conflict. |
 | **React version mismatch** | Low | Medium | Theia 1.73 bundles its own React. Install matching version. |
 | **Font loading** | Low | Low | LD/FBD use `var(--font-mono)` and `var(--font-body)`. Need to ensure these CSS variables are defined in Theia. |
 | **FBD SVG coordinate drift** | Low | Medium | The FBD editor uses `getBoundingClientRect()` which depends on the canvas DOM position. If Theia modifies the DOM layout (extra wrapper divs), coordinates may shift. Test: render a block, verify pin positions match SVG wire endpoints. |

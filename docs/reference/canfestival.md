@@ -332,11 +332,11 @@ CanFestival 的对象字典生成流程：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
-### 7.1 CANopen 协议架构 vs AUDESYS HAL 设计
+### 7.1 CANopen 协议架构 vs Weftik HAL 设计
 
-| CANopen 概念 | AUDESYS 等价 | 参考价值 |
+| CANopen 概念 | Weftik 等价 | 参考价值 |
 |-------------|-------------|---------|
 | PDO 过程数据 | Signal | 高速广播，无协议开销 |
 | SDO 服务数据 | RPC | 参数化访问 |
@@ -345,11 +345,11 @@ CanFestival 的对象字典生成流程：
 | 心跳 | HalQoS Liveliness | 节点存活监控 |
 | NMT 状态机 | 设备生命周期 | 状态管理模型 |
 
-### 7.2 主站/从站模式对 AUDESYS 的启示
+### 7.2 主站/从站模式对 Weftik 的启示
 
-CanFestival 的主站/从站双模式对 AUDESYS 的节点角色设计有参考意义：
+CanFestival 的主站/从站双模式对 Weftik 的节点角色设计有参考意义：
 
-| 角色 | CanFestival | AUDESYS 对应 |
+| 角色 | CanFestival | Weftik 对应 |
 |------|------------|-------------|
 | 主站 | 管理网络、配置参数 | Runtime 节点 |
 | 从站 | 执行实时任务 | HAL 设备节点 |
@@ -357,9 +357,9 @@ CanFestival 的主站/从站双模式对 AUDESYS 的节点角色设计有参考�
 
 ### 7.3 对象字典工具链
 
-CanFestival 的 Objdictedit.py 工具链对 AUDESYS 的配置工具设计有参考价值：
+CanFestival 的 Objdictedit.py 工具链对 Weftik 的配置工具设计有参考价值：
 
-| 工具 | CanFestival | AUDESYS 对应 |
+| 工具 | CanFestival | Weftik 对应 |
 |------|------------|-------------|
 | 配置编辑器 | Objdictedit.py | Studio 配置编辑器 |
 | 代码生成 | Python → C | Studio → YAML/FlatBuffers |
@@ -372,11 +372,11 @@ CanFestival 的 Objdictedit.py 工具链对 AUDESYS 的配置工具设计有参�
 |------|------|------|
 | 成熟度 | 高 | 2001 年以来持续使用 |
 | 主站能力 | 高 | 完整 NMT 主站功能 |
-| AUDESYS 参考 | 中 | 对象字典和主站模式可参考 |
+| Weftik 参考 | 中 | 对象字典和主站模式可参考 |
 | 代码质量 | 中 | 历史代码，部分驱动待更新 |
 | 学习价值 | 中 | 展示了 CANopen 协议栈架构 |
 
-CanFestival 的主站/从站双模式设计，特别是其对象字典工具链和 Beremiz 集成，对 AUDESYS 的 Studio 配置工具和 Runtime 节点管理有参考价值。
+CanFestival 的主站/从站双模式设计，特别是其对象字典工具链和 Beremiz 集成，对 Weftik 的 Studio 配置工具和 Runtime 节点管理有参考价值。
 
 ---
 
@@ -605,11 +605,11 @@ CanFestival 作为 Beremiz 的 CANopen 通信层，在 IEC 61131-3 生态中扮�
 
 ---
 
-## 7. 对 AUDESYS 参考价值 (续)
+## 7. 对 Weftik 参考价值 (续)
 
-### 7.2 主站/从站模式映射到 AUDESYS 节点架构
+### 7.2 主站/从站模式映射到 Weftik 节点架构
 
-| CANopen 节点角色 | AUDESYS 等价 | 通信模式 |
+| CANopen 节点角色 | Weftik 等价 | 通信模式 |
 |-----------------|-------------|---------|
 | NMT 主站 | Runtime 主控节点 | 下发管理命令 |
 | NMT 从站 | HAL 设备节点 | 执行实时任务 |
@@ -618,11 +618,11 @@ CanFestival 作为 Beremiz 的 CANopen 通信层，在 IEC 61131-3 生态中扮�
 | PDO 生产者 | Signal 发布者 | 广播实时数据 |
 | PDO 消费者 | Signal 订阅者 | 消费实时数据 |
 
-### 7.3 对象字典 vs AUDESYS HalDiscovery
+### 7.3 对象字典 vs Weftik HalDiscovery
 
-CanFestival 的对象字典自描述机制对 AUDESYS 的 HalDiscovery 设计提供了具体参考：
+CanFestival 的对象字典自描述机制对 Weftik 的 HalDiscovery 设计提供了具体参考：
 
-| OD 特性 | 实现方式 | AUDESYS 对应 |
+| OD 特性 | 实现方式 | Weftik 对应 |
 |---------|---------|-------------|
 | 索引表 | 静态数组 + 函数指针 | HalDiscovery 数据结构 |
 | 数据类型 | 预定义枚举 | 14 标准类型 |
@@ -633,20 +633,20 @@ CanFestival 的对象字典自描述机制对 AUDESYS 的 HalDiscovery 设计提
 
 ### 7.4 双许可证模型的启示
 
-CanFestival 的 LGPL 运行时 + GPL 工具双许可证模式对 AUDESYS 的许可证策略有参考意义：
+CanFestival 的 LGPL 运行时 + GPL 工具双许可证模式对 Weftik 的许可证策略有参考意义：
 
-| 组件类型 | CanFestival | AUDESYS 建议 |
+| 组件类型 | CanFestival | Weftik 建议 |
 |---------|------------|-------------|
 | 运行时库 | LGPL v2.1 | 宽松许可 (MIT/Apache) |
 | 开发工具 | GPL v2 | 开源工具 |
 | 用户代码 | 无限制 | 无限制 |
 | 硬件设计 | N/A | CERN-OHL-S |
 
-### 7.5 CAN 通信层 vs AUDESYS HalTransport
+### 7.5 CAN 通信层 vs Weftik HalTransport
 
-CAN 总线在物理层和链路层的设计原则对 AUDESYS 的实时通信层设计有参考价值：
+CAN 总线在物理层和链路层的设计原则对 Weftik 的实时通信层设计有参考价值：
 
-| CAN 特性 | CANopen 相关 | AUDESYS HalTransport 启示 |
+| CAN 特性 | CANopen 相关 | Weftik HalTransport 启示 |
 |---------|------------|------------------------|
 | 仲裁机制 | 低 COB-ID = 高优先级 | 信号优先级编码 |
 | 错误检测 | CRC + ACK + 位填充 | 传输层错误处理 |
@@ -659,11 +659,11 @@ CAN 总线在物理层和链路层的设计原则对 AUDESYS 的实时通信层�
 |------|------|------|
 | 成熟度 | 高 | 25 年持续使用的协议栈 |
 | 主站功能 | 高 | 完整 NMT 主站能力 |
-| AUDESYS HAL 参考 | 中 | 对象字典和主站模式参考价值高 |
+| Weftik HAL 参考 | 中 | 对象字典和主站模式参考价值高 |
 | 跨平台 | 高 | Linux/Win32/MCU 三平台 |
 | 代码质量 | 中 | 历史代码需选择性参考 |
 
-CanFestival 的 **主站/从站双模式架构** 是 AUDESYS 设计分布式节点管理系统时的重要参考。特别是其对象字典工具链和 NMT 状态机模型，直接对应 AUDESYS 的 HalDiscovery 和设备生命周期管理。
+CanFestival 的 **主站/从站双模式架构** 是 Weftik 设计分布式节点管理系统时的重要参考。特别是其对象字典工具链和 NMT 状态机模型，直接对应 Weftik 的 HalDiscovery 和设备生命周期管理。
 
 ---
 
@@ -838,13 +838,13 @@ can_virtual 驱动使用 Unix 管道实现进程内 CAN 通信，用于开发和
 
 ---
 
-## 7. 对 AUDESYS 参考价值 (续)
+## 7. 对 Weftik 参考价值 (续)
 
 ### 7.7 动态驱动加载模式
 
-CanFestival 的 CAN 驱动动态加载模式对 AUDESYS 的 HalTransport 实现有参考意义：
+CanFestival 的 CAN 驱动动态加载模式对 Weftik 的 HalTransport 实现有参考意义：
 
-| CanFestival 特性 | AUDESYS 对应设计 |
+| CanFestival 特性 | Weftik 对应设计 |
 |-----------------|----------------|
 | dlopen 动态加载 | HalTransport 可插拔后端 |
 | 运行时切换驱动 | amw_inproc ↔ amw_zenoh 切换 |
@@ -853,7 +853,7 @@ CanFestival 的 CAN 驱动动态加载模式对 AUDESYS 的 HalTransport 实现�
 
 ### 7.8 定时器驱动抽象
 
-CanFestival 的定时器驱动抽象层（5 个标准函数）是 AUDESYS 设计 RT 定时器接口的参考：
+CanFestival 的定时器驱动抽象层（5 个标准函数）是 Weftik 设计 RT 定时器接口的参考：
 
 ```c
 // CanFestival 定时器 API
@@ -863,7 +863,7 @@ void SetAlarm(Alarm* a);     // 设置定时器
 void RemoveAlarm(Alarm* a);  // 移除定时器
 Time GetElapsedTime(void);   // 获取已用时间
 
-// AUDESYS 对应接口（设计建议）
+// Weftik 对应接口（设计建议）
 trait HalTimer {
     fn init() -> Result<()>;
     fn cleanup();
@@ -875,9 +875,9 @@ trait HalTimer {
 
 ### 7.9 多平台移植策略
 
-CanFestival 的跨平台移植策略对 AUDESYS 的多平台支持有参考价值：
+CanFestival 的跨平台移植策略对 Weftik 的多平台支持有参考价值：
 
-| 层 | CanFestival | AUDESYS |
+| 层 | CanFestival | Weftik |
 |----|------------|---------|
 | 协议核心 | ANSI C（可移植）| Rust（跨平台）|
 | 操作系统 | 3 种定时器驱动 | std/os 抽象 |

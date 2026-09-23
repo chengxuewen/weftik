@@ -7,7 +7,7 @@
 
 ## 概述
 
-AUDESYS 工程采用 **Cargo 模型 for IEC 61131-3**：**文件夹即工程** + **薄清单文件**（`project.yaml`）+ **一 POU 一文本文件**。四层关注点解耦（逻辑 / IO / 任务 / 硬件），所有内容为纯文本，Git 合规且对 AI agent 可见。
+Weftik 工程采用 **Cargo 模型 for IEC 61131-3**：**文件夹即工程** + **薄清单文件**（`project.yaml`）+ **一 POU 一文本文件**。四层关注点解耦（逻辑 / IO / 任务 / 硬件），所有内容为纯文本，Git 合规且对 AI agent 可见。
 
 **否决的替代方案**（D114）：
 - 纯目录约定（无法表达目标 Runtime / 任务 / IO / 库版本锁）
@@ -41,9 +41,9 @@ AUDESYS 工程采用 **Cargo 模型 for IEC 61131-3**：**文件夹即工程** +
 ```yaml
 name: my-project
 version: "1.0"
-audesys_version: "0.1.0"
+weftik_version: "0.1.0"
 target:
-  runtime: audesys-rt
+  runtime: weftik-rt
 paths:
   programs: Programs/
   function_blocks: FBs/

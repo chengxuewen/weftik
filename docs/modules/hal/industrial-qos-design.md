@@ -1,4 +1,4 @@
-# AUDESYS 工业 QoS 设计
+# Weftik 工业 QoS 设计
 
 > 生成日期：2026-07-09
 > 设计目标：定义 `HalQoS` trait 作为 amw 第三极，统一 Deadline / Liveliness / Security Domain 三个维度，与 HalTransport / HalDiscovery 平齐
@@ -313,4 +313,4 @@ qos.set_security_domain("l3.supervisory.hmi")?;
 | Liveliness 在控制面 | 组件心跳丢失不是微秒级事件；Zenoh 原生处理，100ms 级足够 |
 | Security Domain 在配置面 | 纯 meta 标记，zero runtime overhead；静态隔离，不参与 RT 路径 |
 | 各 amw 实现自行解释 HalQoS | 同 HalTransport/HalDiscovery 哲学。inproc 无 Liveliness 是语义正确，不是缺失 |
-| 不做 DDS 式 QoS 映射（reliable/best-effort 等） | AUDESYS 的 Signal 天然 latest-value, StreamChannel 有 QueuePolicy。那是另一个维度，不混合 |
+| 不做 DDS 式 QoS 映射（reliable/best-effort 等） | Weftik 的 Signal 天然 latest-value, StreamChannel 有 QueuePolicy。那是另一个维度，不混合 |

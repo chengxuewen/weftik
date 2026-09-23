@@ -1,4 +1,4 @@
-# AUDESYS Studio 插件架构设计
+# Weftik Studio 插件架构设计
 
 > ⚠️ **已弃用** — 本文档描述的 PluginRegistry + CommandRegistry + PanelSystem + PlatformAdapter 四层架构已被 Tool+Slot+Mode 架构取代，后者又已被 Eclipse Theia 迁移计划取代。
 > 
@@ -10,7 +10,7 @@
 > 生成日期：2026-07-19（2026-07-21 弃用）
 > 依赖决策：D58 (PluginRegistry + CommandRegistry + PlatformAdapter + PanelSystem), D59 (PC/Web 双模式)
 > 参考架构：VS Code Extension API（`docs/reference/vscode.md`）
-> 设计目标：为 AUDESYS Studio 构建插件化编辑器平台，支持 PC (Tauri) 和 Web 双模式部署
+> 设计目标：为 Weftik Studio 构建插件化编辑器平台，支持 PC (Tauri) 和 Web 双模式部署
 
 ## 0. 现状矩阵（2026-07-20）
 
@@ -38,7 +38,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                       AUDESYS Studio Shell                            │
+│                       Weftik Studio Shell                            │
 │                                                                       │
 │  ┌─────────────┐  ┌──────────────────┐  ┌──────────────────────────┐ │
 │  │ Plugin      │  │ Command          │  │ Panel                    │ │
@@ -91,7 +91,7 @@
 
 ```typescript
 interface PluginManifest {
-  id: string;                    // "audesys.hal-binding-gen" (小写.分隔)
+  id: string;                    // "weftik.hal-binding-gen" (小写.分隔)
   displayName: string;           // "ST Compiler"
   version: string;               // SemVer
   engines: { studio: string };   // 最低 Studio 版本
@@ -206,7 +206,7 @@ interface PlatformCapabilities {
 
 ### 3.3 与 VS Code 双模式的对应
 
-| VS Code 策略 | AUDESYS 策略 |
+| VS Code 策略 | Weftik 策略 |
 |-------------|-------------|
 | `IFileService` 抽象 | `IPlatformAdapter.fs` 方法 |
 | `ICommandService` | `IPlatformAdapter.invoke()` |
@@ -285,7 +285,7 @@ class CommandRegistry {
 
 ```typescript
 interface PanelDescriptor {
-  id: string;                         // "audesys.hal-binding-gen.editor"
+  id: string;                         // "weftik.hal-binding-gen.editor"
   title: string;                      // "ST Editor"
   icon: string;                       // Lucide icon name
   defaultPosition: PanelPosition;
@@ -311,7 +311,7 @@ PanelSystem 收集所有已注册的 PanelDescriptor，按 `defaultPosition` 分
 
 ## 6. 与 VS Code 架构对比
 
-| 设计维度 | VS Code | AUDESYS Studio |
+| 设计维度 | VS Code | Weftik Studio |
 |---------|---------|---------------|
 | 插件入口 | `activate(context)` / `deactivate()` | 同模式 |
 | 激活事件 | 25 种 activationEvents | 5 种（P1 核心子集） |

@@ -1,11 +1,11 @@
-# AUDESYS CNC G-code 编译器规范
+# Weftik CNC G-code 编译器规范
 
 **Spec ID**: CNC-GCODE-v1
 **Status**: Draft
 **Source**: `docs/modules/cnc/gcode-compiler-design.md` (v1.0, 2026-07-19)
 **Date**: 2026-07-19
 
-This document defines the normative specification for the AUDESYS G-code
+This document defines the normative specification for the Weftik G-code
 compiler. Each spec item maps a G-code input to a concrete expected output,
 serving as the single source of truth for implementation, testing, and
 conformance verification.

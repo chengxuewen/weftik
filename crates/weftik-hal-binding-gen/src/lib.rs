@@ -6,8 +6,8 @@ mod codegen;
 mod lexer;
 mod parser;
 
-use weftik_hal_ir::program::HalProgram;
 use thiserror::Error;
+use weftik_hal_ir::program::HalProgram;
 
 /// Top-level compiler error.
 #[derive(Debug, Error)]

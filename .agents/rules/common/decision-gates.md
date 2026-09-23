@@ -8,7 +8,7 @@ Any of these triggers require `question()` BEFORE writing code:
 
 | Trigger | Examples (from today's session) |
 |---------|--------------------------------|
-| **Naming conventions** | `diagramType: 'ld-diagram'`, `contributionId: 'audesys-ld'` |
+| **Naming conventions** | `diagramType: 'ld-diagram'`, `contributionId: 'weftik-ld'` |
 | **Visual values** | Colors `#4caf50`, sizes `36px`, layout offsets `80` |
 | **String patterns** | Auto-naming `IN{n}`/`OUT{n}`, file extensions `.ld` |
 | **Architecture choices within a file** | "Should CSS be inline, in a theme file, or fetched from existing system?" |

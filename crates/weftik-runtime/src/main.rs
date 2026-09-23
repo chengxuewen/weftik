@@ -8,9 +8,9 @@
 use std::sync::{Arc, RwLock};
 
 use weftik_amw_inproc::InprocFactory;
+use weftik_hal_core::{AmwConfig, AmwFactory};
 use weftik_runtime::{Engine, HealthServer, IpcServer, LifecycleManager, logging};
 use weftik_runtime::{log_error, log_info, log_warn};
-use weftik_hal_core::{AmwConfig, AmwFactory};
 use weftik_runtime_common::types::{HealthCheck, HealthCheckRegistry, HealthStatus};
 
 // ── Defaults ──

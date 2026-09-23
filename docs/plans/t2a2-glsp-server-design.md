@@ -50,7 +50,7 @@
 │                  │ FFI (napi-rs)              │
 │  ┌───────────────▼────────────────────────┐  │
 │  │ Rust Layout Engine                     │  │
-│  │ crates/audesys-ld-layout/             │  │
+│  │ crates/weftik-ld-layout/             │  │
 │  │ ┌──────────────────────────────────┐   │  │
 │  │ │ layout_rungs()  — 电源轨对齐      │   │  │
 │  │ │ layout_contacts() — 触点水平分布   │   │  │
@@ -63,7 +63,7 @@
 │                  │ Cargo dependency           │
 │  ┌───────────────▼────────────────────────┐  │
 │  │ Rust LD Compiler                       │  │
-│  │ crates/audesys-ld-compiler/            │  │
+│  │ crates/weftik-ld-compiler/            │  │
 │  │ ┌──────────────────────────────────┐   │  │
 │  │ │ ld_compile(source) → IL text      │   │  │
 │  │ │   └→ il_compile(IL) → HalProgram │   │  │
@@ -584,18 +584,18 @@ class LDBridgeClient {
 ### 6.2 Rust 端 napi-rs 函数签名
 
 ```rust
-// crates/audesys-theia-bridge/src/ld_bridge.rs
+// crates/weftik-theia-bridge/src/ld_bridge.rs
 
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 /// Compile LD source text to HalProgram JSON.
-/// Wraps audesys_ld_compiler::ld_compile + audesys_il_compiler::il_compile.
+/// Wraps weftik_ld_compiler::ld_compile + weftik_il_compiler::il_compile.
 #[napi]
 pub fn ld_compile(source: String) -> Result<CompileResult> {
-    let il = audesys_ld_compiler::ld_compile(&source)
+    let il = weftik_ld_compiler::ld_compile(&source)
         .map_err(|e| napi::Error::from_reason(format!("LD compile: {}", e)))?;
-    let hal = audesys_il_compiler::il_compile(&il)
+    let hal = weftik_il_compiler::il_compile(&il)
         .map_err(|e| napi::Error::from_reason(format!("IL compile: {}", e)))?;
     let json = serde_json::to_string(&hal)
         .map_err(|e| napi::Error::from_reason(format!("Serialize: {}", e)))?;
@@ -607,7 +607,7 @@ pub fn ld_compile(source: String) -> Result<CompileResult> {
 pub fn ld_layout_rungs(rungs_json: String) -> Result<LayoutResult> {
     let rungs: Vec<RungInput> = serde_json::from_str(&rungs_json)
         .map_err(|e| napi::Error::from_reason(format!("Parse input: {}", e)))?;
-    let result = audesys_ld_layout::layout_rungs(&rungs);
+    let result = weftik_ld_layout::layout_rungs(&rungs);
     let json = serde_json::to_string(&result)
         .map_err(|e| napi::Error::from_reason(format!("Serialize: {}", e)))?;
     Ok(serde_json::from_str(&json)?)
@@ -618,13 +618,13 @@ pub fn ld_layout_rungs(rungs_json: String) -> Result<LayoutResult> {
 pub fn ld_validate_connectivity(rung_json: String) -> Result<ValidationResult> {
     let rung: RungJSON = serde_json::from_str(&rung_json)
         .map_err(|e| napi::Error::from_reason(format!("Parse input: {}", e)))?;
-    Ok(audesys_ld_layout::validate_connectivity(&rung))
+    Ok(weftik_ld_layout::validate_connectivity(&rung))
 }
 
 /// Verify a variable name is syntactically valid for LD context.
 #[napi]
 pub fn ld_verify_variable(name: String) -> Result<VerifyResult> {
-    let valid = audesys_ld_layout::is_valid_variable(&name);
+    let valid = weftik_ld_layout::is_valid_variable(&name);
     Ok(VerifyResult { valid, message: if valid { String::new() } else { format!("Invalid variable name: '{}'", name) } })
 }
 ```
@@ -730,7 +730,7 @@ class UndoStack {
 
 Neuron Automation (logi.cals) 基于 Theia+GLSP 构建 IEC 61131-3 IDE，其 GLSP 使用模式值得参考：
 
-| 模式 | Neuron 做法 | AUDESYS 适配 |
+| 模式 | Neuron 做法 | Weftik 适配 |
 |------|------------|-------------|
 | **GModel 分层** | 顶层 GGraph → 中间层 Network → 叶子层 GNode/GEdge | LD: GGraph → Rung → Contact/Coil/Wire |
 | **操作处理** | 每种图形操作一个 `GModelOperationHandler<T>` | 我们 15 种操作各一个 handler，注册到 `DiagramModule` |
@@ -746,7 +746,7 @@ Neuron Automation (logi.cals) 基于 Theia+GLSP 构建 IEC 61131-3 IDE，其 GLS
 ## 9. Server 目录结构
 
 ```
-theia-extensions/audesys-ld-glsp/src/server/
+theia-extensions/weftik-ld-glsp/src/server/
 ├── index.ts                    # LDGLSPServer 入口，导出 DiagramModule
 ├── ld-glsp-server.ts           # LDGLSPServer 主类（extends GLSPServer）
 ├── diagram/
@@ -810,18 +810,18 @@ theia-extensions/audesys-ld-glsp/src/server/
 
 | Crate | 用途 | 接口 |
 |-------|------|------|
-| `audesys-ld-compiler` | LD 源码→IL 文本 | `fn ld_compile(source: &str) -> Result<String, String>` |
-| `audesys-il-compiler` | IL 文本→HalProgram | `fn il_compile(source: &str) -> Result<HalProgram, String>` |
-| `audesys-hal-ir` | HalProgram 类型 + JSON 序列化 | `HalProgram { name, signals, channels, instructions, function_table }` |
-| `audesys-ld-layout` | 布局引擎 (新建 T2a.4) | 7 个函数: `layout_rungs`, `layout_contacts`, `layout_coils`, `route_wires`, `auto_number_rungs`, `validate_connectivity`, `is_valid_variable` |
-| `audesys-theia-bridge` | napi-rs 桥接层 | 4 个 LD 函数: `ld_compile`, `ld_layout_rungs`, `ld_validate_connectivity`, `ld_verify_variable` |
+| `weftik-ld-compiler` | LD 源码→IL 文本 | `fn ld_compile(source: &str) -> Result<String, String>` |
+| `weftik-il-compiler` | IL 文本→HalProgram | `fn il_compile(source: &str) -> Result<HalProgram, String>` |
+| `weftik-hal-ir` | HalProgram 类型 + JSON 序列化 | `HalProgram { name, signals, channels, instructions, function_table }` |
+| `weftik-ld-layout` | 布局引擎 (新建 T2a.4) | 7 个函数: `layout_rungs`, `layout_contacts`, `layout_coils`, `route_wires`, `auto_number_rungs`, `validate_connectivity`, `is_valid_variable` |
+| `weftik-theia-bridge` | napi-rs 桥接层 | 4 个 LD 函数: `ld_compile`, `ld_layout_rungs`, `ld_validate_connectivity`, `ld_verify_variable` |
 
 ### 11.2 前置依赖
 
 - T1.1: Theia 应用骨架 (GLSP Server 运行在 Theia Backend)
 - T1.2: napi-rs 绑定层 (worker_thread 池)
 - T2a.1: LD GModel 定义 (类型定义 `gmodel-types.ts`)
-- T2a.4: LD Layout Engine (Rust crate `audesys-ld-layout`)
+- T2a.4: LD Layout Engine (Rust crate `weftik-ld-layout`)
 
 ### 11.3 下游依赖
 

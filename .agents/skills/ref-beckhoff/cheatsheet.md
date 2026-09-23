@@ -32,9 +32,9 @@ Engineering (XAE)  <-- ADS Protocol -->  Runtime (XAR)
 | Market share (PC-based) | ~14% (3rd) |
 | 5-year CAGR | 9.1% |
 
-## Protocol Comparison: ADS vs AUDESYS HAL
+## Protocol Comparison: ADS vs Weftik HAL
 
-| Dimension | ADS (Beckhoff) | AUDESYS HAL |
+| Dimension | ADS (Beckhoff) | Weftik HAL |
 |-----------|---------------|-------------|
 | Core primitives | Read/Write/Notification | Signal / StreamChannel / RPC |
 | Addressing | (AMS Port, IndexGroup, IndexOffset) | (component.interface.name) |
@@ -81,9 +81,9 @@ Engineering (XAE)  <-- ADS Protocol -->  Runtime (XAR)
 | Beckhoff | ~14% | Technology leadership, EtherCAT, open | Small scale, high price |
 | B&R (ABB) | ~7% | Software flexibility | Post-acquisition independence |
 
-## AUDESYS Reference Mapping
+## Weftik Reference Mapping
 
-| AUDESYS Component | Beckhoff Reference |
+| Weftik Component | Beckhoff Reference |
 |-------------------|--------------------|
 | Studio IDE Shell | VS Shell (embed, don't self-build) |
 | HAL Signal primitives | ADS (IndexGroup, IndexOffset) binary addressing |

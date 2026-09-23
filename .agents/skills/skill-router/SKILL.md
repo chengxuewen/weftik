@@ -48,7 +48,7 @@ description: "分析用户意图，推荐最合适的技能组合。当任务复
 
 检测任务上下文：
 
-- **项目类型**: AUDESYS / NocoBase / 其他
+- **项目类型**: Weftik / NocoBase / 其他
 - **语言**: Rust / TypeScript / Python / 其他
 - **阶段**: 设计 / 实现 / 测试 / 审查 / 部署
 - **复杂度**: 简单(1步) / 中等(2-3步) / 复杂(4+步)
@@ -176,7 +176,7 @@ NocoBase 任务默认从 nocobase-ui-builder 开始，除非用户明确要其�
 ### 推荐技能链
 
 1. **brainstorming** — 探索需求和设计
-2. **design-system** — 确保符合 AUDESYS 工业设计系统
+2. **design-system** — 确保符合 Weftik 工业设计系统
 3. **test-driven-development** — TDD 实现
 4. **verification-before-completion** — 验证完成
 

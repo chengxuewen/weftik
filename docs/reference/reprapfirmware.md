@@ -741,7 +741,7 @@ RRF 展示了开源社区项目向商业产品演进的典型案例：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
@@ -749,11 +749,11 @@ RRF 展示了开源社区项目向商业产品演进的典型案例：
 
 RRF 在 MCU 端直接运行 Web 服务器，提供完整的机器控制界面，无需外部中间件：
 
-**AUDESYS 参考**：
+**Weftik 参考**：
 
-AUDESYS Studio IDE 可借鉴 RRF 的 DWC 设计：
+Weftik Studio IDE 可借鉴 RRF 的 DWC 设计：
 
-| RRF DWC 特性 | AUDESYS Studio 对应 | 参考价值 |
+| RRF DWC 特性 | Weftik Studio 对应 | 参考价值 |
 |-------------|-------------------|---------|
 | 实时状态监控（对象模型） | Runtime 状态管理器 | 高 |
 | 宏管理系统 | 脚本面板 | 高 |
@@ -762,15 +762,15 @@ AUDESYS Studio IDE 可借鉴 RRF 的 DWC 设计：
 | 插件系统 | Studio 扩展机制 | 高 |
 | WebSocket 实时更新 | 实时数据通道 | 高 |
 
-**关键启示**：RRF 证明了在资源受限的 MCU 上运行 Web 服务器并实现复杂控制界面是可行的。AUDESYS 的 Studio（Tauri + React）在更强大的平台上运行，可以实现更丰富的功能。
+**关键启示**：RRF 证明了在资源受限的 MCU 上运行 Web 服务器并实现复杂控制界面是可行的。Weftik 的 Studio（Tauri + React）在更强大的平台上运行，可以实现更丰富的功能。
 
 #### 2. 对象模型（Object Model）
 
 RRF 3.x 的对象模型是固件状态管理的优秀参考：
 
-**AUDESYS 参考**：
+**Weftik 参考**：
 
-AUDESYS Runtime 可考虑类似设计：
+Weftik Runtime 可考虑类似设计：
 - Runtime 状态模型（类似 RRF OM）
 - 通过 JSON-RPC 暴露状态
 - 宏/脚本可以查询和修改状态
@@ -779,7 +779,7 @@ AUDESYS Runtime 可考虑类似设计：
 ```
 可能的设计：
 +--------------------------+
-|  AUDESYS Runtime         |
+|  Weftik Runtime         |
 |  - 对象模型（上/下位机状态） |
 |  - JSON-RPC 接口          |
 |  - 事件通知               |
@@ -787,7 +787,7 @@ AUDESYS Runtime 可考虑类似设计：
           | JSON-RPC
           v
 +--------------------------+
-|  AUDESYS Studio          |
+|  Weftik Studio          |
 |  - 通过对象模型同步        |
 |  - 实时 UI 更新           |
 |  - 配置编辑               |
@@ -798,9 +798,9 @@ AUDESYS Runtime 可考虑类似设计：
 
 RRF 的宏系统是工业控制自动化的优秀参考：
 
-**AUDESYS 参考**：
+**Weftik 参考**：
 
-AUDESYS 的脚本/宏策略（D26）可借鉴：
+Weftik 的脚本/宏策略（D26）可借鉴：
 - Phase 1 YAML 配置 + ST 编程
 - 宏文件驱动的自动化流程
 - 条件执行和循环结构
@@ -809,9 +809,9 @@ AUDESYS 的脚本/宏策略（D26）可借鉴：
 
 RRF 的 CoreNG 提供了跨平台硬件抽象：
 
-**AUDESYS 参考**：
+**Weftik 参考**：
 
-AUDESYS HAL 设计中的 HalTransport 抽象层可参考 CoreNG 的模式：
+Weftik HAL 设计中的 HalTransport 抽象层可参考 CoreNG 的模式：
 - 统一的硬件接口
 - 可替换的实现（不同 MCU 平台）
 - 编译时选择和优化
@@ -820,16 +820,16 @@ AUDESYS HAL 设计中的 HalTransport 抽象层可参考 CoreNG 的模式：
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| **对象模型** | 完整的固件状态镜像和 API | 高 — 可直接参考 AUDESYS Runtime 状态管理 |
-| **G-code 宏系统** | G-code 文件驱动的配置自动化 | 高 — AUDESYS 脚本系统参考 |
+| **对象模型** | 完整的固件状态镜像和 API | 高 — 可直接参考 Weftik Runtime 状态管理 |
+| **G-code 宏系统** | G-code 文件驱动的配置自动化 | 高 — Weftik 脚本系统参考 |
 | **模型驱动加热器控制** | 一阶传递函数加热器模型 | 中 — 标准工业控制算法 |
 | **输入整形** | 抑制打印共振的滤波算法 | 中 — 如果需要运动控制 |
 | **S-curve 加速** | 三级运动轨迹规划 | 中 — 高标准运动控制 |
-| **CoreNG HAL 层** | MCU 硬件抽象层 | 中 — AUDESYS HAL 参考 |
+| **CoreNG HAL 层** | MCU 硬件抽象层 | 中 — Weftik HAL 参考 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | RepRapFirmware | AUDESYS |
+| 维度 | RepRapFirmware | Weftik |
 |------|---------------|---------|
 | 核心定位 | 3D 打印机运动控制固件 | 工业控制系统模拟平台 |
 | 目标用户 | 3D 打印爱好者、专业打印用户 | 控制工程师、系统集成商、开发者 |
@@ -841,14 +841,14 @@ AUDESYS HAL 设计中的 HalTransport 抽象层可参考 CoreNG 的模式：
 | HAL 设计 | CoreNG（Atmel 特定） | 完整通信原语（Signal/StreamChannel/RPC） |
 
 **互补关系**：
-- RRF 的 **Web 控制 + 宏系统** 对 AUDESYS Studio IDE 的前端设计有直接参考价值
-- RRF 的 **对象模型** 对 AUDESYS Runtime 状态管理有重要参考价值
-- RRF 的 **模型驱动加热器控制** 可作为 AUDESYS 标准控制算法的参考实现
-- AUDESYS 的 **HAL 设计**（3 原语 + amw）在抽象层次上远超 RRF 的 CoreNG
+- RRF 的 **Web 控制 + 宏系统** 对 Weftik Studio IDE 的前端设计有直接参考价值
+- RRF 的 **对象模型** 对 Weftik Runtime 状态管理有重要参考价值
+- RRF 的 **模型驱动加热器控制** 可作为 Weftik 标准控制算法的参考实现
+- Weftik 的 **HAL 设计**（3 原语 + amw）在抽象层次上远超 RRF 的 CoreNG
 
 ### 7.4 详细对比分析：配置与用户界面
 
-| 维度 | RRF | AUDESYS（设计） |
+| 维度 | RRF | Weftik（设计） |
 |------|-----|----------------|
 | 配置形式 | G-code 宏文件（config.g） | YAML（开发）+ FlatBuffers（运行时） |
 | 用户界面 | DWC Web 界面（固件端运行） | Studio IDE 桌面应用（Tauri+React） |
@@ -867,7 +867,7 @@ RRF 展示了可持续的开源工业控制项目模式：
 4. **文档完善**：docs.duet3d.com 提供专业级的技术文档
 5. **向后兼容性**：RRF 2 -> 3 迁移提供了详细的迁移指南
 
-**AUDESYS 启示**：AUDESYS 的长期治理模式可从 RRF 的经验中吸取教训——明确的开源策略、高质量的硬件/软件结合、完善的文档和迁移路径。
+**Weftik 启示**：Weftik 的长期治理模式可从 RRF 的经验中吸取教训——明确的开源策略、高质量的硬件/软件结合、完善的文档和迁移路径。
 
 ---
 

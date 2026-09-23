@@ -35,7 +35,7 @@
 | finishing-a-development-branch | 实现完成，决定如何集成 | 中 |
 | using-git-worktrees | 需要隔离工作区 | 低 |
 
-### AUDESYS 项目类
+### Weftik 项目类
 
 | 技能 | 触发时机 | 优先级 |
 |------|----------|--------|

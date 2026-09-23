@@ -717,43 +717,43 @@ CODESYS 在单一开发环境中整合了逻辑控制和运动控制：
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 IEC 61131-3 编译器架构与运行时设计
 
-CODESYS 的编译器架构为 AUDESYS 的 HAL（硬件抽象层）运行时设计提供了重要参考：
+CODESYS 的编译器架构为 Weftik 的 HAL（硬件抽象层）运行时设计提供了重要参考：
 
-| CODESYS 特性 | 对 AUDESYS 的参考价值 |
+| CODESYS 特性 | 对 Weftik 的参考价值 |
 |-------------|---------------------|
-| 语言模型（Language Model）作为中心表示 | AUDESYS 可考虑类似的设计——将所有编辑器输入统一为中间表示 |
-| 原生机器码生成 vs 解释执行 | AUDESYS HAL 需决定运行时采用 JIT/解释/机器码方式 |
-| 编译器前端/后端分离 | 适用于 AUDESYS 的多语言策略（Rust Core + C++ + 其他语言） |
-| 运行时与操作系统抽象层（OSAL） | 与 AUDESYS HAL 的硬件抽象层设计直接对应 |
+| 语言模型（Language Model）作为中心表示 | Weftik 可考虑类似的设计——将所有编辑器输入统一为中间表示 |
+| 原生机器码生成 vs 解释执行 | Weftik HAL 需决定运行时采用 JIT/解释/机器码方式 |
+| 编译器前端/后端分离 | 适用于 Weftik 的多语言策略（Rust Core + C++ + 其他语言） |
+| 运行时与操作系统抽象层（OSAL） | 与 Weftik HAL 的硬件抽象层设计直接对应 |
 
-**关键问题**：AUDESYS 是否也需要类似 IEC 61131-3 的编程语言支持？还是聚焦于 Studio IDE 的配置式开发？CODESYS 的经验表明，IEC 61131-3 编译器是巨大的工程投入（数十年积累），AUDESYS 需谨慎评估是否自研或采用现有方案。
+**关键问题**：Weftik 是否也需要类似 IEC 61131-3 的编程语言支持？还是聚焦于 Studio IDE 的配置式开发？CODESYS 的经验表明，IEC 61131-3 编译器是巨大的工程投入（数十年积累），Weftik 需谨慎评估是否自研或采用现有方案。
 
 ### 7.2 软PLC 开发 IDE 的设计模式
 
-CODESYS IDE 的设计模式值得 AUDESYS Studio IDE 参考：
+CODESYS IDE 的设计模式值得 Weftik Studio IDE 参考：
 
-| 设计模式 | CODESYS 实现 | 对 AUDESYS 的参考 |
+| 设计模式 | CODESYS 实现 | 对 Weftik 的参考 |
 |---------|-------------|------------------|
-| 插件架构 | 基于 DI 框架的全插件化 | AUDESYS Studio 可采用类似的可扩展架构 |
-| 语言模型 | 编辑器输入统一转换为 ST | AUDESYS 可定义统一的"设备配置模型" |
+| 插件架构 | 基于 DI 框架的全插件化 | Weftik Studio 可采用类似的可扩展架构 |
+| 语言模型 | 编辑器输入统一转换为 ST | Weftik 可定义统一的"设备配置模型" |
 | 项目树 | 设备树（Device Tree）+ POU 视图 | 对 Studio IDE 的项目浏览结构有参考价值 |
 | 在线修改 | 运行时不停机修改程序 | 工业控制的关键需求 |
-| 设备描述文件 | DDF 格式描述设备能力 | 对 AUDESYS 的硬件描述文件有参考意义 |
+| 设备描述文件 | DDF 格式描述设备能力 | 对 Weftik 的硬件描述文件有参考意义 |
 
 ### 7.3 硬件无关的 Runtime 抽象层设计
 
-CODESYS 的运行时抽象层设计是 AUDESYS HAL 的重要参考：
+CODESYS 的运行时抽象层设计是 Weftik HAL 的重要参考：
 
 - **CODESYS Control Runtime Toolkit** 提供了一个 SDK，OEM 用于适配自有硬件
 - 运行时包含：OS 抽象层、事件系统、内存管理、任务调度、I/O 管理
 - 支持多种 OS 和 CPU 架构，通过分层抽象实现
 
-**对 AUDESYS HAL 的参考**：
-- AUDESYS HAL 的 amw（AUDESYS Middleware）抽象层可参考 CODESYS 的"可插拔通信栈"设计
+**对 Weftik HAL 的参考**：
+- Weftik HAL 的 amw（Weftik Middleware）抽象层可参考 CODESYS 的"可插拔通信栈"设计
 - 运行时与 IDE 的通信协议设计（CODESYS 使用自有协议）
 - 设备描述机制（DDF 类比）——设备能力通过描述文件暴露给 IDE
 
@@ -765,7 +765,7 @@ CODESYS 将可视化直接集成到开发环境中的做法值得关注：
 - **SoftMotion 可视化模板** 为运动控制功能块提供即用型调试界面
 - **3D 可视化**（Depictor）用于 CNC/机器人路径验证
 
-**对 AUDESYS Studio 的参考**：
+**对 Weftik Studio 的参考**：
 - IDE 是否应内置轻量级 HMI 设计器？
 - 可视化与运行时调试的集成程度如何设计？
 - 运动控制参数的在线调试界面设计
@@ -779,24 +779,24 @@ CODESYS 的 OPC UA 实现策略提供了参考：
 - 支持 Alarms & Conditions、Methods、PubSub
 - 自定义信息模型（Companion Specifications）
 
-**对 AUDESYS 的参考**：
-- AUDESYS 的 Runtime 是否应内置 OPC UA Server？
+**对 Weftik 的参考**：
+- Weftik 的 Runtime 是否应内置 OPC UA Server？
 - 与 amw 抽象层的关系——OPC UA 作为通信协议之一，还是内置协议？
 
 ### 7.6 商业模式启示
 
-CODESYS 的商业模式对 AUDESYS 有直接参考价值：
+CODESYS 的商业模式对 Weftik 有直接参考价值：
 
-| 方面 | CODESYS 模式 | 对 AUDESYS 的参考 |
+| 方面 | CODESYS 模式 | 对 Weftik 的参考 |
 |------|-------------|------------------|
-| IDE 免费 | 降低门槛，扩大生态 | AUDESYS Studio 可考虑免费策略 |
-| 运行时收费 | 按设备授权，收入稳定 | AUDESYS Runtime 的商业模式设计 |
-| OEM 定制 | 品牌化版本，版税模式 | AUDESYS 是否向设备厂商提供 SDK？ |
-| 应用商店 | CODESYS Store 分成 | AUDESYS 的插件/库生态规划 |
+| IDE 免费 | 降低门槛，扩大生态 | Weftik Studio 可考虑免费策略 |
+| 运行时收费 | 按设备授权，收入稳定 | Weftik Runtime 的商业模式设计 |
+| OEM 定制 | 品牌化版本，版税模式 | Weftik 是否向设备厂商提供 SDK？ |
+| 应用商店 | CODESYS Store 分成 | Weftik 的插件/库生态规划 |
 
 ### 7.7 需警惕的风险
 
-CODESYS 的发展历程中也暴露出一些 AUDESYS 需注意的风险：
+CODESYS 的发展历程中也暴露出一些 Weftik 需注意的风险：
 
 1. **编译器版本碎片化**：SP17 到 SP18 的过渡中，编译器版本管理变得复杂，最终被迫放弃统一版本号
 2. **运行时兼容性**：新 IDE 可能不支持旧运行时，旧 IDE 可能无法连接新运行时
@@ -854,5 +854,5 @@ CODESYS 的发展历程中也暴露出一些 AUDESYS 需注意的风险：
 
 - 文档版本: 1.0
 - 生成日期: 2026-07-13
-- 作者: researcher-ide (AUDESYS Team)
+- 作者: researcher-ide (Weftik Team)
 - 审核状态: 草稿

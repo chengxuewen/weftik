@@ -1,11 +1,11 @@
-# AUDESYS Studio 迁移指南：Tauri → Eclipse Theia
+# Weftik Studio 迁移指南：Tauri → Eclipse Theia
 
 > 更新日期：2026-07-22
 > 目标读者：原 Tauri Studio 用户
 
 ## 概述
 
-AUDESYS Studio 从 Tauri+React 自建架构迁移到 Eclipse Theia 框架（D71）。迁移后的 Studio 提供更好的 IDE 体验，同时保持与现有 Rust Runtime 和 Controller 的完全兼容。
+Weftik Studio 从 Tauri+React 自建架构迁移到 Eclipse Theia 框架（D71）。迁移后的 Studio 提供更好的 IDE 体验，同时保持与现有 Rust Runtime 和 Controller 的完全兼容。
 
 ## 变化一览
 
@@ -50,7 +50,7 @@ AUDESYS Studio 从 Tauri+React 自建架构迁移到 Eclipse Theia 框架（D71�
 
 ```bash
 # macOS
-open AUDESYS\ Studio.dmg
+open Weftik\ Studio.dmg
 
 # 或从源码构建
 cd apps/studio-theia
@@ -70,7 +70,7 @@ Theia 自动识别项目结构，IEC 61131-3 源文件直接可用。
 ### 3. 迁移项目配置
 
 ```bash
-npx audesys migrate --from-tauri /path/to/old-project
+npx weftik migrate --from-tauri /path/to/old-project
 ```
 
 自动执行：

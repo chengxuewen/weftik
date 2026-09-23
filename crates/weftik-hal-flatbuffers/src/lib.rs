@@ -12,9 +12,9 @@ mod generated {
     pub use hal_value_generated::weftik::hal::*;
 }
 
+use flatbuffers::{FlatBufferBuilder, InvalidFlatbuffer, WIPOffset};
 use weftik_hal_core::types::HalPinType;
 use weftik_hal_core::value::HalValue;
-use flatbuffers::{FlatBufferBuilder, InvalidFlatbuffer, WIPOffset};
 
 // ── fbs HalType ↔ HalPinType ──
 

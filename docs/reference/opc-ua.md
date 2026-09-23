@@ -75,12 +75,12 @@ OPC UA 的定位从最初的「解决 Windows 上工业软件的互操作问题�
 4. **向后兼容与向前扩展**：通过 Profile 和 Companion Spec 机制支持广泛的设备类型和行业需求
 5. **德国工业 4.0 RAMI 4.0 的核心通信标准**：RAMI 4.0（Reference Architecture Model Industrie 4.0）将 OPC UA 指定为通信层唯一推荐标准
 
-### 1.4 与 AUDESYS 的关系定位
+### 1.4 与 Weftik 的关系定位
 
-OPC UA 对 AUDESYS 的参考价值主要在两个方面：
-- **信息建模**：OPC UA 的 Address Space + Type System 为 AUDESYS HAL 的命名体系、组件接口模型提供设计参考
-- **通信集成**：AUDESYS Runtime 对外暴露 OPC UA 接口是与其他工业系统互操作的关键
-- **安全性**：OPC UA 的多层安全模型可参考用于 AUDESYS 的 HalQoS security_domain
+OPC UA 对 Weftik 的参考价值主要在两个方面：
+- **信息建模**：OPC UA 的 Address Space + Type System 为 Weftik HAL 的命名体系、组件接口模型提供设计参考
+- **通信集成**：Weftik Runtime 对外暴露 OPC UA 接口是与其他工业系统互操作的关键
+- **安全性**：OPC UA 的多层安全模型可参考用于 Weftik 的 HalQoS security_domain
 
 参考价值评分：⭐⭐⭐⭐⭐ (5/5)
 
@@ -148,7 +148,7 @@ Address Space 是 OPC UA Server 暴露给客户端的全部数据和元数据的
 
 **节点类型（Node Classes）**：
 
-| 节点类型 | 说明 | 关键属性 | AUDESYS 对应概念 |
+| 节点类型 | 说明 | 关键属性 | Weftik 对应概念 |
 |---------|------|---------|---------------|
 | **Object** | 结构化的数据容器（可包含 Variable/Method/其他 Object） | NodeId, BrowseName, DisplayName, EventNotifier | component（组件——一个控制器、一个传感器、一个执行器） |
 | **Variable** | 数据的实际承载者（值 + 元数据） | Value, DataType, ValueRank, AccessLevel, MinimumSamplingInterval, Historizing | Pin（Signal 的值载体） |
@@ -157,7 +157,7 @@ Address Space 是 OPC UA Server 暴露给客户端的全部数据和元数据的
 | **VariableType** | Variable 的类型定义 | 定义 Variable 的数据类型、值范围、工程单位 | 存储数据类型元数据 |
 | **ReferenceType** | Reference 的类型定义 | 定义节点间关系的语义（Organizes, HasComponent, HasProperty 等） | HAL 组件间连接关系语义 |
 | **DataType** | 数据类型定义 | 基本类型 (Int32, Float, String...) 或自定义结构体 | HAL 14 种统一类型 |
-| **View** | Address Space 的过滤子集 | 按特定视角组织节点（如"维护视图"、"操作视图"） | 暂不适用（AUDESYS 面向运行时，非信息浏览） |
+| **View** | Address Space 的过滤子集 | 按特定视角组织节点（如"维护视图"、"操作视图"） | 暂不适用（Weftik 面向运行时，非信息浏览） |
 
 **核心节点标识符**：
 
@@ -314,7 +314,7 @@ OPC UA 1.04（2017 年引入）的 PubSub 是其进军 IIoT（工业物联网）
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**对 AUDESYS 的直接参考**：OPC UA PubSub 的发布/订阅模式与 AUDESYS HAL 的 StreamChannel 原语存在精确的语义映射。PubSub 的 DataSetMessage 对应 StreamChannel 的一个数据帧。
+**对 Weftik 的直接参考**：OPC UA PubSub 的发布/订阅模式与 Weftik HAL 的 StreamChannel 原语存在精确的语义映射。PubSub 的 DataSetMessage 对应 StreamChannel 的一个数据帧。
 
 ### 2.5 安全模型
 
@@ -368,10 +368,10 @@ OPC UA 的安全设计是其区别于大多数工业通信协议的核心优势�
 **审计（Audit）**：
 OPC UA 服务器自动生成审计事件（Audit Event），记录所有安全相关操作：会话创建/关闭、用户认证成功/失败、变量写入（值的前后对比）、方法调用（调用参数和结果）。审计日志可用于合规性检查和事后安全分析。
 
-**对 AUDESYS 的参考**：
-- AUDESYS HalQoS 的 security_domain 标记（D16 决策）可以从 OPC UA 的多层安全模型中汲取分类思路
-- OPC UA 的权限模型（Node 级别的读/写/执行控制）可直接映射到 AUDESYS 的 Signal 和 RPC 的权限检查
-- OPC UA 的审计事件可参考用于 AUDESYS 工业调试桥的操作审计功能
+**对 Weftik 的参考**：
+- Weftik HalQoS 的 security_domain 标记（D16 决策）可以从 OPC UA 的多层安全模型中汲取分类思路
+- OPC UA 的权限模型（Node 级别的读/写/执行控制）可直接映射到 Weftik 的 Signal 和 RPC 的权限检查
+- OPC UA 的审计事件可参考用于 Weftik 工业调试桥的操作审计功能
 
 ### 2.6 传输协议选项
 
@@ -588,13 +588,13 @@ OPC UA Profile 机制允许渐进式采用——从最简单的 Nano Server 开�
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
-### 7.1 OPC UA Address Space vs AUDESYS HAL 命名体系 (⭐⭐⭐⭐⭐)
+### 7.1 OPC UA Address Space vs Weftik HAL 命名体系 (⭐⭐⭐⭐⭐)
 
-OPC UA 的 Address Space 和节点类型系统为 AUDESYS HAL 的组件命名和接口模型提供了最完整的工业化参考：
+OPC UA 的 Address Space 和节点类型系统为 Weftik HAL 的组件命名和接口模型提供了最完整的工业化参考：
 
-| OPC UA 概念 | AUDESYS HAL 映射 | 分析 |
+| OPC UA 概念 | Weftik HAL 映射 | 分析 |
 |------------|-----------------|------|
 | Object 节点 (Organizes 层次) | component (组件——一个控制器/传感器/执行器) | OPC UA Objects 树对应 HAL 组件拓扑 |
 | Variable 节点 | Pin（Signal 的值载体）| 每个 Variable 的 Value + DataType + Quality 对应 HAL Pin 的值 + 类型 + 状态 |
@@ -606,11 +606,11 @@ OPC UA 的 Address Space 和节点类型系统为 AUDESYS HAL 的组件命名和
 | Browse Service | HalDiscovery（组件发现与端点枚举）| 浏览器发现服务器上有哪些变量 → 发现组件有哪些 Pin |
 | 地址空间层次 | component.interface.name 的 Hierarchical 命名 | Objects → DeviceSet → Component → Interface → Pin |
 
-### 7.2 OPC UA PubSub vs AUDESYS StreamChannel (⭐⭐⭐⭐⭐)
+### 7.2 OPC UA PubSub vs Weftik StreamChannel (⭐⭐⭐⭐⭐)
 
-OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在精确的结构映射：
+OPC UA PubSub 的发布/订阅模式与 Weftik 的 StreamChannel 原语存在精确的结构映射：
 
-| OPC UA PubSub | AUDESYS StreamChannel | 映射分析 |
+| OPC UA PubSub | Weftik StreamChannel | 映射分析 |
 |--------------|----------------------|---------|
 | Publisher | StreamChannel 写入者 (Writer) | 多个 Publisher 可写入同一 StreamChannel |
 | Subscriber (UDP Multicast) | StreamChannel 读取者 (Reader) | 多播接收 = StreamChannel 的"多读"语义 |
@@ -622,13 +622,13 @@ OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在�
 | MQTT Broker | amw_mqtt transport (可选) | 云友好的传输层 |
 
 **关键设计洞察**：
-1. OPC UA PubSub 的 DataSetMessage 包含 SequenceNumber 和 Timestamp——这正是 AUDESYS StreamChannel 需要的数据帧结构。AUDESYS 可以直接借鉴 DataSetMessage 的帧格式设计 StreamChannel 的帧头。
-2. UADP 的零拷贝设计（二进制编码直接写入 UDP 负载）对应 AUDESYS 的 FlatBuffers 策略（D19）——性能优先场景避免 JSON 编码开销。
+1. OPC UA PubSub 的 DataSetMessage 包含 SequenceNumber 和 Timestamp——这正是 Weftik StreamChannel 需要的数据帧结构。Weftik 可以直接借鉴 DataSetMessage 的帧格式设计 StreamChannel 的帧头。
+2. UADP 的零拷贝设计（二进制编码直接写入 UDP 负载）对应 Weftik 的 FlatBuffers 策略（D19）——性能优先场景避免 JSON 编码开销。
 3. MQTT broker 模式验证了"通过消息代理解耦发布者和订阅者"的架构可行性，与 amw 的 HalTransport trait 可替换性设计一致。
 
-### 7.3 OPC UA Method Call vs AUDESYS RPC (⭐⭐⭐⭐)
+### 7.3 OPC UA Method Call vs Weftik RPC (⭐⭐⭐⭐)
 
-| OPC UA Method | AUDESYS RPC | 对照 |
+| OPC UA Method | Weftik RPC | 对照 |
 |-------------|------------|------|
 | Call 服务（请求/响应） | RPC 请求/响应 | 完全一致的语义 |
 | InputArguments (类型化参数列表) | RPC 请求参数（类型化） | 参数序列化需求一致 |
@@ -637,9 +637,9 @@ OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在�
 | UserExecutable 标志 | RBAC 权限控制 | 操作员/工程师权限区分 |
 | StatusCode (Bad_MethodInvalid...) | RPC 错误码 | 建议采用类似结构化的错误类型 |
 
-### 7.4 OPC UA Security vs AUDESYS HalQoS security_domain (⭐⭐⭐⭐)
+### 7.4 OPC UA Security vs Weftik HalQoS security_domain (⭐⭐⭐⭐)
 
-| OPC UA 安全特性 | AUDESYS HalQoS | 分析 |
+| OPC UA 安全特性 | Weftik HalQoS | 分析 |
 |---------------|---------------|------|
 | 应用认证 (x509 证书) | security_domain: "trusted" | 节点间互信验证 |
 | 用户认证 (user/pwd + x509) | RBAC 权限模型 | 操作员/工程师/管理员权限分级 |
@@ -648,9 +648,9 @@ OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在�
 | 审计 (Audit) | 工业调试桥操作审计 | 记录所有配置变更和控制操作 |
 | 安全策略 (Security Policy) | HalQoS.security_policy 字段 | 建议增加——本地/隔离/保护不同策略 |
 
-### 7.5 AUDESYS 应采纳的 OPC UA 设计模式
+### 7.5 Weftik 应采纳的 OPC UA 设计模式
 
-| 采纳 | OPC UA 模式 | AUDESYS 实现建议 |
+| 采纳 | OPC UA 模式 | Weftik 实现建议 |
 |------|-----------|----------------|
 | ✅ 直接采纳 | Address Space 层次化命名 (Objects → ... → Variable) | component.interface.pin 的三级命名体系 |
 | ✅ 直接采纳 | Type System（值类型 + 工程单位 + 范围） | HAL 14 种类型的元数据扩展（每个 Pin 可附带 EngineeringUnits 和 Range） |
@@ -659,19 +659,19 @@ OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在�
 | ✅ 借鉴修改 | Method Call → RPC | 添加超时机制和降级策略（OPC UA Method 无内建超时） |
 | ✅ 借鉴修改 | PubSub Broker 模式 → amw transport | 使用 amw 的 HalTransport trait 实现不同的 broker（Zenoh 作为主要实现） |
 | ⚠️ 谨慎采纳 | 完整 Address Space（含 Browse 导航） | Phase 1 不需要（增加运行时开销），Phase 2+ 可考虑 |
-| ❌ 不采纳 | 每个服务器运行一个 UA Stack（重型协议栈） | AUDESYS 使用轻量级 FlatBuffers + Zenoh（更低的内存和 CPU 开销） |
+| ❌ 不采纳 | 每个服务器运行一个 UA Stack（重型协议栈） | Weftik 使用轻量级 FlatBuffers + Zenoh（更低的内存和 CPU 开销） |
 
-### 7.6 AUDESYS 应避免的 OPC UA 设计陷阱
+### 7.6 Weftik 应避免的 OPC UA 设计陷阱
 
-| OPC UA 陷阱 | 对 AUDESYS 的教训 |
+| OPC UA 陷阱 | 对 Weftik 的教训 |
 |------------|-----------------|
-| **协议栈复杂度**：open62541 单库超过 50 万行 C 代码，商用 UA 栈的学习和集成成本极高 | AUDESYS HAL 必须保持轻量——amw transport trait 的小接口足以替换底层传输 |
+| **协议栈复杂度**：open62541 单库超过 50 万行 C 代码，商用 UA 栈的学习和集成成本极高 | Weftik HAL 必须保持轻量——amw transport trait 的小接口足以替换底层传输 |
 | **信息过载**：Address Space 的完整浏览和查询机制在实时系统中产生不可预测的负载 | HAL Discovery 应返回最小信息集（组件名 + Pin 列表 + 类型），不需要浏览整个拓扑 |
 | **安全性能税**：x509 证书验证和消息加密在每个请求上增加数百微秒延迟 | 安全设计应分层：控制面（RPC/Config）加密，数据面（Signal/StreamChannel）可选加密 |
-| **XML Schema 依赖**：OPC UA 规范使用 XML Schema 定义类型（虽然运行时使用二进制编码） | AUDESYS 类型定义使用 FlatBuffers schema（.fbs 文件），比 XML Schema 更简洁且编译时可用 |
-| **向后兼容压力**：OPC UA 1.00 的某些已废弃安全策略（如 Basic128Rsa15）仍被要求支持 | AUDESYS 从零开始无需向后兼容包袱——直接定义当前最优安全策略 |
+| **XML Schema 依赖**：OPC UA 规范使用 XML Schema 定义类型（虽然运行时使用二进制编码） | Weftik 类型定义使用 FlatBuffers schema（.fbs 文件），比 XML Schema 更简洁且编译时可用 |
+| **向后兼容压力**：OPC UA 1.00 的某些已废弃安全策略（如 Basic128Rsa15）仍被要求支持 | Weftik 从零开始无需向后兼容包袱——直接定义当前最优安全策略 |
 
-### 7.7 总结：OPC UA 对 AUDESYS 的关键参考权重
+### 7.7 总结：OPC UA 对 Weftik 的关键参考权重
 
 | 参考领域 | 重要性 | 适用阶段 | 关键行动 |
 |---------|--------|---------|---------|
@@ -682,7 +682,7 @@ OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在�
 | Security 多层模型 → HalQoS | P1 | Phase 2 | security_domain 的分类参考 OPC UA 的安全策略 |
 | Audit Event → 调试审计 | P2 | Phase 2 | RPC 调用和 Config 变更的审计记录 |
 | OPC UA over TSN → 确定性网络 | P3 | Phase 3+ | 为 amw 预留 TSN transport 的 trait 接口 |
-| Companion Spec 生态 → AUDESYS 行业扩展 | P3 | Phase 3+ | AUDESYS 可参考伴随便携的行业信息模型定义机制 |
+| Companion Spec 生态 → Weftik 行业扩展 | P3 | Phase 3+ | Weftik 可参考伴随便携的行业信息模型定义机制 |
 
 ---
 
@@ -702,7 +702,7 @@ OPC UA PubSub 的发布/订阅模式与 AUDESYS 的 StreamChannel 原语存在�
 - **OPC UA**：标准化信息模型 + 安全的 Client/Server 通信。适合需要"数据语义"（不只是值）和"安全可控"（谁在什么时候写入了什么）的场景
 - **MQTT**：轻量级发布/订阅管道。适合简单的"传感器值 → 云端"数据流，不需要语义信息
 
-OPC UA 1.04 之后的 PubSub MQTT 模式将两者融合——使用 OPC UA 定义信息模型（变量名、类型、单位），使用 MQTT 作为传输管道（低开销的发布/订阅）。这正是 AUDESYS 应该采取的模式：HAL 定义了 Signal/StreamChannel/RPC 的语义（类似 OPC UA 的信息建模），amw transport 实现了底层的传输协议（类似 OPC UA PubSub 的 MQTT/UADP 传输选择）。
+OPC UA 1.04 之后的 PubSub MQTT 模式将两者融合——使用 OPC UA 定义信息模型（变量名、类型、单位），使用 MQTT 作为传输管道（低开销的发布/订阅）。这正是 Weftik 应该采取的模式：HAL 定义了 Signal/StreamChannel/RPC 的语义（类似 OPC UA 的信息建模），amw transport 实现了底层的传输协议（类似 OPC UA PubSub 的 MQTT/UADP 传输选择）。
 
 #### 关于 open62541 的技术评估
 
@@ -714,7 +714,7 @@ open62541 是目前最活跃的开源 OPC UA 实现（GitHub 2,500+ Stars，活�
 - 编译后 Server 库约 200-300KB（取决于启用功能）
 - Rust 绑定存在但非官方维护（open62541-sys + 社区 rust 封装）
 
-AUDESYS 如果需要对外暴露 OPC UA 接口（与第三方系统集成），可以考虑通过 open62541 的 FFI 桥接（类似 D19 决策中 C++ FFI 桥接限非 RT 线程的策略），在 I/O 通信线程中运行 OPC UA 服务器，通过 Signal/StreamChannel 与 RT 线程交换数据。
+Weftik 如果需要对外暴露 OPC UA 接口（与第三方系统集成），可以考虑通过 open62541 的 FFI 桥接（类似 D19 决策中 C++ FFI 桥接限非 RT 线程的策略），在 I/O 通信线程中运行 OPC UA 服务器，通过 Signal/StreamChannel 与 RT 线程交换数据。
 
 #### OPC UA over TSN 的发展现状（2026）
 
@@ -723,7 +723,7 @@ AUDESYS 如果需要对外暴露 OPC UA 接口（与第三方系统集成），�
 - 控制器制造商（B&R、Beckhoff、Siemens）已发布支持 OPC UA over TSN 的硬件原型和固件
 - 实验室环境和展会演示中展示了确定性控制器间通信（< 100μs 抖动）
 - 但大规模生产部署仍处于早期阶段——TSN 交换机的成本、配置复杂性和多厂商互操作性问题仍需时间解决
-- AUDESYS Phase 1-2 不需要关注 OPC UA over TSN，可在 Phase 3 评估时预留 amw_tsn transport trait
+- Weftik Phase 1-2 不需要关注 OPC UA over TSN，可在 Phase 3 评估时预留 amw_tsn transport trait
 
 #### OPC UA FX (Field eXchange) 倡议
 
@@ -735,14 +735,14 @@ OPC UA FX 核心组件：
 - UAFX Safety：基于 OPC UA Safety 规范的功能安全通信（面向 SIL2/SIL3 应用）
 - UAFX Motion：面向运动控制的确定性通信（亚毫秒级同步）
 
-这意味 OPC UA 将在未来几年内与 EtherCAT、PROFINET 等传统现场总线在"实时控制"领域直接竞争。对 AUDESYS 的长期影响：如果 UAFX 成为主流，AUDESYS 的 amw 应考虑预留 UAFX transport trait 接口。
+这意味 OPC UA 将在未来几年内与 EtherCAT、PROFINET 等传统现场总线在"实时控制"领域直接竞争。对 Weftik 的长期影响：如果 UAFX 成为主流，Weftik 的 amw 应考虑预留 UAFX transport trait 接口。
 
-#### OPC UA 在 AUDESYS 架构中的最佳位置
+#### OPC UA 在 Weftik 架构中的最佳位置
 
-OPC UA 不应是 AUDESYS HAL 的"内部通信协议"（内部使用更轻量的 FlatBuffers + Zenoh），而应是 HAL 的"对外互操作接口"：
+OPC UA 不应是 Weftik HAL 的"内部通信协议"（内部使用更轻量的 FlatBuffers + Zenoh），而应是 HAL 的"对外互操作接口"：
 
 ```
-AUDESYS Runtime
+Weftik Runtime
   ┌──────────────────────────┐
   │  RT 线程 (控制逻辑)       │
   │  Signal ← FlatBuffers →  │  内部：高性能零拷贝通信
@@ -765,7 +765,7 @@ AUDESYS Runtime
 - OPC UA Gateway 运行在非 RT 线程，不影响控制循环的确定性
 - 符合 D19 多语言策略——OPC UA Gateway 可以是 C++ 实现（通过 open62541），与 Rust RT 核心通过 FFI 桥接
 
-#### OPC UA 的时间序列数据与 AUDESYS StreamChannel
+#### OPC UA 的时间序列数据与 Weftik StreamChannel
 
 OPC UA 的 Subscription 和 PubSub 机制提供了时间序列数据（time-series data）的服务质量保证：
 - Publishing Interval：客户端可指定数据的推送间隔（对应 StreamChannel 的帧率）
@@ -773,7 +773,7 @@ OPC UA 的 Subscription 和 PubSub 机制提供了时间序列数据（time-seri
 - Keep-Alive Count / Lifetime Count：订阅的生命周期管理（对应 StreamChannel 的连接超时和保活机制）
 - Queue Size：缓冲队列大小（对应 StreamChannel 的缓冲容量）
 
-OPC UA Subscription 的设计为 AUDESYS StreamChannel 的 QoS 参数提供了可直接参考的模板。AUDESYS 的 HalQoS 应借鉴 Publishing/Sampling/Lifetime 三个核心参数。
+OPC UA Subscription 的设计为 Weftik StreamChannel 的 QoS 参数提供了可直接参考的模板。Weftik 的 HalQoS 应借鉴 Publishing/Sampling/Lifetime 三个核心参数。
 
 #### OPC UA 标准库的规模与复杂度评估
 
@@ -783,9 +783,9 @@ OPC UA 作为一个"完整的"工业通信标准，其规范文档极其庞大�
 - open62541 代码库：超过 500,000 行 C 代码
 - node-opcua 代码库：超过 200,000 行 TypeScript 代码
 
-对于 AUDESYS 而言，这强化了一个关键设计原则：AUDESYS HAL 不应尝试实现完整的 OPC UA 协议栈。HAL 的核心（Signal/StreamChannel/RPC + amw）应保持轻量和聚焦，通过可选的 OPC UA Gateway 提供外部互操作。正如 Linux 内核保持最小化和模块化，OPC UA 的庞大协议栈应作为外部模块而非 HAL 的内核部分。
+对于 Weftik 而言，这强化了一个关键设计原则：Weftik HAL 不应尝试实现完整的 OPC UA 协议栈。HAL 的核心（Signal/StreamChannel/RPC + amw）应保持轻量和聚焦，通过可选的 OPC UA Gateway 提供外部互操作。正如 Linux 内核保持最小化和模块化，OPC UA 的庞大协议栈应作为外部模块而非 HAL 的内核部分。
 
-#### 对 AUDESYS 的最终建议
+#### 对 Weftik 的最终建议
 
 1. **Phase 1**：HAL 内部通信使用 FlatBuffers + Zenoh（轻量、高性能）。不引入 OPC UA 依赖性
 2. **Phase 2**：构建独立的 OPC UA Gateway 模块（基于 open62541 FFI），在非 RT 线程暴露 Address Space 接口
@@ -793,10 +793,10 @@ OPC UA 作为一个"完整的"工业通信标准，其规范文档极其庞大�
 4. **Phase 3**：评估是否需要原生 OPC UA PubSub 支持（如果工业 4.0 生态要求 OPC UA 作为现场级通信协议）
 5. **贯穿**：持续监控 OPC UA FX (Field eXchange) 的发展，如果其成为 EtherCAT/PROFINET 的替代方案，为 amw 预留 amw_uafx transport trait
 
-#### OPC UA 与 MODACS/AUDESYS 历史的关系
+#### OPC UA 与 MODACS/Weftik 历史的关系
 
-AUDESYS 与 MODACS 的分离（2026-07）要求完全去 MODACS 化。OPC UA 作为工业互操作标准，不包含任何 MODACS 特定引用，可以安全地被 AUDESYS 采用为外部集成接口标准。
+Weftik 与 MODACS 的分离（2026-07）要求完全去 MODACS 化。OPC UA 作为工业互操作标准，不包含任何 MODACS 特定引用，可以安全地被 Weftik 采用为外部集成接口标准。
 
 ---
 
-> 本文档为 AUDESYS 项目技术参考文档系列之一。
+> 本文档为 Weftik 项目技术参考文档系列之一。

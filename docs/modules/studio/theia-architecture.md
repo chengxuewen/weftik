@@ -1,11 +1,11 @@
-# AUDESYS Studio Theia 架构
+# Weftik Studio Theia 架构
 
 > 更新日期：2026-07-22
 > 参考决策：D71
 
 ## 架构概览
 
-AUDESYS Studio 基于 Eclipse Theia 1.73 构建，采用 Electron + Browser 双渲染模式。前端使用 Theia Workbench（Monaco Editor + GLSP 图形编辑器），后端通过 napi-rs 桥接 Rust Runtime。
+Weftik Studio 基于 Eclipse Theia 1.73 构建，采用 Electron + Browser 双渲染模式。前端使用 Theia Workbench（Monaco Editor + GLSP 图形编辑器），后端通过 napi-rs 桥接 Rust Runtime。
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -20,7 +20,7 @@ AUDESYS Studio 基于 Eclipse Theia 1.73 构建，采用 Electron + Browser 双�
 ├────────────────────────────────────────────────────────────────┤
 │  Theia Backend (Node.js)                                       │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Audesys Bridge Service (napi-rs)                        │  │
+│  │  Weftik Bridge Service (napi-rs)                        │  │
 │  │  · compile_st / compile_ld / compile_il / compile_fbd    │  │
 │  │  · compile_sfc / compile_gcode                           │  │
 │  │  · controller_start / stop / health                      │  │
@@ -48,19 +48,19 @@ apps/studio-theia/            # Theia 应用主目录
 └── electron-builder.yml      # Electron 打包配置
 
 theia-extensions/             # 10 个 Theia 扩展
-├── audesys-core/             # 核心扩展：菜单、主题、命令面板
-├── audesys-backend/          # 后端服务：JSON-RPC 代理 + RBAC + 审计
-├── audesys-st-editor/        # ST Monaco Editor（Monarch tokenizer + completion）
-├── audesys-il-editor/        # IL Monaco Editor
-├── audesys-gcode-editor/     # G-code Monaco Editor
-├── audesys-sfc-editor/       # SFC Monaco Editor（文本模式）
-├── audesys-ld-glsp/          # LD GLSP 图形编辑器（GModel + Server + 工具面板）
-├── audesys-fbd-glsp/         # FBD GLSP 图形编辑器
-├── audesys-hmi-designer/     # HMI 设计器（ReactWidget 包装）
-├── audesys-debug/            # 调试面板（DAP adapter 适配 Theia Debug API）
+├── weftik-core/             # 核心扩展：菜单、主题、命令面板
+├── weftik-backend/          # 后端服务：JSON-RPC 代理 + RBAC + 审计
+├── weftik-st-editor/        # ST Monaco Editor（Monarch tokenizer + completion）
+├── weftik-il-editor/        # IL Monaco Editor
+├── weftik-gcode-editor/     # G-code Monaco Editor
+├── weftik-sfc-editor/       # SFC Monaco Editor（文本模式）
+├── weftik-ld-glsp/          # LD GLSP 图形编辑器（GModel + Server + 工具面板）
+├── weftik-fbd-glsp/         # FBD GLSP 图形编辑器
+├── weftik-hmi-designer/     # HMI 设计器（ReactWidget 包装）
+├── weftik-debug/            # 调试面板（DAP adapter 适配 Theia Debug API）
 └── workshop-playground/      # 开发 workshop
 
-crates/audesys-theia-bridge/  # napi-rs 绑定层
+crates/weftik-theia-bridge/  # napi-rs 绑定层
 ├── src/lib.rs                # ~25 个 napi-rs 函数
 ├── index.d.ts                # TypeScript 类型声明
 ├── index.js                  # JS 绑定入口（多平台自动选择）
@@ -70,16 +70,16 @@ crates/audesys-theia-bridge/  # napi-rs 绑定层
 
 ## 关键扩展详解
 
-### audesys-core
+### weftik-core
 Theia 扩展入口，负责：
 - 注册菜单和工具栏贡献点
-- 注入 AUDESYS 主题（工业灰色调 + ISA-101 语义状态色）
+- 注入 Weftik 主题（工业灰色调 + ISA-101 语义状态色）
 - 模式系统（Edit/Debug/Commissioning Mode）
 - inversify DI 注册
 
-### audesys-backend
+### weftik-backend
 后端服务层（`BackendApplicationContribution`），运行在 Node.js 主进程：
-- 加载 napi-rs 原生模块（`require('@audesys/theia-bridge')`）
+- 加载 napi-rs 原生模块（`require('@weftik/theia-bridge')`）
 - JSON-RPC 代理（Frontend ↔ Rust Runtime）
 - Schema 验证（参数格式校验）
 - RBAC 中间件（6 角色权限检查）
@@ -106,22 +106,22 @@ LD 编辑器通过 IL 文本转换编译：LD GModel → IL 文本 → HalProgra
 ```
 Theia Backend (Node.js)
   │
-  │  require('@audesys/theia-bridge')
+  │  require('@weftik/theia-bridge')
   ▼
 index.js (多平台 .node 二进制选择)
   │
   │  napi-rs FFI (零序列化开销)
   ▼
-audesys-theia-bridge.darwin-x64.node
+weftik-theia-bridge.darwin-x64.node
   │
   │  Rust libraries (static linking)
   ▼
-├── audesys-hal-binding-gen   # ST 编译器
-├── audesys-il-compiler       # IL 编译器
-├── audesys-ld-compiler       # LD 编译器
-├── audesys-fbd-compiler      # FBD 编译器
-├── audesys-sfc-compiler      # SFC 编译器
-├── audesys-controller-client # UDS IPC 客户端
+├── weftik-hal-binding-gen   # ST 编译器
+├── weftik-il-compiler       # IL 编译器
+├── weftik-ld-compiler       # LD 编译器
+├── weftik-fbd-compiler      # FBD 编译器
+├── weftik-sfc-compiler      # SFC 编译器
+├── weftik-controller-client # UDS IPC 客户端
 └── serde_json                # JSON 序列化
 ```
 
@@ -141,7 +141,7 @@ audesys-theia-bridge.darwin-x64.node
   │
   │  JSON-RPC over WebSocket (Theia 内置)
   ▼
-AudesysBackendService（Node.js）
+WeftikBackendService（Node.js）
   │
   │  RBAC 检查 → Schema 验证 → Rate limiting
   ▼
@@ -150,7 +150,7 @@ napi-rs 函数调用（同步/异步）
   ├─ 编译：直接调用 Rust 编译器库（进程内，<10ms）
   │  compile_st(source) → HalProgram JSON
   │
-  ├─ 控制：通过 audesys-controller-client 建立 UDS 连接
+  ├─ 控制：通过 weftik-controller-client 建立 UDS 连接
   │  read_signal() → UDS → Controller → HalValue JSON
   │
   └─ 调试：通过 UDS 连接 DAP 适配器
@@ -166,6 +166,6 @@ napi-rs 函数调用（同步/异步）
 | 图形编辑器 | Eclipse GLSP | 内置于 theia-extensions |
 | Electron | electron | 39.8.7 |
 | Rust 桥接 | napi-rs | 3.x (napi4) |
-| Rust 编译器 | audesys-*-compiler | workspace crates |
+| Rust 编译器 | weftik-*-compiler | workspace crates |
 | UI 渲染 | ECharts + react-rnd | 5.6.0 / 10.5.3 |
 | 测试 | Playwright | 1.61.1 |

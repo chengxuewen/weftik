@@ -822,9 +822,9 @@ fn echo_response(mbap: &[u8], fc: u8, data: &[u8]) -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use weftik_amw_inproc::InprocTransport;
     use std::net::TcpStream;
     use std::time::Duration;
+    use weftik_amw_inproc::InprocTransport;
 
     fn dummy_ts() -> Timestamp {
         Timestamp { secs: 0, micros: 0 }

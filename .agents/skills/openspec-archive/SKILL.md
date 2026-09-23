@@ -1,7 +1,7 @@
 ---
 name: openspec-archive
 description: >-
-  Archive a completed AUDESYS change proposal after implementation and verification.
+  Archive a completed Weftik change proposal after implementation and verification.
   Use when the user wants to finalize a change — record decisions, update memory,
   clean up artifacts.
 license: MIT
@@ -11,12 +11,12 @@ metadata:
   author: openspec
   version: "1.0"
   category: workflow
-  project: AUDESYS
+  project: Weftik
 ---
 
-# OpenSpec Archive — AUDESYS
+# OpenSpec Archive — Weftik
 
-Archive a completed AUDESYS change proposal. Record what was done, update project memory, and clean up working artifacts.
+Archive a completed Weftik change proposal. Record what was done, update project memory, and clean up working artifacts.
 
 ---
 
@@ -137,7 +137,7 @@ Or keep it for reference — the user decides.
 
 ---
 
-## AUDESYS-Specific Archival Context
+## Weftik-Specific Archival Context
 
 ### Memory files to update
 

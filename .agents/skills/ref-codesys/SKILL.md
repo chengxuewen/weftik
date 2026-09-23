@@ -1,25 +1,25 @@
 ---
 name: ref-codesys
-description: "CODESYS IDE 平台参考 — IEC 61131-3 工业控制开发平台架构、IDE 设计模式、运行时模型。用于 AUDESYS Studio 设计决策。"
+description: "CODESYS IDE 平台参考 — IEC 61131-3 工业控制开发平台架构、IDE 设计模式、运行时模型。用于 Weftik Studio 设计决策。"
 ---
 
 # ref-codesys
 
-**CODESYS IDE Platform Reference for AUDESYS Studio Design**
+**CODESYS IDE Platform Reference for Weftik Studio Design**
 
-> Study-depth reference skill extracted from `docs/reference/codesys.md`. Focuses on design decisions, architectural patterns, and UI patterns that AUDESYS Studio can learn from.
+> Study-depth reference skill extracted from `docs/reference/codesys.md`. Focuses on design decisions, architectural patterns, and UI patterns that Weftik Studio can learn from.
 
 ## Overview
 
-CODESYS is the dominant hardware-independent IEC 61131-3 industrial control development platform. This skill captures its architecture, IDE design patterns, runtime model, and business strategies — distilled for AUDESYS Studio design decisions.
+CODESYS is the dominant hardware-independent IEC 61131-3 industrial control development platform. This skill captures its architecture, IDE design patterns, runtime model, and business strategies — distilled for Weftik Studio design decisions.
 
 ## When to Use
 
-- Designing AUDESYS Studio's IDE architecture (plugin system, project tree, editor model)
+- Designing Weftik Studio's IDE architecture (plugin system, project tree, editor model)
 - Deciding Runtime/IDE communication patterns
 - Evaluating hardware abstraction and device description formats
 - Designing visualization/HMI integration within the IDE
-- Comparing AUDESYS's approach against the industry-standard reference
+- Comparing Weftik's approach against the industry-standard reference
 - Business model planning (IDE pricing, OEM SDK, app store)
 
 ## Chapters
@@ -32,12 +32,12 @@ CODESYS is the dominant hardware-independent IEC 61131-3 industrial control deve
 | `chapters/ch04-status-ecosystem.md` | §4 现状与生态 | Versions, user base, hardware/software ecosystem, training, recent trends (modularization, Web IDE, IIoT, virtualization, security) |
 | `chapters/ch05-market-positioning.md` | §5 市场定位 | Industries, competitive analysis vs TIA/TwinCAT/Studio5000/EcoStruxure, competitive/complementary relationships |
 | `chapters/ch06-product-characteristics.md` | §6 产品特色 | Hardware-independent SoftPLC, compiler standard status, visualization integration, motion+logic integration, modularity, safety certification |
-| `chapters/ch07-reference-value.md` | §7 对AUDESYS的参考价值 | Compiler/RT architecture lessons, IDE design patterns, HAL abstraction patterns, visualization integration, OPC UA strategy, business model, risks to avoid |
+| `chapters/ch07-reference-value.md` | §7 对Weftik的参考价值 | Compiler/RT architecture lessons, IDE design patterns, HAL abstraction patterns, visualization integration, OPC UA strategy, business model, risks to avoid |
 
 ## Companion Files
 
 - `glossary.md` — Term definitions (Language Model, SoftPLC, DDF, Online Change, SIL, OSAL, etc.)
-- `patterns.md` — Design patterns extracted from CODESYS, mapped to AUDESYS Studio applicability
+- `patterns.md` — Design patterns extracted from CODESYS, mapped to Weftik Studio applicability
 - `cheatsheet.md` — Quick-reference: key decisions, numbers, relationships at a glance
 
 ## Core Design Decisions (Quick Reference)

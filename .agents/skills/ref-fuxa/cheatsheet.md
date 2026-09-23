@@ -1,4 +1,4 @@
-# Cheatsheet — FUXA Quick Reference for AUDESYS Design
+# Cheatsheet — FUXA Quick Reference for Weftik Design
 
 ## Deployment
 
@@ -58,9 +58,9 @@ cd node_modules/@frangoteam/fuxa && npm start
 | GET | /api/history | Query historical data |
 | GET | /api/projects | List projects |
 
-## Key Lessons for AUDESYS
+## Key Lessons for Weftik
 
-| FUXA Decision | AUDESYS Takeaway |
+| FUXA Decision | Weftik Takeaway |
 |--------------|-----------------|
 | Node.js + GC → no hard real-time | Rust core with SCHED_FIFO |
 | Single-process → no scaling | Rust multi-thread + amw plugins |
@@ -75,6 +75,6 @@ cd node_modules/@frangoteam/fuxa && npm start
 
 1. **Node.js 14→18 migration**: Some S7 libraries break on version upgrades — Rust avoids this
 2. **SQLite bottleneck at >1000 tags**: Use InfluxDB/TDengine for production-scale
-3. **Single-process ceiling**: FUXA cannot horizontally scale — AUDESYS must be multi-process from start
+3. **Single-process ceiling**: FUXA cannot horizontally scale — Weftik must be multi-process from start
 4. **SVG editor complexity**: Snap/rotate/path editing is harder than it looks — consider Fabric.js/Konva.js
-5. **No mobile app**: FUXA is browser-only — AUDESYS PWA (Phase 2) fills this gap
+5. **No mobile app**: FUXA is browser-only — Weftik PWA (Phase 2) fills this gap

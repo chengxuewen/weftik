@@ -7,10 +7,10 @@
 //!   r14     — CR (accumulator)
 //!   r15     — TRUE_CONST (Bool(true), pre-loaded)
 use crate::parser::{CompareOp, ILStatement};
+use std::collections::HashMap;
 use weftik_hal_core::HalValue;
 use weftik_hal_ir::instruction::{Instruction, Opcode};
 use weftik_hal_ir::types::Operand;
-use std::collections::HashMap;
 
 const USER_REG_START: u8 = 0;
 const USER_REG_MAX: u8 = 9;

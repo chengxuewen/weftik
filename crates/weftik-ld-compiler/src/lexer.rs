@@ -14,12 +14,12 @@ pub enum Token {
     Network,
     No(String),
     Nc(String),
-    P(String),   // Positive transition contact
-    N(String),   // Negative transition contact
+    P(String), // Positive transition contact
+    N(String), // Negative transition contact
     Out(String),
     Set(String),
     Reset(String),
-    Parallel(String),  // | NO var or | NC var — parallel branch
+    Parallel(String), // | NO var or | NC var — parallel branch
 }
 
 /// Tokenize LD source text into a vector of tokens.

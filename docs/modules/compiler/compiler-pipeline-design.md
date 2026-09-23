@@ -1,18 +1,18 @@
-# AUDESYS 编译器管线设计
+# Weftik 编译器管线设计
 
 > **生成日期**: 2026-07-31
 > **决策**: D108 (编译器管线架构)
 
 ## 概述
 
-AUDESYS 有 6 种源码语言编译器，全部输出 HalProgram（HAL IR 字节码），运行在 16 寄存器 VM 上。
+Weftik 有 6 种源码语言编译器，全部输出 HalProgram（HAL IR 字节码），运行在 16 寄存器 VM 上。
 
 ```
-ST ──→ audesys-hal-binding-gen ──→ HalProgram        (直接)
-G-code ──→ audesys-gcode-compiler ──→ HalProgram      (直接)
-LD ──→ audesys-ld-compiler ──→ IL 文本 ──→ audesys-il-compiler ──→ HalProgram
-FBD ──→ audesys-fbd-compiler ──→ IL 文本 ──→ audesys-il-compiler ──→ HalProgram
-SFC ──→ audesys-sfc-compiler ──→ IL 文本 ──→ audesys-il-compiler ──→ HalProgram
+ST ──→ weftik-hal-binding-gen ──→ HalProgram        (直接)
+G-code ──→ weftik-gcode-compiler ──→ HalProgram      (直接)
+LD ──→ weftik-ld-compiler ──→ IL 文本 ──→ weftik-il-compiler ──→ HalProgram
+FBD ──→ weftik-fbd-compiler ──→ IL 文本 ──→ weftik-il-compiler ──→ HalProgram
+SFC ──→ weftik-sfc-compiler ──→ IL 文本 ──→ weftik-il-compiler ──→ HalProgram
 ```
 
 ## 设计决策
@@ -36,7 +36,7 @@ IL (Instruction List) 是 IEC 61131-3 标准定义的"汇编语言"，用于线�
 
 ## 编译器详情
 
-### ST 编译器 (`audesys-hal-binding-gen`)
+### ST 编译器 (`weftik-hal-binding-gen`)
 
 - **输入**: IEC 61131-3 Structured Text
 - **输出**: HalProgram (直接)
@@ -44,7 +44,7 @@ IL (Instruction List) 是 IEC 61131-3 标准定义的"汇编语言"，用于线�
 - **代码**: 1043 行 codegen，支持 if/while/for/case/function
 - **测试**: 32 个 #[test] 标注，覆盖 34 个 HAL IR 操作码
 
-### IL 编译器 (`audesys-il-compiler`)
+### IL 编译器 (`weftik-il-compiler`)
 
 - **输入**: IEC 61131-3 Instruction List 文本
 - **输出**: HalProgram
@@ -54,7 +54,7 @@ IL (Instruction List) 是 IEC 61131-3 标准定义的"汇编语言"，用于线�
 - **缺失指令**: S/R/NOT/MOD/定时器/计数器/边沿/双稳态 (计划 Phase 1-2 修复)
 - **测试**: 32 个 #[test]
 
-### LD 编译器 (`audesys-ld-compiler`)
+### LD 编译器 (`weftik-ld-compiler`)
 
 - **输入**: LD 文本格式 (NETWORK + NO/NC/OUT/SET/RESET)
 - **输出**: IL 文本 (经 IL 编译器编译为 HalProgram)
@@ -69,20 +69,20 @@ IL (Instruction List) 是 IEC 61131-3 标准定义的"汇编语言"，用于线�
   - RESET 线圈 → `R var`
 - **缺失**: 并联分支 (OR/ORN)、多输出、正/负跳变触点 (计划 Phase 1 修复)
 
-### FBD 编译器 (`audesys-fbd-compiler`)
+### FBD 编译器 (`weftik-fbd-compiler`)
 
 - **输入**: FbdGraph JSON (功能块图)
 - **输出**: IL 文本
 - **管线**: graph → convertGraphToIl → IL 文本
 
-### SFC 编译器 (`audesys-sfc-compiler`)
+### SFC 编译器 (`weftik-sfc-compiler`)
 
 - **输入**: SFC 文本格式 (STEP/TRANSITION/ACTION)
 - **输出**: IL 文本
 - **管线**: source → parse → generate_il → IL 文本
 - **约束**: Phase 1 仅顺序步骤，无并行/替代分支
 
-### G-code 编译器 (`audesys-gcode-compiler`)
+### G-code 编译器 (`weftik-gcode-compiler`)
 
 - **输入**: ISO 6983 / RS274 G-code
 - **输出**: HalProgram (直接)
@@ -118,15 +118,15 @@ IL (Instruction List) 是 IEC 61131-3 标准定义的"汇编语言"，用于线�
 | IL | 🟡 基础 | 23/35+ 指令 |
 | G-code | ✅ RS274 子集 | G0/G1/G2/G3 + M 代码 |
 
-> **注**: 虽然 IEC 61131-3:2025 已移除 IL 作为标准语言，AUDESYS 仍将 IL 用作 LD/FBD/SFC 的**内部中间表示**（IR）。IL 作为"汇编语言"的线性化特性使其成为图形语言到 HalProgram 的理想中间层。用户不直接编写 IL 代码。
+> **注**: 虽然 IEC 61131-3:2025 已移除 IL 作为标准语言，Weftik 仍将 IL 用作 LD/FBD/SFC 的**内部中间表示**（IR）。IL 作为"汇编语言"的线性化特性使其成为图形语言到 HalProgram 的理想中间层。用户不直接编写 IL 代码。
 
 ## 参考
 
 - D108: 编译器管线架构决策 (decisions.md)
-- `crates/audesys-hal-ir/src/instruction.rs` — HAL IR 操作码定义
-- `crates/audesys-il-compiler/` — IL 编译器实现
-- `crates/audesys-ld-compiler/` — LD 编译器实现
-- `crates/audesys-hal-binding-gen/` — ST 编译器实现
-- `crates/audesys-gcode-compiler/` — G-code 编译器实现
-- `crates/audesys-fbd-compiler/` — FBD 编译器实现
-- `crates/audesys-sfc-compiler/` — SFC 编译器实现
+- `crates/weftik-hal-ir/src/instruction.rs` — HAL IR 操作码定义
+- `crates/weftik-il-compiler/` — IL 编译器实现
+- `crates/weftik-ld-compiler/` — LD 编译器实现
+- `crates/weftik-hal-binding-gen/` — ST 编译器实现
+- `crates/weftik-gcode-compiler/` — G-code 编译器实现
+- `crates/weftik-fbd-compiler/` — FBD 编译器实现
+- `crates/weftik-sfc-compiler/` — SFC 编译器实现

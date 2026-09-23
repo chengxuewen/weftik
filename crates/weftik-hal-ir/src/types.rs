@@ -1,9 +1,9 @@
 //! HAL IR types — bindings and operands.
 //! 来源: docs/modules/compiler/hal-ir-design.md §1, §2.2
 
+use serde::{Deserialize, Serialize};
 use weftik_hal_core::HalValue;
 use weftik_hal_core::types::HalPinType;
-use serde::{Deserialize, Serialize};
 
 /// I/O direction for signal and channel bindings.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

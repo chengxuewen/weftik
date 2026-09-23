@@ -1,6 +1,6 @@
 # Eclipse Theia 架构深入分析
 
-> 数据来源：Eclipse Theia 官方文档（theia-ide.org/docs/）、GitHub 仓库（eclipse-theia/theia, 20K+ stars）、AUDESYS Theia 迁移经验（D71, D95-D100）
+> 数据来源：Eclipse Theia 官方文档（theia-ide.org/docs/）、GitHub 仓库（eclipse-theia/theia, 20K+ stars）、Weftik Theia 迁移经验（D71, D95-D100）
 
 ## 1. 产品画像
 
@@ -162,7 +162,7 @@ export class MyContribution implements FrontendApplicationContribution {
     // 阶段 3：onDidInitializeLayout — 布局初始化后（每次启动都调用）
     onDidInitializeLayout(): void {
         // 适合：需要每次启动都执行的操作
-        // AUDESYS LD/FBD 工具面板使用此钩子
+        // Weftik LD/FBD 工具面板使用此钩子
     }
 
     // 阶段 4：onStop — 应用关闭前
@@ -172,7 +172,7 @@ export class MyContribution implements FrontendApplicationContribution {
 }
 ```
 
-**AUDESYS 经验（LD/FBD 工具面板修复）**：`initializeLayout()` 仅在首次启动时调用——如果用户之前打开过 IDE 并有已保存的布局，此方法不会被调用。需要使用 `onDidInitializeLayout()` 确保每次启动都执行。
+**Weftik 经验（LD/FBD 工具面板修复）**：`initializeLayout()` 仅在首次启动时调用——如果用户之前打开过 IDE 并有已保存的布局，此方法不会被调用。需要使用 `onDidInitializeLayout()` 确保每次启动都执行。
 
 ## 4. 扩展系统
 
@@ -210,7 +210,7 @@ Theia 扩展通过 `package.json` 的 `theiaExtensions` 字段声明：
 
 ### 4.3 扩展开发约束
 
-| 约束 | 原因 | AUDESYS 规则 |
+| 约束 | 原因 | Weftik 规则 |
 |------|------|:----:|
 | `@theia/*` 必须声明为 `peerDependencies` | 避免 npm 安装物理副本 | D96 |
 | React 导入必须用 `@theia/core/shared/react` | 避免 bundle 中多 React 实例 | D97 |
@@ -251,7 +251,7 @@ export class MyWidget extends ReactWidget {
 }
 ```
 
-**AUDESYS 坑点**：通过 `new` 创建的 ReactWidget 不会触发 `@postConstruct()`——必须通过 DI 容器获取实例，或在 `onAfterAttach(msg)` 中手动调用 `this.update()`。
+**Weftik 坑点**：通过 `new` 创建的 ReactWidget 不会触发 `@postConstruct()`——必须通过 DI 容器获取实例，或在 `onAfterAttach(msg)` 中手动调用 `this.update()`。
 
 ### 5.3 ApplicationShell
 
@@ -333,7 +333,7 @@ GLSP 编辑器使用 `GLSPDiagramLanguage` + `DiagramOpener` 模式：
 
 ```typescript
 export const LdLanguage: GLSPDiagramLanguage = {
-    contributionId: 'audesys-ld',
+    contributionId: 'weftik-ld',
     label: 'LD Editor',
     diagramType: 'ld-diagram',
     fileExtensions: ['.ld']
@@ -380,7 +380,7 @@ export class MyServiceProxy implements MyService {
 }
 ```
 
-## 9. 常见陷阱（AUDESYS 经验验证）
+## 9. 常见陷阱（Weftik 经验验证）
 
 ### 9.1 Symbol 重复（D97）
 
@@ -414,11 +414,11 @@ export class MyServiceProxy implements MyService {
 
 **修复**: 修改源码后 `npm run build`，验证 `grep -c '新方法名' lib/**/*.js`
 
-## 10. 对 AUDESYS 的参考价值
+## 10. 对 Weftik 的参考价值
 
 ### 10.1 已验证的模式
 
-| 模式 | AUDESYS 应用 | 状态 |
+| 模式 | Weftik 应用 | 状态 |
 |------|-------------|:----:|
 | DI 容器 + ContainerModule | Studio 扩展架构 | ✅ |
 | FrontendApplicationContribution | LD/FBD 工具面板初始化 | ✅ |
@@ -431,10 +431,10 @@ export class MyServiceProxy implements MyService {
 ### 10.2 架构决策参考
 
 1. **GLSP 集成**：Theia 的 `GLSPTheiaFrontendModule` + `GLSPDiagramConfiguration` 模式是图形编辑器集成的标准路径
-2. **DI 容器**：InversifyJS 的 `ContainerModule` 模式实现了完全可插拔的架构，AUDESYS 新扩展应遵循此模式
+2. **DI 容器**：InversifyJS 的 `ContainerModule` 模式实现了完全可插拔的架构，Weftik 新扩展应遵循此模式
 3. **双端策略**：`theia.target = "browser"` + Electron 薄壳的模式已验证可行
 4. **扩展 dependencies 管理**：`peerDependencies` + 精确版本的 `overrides` 策略是解决依赖冲突的关键
 
 > **文档版本**: v1.0
 > **生成日期**: 2026-07-30
-> **参考来源**: Eclipse Theia 官网文档（theia-ide.org/docs/architecture/, /docs/authoring_extensions/, /docs/frontend_application_contribution/），Eclipse Theia GitHub（eclipse-theia/theia），AUDESYS Theia 迁移经验（D71, D95-D100），GLSP node-json-theia 模板源码（v2.7.0）
+> **参考来源**: Eclipse Theia 官网文档（theia-ide.org/docs/architecture/, /docs/authoring_extensions/, /docs/frontend_application_contribution/），Eclipse Theia GitHub（eclipse-theia/theia），Weftik Theia 迁移经验（D71, D95-D100），GLSP node-json-theia 模板源码（v2.7.0）

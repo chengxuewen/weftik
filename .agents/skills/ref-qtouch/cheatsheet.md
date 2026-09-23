@@ -30,9 +30,9 @@ KEPServerEX/IGS (OPC UA/DA, 200+ 驱动)
 Proficy Historian (时序归档)
 ```
 
-## AUDESYS 决策映射
+## Weftik 决策映射
 
-| AUDESYS 决策 | QTouch/iFIX 参考 |
+| Weftik 决策 | QTouch/iFIX 参考 |
 |-------------|-----------------|
 | D21: Tauri + React + TS | QiTech Electron→Tauri 迁移验证 |
 | D22: RuSTy → HAL IR | QTouch IEC 61131-3 + C 混合 |
@@ -59,10 +59,10 @@ Proficy Historian (时序归档)
 ## 警示清单
 
 ### 需避免的 iFIX 缺陷
-- [ ] VBA 脚本锁定（性能、安全） → AUDESYS 选 WASM + Python
-- [ ] 配置工具分散（多个独立工具） → AUDESYS 统一 IDE
-- [ ] COM/ActiveX 技术债 → AUDESYS 现代技术栈
-- [ ] 向后兼容限制现代化 → AUDESYS schema 版本管理
+- [ ] VBA 脚本锁定（性能、安全） → Weftik 选 WASM + Python
+- [ ] 配置工具分散（多个独立工具） → Weftik 统一 IDE
+- [ ] COM/ActiveX 技术债 → Weftik 现代技术栈
+- [ ] 向后兼容限制现代化 → Weftik schema 版本管理
 - [ ] 品牌多次变更引发用户担忧 → 保持品牌一致性
 
 ### 所有权变迁时间线

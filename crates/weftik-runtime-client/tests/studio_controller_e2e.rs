@@ -9,14 +9,14 @@
 //! Run with single thread to avoid socket conflicts:
 //!   cargo test --test studio_controller_e2e -- --test-threads=1
 
-use weftik_runtime_client::RuntimeClient;
-use weftik_hal_binding_gen::compile;
-use weftik_runtime_common::types::Role;
 use std::os::unix::net::UnixStream;
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
 use std::thread;
 use std::time::{Duration, Instant};
+use weftik_hal_binding_gen::compile;
+use weftik_runtime_client::RuntimeClient;
+use weftik_runtime_common::types::Role;
 
 const SOCKET_PATH: &str = "/tmp/weftik-e2e-test.sock";
 const SECRET: &[u8] = b"test-secret-32-bytes-long-key!!";
@@ -214,8 +214,8 @@ fn test_auth_failure_wrong_secret() {
     thread::sleep(Duration::from_millis(200));
 
     let wrong_secret = b"wrong-secret-----------------------";
-    let mut client = RuntimeClient::connect(SOCKET_PATH, wrong_secret)
-        .expect("should connect (HMAC challenge)");
+    let mut client =
+        RuntimeClient::connect(SOCKET_PATH, wrong_secret).expect("should connect (HMAC challenge)");
     let result = client.authenticate(Role::Engineer);
     assert!(result.is_err(), "auth with wrong secret should fail");
 

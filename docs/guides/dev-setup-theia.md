@@ -1,7 +1,7 @@
-# AUDESYS Studio Theia 开发环境搭建
+# Weftik Studio Theia 开发环境搭建
 
 > 更新日期：2026-07-22
-> 目标读者：AUDESYS Studio 开发者
+> 目标读者：Weftik Studio 开发者
 
 ## 前提条件
 
@@ -16,14 +16,14 @@
 
 ```bash
 # 1. 克隆仓库
-git clone <repo-url> && cd AUDESYS
+git clone <repo-url> && cd Weftik
 
 # 2. 安装依赖
 cd apps/studio-theia
 npm install
 
 # 3. 构建 napi-rs 原生模块
-cd ../../crates/audesys-theia-bridge
+cd ../../crates/weftik-theia-bridge
 npm install
 npm run build          # 编译 .node 二进制
 
@@ -39,10 +39,10 @@ npm start
 
 ## napi-rs 桥接构建详解
 
-`crates/audesys-theia-bridge/` 是 Rust → Node.js 绑定层，编译为 `.node` 原生二进制。
+`crates/weftik-theia-bridge/` 是 Rust → Node.js 绑定层，编译为 `.node` 原生二进制。
 
 ```bash
-cd crates/audesys-theia-bridge
+cd crates/weftik-theia-bridge
 
 # 安装 npm 依赖（napi-rs CLI）
 npm install
@@ -101,14 +101,14 @@ npm run build:prod && npm run package
 
 ```bash
 # 1. 创建扩展目录
-mkdir -p theia-extensions/audesys-mylang-editor/src/browser
+mkdir -p theia-extensions/weftik-mylang-editor/src/browser
 
 # 2. 创建 package.json
-cat > theia-extensions/audesys-mylang-editor/package.json << 'EOF'
+cat > theia-extensions/weftik-mylang-editor/package.json << 'EOF'
 {
-  "name": "audesys-mylang-editor",
+  "name": "weftik-mylang-editor",
   "version": "0.1.0",
-  "description": "AUDESYS MyLang Editor",
+  "description": "Weftik MyLang Editor",
   "theiaExtensions": [{
     "frontend": "lib/browser/mylang-frontend-module"
   }],
@@ -129,13 +129,13 @@ EOF
 #    - 注册 LanguageContribution
 
 # 4. 在 apps/studio-theia/package.json 中添加依赖
-# "audesys-mylang-editor": "file:../../theia-extensions/audesys-mylang-editor"
+# "weftik-mylang-editor": "file:../../theia-extensions/weftik-mylang-editor"
 
 # 5. 重新构建
 cd apps/studio-theia && npm install && npm run build
 ```
 
-完整参考：`theia-extensions/audesys-st-editor/src/browser/`
+完整参考：`theia-extensions/weftik-st-editor/src/browser/`
 
 ## 运行测试
 
@@ -155,12 +155,12 @@ npx playwright test
 
 ## 故障排查
 
-### `require('@audesys/theia-bridge')` 报错
+### `require('@weftik/theia-bridge')` 报错
 
 ```
-Error: Cannot find module '@audesys/theia-bridge'
+Error: Cannot find module '@weftik/theia-bridge'
 ```
-→ 运行 `cd crates/audesys-theia-bridge && npm install && npm run build`
+→ 运行 `cd crates/weftik-theia-bridge && npm install && npm run build`
 
 ### napi-rs 编译失败（缺少 Rust target）
 

@@ -1,8 +1,8 @@
 //! Register VM — 16 general-purpose registers, flags, instruction pointer.
 //! 来源: docs/modules/compiler/hal-ir-design.md §1.3, §3.1
 
-use weftik_hal_core::HalValue;
 use std::collections::HashMap;
+use weftik_hal_core::HalValue;
 
 /// Number of general-purpose registers (r0–r15).
 

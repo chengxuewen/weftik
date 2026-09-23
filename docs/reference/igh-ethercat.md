@@ -62,12 +62,12 @@ IgH EtherCAT Master 的典型应用场景：
 4. **测试与测量系统**：EtherCAT 高速数据采集系统的数据链路层
 5. **协议转换/网关**：将 EtherCAT 与其他现场总线（Modbus、CANopen 等）桥接
 
-### 1.4 与 AUDESYS 的关系定位
+### 1.4 与 Weftik 的关系定位
 
-IgH 对 AUDESYS HAL 参考价值的三个核心维度：
-- **内核/用户空间双层架构**：AUDESYS Runtime 的实时通信层可以借鉴 IgH 的分层设计
+IgH 对 Weftik HAL 参考价值的三个核心维度：
+- **内核/用户空间双层架构**：Weftik Runtime 的实时通信层可以借鉴 IgH 的分层设计
 - **实时接口抽象**：IgH 对 PREEMPT_RT 和 Xenomai 的支持模式是实时通信的参考
-- **DC 同步的主站侧实现**：AUDESYS 的 amw 实时同步可以参考 IgH 的 DC 漂移补偿算法
+- **DC 同步的主站侧实现**：Weftik 的 amw 实时同步可以参考 IgH 的 DC 漂移补偿算法
 
 ---
 
@@ -754,37 +754,37 @@ IgH 当前支持的内核版本范围：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
-### 7.1 IgH 实时架构 vs AUDESYS Runtime 通信层 (5星)
+### 7.1 IgH 实时架构 vs Weftik Runtime 通信层 (5星)
 
-IgH 的内核/用户空间双层架构是 AUDESYS Runtime 实时通信层设计的最直接参考模型。
+IgH 的内核/用户空间双层架构是 Weftik Runtime 实时通信层设计的最直接参考模型。
 
 **关键类比**：
 
-| IgH 组件 | AUDESYS 对应组件 | 参考价值 |
+| IgH 组件 | Weftik 对应组件 | 参考价值 |
 |----------|-----------------|----------|
-| ec_master.ko（内核模块） | AUDESYS Runtime 内核态通信代理 | 实时性保障机制 |
-| libethercat（用户空间库） | AUDESYS Runtime 用户空间通信 API | 接口设计模式 |
-| /dev/EtherCATX（字符设备） | AUDESYS Runtime 系统调用接口 | 内核/用户空间通信 |
+| ec_master.ko（内核模块） | Weftik Runtime 内核态通信代理 | 实时性保障机制 |
+| libethercat（用户空间库） | Weftik Runtime 用户空间通信 API | 接口设计模式 |
+| /dev/EtherCATX（字符设备） | Weftik Runtime 系统调用接口 | 内核/用户空间通信 |
 | ecrt_master_send/receive | amw_inproc Send/Receive | 实时数据路径 |
 | 域（Domain） | StreamChannel 组 | 数据分组管理 |
 
-**AUDESYS Runtime 架构建议**：
+**Weftik Runtime 架构建议**：
 ```
-AUDESYS Runtime 实时通信层（参考 IgH 架构）
+Weftik Runtime 实时通信层（参考 IgH 架构）
 
 用户空间：
 +---------------------------------------------+
 |  Studio IDE / 用户应用                        |
 +---------------------------------------------+
-|  AUDESYS SDK (audesys_sdk)                  |
-|  libaudesys_hal / libaudesys_rt             |
+|  Weftik SDK (weftik_sdk)                  |
+|  libweftik_hal / libweftik_rt             |
 +--+------------------------------------------+
    |  ioctl() / mmap() 通信
 +--+------------------------------------------+
 |  内核空间：                                   |
-|  AUDESYS RT 通信内核模块 (audesys_rt.ko)    |
+|  Weftik RT 通信内核模块 (weftik_rt.ko)    |
 |  StreamChannel 路由 / Signal 值交换         |
 |  HalQoS 执行 / 周期调度                     |
 +---------------------------------------------+
@@ -794,18 +794,18 @@ AUDESYS Runtime 实时通信层（参考 IgH 架构）
 +---------------------------------------------+
 ```
 
-### 7.2 域管理 vs AUDESYS StreamChannel 分组 (4星)
+### 7.2 域管理 vs Weftik StreamChannel 分组 (4星)
 
-IgH 的域（Domain）概念——将相关 PDO 数据分组到同一帧中——直接对应 AUDESYS 中 StreamChannel 的分组需求。
+IgH 的域（Domain）概念——将相关 PDO 数据分组到同一帧中——直接对应 Weftik 中 StreamChannel 的分组需求。
 
 **域管理的借鉴价值**：
-1. **编译期路由**：IgH 的域映射在激活前确定，运行时零配置开销。AUDESYS 的 StreamChannel 路由应在启动阶段确定，RT 路径使用预计算的路由表
-2. **批量数据交换**：域将多个从站的 PDO 数据合并为一个帧，减少总线开销。AUDESYS 的 StreamChannel 组也应支持将多个 Signal 合并到同一通道
-3. **一致性边界**：域数据在 receive/process 之间保持一致。AUDESYS StreamChannel 的读写应在 RT 周期的固定相位执行
+1. **编译期路由**：IgH 的域映射在激活前确定，运行时零配置开销。Weftik 的 StreamChannel 路由应在启动阶段确定，RT 路径使用预计算的路由表
+2. **批量数据交换**：域将多个从站的 PDO 数据合并为一个帧，减少总线开销。Weftik 的 StreamChannel 组也应支持将多个 Signal 合并到同一通道
+3. **一致性边界**：域数据在 receive/process 之间保持一致。Weftik StreamChannel 的读写应在 RT 周期的固定相位执行
 
-**AUDESYS 设计建议**：
+**Weftik 设计建议**：
 ```rust
-// AUDESYS StreamChannel 组（参考 IgH Domain）
+// Weftik StreamChannel 组（参考 IgH Domain）
 pub struct StreamChannelGroup {
     channels: Vec<StreamChannel>,
     signal_slots: Vec<SignalSlot>,  // 编译期确定的 Signal 偏移
@@ -823,16 +823,16 @@ impl StreamChannelGroup {
 }
 ```
 
-### 7.3 DC 漂移补偿算法 vs AUDESYS 跨节点同步 (4星)
+### 7.3 DC 漂移补偿算法 vs Weftik 跨节点同步 (4星)
 
-IgH 的 DC 漂移补偿算法经过多年实际验证，是 AUDESYS 跨节点同步的可靠参考。
+IgH 的 DC 漂移补偿算法经过多年实际验证，是 Weftik 跨节点同步的可靠参考。
 
 **漂移补偿算法的关键要素**：
 
 ```c
-// IgH DC 漂移补偿 -> AUDESYS 同步算法映射
+// IgH DC 漂移补偿 -> Weftik 同步算法映射
 // 
-// IgH 实现                                  AUDESYS 对应
+// IgH 实现                                  Weftik 对应
 // ---------------------------------------  ------------------------
 // ec_read_reference_time()                 NTP/PTP 参考时钟获取
 // ec_read_slave_time()                     从设备时间戳读取
@@ -841,24 +841,24 @@ IgH 的 DC 漂移补偿算法经过多年实际验证，是 AUDESYS 跨节点同
 // 写入补偿值                                写入时钟调节寄存器
 ```
 
-**AUDESYS 分阶段同步路线**（基于 IgH 经验）：
+**Weftik 分阶段同步路线**（基于 IgH 经验）：
 - **Phase 1**：软件同步，使用 `clock_nanosleep()` 和参考时钟帧，目标抖动 <100us
 - **Phase 2**：网络级同步，实现 IgH 风格的漂移补偿算法，目标抖动 <10us
 - **Phase 3**：硬件辅助同步（PTP/IEEE 1588），目标抖动 <1us
 
-### 7.4 实时接口抽象 vs AUDESYS RT 线程调度 (4星)
+### 7.4 实时接口抽象 vs Weftik RT 线程调度 (4星)
 
-IgH 对 PREEMPT_RT 和 Xenomai 两种实时方案的支持模式为 AUDESYS 的 RT 线程调度提供了参考。
+IgH 对 PREEMPT_RT 和 Xenomai 两种实时方案的支持模式为 Weftik 的 RT 线程调度提供了参考。
 
 **IgH 实时层抽象的关键设计**：
 1. **统一实时 API**：IgH 提供 `ecrt_master_set_send_interval()` 等平台无关的实时接口，底层适配 PREEMPT_RT 和 Xenomai
 2. **线程优先级管理**：使用 SCHED_FIFO 优先级 95-99（PREEMPT_RT）或 RTDM 优先级（Xenomai）
 3. **CPU 亲和性**：将 RT 线程绑定到隔离的 CPU 核心上
 
-**AUDESYS RT 线程管理建议**：
+**Weftik RT 线程管理建议**：
 
 ```rust
-// AUDESYS RT 线程配置（参考 IgH 实时模式）
+// Weftik RT 线程配置（参考 IgH 实时模式）
 pub struct RtThreadConfig {
     pub scheduler: SchedulerType,  // SCHED_FIFO / SCHED_RR
     pub priority: u8,              // 建议: 95-99
@@ -889,11 +889,11 @@ fn rt_cycle(master: &mut RtMaster) -> Result<()> {
 }
 ```
 
-### 7.5 IgH 的局限性 vs AUDESYS 的改进方向 (3星)
+### 7.5 IgH 的局限性 vs Weftik 的改进方向 (3星)
 
-IgH 项目的长期问题为 AUDESYS 提供了"不要这样做"的参考：
+IgH 项目的长期问题为 Weftik 提供了"不要这样做"的参考：
 
-| IgH 的问题 | 对 AUDESYS 的教训 | 改进方向 |
+| IgH 的问题 | 对 Weftik 的教训 | 改进方向 |
 |------------|-------------------|----------|
 | 内核模块依赖 | 避免内核态实现的必要性 | Phase 1 用户态实现 + PREEMPT_RT |
 | 内核版本兼容性负担 | 抽象层应独立于内核版本 | 通过 FFI 或 UIO 实现硬件访问 |
@@ -903,19 +903,19 @@ IgH 项目的长期问题为 AUDESYS 提供了"不要这样做"的参考：
 | 用户态 API 复杂 | 简洁 API 设计 | 最小 API 表面积原则 |
 | 无冗余支持 | 设计时考虑冗余 | StreamChannel 预留 redundancy 字段 |
 
-### 7.6 总结：IgH 对 AUDESYS 的关键参考权重
+### 7.6 总结：IgH 对 Weftik 的关键参考权重
 
 | 参考点 | 权重 | 适用模块 | 优先级 |
 |--------|------|----------|--------|
-| 内核/用户空间双层架构 | 5星 | AUDESYS Runtime 通信层 | P0 |
+| 内核/用户空间双层架构 | 5星 | Weftik Runtime 通信层 | P0 |
 | 域管理 StreamChannel 分组 | 4星 | amw StreamChannel | P1 |
 | DC 漂移补偿算法 | 4星 | amw 跨节点同步 | P1 |
-| 实时接口抽象 | 4星 | AUDESYS RT 线程调度 | P1 |
+| 实时接口抽象 | 4星 | Weftik RT 线程调度 | P1 |
 | 多网卡/多主站 | 3星 | Runtime 管理 | P2 |
 | PREEMPT_RT 集成模式 | 4星 | 部署/CI | P1 |
 | LinuxCNC HAL 接口 | 3星 | Runtime HAL 适配层 | P2 |
-| 用户空间 API 设计 | 3星 | AUDESYS SDK | P2 |
+| 用户空间 API 设计 | 3星 | Weftik SDK | P2 |
 
-**总体评估**：IgH EtherCAT Master 对 AUDESYS 的最核心参考价值在于其**经过生产验证的实时通信架构**。作为唯一成熟的开源内核态 EtherCAT 主站，IgH 用 20 年的实际部署证明了内核/用户空间双层实时通信架构的有效性。AUDESYS Runtime 的通信层可以借鉴这一架构，但应使用 Rust 语言和现代 Linux 机制（如 AF_XDP、io_uring）替代 IgH 直接操作内核网络栈的方式，以降低维护复杂度和提高安全性。
+**总体评估**：IgH EtherCAT Master 对 Weftik 的最核心参考价值在于其**经过生产验证的实时通信架构**。作为唯一成熟的开源内核态 EtherCAT 主站，IgH 用 20 年的实际部署证明了内核/用户空间双层实时通信架构的有效性。Weftik Runtime 的通信层可以借鉴这一架构，但应使用 Rust 语言和现代 Linux 机制（如 AF_XDP、io_uring）替代 IgH 直接操作内核网络栈的方式，以降低维护复杂度和提高安全性。
 
-> **补充说明**：IgH EtherCAT Master 虽然在开源 EtherCAT 主站领域具有不可替代的地位，但其技术架构反映了 2005 年代的设计选择（内核模块、C 语言、手动内核适配）。AUDESYS 在设计 Runtime 通信层时应吸收 IgH 的架构思想（分层、实时隔离、域管理），但使用更现代的实现方式（Rust 的零成本抽象、用户态 DPDK/AF_XDP、类型安全），避免继承 IgH 的维护负担。
+> **补充说明**：IgH EtherCAT Master 虽然在开源 EtherCAT 主站领域具有不可替代的地位，但其技术架构反映了 2005 年代的设计选择（内核模块、C 语言、手动内核适配）。Weftik 在设计 Runtime 通信层时应吸收 IgH 的架构思想（分层、实时隔离、域管理），但使用更现代的实现方式（Rust 的零成本抽象、用户态 DPDK/AF_XDP、类型安全），避免继承 IgH 的维护负担。

@@ -116,7 +116,7 @@ Machinekit 与 LinuxCNC 共享共同祖先但走向不同路线：
 
 ### 2.2 HAL（硬件抽象层）详解
 
-HAL 是 Machinekit 的 **核心创新**，也是 AUDESYS 直接参考的设计来源。
+HAL 是 Machinekit 的 **核心创新**，也是 Weftik 直接参考的设计来源。
 
 #### HAL 基本概念
 
@@ -915,15 +915,15 @@ hal_export_funct("my_func", func, ...); // 导出函数
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
 #### 1. HAL 组件/引脚/信号/线程抽象
 
-Machinekit 的 HAL 提供了一套 **完整的"电子面包板"抽象**，这是 AUDESYS HAL 设计最直接的参考来源：
+Machinekit 的 HAL 提供了一套 **完整的"电子面包板"抽象**，这是 Weftik HAL 设计最直接的参考来源：
 
-| Machinekit HAL 概念 | AUDESYS 对应概念 | 参考意义 |
+| Machinekit HAL 概念 | Weftik 对应概念 | 参考意义 |
 |--------------------|-----------------|---------|
 | Component（组件） | HAL Transport / Driver | 统一接口的模块化组件 |
 | Pin（引脚） | Signal（信号原语） | 类型化的输入/输出端口 |
@@ -931,14 +931,14 @@ Machinekit 的 HAL 提供了一套 **完整的"电子面包板"抽象**，这是
 | Thread（线程） | 实时线程调度 | 固定周期函数调度 |
 | Function（函数） | RT 回调 | 组件中的可调度代码 |
 
-**AUDESYS 参考**: AUDESYS 的 `Signal` 原语（单写多读最新值覆盖）与 Machinekit HAL 的 `net` 信号概念一致，但 AUDESYS 增加了类型化（14 种类型 vs 4 种）和多节点通信（跨进程/跨网络）的能力。
+**Weftik 参考**: Weftik 的 `Signal` 原语（单写多读最新值覆盖）与 Machinekit HAL 的 `net` 信号概念一致，但 Weftik 增加了类型化（14 种类型 vs 4 种）和多节点通信（跨进程/跨网络）的能力。
 
 #### 2. RTAPI 的 RTOS 无关抽象
 
-Machinekit 的 RTAPI 提供了 **RTOS 无关的实时编程接口**，使组件无需修改即可运行在不同 RTOS 上。这一理念与 AUDESYS `amw`（AUDESYS Middleware）抽象层高度一致：
+Machinekit 的 RTAPI 提供了 **RTOS 无关的实时编程接口**，使组件无需修改即可运行在不同 RTOS 上。这一理念与 Weftik `amw`（Weftik Middleware）抽象层高度一致：
 
 ```
-RTAPI (Machinekit)       amw (AUDESYS)
+RTAPI (Machinekit)       amw (Weftik)
 ------------             -------------
 hal_init()               HalTransport::init()
 hal_create_thread()      AMW 线程管理
@@ -946,11 +946,11 @@ hal_export_funct()       RPC/Signal 回调注册
 hal_add_funct_to_thread() 线程调度器
 ```
 
-**AUDESYS 参考**: AUDESYS 的 `amw` 抽象层（D11）可参考 RTAPI 的设计模式，但 AUDESYS 在此基础上增加了更丰富的通信原语（Signal/StreamChannel/RPC）和更严格的 QoS（deadline/liveliness/security_domain）。
+**Weftik 参考**: Weftik 的 `amw` 抽象层（D11）可参考 RTAPI 的设计模式，但 Weftik 在此基础上增加了更丰富的通信原语（Signal/StreamChannel/RPC）和更严格的 QoS（deadline/liveliness/security_domain）。
 
 #### 3. 组件生成器（comp/instcomp）
 
-Machinekit 的 comp 和 instcomp 组件生成器允许以极少的代码创建新的 HAL 组件。这一理念对 AUDESYS HAL 驱动开发有重要参考价值：
+Machinekit 的 comp 和 instcomp 组件生成器允许以极少的代码创建新的 HAL 组件。这一理念对 Weftik HAL 驱动开发有重要参考价值：
 
 ```c
 // Machinekit comp — 10 行创建组件
@@ -962,40 +962,40 @@ function _;
 ;;
 // ... implementation
 
-// 类似的对 AUDESYS HAL 组件的启示：
+// 类似的对 Weftik HAL 组件的启示：
 // 提供 amw 组件宏/DSL，使驱动开发标准化
 // 减少重复的 boilerplate 代码
 ```
 
-**AUDESYS 参考**: 如果 AUDESYS 未来提供 HAL 驱动 SDK，可借鉴 comp/instcomp 的声明式组件描述模式。
+**Weftik 参考**: 如果 Weftik 未来提供 HAL 驱动 SDK，可借鉴 comp/instcomp 的声明式组件描述模式。
 
 #### 4. 实时线程层次（servo-thread / base-thread）
 
 Machinekit 的双线程层次（1kHz servo + 10kHz base）提供了清晰的实时调度模型：
 
-| 线程 | 典型周期 | AUDESYS 对应 |
+| 线程 | 典型周期 | Weftik 对应 |
 |------|---------|-------------|
 | base-thread | 100μs (10kHz) | RT 数据面 (< 1μs) |
 | servo-thread | 1ms (1kHz) | I/O 通信层 (~10μs) |
 | (无对应) | - | 控制面/HMI (~100μs) |
 
-**AUDESYS 参考**: AUDESYS 的延迟分层（D19: < 1μs / ~10μs / ~100μs）比 Machinekit 的线程层次更细粒度，但设计思路一致 — 将不同实时要求的任务分配到不同频率的线程中执行。
+**Weftik 参考**: Weftik 的延迟分层（D19: < 1μs / ~10μs / ~100μs）比 Machinekit 的线程层次更细粒度，但设计思路一致 — 将不同实时要求的任务分配到不同频率的线程中执行。
 
 ### 7.2 可移植/适配的技术模块
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| **HAL 组件库架构** | 200+ 现成组件的分类和接口设计 | 高，AUDESYS HAL 组件注册表可参考 |
+| **HAL 组件库架构** | 200+ 现成组件的分类和接口设计 | 高，Weftik HAL 组件注册表可参考 |
 | **RTAPI 抽象层** | RTOS 无关的实时 API | 中，amw 已经覆盖但理念一致 |
-| **instcomp 实例化模式** | 运行时动态创建组件实例 | 高，AUDESYS 动态组件加载可参考 |
-| **Machinetalk 协议** | WebSocket + Protobuf 远程控制 | 中，AUDESYS JSON-RPC 已有类似设计 |
-| **halshow/halscope 调试工具** | HAL 状态可视化 | 高，AUDESYS Studio IDE 调试功能可借鉴 |
-| **PRU 驱动模式** | 异构计算（主处理器 + 实时协处理器） | 高，如果 AUDESYS 需要 FPGA/MCU 协同 |
-| **halcmd CLI 命令体系** | 统一命令行工具 | 中，AUDESYS CLI 工具设计参考 |
+| **instcomp 实例化模式** | 运行时动态创建组件实例 | 高，Weftik 动态组件加载可参考 |
+| **Machinetalk 协议** | WebSocket + Protobuf 远程控制 | 中，Weftik JSON-RPC 已有类似设计 |
+| **halshow/halscope 调试工具** | HAL 状态可视化 | 高，Weftik Studio IDE 调试功能可借鉴 |
+| **PRU 驱动模式** | 异构计算（主处理器 + 实时协处理器） | 高，如果 Weftik 需要 FPGA/MCU 协同 |
+| **halcmd CLI 命令体系** | 统一命令行工具 | 中，Weftik CLI 工具设计参考 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | Machinekit | AUDESYS |
+| 维度 | Machinekit | Weftik |
 |------|-----------|---------|
 | 核心定位 | 通用机器控制框架 | 工业控制系统模拟平台 |
 | 目标用户 | CNC 集成商、机器人工程师 | 控制工程师、系统集成商 |
@@ -1008,14 +1008,14 @@ Machinekit 的双线程层次（1kHz servo + 10kHz base）提供了清晰的实�
 
 **互补关系**：
 
-- Machinekit 的 **HAL 设计哲学** 是 AUDESYS HAL 设计最直接的参考来源，但 AUDESYS 在通信原语、类型系统、QoS 等方面更加丰富
-- Machinekit 的 **停滞教训** 对 AUDESYS 的长期维护策略有警示意义：大规模分叉 + 社区分裂导致开发者分散、项目停滞
-- AUDESYS 的 **Simulator 功能** 可包含 Machinekit 的 HAL 场景仿真，使开发者无需物理硬件即可测试 HAL 组件
-- Machinekit 的 **Machinetalk/WebSocket 远程架构** 为 AUDESYS Studio IDE 的远程调试功能提供了参考
+- Machinekit 的 **HAL 设计哲学** 是 Weftik HAL 设计最直接的参考来源，但 Weftik 在通信原语、类型系统、QoS 等方面更加丰富
+- Machinekit 的 **停滞教训** 对 Weftik 的长期维护策略有警示意义：大规模分叉 + 社区分裂导致开发者分散、项目停滞
+- Weftik 的 **Simulator 功能** 可包含 Machinekit 的 HAL 场景仿真，使开发者无需物理硬件即可测试 HAL 组件
+- Machinekit 的 **Machinetalk/WebSocket 远程架构** 为 Weftik Studio IDE 的远程调试功能提供了参考
 
-### 7.4 详细对比分析：AUDESYS HAL 与 Machinekit HAL
+### 7.4 详细对比分析：Weftik HAL 与 Machinekit HAL
 
-| 维度 | Machinekit HAL | AUDESYS HAL（设计） |
+| 维度 | Machinekit HAL | Weftik HAL（设计） |
 |------|--------------|-------------------|
 | 设计目标 | 机器控制组件互联（本机实时） | 完整的实时通信中间件（分布异构） |
 | 抽象模型 | 电子面包板（组件/引脚/信号） | 通信原语（Signal/StreamChannel/RPC） |
@@ -1028,13 +1028,13 @@ Machinekit 的双线程层次（1kHz servo + 10kHz base）提供了清晰的实�
 | 组件创建 | comp/instcomp 生成器 | HAL SDK（规划中） |
 | 调试工具 | halshow/halscope/halmeter | Studio IDE 调试面板（规划中） |
 
-Machinekit 的 HAL 是 **"单机实时控制组件互联"** 模型，而 AUDESYS 的 HAL 是 **"分布式异构实时通信中间件"**。两者在抽象层次和应用范围上有本质差异，但 Machinekit HAL 的简洁性和可组合性对 AUDESYS 有直接参考价值。
+Machinekit 的 HAL 是 **"单机实时控制组件互联"** 模型，而 Weftik 的 HAL 是 **"分布式异构实时通信中间件"**。两者在抽象层次和应用范围上有本质差异，但 Machinekit HAL 的简洁性和可组合性对 Weftik 有直接参考价值。
 
 ### 7.5 项目停滞的教训
 
-Machinekit 从 2014 年分叉到 2024 年基本停滞，其教训对 AUDESYS 具有重要参考意义：
+Machinekit 从 2014 年分叉到 2024 年基本停滞，其教训对 Weftik 具有重要参考意义：
 
-| 教训 | Machinekit 表现 | AUDESYS 应对 |
+| 教训 | Machinekit 表现 | Weftik 应对 |
 |------|---------------|-------------|
 | **分叉成本高** | LinuxCNC 差异 20,000+ 提交，无法合并回线 | 零源代码阶段不依赖分叉，原始设计 |
 | **社区分裂** | 贡献者从 155 人分散到 3 个仓库 | D34: hal-core 驱动并行，减少并行分裂 |
@@ -1043,10 +1043,10 @@ Machinekit 从 2014 年分叉到 2024 年基本停滞，其教训对 AUDESYS 具
 | **文档老化** | 部分文档与代码不一致 | D14: 独立详细设计文档策略 |
 | **测试不足** | 缺乏 CI 测试基础设施 | D30: 三层 QA 体系从 Phase 0 开始 |
 
-### 7.6 对 AUDESYS HAL 设计的具体参考点
+### 7.6 对 Weftik HAL 设计的具体参考点
 
-1. **引脚类型系统** — Machinekit 仅 4 种类型（bit/float/s32/u32），AUDESYS 的 14 种类型覆盖更广但需注意不要太复杂
-2. **线程命名约定** — base-thread/servo-thread 清晰表述了用途和速度，AUDESYS 可参考
+1. **引脚类型系统** — Machinekit 仅 4 种类型（bit/float/s32/u32），Weftik 的 14 种类型覆盖更广但需注意不要太复杂
+2. **线程命名约定** — base-thread/servo-thread 清晰表述了用途和速度，Weftik 可参考
 3. **信号命名** — `<source>.<function>.<name>` 模式明确信号来源和用途
 4. **配置分离** — .ini（系统配置）+ .hal（组件互联）的分离设计值得借鉴
 5. **调试可视化** — halshow 的树形状态显示 + halscope 的波形显示是 HAL 调试的黄金标准

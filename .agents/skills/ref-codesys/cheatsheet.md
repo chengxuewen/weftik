@@ -1,4 +1,4 @@
-# Cheatsheet — CODESYS Reference for AUDESYS
+# Cheatsheet — CODESYS Reference for Weftik
 
 ## Quick Numbers
 
@@ -39,11 +39,11 @@ Compiler Stack (Frontend: parse→Language Model, Backend: native code gen)
 
 ## Key Design Decisions
 
-| Decision | CODESYS Approach | AUDESYS Implication |
+| Decision | CODESYS Approach | Weftik Implication |
 |----------|-----------------|---------------------|
 | IDE pricing | Free | Consider free Studio |
 | Runtime pricing | Per-device licensed | Runtime/OEM SDK revenue model |
-| Internal representation | ST Language Model | Define AUDESYS Device Config Model / HAL IR |
+| Internal representation | ST Language Model | Define Weftik Device Config Model / HAL IR |
 | Execution | Native code generation | Native Rust execution |
 | IDE architecture | Plugin-based (DI) | Design for extensibility from start |
 | Device support | DDF (XML) | YAML dev + FlatBuffers runtime |
@@ -73,9 +73,9 @@ Compiler Stack (Frontend: parse→Language Model, Backend: native code gen)
 2. **Machine dev**: Free IDE → write IEC 61131-3 → configure I/O → debug → deploy
 3. **Motion dev**: Configure axes → SoftMotion FBs → CNC editor → visualize → online config
 
-## AUDESYS Decision Map
+## Weftik Decision Map
 
-| CODESYS Pattern | AUDESYS Decision | Status |
+| CODESYS Pattern | Weftik Decision | Status |
 |-----------------|-----------------|--------|
 | Language Model IR | HAL IR / Device Config Model | 🟡 Design phase |
 | Plugin IDE | Tauri + React plugin system | 🟡 Design phase |

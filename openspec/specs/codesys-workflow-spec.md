@@ -1,6 +1,6 @@
-# AUDESYS Studio CODESYS 工作流 SDD 规范
+# Weftik Studio CODESYS 工作流 SDD 规范
 
-> **来源**: `theia-extensions/audesys-core/src/browser/iec-new-file-contribution.ts` + `.sisyphus/plans/glsp-migration/plan.md` + `crates/audeys-theia-bridge/` + `docs/modules/runtime/panel-architecture-design.md`
+> **来源**: `theia-extensions/weftik-core/src/browser/iec-new-file-contribution.ts` + `.sisyphus/plans/glsp-migration/plan.md` + `crates/audeys-theia-bridge/` + `docs/modules/runtime/panel-architecture-design.md`
 > **总项数**: 30
 > **工作流**: 工程创建 → 文件创建 → LD 编辑 → 编译 → 部署 → 调试 → HMI 绑定
 > **关联决策**: D22, D25, D55, D56, D57, D68, D71
@@ -12,13 +12,13 @@
 
 ### WF-CREATE-001: 新建工程项目
 
-用户通过 File > New Project 创建 AUDESYS 工程项目，生成标准项目目录结构和 `.audesys-project.yaml` 清单文件。
+用户通过 File > New Project 创建 Weftik 工程项目，生成标准项目目录结构和 `.weftik-project.yaml` 清单文件。
 
 - **前置条件**: Studio 已启动，无工程打开（或已关闭当前工程）
 - **操作**: 执行 `File > New Project` 命令，在弹出对话框中输入工程名称 `"my-automation"`，选择目标目录
 - **期望**: 
   - 项目树 (File Explorer) 显示工程根节点 `my-automation`
-  - 根目录生成 `.audesys-project.yaml`，含 `name`、`version`、`created`、`runtime` 字段
+  - 根目录生成 `.weftik-project.yaml`，含 `name`、`version`、`created`、`runtime` 字段
   - 预创建子目录: `src/`、`hmi/`、`build/`、`tests/`
   - Theia workspace 自动切换到新工程目录
 - **边界**: 
@@ -30,25 +30,25 @@
 
 ### WF-CREATE-002: 打开已有工程
 
-用户通过 File > Open Project 打开已存在的 AUDESYS 工程。
+用户通过 File > Open Project 打开已存在的 Weftik 工程。
 
-- **前置条件**: `.audesys-project.yaml` 文件存在于目标目录
-- **操作**: 执行 `File > Open Project` → 选择包含 `.audesys-project.yaml` 的目录 → 确认
+- **前置条件**: `.weftik-project.yaml` 文件存在于目标目录
+- **操作**: 执行 `File > Open Project` → 选择包含 `.weftik-project.yaml` 的目录 → 确认
 - **期望**: 
   - 项目树刷新显示工程结构（src/、hmi/、build/、tests/）
-  - `.audesys-project.yaml` 被解析，name 字段显示为项目根节点标签
-  - 无 `.audesys-project.yaml` 的目录 → 提示 `"Not a valid AUDESYS project"`
+  - `.weftik-project.yaml` 被解析，name 字段显示为项目根节点标签
+  - 无 `.weftik-project.yaml` 的目录 → 提示 `"Not a valid Weftik project"`
 - **边界**: 
-  - `.audesys-project.yaml` 格式损坏 → 错误提示含具体解析错误行号
-  - 打开工程时检测到 `.audesys-project.yaml` 中 `runtime` 版本高于当前 Studio 版本 → 警告 `"Project requires runtime vX.Y.Z, current is vA.B.C"`
+  - `.weftik-project.yaml` 格式损坏 → 错误提示含具体解析错误行号
+  - 打开工程时检测到 `.weftik-project.yaml` 中 `runtime` 版本高于当前 Studio 版本 → 警告 `"Project requires runtime vX.Y.Z, current is vA.B.C"`
 - **测试**: `test_open_existing_project` (vitest)
 
 ### WF-CREATE-003: 工程清单文件格式
 
-`.audesys-project.yaml` 遵循约定的 YAML schema。
+`.weftik-project.yaml` 遵循约定的 YAML schema。
 
 - **前置条件**: 工程创建完成
-- **操作**: 读取 `.audesys-project.yaml` 内容
+- **操作**: 读取 `.weftik-project.yaml` 内容
 - **期望**: 文件包含以下字段（均为必填）:
   ```yaml
   name: "my-automation"
@@ -100,7 +100,7 @@ File > New 菜单下提供 IEC 61131-3 子菜单，列出全部 6 种源文件�
 - **边界**: 无 workspace 时所有 IEC 菜单项灰色禁用（`isEnabled: false`）
 - **测试**: `test_iec_new_file_menu_structure` (vitest)
 
-> **实现参考**: `IecNewFileContribution.registerMenus()` — `theia-extensions/audesys-core/src/browser/iec-new-file-contribution.ts:102-140`
+> **实现参考**: `IecNewFileContribution.registerMenus()` — `theia-extensions/weftik-core/src/browser/iec-new-file-contribution.ts:102-140`
 
 ### WF-FILE-002: 模板文件生成 — ST
 
@@ -278,7 +278,7 @@ LD 编辑器将当前 GModel 序列化为 JSON 并写回 .ld 文件。
 LD 编辑器右键 Compile 触发完整编译链：LD GModel → IL 中间表示 → HalProgram。
 
 - **前置条件**: LD 编辑器中有完整梯级（含触点+线圈+连线），编辑器连接到 theia-bridge
-- **操作**: 右键画布 → 选择 `LD: Compile`（或执行 Command Palette `audesys.ld.compile`）
+- **操作**: 右键画布 → 选择 `LD: Compile`（或执行 Command Palette `weftik.ld.compile`）
 - **期望**: 
   - `LdOperationHandler.compile(graph)` 被调用
   - 返回 `CompileResult { success: true, programJson: "..." }`
@@ -291,7 +291,7 @@ LD 编辑器右键 Compile 触发完整编译链：LD GModel → IL 中间表示
   - 编译超时 30s → `success: false`，消息 `"Compilation timed out"`
 - **测试**: `test_ld_compile_basic` (vitest), `test_ld_compile_with_error` (vitest)
 
-> **实现参考**: `GLSP CompilerBridge` — napi-rs → `audesys-ld-compiler` (Phase 2, `.sisyphus/plans/glsp-migration/plan.md` — 迁移后由 GLSP Server 的 CompileActionHandler 触发)
+> **实现参考**: `GLSP CompilerBridge` — napi-rs → `weftik-ld-compiler` (Phase 2, `.sisyphus/plans/glsp-migration/plan.md` — 迁移后由 GLSP Server 的 CompileActionHandler 触发)
 
 ### WF-COMPILE-002: 编译输出格式
 
@@ -314,11 +314,11 @@ ST、IL、FBD、SFC、G-code 语言各有独立编译命令，统一输出 HalPr
 
 - **前置条件**: 各语言编辑器中有有效源码
 - **操作**: 分别执行各语言编译命令:
-  - ST: `audesys.st.compile` → ST 编译器 → HalProgram
-  - IL: `audesys.il.compile` → IL 编译器 → HalProgram
-  - FBD: `audesys.fbd.compile` → FBD 编译器 → HalProgram
-  - SFC: `audesys.sfc.compile` → SFC 编译器 → HalProgram
-  - G-code: `audesys.gcode.compile` → G-code 编译器 → HalProgram
+  - ST: `weftik.st.compile` → ST 编译器 → HalProgram
+  - IL: `weftik.il.compile` → IL 编译器 → HalProgram
+  - FBD: `weftik.fbd.compile` → FBD 编译器 → HalProgram
+  - SFC: `weftik.sfc.compile` → SFC 编译器 → HalProgram
+  - G-code: `weftik.gcode.compile` → G-code 编译器 → HalProgram
 - **期望**: 所有语言编译器输出符合相同 HalProgram JSON schema（共享后端）
 - **边界**: 各语言特有错误 → 诊断消息含语言前缀（`ST-xxx`, `IL-xxx` 等）
 - **测试**: `test_all_languages_compile_to_halprogram` (vitest)

@@ -1,4 +1,4 @@
-# AUDESYS ROS2 Actions 映射设计
+# Weftik ROS2 Actions 映射设计
 
 > 生成日期：2026-07-09
 > 设计目标：用现有三原语（RPC + StreamChannel + Signal）组合实现 ROS2 Action 语义，不引入第 4 种原语
@@ -9,7 +9,7 @@
 
 ROS2 Action 不是一个新的**通信模式**，而是一个**编排模式**——它将 Goal（发起）、Feedback（周期进度）、Result（最终结果）、Cancel（取消）四个阶段组合在一起。
 
-AUDESYS HAL 的三原语已经具备了 Action 所需的全部通信能力：
+Weftik HAL 的三原语已经具备了 Action 所需的全部通信能力：
 - **RPC**：Goal 发起、Cancel、Result 获取
 - **StreamChannel**：周期 Feedback 流
 - **Signal**：状态变更通知（running / done / cancelled / error）
@@ -294,7 +294,7 @@ action.{action_id}.feedback   # StreamChannel: Action 进度
 
 ## 5. 与 ROS2 Action 的差异
 
-| | ROS2 Action | AUDESYS Action (方案 B) |
+| | ROS2 Action | Weftik Action (方案 B) |
 |---|---|---|
 | 抽象层 | 独立原语（rmw + rclcpp action client/server） | 组合原语（RPC + StreamChannel + Signal） |
 | 服务发现 | 通过 DDS 自动发现 | 通过 amw HalDiscovery 注册 |

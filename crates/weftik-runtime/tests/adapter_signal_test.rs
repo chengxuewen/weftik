@@ -9,8 +9,8 @@ use std::time::Duration;
 use weftik_amw_inproc::{
     InprocAuditLog, InprocMiddleware, InprocQoS, InprocTransport, StaticDiscovery,
 };
-use weftik_runtime::{Engine, LifecycleManager, SignalDef, WriteStrategy};
 use weftik_hal_core::{HalPinType, HalTransport, HalValue, Timestamp};
+use weftik_runtime::{Engine, LifecycleManager, SignalDef, WriteStrategy};
 
 // ── helpers ──
 mod common;

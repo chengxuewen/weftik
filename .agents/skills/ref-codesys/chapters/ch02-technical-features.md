@@ -175,13 +175,13 @@ Core components of CODESYS Control:
 
 **Version control**: CODESYS Git support (SP17+, XML export), CODESYS SVN, third-party Copia tool. Traditionally single-file project storage; new versions support Git-friendly XML export.
 
-## 2.5 AUDESYS Relevance — Architecture Decisions
+## 2.5 Weftik Relevance — Architecture Decisions
 
-| CODESYS Pattern | AUDESYS Studio Application |
+| CODESYS Pattern | Weftik Studio Application |
 |-----------------|--------------------------|
-| Language Model as central IR | HAL IR / Device Config Model as AUDESYS's internal representation |
+| Language Model as central IR | HAL IR / Device Config Model as Weftik's internal representation |
 | Native code gen (not interpretation) | HAL Runtime executes native Rust; JIT for dynamic configs |
 | Frontend/Backend compiler split | Matches D19 multi-language strategy (Rust Core + FlatBuffers) |
-| OSAL (OS Abstraction Layer) | Directly corresponds to AUDESYS HAL |
-| Plugin-based IDE with DI | AUDESYS Studio plugin architecture design |
-| Proprietary IDE↔Runtime protocol | Reference for AUDESYS Studio↔Runtime IPC design |
+| OSAL (OS Abstraction Layer) | Directly corresponds to Weftik HAL |
+| Plugin-based IDE with DI | Weftik Studio plugin architecture design |
+| Proprietary IDE↔Runtime protocol | Reference for Weftik Studio↔Runtime IPC design |

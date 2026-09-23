@@ -6,12 +6,12 @@
 
 use crate::GCodeError;
 use crate::parser::{CommandKind, GCodeCommand};
+use weftik_cnc_motion::{TrapezoidalProfile, generate_trapezoidal_program};
 use weftik_hal_core::HalValue;
 use weftik_hal_core::types::HalPinType;
 use weftik_hal_ir::instruction::{Instruction, Opcode};
 use weftik_hal_ir::program::HalProgram;
 use weftik_hal_ir::types::{Direction, SignalBinding};
-use weftik_cnc_motion::{TrapezoidalProfile, generate_trapezoidal_program};
 
 /// Modal state tracker — accumulates persistent G-code context across lines.
 ///
@@ -301,22 +301,46 @@ fn emit_arc(
 
     match plane {
         17 => {
-            start_a = prev.current_x; start_b = prev.current_y; start_linear = prev.current_z;
-            end_a = next.current_x; end_b = next.current_y; end_linear = next.current_z;
-            a_signal = "axis.0.pos"; b_signal = "axis.1.pos"; linear_signal = "axis.2.pos";
-            enable_a = "axis.0.enable"; enable_b = "axis.1.enable"; enable_linear = "axis.2.enable";
+            start_a = prev.current_x;
+            start_b = prev.current_y;
+            start_linear = prev.current_z;
+            end_a = next.current_x;
+            end_b = next.current_y;
+            end_linear = next.current_z;
+            a_signal = "axis.0.pos";
+            b_signal = "axis.1.pos";
+            linear_signal = "axis.2.pos";
+            enable_a = "axis.0.enable";
+            enable_b = "axis.1.enable";
+            enable_linear = "axis.2.enable";
         }
         18 => {
-            start_a = prev.current_z; start_b = prev.current_x; start_linear = prev.current_y;
-            end_a = next.current_z; end_b = next.current_x; end_linear = next.current_y;
-            a_signal = "axis.2.pos"; b_signal = "axis.0.pos"; linear_signal = "axis.1.pos";
-            enable_a = "axis.2.enable"; enable_b = "axis.0.enable"; enable_linear = "axis.1.enable";
+            start_a = prev.current_z;
+            start_b = prev.current_x;
+            start_linear = prev.current_y;
+            end_a = next.current_z;
+            end_b = next.current_x;
+            end_linear = next.current_y;
+            a_signal = "axis.2.pos";
+            b_signal = "axis.0.pos";
+            linear_signal = "axis.1.pos";
+            enable_a = "axis.2.enable";
+            enable_b = "axis.0.enable";
+            enable_linear = "axis.1.enable";
         }
         19 => {
-            start_a = prev.current_y; start_b = prev.current_z; start_linear = prev.current_x;
-            end_a = next.current_y; end_b = next.current_z; end_linear = next.current_x;
-            a_signal = "axis.1.pos"; b_signal = "axis.2.pos"; linear_signal = "axis.0.pos";
-            enable_a = "axis.1.enable"; enable_b = "axis.2.enable"; enable_linear = "axis.0.enable";
+            start_a = prev.current_y;
+            start_b = prev.current_z;
+            start_linear = prev.current_x;
+            end_a = next.current_y;
+            end_b = next.current_z;
+            end_linear = next.current_x;
+            a_signal = "axis.1.pos";
+            b_signal = "axis.2.pos";
+            linear_signal = "axis.0.pos";
+            enable_a = "axis.1.enable";
+            enable_b = "axis.2.enable";
+            enable_linear = "axis.0.enable";
         }
         _ => {
             return Err(GCodeError::UnsupportedCommand {
@@ -328,9 +352,7 @@ fn emit_arc(
 
     // Calculate arc center
     let (center_a, center_b) = calculate_arc_center(
-        start_a, start_b, end_a, end_b,
-        cmd.i, cmd.j, cmd.k, cmd.r,
-        plane, cmd.line,
+        start_a, start_b, end_a, end_b, cmd.i, cmd.j, cmd.k, cmd.r, plane, cmd.line,
     )?;
 
     let radius = ((start_a - center_a).powi(2) + (start_b - center_b).powi(2)).sqrt();
@@ -353,12 +375,16 @@ fn emit_arc(
     } else if g_code == 2 {
         // G2 CW: sweep is always negative or zero
         let mut s = end_angle - start_angle;
-        if s > 0.0 { s -= 2.0 * std::f64::consts::PI; }
+        if s > 0.0 {
+            s -= 2.0 * std::f64::consts::PI;
+        }
         s
     } else {
         // G3 CCW: sweep is always positive or zero
         let mut s = end_angle - start_angle;
-        if s < 0.0 { s += 2.0 * std::f64::consts::PI; }
+        if s < 0.0 {
+            s += 2.0 * std::f64::consts::PI;
+        }
         s
     };
 
@@ -504,15 +530,9 @@ fn calculate_arc_center(
 
         // R > 0 → short arc (≤ 180°), R < 0 → long arc (> 180°)
         let sign = if radius > 0.0 { 1.0 } else { -1.0 };
-        Ok((
-            mid_a + sign * perp_a * center_offset,
-            mid_b + sign * perp_b * center_offset,
-        ))
+        Ok((mid_a + sign * perp_a * center_offset, mid_b + sign * perp_b * center_offset))
     } else {
-        Err(GCodeError::UnsupportedCommand {
-            line,
-            code: "arc missing I/J/K or R".into(),
-        })
+        Err(GCodeError::UnsupportedCommand { line, code: "arc missing I/J/K or R".into() })
     }
 }
 
@@ -902,10 +922,12 @@ mod tests {
         let has_nop = program.instructions.iter().any(|inst| inst.opcode == Opcode::Nop);
         assert!(has_store, "G2 quadrant arc should emit Store instructions");
         // Nop from init only (REG_ONE load has no Nop), not from motion emission
-        assert!(!has_nop || {
-            program.instructions.iter().filter(|i| i.opcode == Opcode::Nop).count() == 0
-            // if any Nop exists, fail with details
-        });
+        assert!(
+            !has_nop || {
+                program.instructions.iter().filter(|i| i.opcode == Opcode::Nop).count() == 0
+                // if any Nop exists, fail with details
+            }
+        );
         // Verify stores to axis signals exist
         let has_x = program.instructions.iter().any(|inst| {
             inst.opcode == Opcode::Store
@@ -934,8 +956,13 @@ mod tests {
         let has_store = program.instructions.iter().any(|inst| inst.opcode == Opcode::Store);
         assert!(has_store, "G2 full circle should emit Store instructions");
         // Full circle should have many chord segments
-        let store_count = program.instructions.iter().filter(|inst| inst.opcode == Opcode::Store).count();
-        assert!(store_count >= 18, "Full circle should have many chord segments, got {}", store_count);
+        let store_count =
+            program.instructions.iter().filter(|inst| inst.opcode == Opcode::Store).count();
+        assert!(
+            store_count >= 18,
+            "Full circle should have many chord segments, got {}",
+            store_count
+        );
     }
 
     #[test]

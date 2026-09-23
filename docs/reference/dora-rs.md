@@ -1,6 +1,6 @@
 # dora-rs（Dataflow-Oriented Robotic Architecture）
 
-> 本文档为 AUDESYS 项目参考文档，系统梳理 dora-rs 的技术架构、数据流模型、通信机制与设计理念，为 AUDESYS 的 HAL 与 Runtime 设计提供参考对比。
+> 本文档为 Weftik 项目参考文档，系统梳理 dora-rs 的技术架构、数据流模型、通信机制与设计理念，为 Weftik 的 HAL 与 Runtime 设计提供参考对比。
 > 
 > 最后更新：2026-07-13
 
@@ -890,38 +890,38 @@ dora-rs 本身就是 AI Agent 协作开发的范例：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
-### 7.1 通信原语对比 — dora-rs 的 Topic/Service/Action/Streaming vs AUDESYS HAL 的 Signal/StreamChannel/RPC
+### 7.1 通信原语对比 — dora-rs 的 Topic/Service/Action/Streaming vs Weftik HAL 的 Signal/StreamChannel/RPC
 
-AUDESYS HAL 在设计中明确将 dora-rs 列为四大参考系统之一。以下从通信原语维度进行系统对比：
+Weftik HAL 在设计中明确将 dora-rs 列为四大参考系统之一。以下从通信原语维度进行系统对比：
 
-| 通信模式 | dora-rs | AUDESYS HAL | 关键差异 |
+| 通信模式 | dora-rs | Weftik HAL | 关键差异 |
 |---------|---------|-------------|---------|
-| **控制信号** | Topic（pub/sub，默认） | **Signal**（单写多读，最新值覆盖） | AUDESYS 的 Signal 语义更精确：限制单写者 + 无缓冲，保证了工业控制所需的确定性和最低延迟。dora-rs 的 Topic 是通用 pub/sub，不区分控制信号和流数据 |
-| **高吞吐数据流** | Topic（可配置 queue_size + queue_policy） | **StreamChannel**（多写多读，显式反压策略） | AUDESYS 的 StreamChannel 显式区分了流数据与信号数据，dora-rs 的 Topic 统一处理两者 |
-| **请求/回复** | Service（metadata key `request_id`） | **RPC**（原生请求/回复 + 超时 + 幂等） | AUDESYS 的 RPC 是原生一等公民，dora-rs 的 Service 是 Topic 之上的元数据模式 |
-| **长任务** | Action（metadata key `goal_id`/`goal_status`） | RPC + Signal 组合 | AUDESYS 通过 RPC 发起 + Signal 反馈组合实现，不做专门抽象 |
-| **流式响应** | Streaming（metadata key `session_id`/`seq`/`fin`） | StreamChannel | AUDESYS 的 StreamChannel 天然支持，dora-rs 额外添加会话/分块语义 |
+| **控制信号** | Topic（pub/sub，默认） | **Signal**（单写多读，最新值覆盖） | Weftik 的 Signal 语义更精确：限制单写者 + 无缓冲，保证了工业控制所需的确定性和最低延迟。dora-rs 的 Topic 是通用 pub/sub，不区分控制信号和流数据 |
+| **高吞吐数据流** | Topic（可配置 queue_size + queue_policy） | **StreamChannel**（多写多读，显式反压策略） | Weftik 的 StreamChannel 显式区分了流数据与信号数据，dora-rs 的 Topic 统一处理两者 |
+| **请求/回复** | Service（metadata key `request_id`） | **RPC**（原生请求/回复 + 超时 + 幂等） | Weftik 的 RPC 是原生一等公民，dora-rs 的 Service 是 Topic 之上的元数据模式 |
+| **长任务** | Action（metadata key `goal_id`/`goal_status`） | RPC + Signal 组合 | Weftik 通过 RPC 发起 + Signal 反馈组合实现，不做专门抽象 |
+| **流式响应** | Streaming（metadata key `session_id`/`seq`/`fin`） | StreamChannel | Weftik 的 StreamChannel 天然支持，dora-rs 额外添加会话/分块语义 |
 
-**核心洞察：AUDESYS HAL 的三原语设计比 dora-rs 更正交、更精确**
+**核心洞察：Weftik HAL 的三原语设计比 dora-rs 更正交、更精确**
 
 dora-rs 将所有通信统一为 Topic + metadata key 模式，借鉴了 HTTP 的松耦合设计哲学。这种设计的优势是极简（一个原语覆盖全部场景），代价是不同语义的区分依赖约定（metadata key）而非类型系统。
 
-AUDESYS HAL 继承了 ROS2 社区十年验证的教训（D10：Signal 与 StreamChannel 不可合并），在协议层面显式区分了三类通信：
+Weftik HAL 继承了 ROS2 社区十年验证的教训（D10：Signal 与 StreamChannel 不可合并），在协议层面显式区分了三类通信：
 - **Signal**：为控制回路设计（1 writer, latest-value, no buffer）
 - **StreamChannel**：为数据流设计（N writer, buffered, backpressure）
 - **RPC**：为配置/命令设计（request/reply, timeout, idempotency）
 
 **这种设计比 dora-rs 更适用于工业控制场景**，因为工业控制对延迟确定性、数据不丢失保证、配置变更可审计的要求远高于机器人 AI 推理。
 
-### 7.2 Apache Arrow 零拷贝模型 — 对 AUDESYS 的启示
+### 7.2 Apache Arrow 零拷贝模型 — 对 Weftik 的启示
 
-**AUDESYS HAL 中的借鉴：**
+**Weftik HAL 中的借鉴：**
 
 1. **4KB SHM 阈值**（`docs/modules/hal/` 明确参考）：
    ```yaml
-   # AUDESYS StreamChannel
+   # Weftik StreamChannel
    shm_threshold: 4KB        # >= 4KB 走 Zenoh SHM 零拷贝
    ```
    与 dora-rs 的 `ZERO_COPY_THRESHOLD` 设计一致。
@@ -936,9 +936,9 @@ AUDESYS HAL 继承了 ROS2 社区十年验证的教训（D10：Signal 与 Stream
 3. **是否全面采用 Arrow？**
    - **优势**：零拷贝跨语言共享，适合高吞吐传感器数据（点云、图像）
    - **劣势**：Arrow 是列式格式，工业控制的小标量数据（< 1KB）用 FlatBuffers 更合适（零拷贝随机访问单个字段）
-   - **结论**：AUDESYS 当前策略正确 — 小控制报文用 FlatBuffers（HAL 原生类型 14 种），大载荷用 Blob 透传 Arrow/Protobuf
+   - **结论**：Weftik 当前策略正确 — 小控制报文用 FlatBuffers（HAL 原生类型 14 种），大载荷用 Blob 透传 Arrow/Protobuf
 
-### 7.3 YAML 图定义 — 对 AUDESYS 配置系统的参考
+### 7.3 YAML 图定义 — 对 Weftik 配置系统的参考
 
 dora-rs 的 YAML 声明式数据流定义是一个优雅的设计模式：
 
@@ -954,68 +954,68 @@ nodes:
       data: node-a/data     # 声明式连边
 ```
 
-**对 AUDESYS 的参考价值：**
+**对 Weftik 的参考价值：**
 
-- **AUDESYS 的 Studio IDE** 可以采用类似的声明式配置模式：用户在 IDE 中以可视化的方式定义 Signal/StreamChannel/RPC 连接，底层生成 YAML 或类似格式的拓扑描述
-- **类型注解**：dora-rs 的可选类型系统（build-time validation + runtime check）可以作为 AUDESYS 14 种类型的注解和验证机制的参考
-- **模块复用**：dora-rs 的 Module 机制（编译时展开）可为 AUDESYS 的子拓扑复用提供设计思路
-- **动态拓扑**：dora-rs 的运行时增删节点能力对应 AUDESYS 的 RPC 动态创建 Signal/StreamChannel（已在 §1.4 RPC use_cases 中列入）
+- **Weftik 的 Studio IDE** 可以采用类似的声明式配置模式：用户在 IDE 中以可视化的方式定义 Signal/StreamChannel/RPC 连接，底层生成 YAML 或类似格式的拓扑描述
+- **类型注解**：dora-rs 的可选类型系统（build-time validation + runtime check）可以作为 Weftik 14 种类型的注解和验证机制的参考
+- **模块复用**：dora-rs 的 Module 机制（编译时展开）可为 Weftik 的子拓扑复用提供设计思路
+- **动态拓扑**：dora-rs 的运行时增删节点能力对应 Weftik 的 RPC 动态创建 Signal/StreamChannel（已在 §1.4 RPC use_cases 中列入）
 
-### 7.4 多语言操作符模型 — 对 AUDESYS D19 的影响
+### 7.4 多语言操作符模型 — 对 Weftik D19 的影响
 
-dora-rs 的多语言模型与 AUDESYS 的 D19 决策（多语言策略 = Rust Core + FlatBuffers）高度互补：
+dora-rs 的多语言模型与 Weftik 的 D19 决策（多语言策略 = Rust Core + FlatBuffers）高度互补：
 
-| 维度 | dora-rs 实践 | AUDESYS D19 决策 | 启示 |
+| 维度 | dora-rs 实践 | Weftik D19 决策 | 启示 |
 |------|-------------|-----------------|------|
 | **RT 线程** | Rust 独占（无 GC/JIT/异步运行时） | Rust 独占（< 1μs） | 一致：RT 线程只能 Rust |
 | **I/O 通信** | Python Operator >4KB 自动走 Zenoh SHM | Rust + C++ FlatBuffers over UDS（~10μs） | dora-rs 证明 Python 可参与 I/O 层，但 GIL 是瓶颈（需权衡） |
 | **跨语言共享** | Arrow C Data Interface（所有绑定共享同一内存） | FlatBuffers（标量零拷贝）+ Blob 透传（大载荷） | 两者方向一致：通过统一内存格式避免语言间转换 |
-| **FFI 桥接** | PyO3（Rust→Python）+ CXX（Rust→C++）+ C FFI | Rust→C FFI→各语言 | dora-rs 的 PyO3/CXX 成熟方案可作为 AUDESYS 参考 |
+| **FFI 桥接** | PyO3（Rust→Python）+ CXX（Rust→C++）+ C FFI | Rust→C FFI→各语言 | dora-rs 的 PyO3/CXX 成熟方案可作为 Weftik 参考 |
 
 **关键启示：**
 
 1. **Python 在非 RT 路径可用**：dora-rs 证明了 Python（通过 PyO3）可以在非 RT 的数据处理和 AI 推理路径中有效使用，只要不进入 RT 线程
 2. **Arrow vs FlatBuffers 不是互斥的**：两者可在同一系统中分层使用 — FlatBuffers 处理小标量控制消息（HAL 原生类型），Arrow/Protobuf 通过 Blob 透传处理大载荷（参考 `docs/modules/hal/multi-language-strategy.md`）
 
-### 7.5 Operator 调度模型 — 对 AUDESYS D13 的验证
+### 7.5 Operator 调度模型 — 对 Weftik D13 的验证
 
-AUDESYS D13 设计了四系统混合线程调度模型（RT 线程 + I/O 线程 + Stream Worker + 事件驱动），dora-rs 的实践提供了重要验证：
+Weftik D13 设计了四系统混合线程调度模型（RT 线程 + I/O 线程 + Stream Worker + 事件驱动），dora-rs 的实践提供了重要验证：
 
-| AUDESYS D13 调度路径 | dora-rs 对应实践 | 验证结论 |
+| Weftik D13 调度路径 | dora-rs 对应实践 | 验证结论 |
 |---------------------|-----------------|---------|
 | **RT 线程**（LinuxCNC 显式函数列表） | dora-rs：`--rt` flag（SCHED_FIFO + mlockall + CPU affinity） | dora-rs 实践验证了 **SCHED_FIFO + CPU 亲和性** 是有效的软实时方案，但需 PREEMPT_RT 内核才能达到硬实时 |
 | **I/O 线程**（dora-rs 事件驱动） | dora-rs：Tokio 异步 I/O，事件驱动 Node 循环 | 验证了 `docs/modules/hal/thread-scheduling-design.md` 的判断："dora-rs 是事件驱动的，不存在固定周期"（第 796-821 行） |
-| **Stream Worker**（dora-rs 风格事件驱动） | dora-rs：Node 在 for 循环中阻塞接收事件 | 对应 AUDESYS 的 "数据流路径吞吐优先—借鉴 dora-rs 事件驱动"（第 839 行） |
+| **Stream Worker**（dora-rs 风格事件驱动） | dora-rs：Node 在 for 循环中阻塞接收事件 | 对应 Weftik 的 "数据流路径吞吐优先—借鉴 dora-rs 事件驱动"（第 839 行） |
 | **控制周期**（OpenPLC 扫描屏障） | dora-rs：定时器 `dora/timer/millis/N` | dora-rs 的定时器模式可作为周期控制的参考，但缺少 OpenPLC 的扫描屏障语义 |
 
 **核心验证：**
 
-dora-rs 的 Tokio 异步事件循环在**吞吐导向**场景（数据流、AI 推理）表现优异（10-17x ROS2），但在**确定性延迟**场景（硬实时控制回路）不如固定周期的 RT 线程模型。这强化了 AUDESYS D13 的设计：**三类执行需求（硬实时控制 / I/O 通信 / 流数据）不能放进同一个调度模型** — 这与 dora-rs 将全部通信统一为事件驱动的设计形成鲜明对比。
+dora-rs 的 Tokio 异步事件循环在**吞吐导向**场景（数据流、AI 推理）表现优异（10-17x ROS2），但在**确定性延迟**场景（硬实时控制回路）不如固定周期的 RT 线程模型。这强化了 Weftik D13 的设计：**三类执行需求（硬实时控制 / I/O 通信 / 流数据）不能放进同一个调度模型** — 这与 dora-rs 将全部通信统一为事件驱动的设计形成鲜明对比。
 
-AUDESYS 的混合调度模型更适用于工业控制场景，因为它对每类工作负载提供了最匹配的执行策略，而 dora-rs 的统一事件模型更适合机器人 AI 应用的数据驱动特性。
+Weftik 的混合调度模型更适用于工业控制场景，因为它对每类工作负载提供了最匹配的执行策略，而 dora-rs 的统一事件模型更适合机器人 AI 应用的数据驱动特性。
 
 ### 7.6 工程实践参考
 
-| dora-rs 实践 | AUDESYS 可借鉴之处 |
+| dora-rs 实践 | Weftik 可借鉴之处 |
 |-------------|------------------|
-| **三层 QA 体系**（qa-fast/qa-full/qa-deep） | 作为 AUDESYS CI/CD 流水线的参考模型（当前 AUDESYS 无测试基础设施） |
+| **三层 QA 体系**（qa-fast/qa-full/qa-deep） | 作为 Weftik CI/CD 流水线的参考模型（当前 Weftik 无测试基础设施） |
 | **变异测试 + 属性测试 + Miri UB 检测** | 高性能/安全关键系统的质量保障最佳实践 |
-| **Node Hub 包管理器** | 为 AUDESYS 未来的组件市场/应用商店提供设计思路 |
+| **Node Hub 包管理器** | 为 Weftik 未来的组件市场/应用商店提供设计思路 |
 | **录放（Record/Replay）** | 工业控制系统回归测试的有力工具 |
 | **`dora doctor` 诊断工具** | 工业部署环境的自诊断模式 |
-| **OpenTelemetry 集成** | 可观测性标准，AUDESYS 可考虑在 Phase 2+ 引入 |
-| **非阻塞事件循环**（控制命令 <500ms 响应） | 对应 AUDESYS 的 Config Barrier + LockLevel（D17），确保控制命令在高负载下不超时 |
+| **OpenTelemetry 集成** | 可观测性标准，Weftik 可考虑在 Phase 2+ 引入 |
+| **非阻塞事件循环**（控制命令 <500ms 响应） | 对应 Weftik 的 Config Barrier + LockLevel（D17），确保控制命令在高负载下不超时 |
 
-### 7.7 总结：dora-rs 对 AUDESYS 的核心价值
+### 7.7 总结：dora-rs 对 Weftik 的核心价值
 
-| 领域 | dora-rs 贡献 | AUDESYS 消化方式 |
+| 领域 | dora-rs 贡献 | Weftik 消化方式 |
 |------|-------------|-----------------|
-| **通信原语** | Topic 统一模型 | 验证了 AUDESYS 三原语分治的必要性 — 工业控制需要更精确的语义区分 |
+| **通信原语** | Topic 统一模型 | 验证了 Weftik 三原语分治的必要性 — 工业控制需要更精确的语义区分 |
 | **零拷贝** | Arrow 端到端零拷贝 | 借鉴 4KB SHM 阈值 + Blob 透传模式，但小标量数据用 FlatBuffers 更优 |
 | **配置管理** | YAML 声明式 + 模块复用 | 为 Studio IDE 的拓扑编辑器提供设计参考 |
 | **多语言** | PyO3/CXX/C FFI 桥接 | 验证 D19 的 Rust Core + FFI 桥接策略可行 |
 | **调度** | Tokio 事件驱动 | 验证 D13 的分层调度设计 — 事件驱动适合 I/O，不适合硬实时 |
-| **工程化** | 三层 QA + 变异测试 + AI Agent 协作 | 为 AUDESYS 工程实践提供参考模型 |
+| **工程化** | 三层 QA + 变异测试 + AI Agent 协作 | 为 Weftik 工程实践提供参考模型 |
 
 ---
 
@@ -1032,4 +1032,4 @@ AUDESYS 的混合调度模型更适用于工业控制场景，因为它对每类
 
 ---
 
-*本文档由 AI Agent 研究和编写，作为 AUDESYS 项目的技术参考。如有信息不准确之处，请以 dora-rs 官方文档为准。*
+*本文档由 AI Agent 研究和编写，作为 Weftik 项目的技术参考。如有信息不准确之处，请以 dora-rs 官方文档为准。*

@@ -683,23 +683,23 @@ grblHAL 的核心代码不包含任何硬件特定的代码。所有硬件访问
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
 #### 1. HAL 函数指针架构
 
-grblHAL 的 HAL 设计是嵌入式系统硬件抽象的最佳实践。AUDESYS HAL 可以借鉴其以下设计要点：
+grblHAL 的 HAL 设计是嵌入式系统硬件抽象的最佳实践。Weftik HAL 可以借鉴其以下设计要点：
 
 - **函数指针驱动的 HAL 接口**：使用结构体封装所有函数指针，驱动初始化时填充这些指针，核心代码通过指针间接调用
 - **能力声明机制**：驱动通过位掩码声明其能力，核心代码可根据能力启用或禁用功能
 - **可选组件设计**：HAL 接口分为必需组件（stepper、stream）和可选组件（probe、tool、encoder），兼顾灵活性和最小化实现
 
-**AUDESYS 参考**：AUDESYS HAL 的 `HalTransport` trait 可以借鉴 grblHAL 的函数指针模式，在 Rust 中表现为 trait 对象和动态分发。
+**Weftik 参考**：Weftik HAL 的 `HalTransport` trait 可以借鉴 grblHAL 的函数指针模式，在 Rust 中表现为 trait 对象和动态分发。
 
 #### 2. 插件系统的事件回调机制
 
-grblHAL 的插件系统通过事件回调（`on_*` 函数指针）实现零侵入扩展。AUDESYS 的模块化架构可以借鉴：
+grblHAL 的插件系统通过事件回调（`on_*` 函数指针）实现零侵入扩展。Weftik 的模块化架构可以借鉴：
 
 - **保存/替换回调模式**：插件保存原始回调，替换为自定义实现，在自定义实现中调用原始回调形成链式处理
 - **自定义设置注册**：插件可动态注册自己的配置项，无需修改核心配置系统
@@ -707,22 +707,22 @@ grblHAL 的插件系统通过事件回调（`on_*` 函数指针）实现零侵�
 
 #### 3. 多平台 HAL 驱动实现
 
-grblHAL 的 15+ 驱动实现展示了如何在不同 MCU 平台上实现同一 HAL 接口。这对 AUDESYS 的 HAL 多平台策略有直接参考价值。
+grblHAL 的 15+ 驱动实现展示了如何在不同 MCU 平台上实现同一 HAL 接口。这对 Weftik 的 HAL 多平台策略有直接参考价值。
 
 ### 7.2 可移植/适配的技术模块
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| **HAL 函数指针接口设计** | `hal_t` 结构体设计 | 高，直接参考 AUDESYS HAL 的 trait 设计 |
-| **插件事件回调机制** | `grbl_t` 事件回调系统 | 高，AUDESYS 模块化扩展可借鉴 |
-| **运动规划器** | 前瞻加速管理 | 中，如果 AUDESYS 需要 CNC 运动控制 |
-| **运动学变换** | CoreXY/Polar 变换 | 中，如果 AUDESYS 需要多运动学模型 |
-| **步进电机控制** | 精确脉冲时序 | 中，如果 AUDESYS 需要直接控制步进电机 |
-| **流通信抽象** | 串口/USB/蓝牙/以太网统一接口 | 低，AUDESYS 使用更高级别的通信抽象 |
+| **HAL 函数指针接口设计** | `hal_t` 结构体设计 | 高，直接参考 Weftik HAL 的 trait 设计 |
+| **插件事件回调机制** | `grbl_t` 事件回调系统 | 高，Weftik 模块化扩展可借鉴 |
+| **运动规划器** | 前瞻加速管理 | 中，如果 Weftik 需要 CNC 运动控制 |
+| **运动学变换** | CoreXY/Polar 变换 | 中，如果 Weftik 需要多运动学模型 |
+| **步进电机控制** | 精确脉冲时序 | 中，如果 Weftik 需要直接控制步进电机 |
+| **流通信抽象** | 串口/USB/蓝牙/以太网统一接口 | 低，Weftik 使用更高级别的通信抽象 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | grblHAL | AUDESYS |
+| 维度 | grblHAL | Weftik |
 |------|---------|---------|
 | 核心定位 | CNC 运动控制器固件 | 工业控制系统模拟平台 |
 | 目标硬件 | 嵌入式 MCU（STM32、ESP32、RP2040） | 通用计算平台 + 仿真 |
@@ -733,13 +733,13 @@ grblHAL 的 15+ 驱动实现展示了如何在不同 MCU 平台上实现同一 H
 | 抽象层次 | 硬件访问层（GPIO、定时器、PWM） | 通信中间件层（节点间数据交换） |
 
 **互补关系**：
-- grblHAL 的 HAL 设计是 **底层硬件抽象**（如何访问 MCU 外设），AUDESYS 的 HAL 设计是 **上层通信抽象**（如何在分布式节点间交换数据），两者在抽象层次上互补
-- grblHAL 的插件事件回调机制为 AUDESYS 的模块化扩展提供了参考模式
+- grblHAL 的 HAL 设计是 **底层硬件抽象**（如何访问 MCU 外设），Weftik 的 HAL 设计是 **上层通信抽象**（如何在分布式节点间交换数据），两者在抽象层次上互补
+- grblHAL 的插件事件回调机制为 Weftik 的模块化扩展提供了参考模式
 - grblHAL 的 15+ 平台驱动证明了良好 HAL 设计的多平台价值
 
-### 7.4 详细对比分析：AUDESYS HAL 与 grblHAL HAL
+### 7.4 详细对比分析：Weftik HAL 与 grblHAL HAL
 
-| 维度 | grblHAL HAL | AUDESYS HAL（设计） |
+| 维度 | grblHAL HAL | Weftik HAL（设计） |
 |------|------------|-------------------|
 | 设计目标 | 统一 MCU 外设访问接口 | 完整的实时通信中间件 |
 | 原语 | 函数指针：stepper、limits、spindle 等 | Signal + StreamChannel + RPC |
@@ -752,11 +752,11 @@ grblHAL 的 15+ 驱动实现展示了如何在不同 MCU 平台上实现同一 H
 | 扩展机制 | 事件回调 + 插件框架 | 模块化设计（规划中） |
 | 配置管理 | 编译时配置 + NVS 设置 | Config Barrier + LockLevel |
 
-grblHAL 的 HAL 是典型的 **MCU 外设抽象层**（解决"如何在不同的 MCU 上访问 GPIO、定时器、PWM"），而 AUDESYS 的 HAL 是 **通信中间件**（解决"如何在分布式节点间交换数据"）。两者在抽象层次上有本质区别，但 grblHAL 的函数指针驱动架构对 AUDESYS 的 trait 设计有直接参考价值。
+grblHAL 的 HAL 是典型的 **MCU 外设抽象层**（解决"如何在不同的 MCU 上访问 GPIO、定时器、PWM"），而 Weftik 的 HAL 是 **通信中间件**（解决"如何在分布式节点间交换数据"）。两者在抽象层次上有本质区别，但 grblHAL 的函数指针驱动架构对 Weftik 的 trait 设计有直接参考价值。
 
 ### 7.5 开源生态系统对比
 
-| 维度 | grblHAL 生态 | AUDESYS（当前/规划） |
+| 维度 | grblHAL 生态 | Weftik（当前/规划） |
 |------|-------------|-------------------|
 | 代码仓库 | 核心 + 驱动 + 插件 三个仓库 | 单仓库（早期项目） |
 | 贡献者 | 多位驱动和插件贡献者 | 0 |
@@ -766,7 +766,7 @@ grblHAL 的 HAL 是典型的 **MCU 外设抽象层**（解决"如何在不同的
 | 工业部署 | 广泛（DIY CNC 社区） | 0 |
 | Web Builder | 在线构建工具 | 无 |
 
-grblHAL 证明了通过 HAL 架构实现多平台支持的有效性，其插件生态系统的发展模式对 AUDESYS 的模块化扩展有参考价值。
+grblHAL 证明了通过 HAL 架构实现多平台支持的有效性，其插件生态系统的发展模式对 Weftik 的模块化扩展有参考价值。
 
 ---
 
@@ -780,22 +780,22 @@ grblHAL 采用松散的组织治理模式：核心代码由 Terje Io 维护，�
 - **分散维护负担** — 各驱动有独立维护者，不依赖单一核心团队
 - **社区自发增长** — 插件可以独立于核心版本发布
 
-AUDESYS 在组织开源社区时，可参考这种核心+驱动分离的仓库结构，降低外部贡献门槛。
+Weftik 在组织开源社区时，可参考这种核心+驱动分离的仓库结构，降低外部贡献门槛。
 
-### 7.7 从 grblHAL 到 AUDESYS 的迁移路径思考
+### 7.7 从 grblHAL 到 Weftik 的迁移路径思考
 
-虽然 grblHAL 是底层 MCU 固件而 AUDESYS 是上层仿真平台，但两者可以通过以下桥接方式互通：
+虽然 grblHAL 是底层 MCU 固件而 Weftik 是上层仿真平台，但两者可以通过以下桥接方式互通：
 
-1. **HAL 适配器** — 在 AUDESYS 的 HAL 层实现一个 grblHAL 适配器，将 grblHAL 的运动控制命令映射到 AUDESYS Signal/StreamChannel
-2. **仿真模式** — AUDESYS Simulator 可以仿真 grblHAL 的行为，用于测试 G-Code 程序
-3. **Plugin Bridge** — 通过插件方式将 grblHAL 集成到 AUDESYS 的模块化架构中
+1. **HAL 适配器** — 在 Weftik 的 HAL 层实现一个 grblHAL 适配器，将 grblHAL 的运动控制命令映射到 Weftik Signal/StreamChannel
+2. **仿真模式** — Weftik Simulator 可以仿真 grblHAL 的行为，用于测试 G-Code 程序
+3. **Plugin Bridge** — 通过插件方式将 grblHAL 集成到 Weftik 的模块化架构中
 
-这种桥接思路适用于 AUDESYS 与底层控制硬件的集成场景。
+这种桥接思路适用于 Weftik 与底层控制硬件的集成场景。
 
 ---
 
 > **本文档基于 2026 年 7 月的公开信息编写。部分数据可能随 grblHAL 版本迭代而变化。建议直接从官方仓库验证最新信息。**
-> **注意**: grblHAL 的 HAL 设计是面向底层 MCU 外设抽象的典范，与 AUDESYS 的通信中间件 HAL 在抽象层次上互补，两者结合可实现从固件到平台的完整控制栈。
+> **注意**: grblHAL 的 HAL 设计是面向底层 MCU 外设抽象的典范，与 Weftik 的通信中间件 HAL 在抽象层次上互补，两者结合可实现从固件到平台的完整控制栈。
 
 ---
 

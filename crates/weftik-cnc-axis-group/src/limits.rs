@@ -60,19 +60,13 @@ pub fn generate_soft_limits_program(cfg: &AxisGroupConfig) -> HalProgram {
         // ── Load pos_cmd ──
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_POS),
-                Operand::SignalName(format!("{}.pos_cmd", pfx)),
-            ],
+            vec![Operand::Register(R_POS), Operand::SignalName(format!("{}.pos_cmd", pfx))],
         ));
 
         // ── Load homed flag ──
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_HOMED),
-                Operand::SignalName(format!("{}.homed", pfx)),
-            ],
+            vec![Operand::Register(R_HOMED), Operand::SignalName(format!("{}.homed", pfx))],
         ));
 
         // ── If not homed, skip limit checks ──
@@ -108,19 +102,13 @@ pub fn generate_soft_limits_program(cfg: &AxisGroupConfig) -> HalProgram {
         // ── Write pos_fault signal ──
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.pos_fault", pfx)),
-                Operand::Register(R_FAULT),
-            ],
+            vec![Operand::SignalName(format!("{}.pos_fault", pfx)), Operand::Register(R_FAULT)],
         ));
 
         // ── Write clamped pos_cmd back ──
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.pos_cmd", pfx)),
-                Operand::Register(R_POS),
-            ],
+            vec![Operand::SignalName(format!("{}.pos_cmd", pfx)), Operand::Register(R_POS)],
         ));
 
         // Patch skip to after this axis block
@@ -148,29 +136,23 @@ fn copy_reg(instructions: &mut Vec<Instruction>, src: u8, dst: u8, zero_reg: u8)
 fn cmp_eq_imm(instructions: &mut Vec<Instruction>, reg: u8, imm: f64) {
     let temp = R_MAX; // borrow R_MAX temporarily
     instructions.push(Instruction::load_imm(temp, HalValue::F64(imm)));
-    instructions.push(Instruction::new(
-        Opcode::Eq,
-        vec![Operand::Register(reg), Operand::Register(temp)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Eq, vec![Operand::Register(reg), Operand::Register(temp)]));
 }
 
 /// Compare a < b: dst = (a < b) ? 1.0 : 0.0
 fn cmp_lt(instructions: &mut Vec<Instruction>, a: u8, b: u8, dst: u8) {
     // copy a to dst, then Lt(dst, b) → dst = (a < b) ? 1 : 0
     copy_reg(instructions, a, dst, R_ZERO);
-    instructions.push(Instruction::new(
-        Opcode::Lt,
-        vec![Operand::Register(dst), Operand::Register(b)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Lt, vec![Operand::Register(dst), Operand::Register(b)]));
 }
 
 /// Compare a > b: dst = (a > b) ? 1.0 : 0.0
 fn cmp_gt(instructions: &mut Vec<Instruction>, a: u8, b: u8, dst: u8) {
     copy_reg(instructions, a, dst, R_ZERO);
-    instructions.push(Instruction::new(
-        Opcode::Gt,
-        vec![Operand::Register(dst), Operand::Register(b)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Gt, vec![Operand::Register(dst), Operand::Register(b)]));
 }
 
 /// Emit JumpIf that skips when condition reg == 0.
@@ -213,11 +195,8 @@ mod tests {
     fn test_pos_fault_signals_present() {
         let cfg = AxisGroupConfig::default_xyz();
         let prog = generate_soft_limits_program(&cfg);
-        let fault_signals: Vec<_> = prog
-            .signals
-            .iter()
-            .filter(|s| s.hal_signal_name.ends_with(".pos_fault"))
-            .collect();
+        let fault_signals: Vec<_> =
+            prog.signals.iter().filter(|s| s.hal_signal_name.ends_with(".pos_fault")).collect();
         assert_eq!(fault_signals.len(), 3);
     }
 
@@ -228,27 +207,18 @@ mod tests {
         cfg.axes[1].soft_limit_enable = false;
         // Only Z axis has soft limits enabled
         let prog = generate_soft_limits_program(&cfg);
-        let fault_signals: Vec<_> = prog
-            .signals
-            .iter()
-            .filter(|s| s.hal_signal_name.ends_with(".pos_fault"))
-            .collect();
+        let fault_signals: Vec<_> =
+            prog.signals.iter().filter(|s| s.hal_signal_name.ends_with(".pos_fault")).collect();
         assert_eq!(fault_signals.len(), 1);
         assert!(fault_signals[0].hal_signal_name.contains("axis.2"));
     }
 
     #[test]
     fn test_single_axis_limits() {
-        let cfg = AxisGroupConfig::new(
-            "group.0",
-            vec![crate::config::AxisConfig::linear(0, "X")],
-        );
+        let cfg = AxisGroupConfig::new("group.0", vec![crate::config::AxisConfig::linear(0, "X")]);
         let prog = generate_soft_limits_program(&cfg);
         assert_eq!(
-            prog.signals
-                .iter()
-                .filter(|s| s.hal_signal_name.ends_with(".pos_fault"))
-                .count(),
+            prog.signals.iter().filter(|s| s.hal_signal_name.ends_with(".pos_fault")).count(),
             1
         );
     }

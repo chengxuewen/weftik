@@ -1,12 +1,12 @@
-# AUDESYS OpenCode AI 配置使用指南
+# Weftik OpenCode AI 配置使用指南
 
 > 最后更新: 2026-07-02
 
 ## 一、架构总览
 
-AUDESYS（Audio/Industrial Embedded System）是一个工业控制系统运行时模拟平台。项目目前处于早期开发阶段，尚无源代码。
+Weftik（Audio/Industrial Embedded System）是一个工业控制系统运行时模拟平台。项目目前处于早期开发阶段，尚无源代码。
 
-本指南说明 AI agent 如何与 AUDESYS 开发环境交互，以及 OpenCode 工具链的配置使用方法。
+本指南说明 AI agent 如何与 Weftik 开发环境交互，以及 OpenCode 工具链的配置使用方法。
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -289,7 +289,7 @@ team_create → team_task_create → team_send_message → team_status
 
 ### 5.6 MCP 工具
 
-AUDESYS 配置的 MCP 服务器：
+Weftik 配置的 MCP 服务器：
 
 | `remote-qt-docs` | Phase 1+ | Qt 6 文档查询（remote） | ✅ |
 | `local-codegraph` | 全部阶段 | AI 代码图谱 + 调用链分析 | ✅ |
@@ -322,7 +322,7 @@ AUDESYS 配置的 MCP 服务器：
 
 ### 6.1 开发工作流概述
 
-AUDESYS 项目目前处于早期阶段，尚无源代码。具体的工作流将在代码库搭建后确定。
+Weftik 项目目前处于早期阶段，尚无源代码。具体的工作流将在代码库搭建后确定。
 
 以下为 OpenCode 通用的开发流程参考：
 
@@ -410,7 +410,7 @@ OpenCode 已配置自动加载全部 4 个文件（通过 `opencode.json` 的 `i
 
 ### 8.4 通用开发最佳实践
 
-由于 AUDESYS 项目尚未确定具体技术栈，以下为通用软件开发原则：
+由于 Weftik 项目尚未确定具体技术栈，以下为通用软件开发原则：
 
 1. **不可变性优先**: 始终使用不可变数据结构，禁止原地修改
 2. **结构化日志**: 使用结构化日志库，避免 `console.log`
@@ -427,7 +427,7 @@ OpenCode 已配置自动加载全部 4 个文件（通过 `opencode.json` 的 `i
 4. **禁止**: AI 自动 git commit 或修改 `version.txt`
 5. **提交前**: 须征得用户同意
 
-> **项目状态**: AUDESYS 仓库目前尚无提交记录，项目处于早期架构设计阶段。
+> **项目状态**: Weftik 仓库目前尚无提交记录，项目处于早期架构设计阶段。
 
 ### 8.6 文档编写风格
 

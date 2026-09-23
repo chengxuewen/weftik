@@ -1,8 +1,8 @@
-# CNC 竞品架构评估与 AUDESYS 参考模型
+# CNC 竞品架构评估与 Weftik 参考模型
 
-> **文档性质**: AUDESYS CNC 子系统架构参考 — 从 8 个主流 CNC/运动控制系统中提取对 HAL 设计有直接映射关系的架构模式
+> **文档性质**: Weftik CNC 子系统架构参考 — 从 8 个主流 CNC/运动控制系统中提取对 HAL 设计有直接映射关系的架构模式
 > **数据来源**: 全部引自 `docs/reference/` 目录下原始竞品分析文档，不包含独立推测数据
-> **HAL 决策映射**: 每项架构特征均标注对应 AUDESYS HAL 设计决策编号（D10/D11/D13/D17/D19/D24/D55）
+> **HAL 决策映射**: 每项架构特征均标注对应 Weftik HAL 设计决策编号（D10/D11/D13/D17/D19/D24/D55）
 > **生成日期**: 2026-07-19 | **版本**: 1.0
 
 ---
@@ -19,8 +19,8 @@
 8. [Smoothieware — 事件驱动模块系统](#8-smoothieware--事件驱动模块系统)
 9. [TwinCAT CNC — PLC+CNC 统一与 EtherCAT 时钟](#9-twincat-cnc--plccnc-统一与-ethercat-时钟)
 10. [架构对比总表](#10-架构对比总表)
-11. [AUDESYS CNC 采纳参考模型](#11-audesys-cnc-采纳参考模型)
-12. [AUDESYS 差异化定位](#12-audesys-差异化定位)
+11. [Weftik CNC 采纳参考模型](#11-weftik-cnc-采纳参考模型)
+12. [Weftik 差异化定位](#12-weftik-差异化定位)
 
 ---
 
@@ -28,7 +28,7 @@
 
 ### 1.1 分析目的
 
-AUDESYS CNC 子系统（D55）的目标是将 G-code 源码编译为 HAL IR，与现有 IEC 61131-3 编译器共享 HalProgram 后端，实现零 VM 变更。本章通过交叉分析 8 个主流 CNC/运动控制系统，为以下设计决策提供竞品验证：
+Weftik CNC 子系统（D55）的目标是将 G-code 源码编译为 HAL IR，与现有 IEC 61131-3 编译器共享 HalProgram 后端，实现零 VM 变更。本章通过交叉分析 8 个主流 CNC/运动控制系统，为以下设计决策提供竞品验证：
 
 - **架构分层**：实时控制面与非实时管理面的分离策略（映射 D19 多语言三层架构）
 - **通信模型**：组件间数据交换机制 — 共享内存、信号总线、RPC、远程协议（映射 D10 三原语）
@@ -53,7 +53,7 @@ AUDESYS CNC 子系统（D55）的目标是将 G-code 源码编译为 HAL IR，�
 
 每个系统的分析遵循统一框架：架构特征提取 → HAL 决策映射 → ADOPT/SKIP/ADAPT 三级判定。
 
-"ADOPT" 表示直接采纳为 AUDESYS 设计模式；"SKIP" 表示因架构方向不兼容、技术栈不同或历史包袱而跳过，并给出替代方案；"ADAPT" 表示采纳核心理念但需根据 AUDESYS 技术栈调整实现方式。
+"ADOPT" 表示直接采纳为 Weftik 设计模式；"SKIP" 表示因架构方向不兼容、技术栈不同或历史包袱而跳过，并给出替代方案；"ADAPT" 表示采纳核心理念但需根据 Weftik 技术栈调整实现方式。
 
 ---
 
@@ -61,7 +61,7 @@ AUDESYS CNC 子系统（D55）的目标是将 G-code 源码编译为 HAL IR，�
 
 ### 2.1 架构概览
 
-LinuxCNC 是 AUDESYS 最重要的参考系统 — 其四层架构和 HAL 设计历经 30 年工业验证（NIST EMC 1990s → EMC2 2003 → LinuxCNC 2011 → v2.9.10 2026）：
+LinuxCNC 是 Weftik 最重要的参考系统 — 其四层架构和 HAL 设计历经 30 年工业验证（NIST EMC 1990s → EMC2 2003 → LinuxCNC 2011 → v2.9.10 2026）：
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -85,7 +85,7 @@ LinuxCNC 是 AUDESYS 最重要的参考系统 — 其四层架构和 HAL 设计�
 
 HAL 的"电路板类比"是 CNC 控制领域最优雅的设计抽象：
 
-| HAL 概念 | 电子类比 | 数据结构 | AUDESYS 对应 |
+| HAL 概念 | 电子类比 | 数据结构 | Weftik 对应 |
 |----------|---------|---------|-------------|
 | **Component** | 集成电路 | 链表注册 | HAL 组件注册表 |
 | **Pin** | IC 引脚 | `hal_pin_t { type, dir, *d_ptr, name }` | Signal 原语的端点 |
@@ -98,7 +98,7 @@ HAL 的"电路板类比"是 CNC 控制领域最优雅的设计抽象：
 
 LinuxCNC 的 Pin 是指向 Signal 数据空间的**指针**，实现零拷贝数据交换。当一个输出 Pin 连接到一个 Signal 时，该 Pin 的 `d_ptr` 直接指向 Signal 的 `data` 地址。所有读取该 Signal 的输入 Pin 同样指向该地址。这是一个**单写多读最新值覆盖**模型。
 
-**映射 D10**：这与 AUDESYS Signal 原语的语义完全一致。AUDESYS 在此基础上扩展了三个维度：
+**映射 D10**：这与 Weftik Signal 原语的语义完全一致。Weftik 在此基础上扩展了三个维度：
 1. **类型系统**：4 种 → 14 种（11 标量 + String + Blob + Array<T>）
 2. **通信范围**：本机共享内存 → FlatBuffers 序列化 over UDS/Zenoh（跨进程/跨网络）
 3. **命名规范**：`component.instance.pin` → `component.interface.name`（D10 约定）
@@ -113,7 +113,7 @@ LinuxCNC 的 `base-thread + servo-thread` 两级模型定义了 CNC 实时控制
 | **servo-thread** | 500-1000μs | 中 | motion-command-handler、轨迹规划 (TP)、PID 伺服环、运动学正/逆解算 |
 | 用户空间 | 非实时 | 普通 | GUI、I/O 控制、文件操作 |
 
-**映射 D13**：AUDESYS 的三级延迟模型（<1μs RT 数据面 / ~10μs I/O 通信面 / ~100μs 控制面）与 LinuxCNC 的两级模型理念一致，但粒度更细：
+**映射 D13**：Weftik 的三级延迟模型（<1μs RT 数据面 / ~10μs I/O 通信面 / ~100μs 控制面）与 LinuxCNC 的两级模型理念一致，但粒度更细：
 - Layer 1 (<1μs): Rust 独占、SCHED_FIFO — 对应 LinuxCNC base-thread
 - Layer 2 (~10μs): Rust + C++ FlatBuffers over UDS — 对应 LinuxCNC servo-thread
 - Layer 3 (~100μs): 15 种语言 FlatBuffers over Zenoh — 对应 LinuxCNC 用户空间
@@ -133,7 +133,7 @@ addf motion-controller servo-thread
 addf pid.0.do-pid-calcs servo-thread
 ```
 
-这种设计允许系统集成商精确控制每个函数在哪个线程以什么频率执行，实现了"定义"与"调度"的分离。AUDESYS Runtime 的调度器可参考这个函数级粒度，将不同 HAL 组件的 RT 回调分组到不同优先级的线程中。
+这种设计允许系统集成商精确控制每个函数在哪个线程以什么频率执行，实现了"定义"与"调度"的分离。Weftik Runtime 的调度器可参考这个函数级粒度，将不同 HAL 组件的 RT 回调分组到不同优先级的线程中。
 
 ### 2.5 NML 通信协议
 
@@ -149,21 +149,21 @@ NML（Neutral Message Language）是 LinuxCNC 非实时层之间的消息传递�
 
 ### 2.6 可插拔运动学系统
 
-LinuxCNC 的 15+ 可插拔运动学模块通过标准 C 函数接口（`kinematicsForward`/`kinematicsInverse`/`kinematicsType`）实现。支持从三轴直角坐标到六足并联的完整拓扑谱系。通过 `switchkins` 模块支持运行时切换最多 3 种运动学 — 这对 AUDESYS 的多场景仿真具有直接参考价值。
+LinuxCNC 的 15+ 可插拔运动学模块通过标准 C 函数接口（`kinematicsForward`/`kinematicsInverse`/`kinematicsType`）实现。支持从三轴直角坐标到六足并联的完整拓扑谱系。通过 `switchkins` 模块支持运行时切换最多 3 种运动学 — 这对 Weftik 的多场景仿真具有直接参考价值。
 
-### 2.7 对 AUDESYS 的采纳判定
+### 2.7 对 Weftik 的采纳判定
 
-| 特征 | 判定 | 理由与 AUDESYS 映射 |
+| 特征 | 判定 | 理由与 Weftik 映射 |
 |------|------|-------------------|
 | **四层架构分离** | **ADOPT** | 管理层↔控制层↔实时层↔硬件层的清晰分层。映射: Studio IDE ↔ Runtime ↔ HAL ↔ 物理层 |
-| **HAL Signal 概念** | **ADOPT** | 单写多读最新值 — 直接对应 D10 Signal 原语。AUDESYS 扩展类型系统和跨网络能力 |
+| **HAL Signal 概念** | **ADOPT** | 单写多读最新值 — 直接对应 D10 Signal 原语。Weftik 扩展类型系统和跨网络能力 |
 | **NML 消息总线** | **SKIP** | 替换为 D10 StreamChannel（多写多读有缓冲队列）+ RPC（请求-响应），语义更明确 |
 | **共享内存通信** | **SKIP** | 替换为 D11 amw 抽象层 — FlatBuffers over UDS/Zenoh，不限于本机 |
-| **两级实时线程** | **ADAPT** | 概念保留，AUDESYS D13 扩展为三级延迟 + 多类型线程 |
-| **函数驱动调度** | **ADOPT** | 函数级粒度调度是 AUDESYS Runtime 调度器的参考设计 |
-| **HAL 组件注册表** | **ADOPT** | 150+ 组件的分类体系（运动/信号处理/逻辑/数学/硬件/通信/PLC/UI/工具）是 AUDESYS HAL 组件注册表的组织参考 |
-| **halscope/halmeter** | **ADOPT** | 实时信号示波器 + 万用表 — 映射 AUDESYS 工业调试桥的实时观测面板 |
-| **可插拔运动学** | **ADOPT (Phase 3+)** | 运动学模块通过标准接口可插拔 — AUDESYS G-code 编译器的运动学组件化 |
+| **两级实时线程** | **ADAPT** | 概念保留，Weftik D13 扩展为三级延迟 + 多类型线程 |
+| **函数驱动调度** | **ADOPT** | 函数级粒度调度是 Weftik Runtime 调度器的参考设计 |
+| **HAL 组件注册表** | **ADOPT** | 150+ 组件的分类体系（运动/信号处理/逻辑/数学/硬件/通信/PLC/UI/工具）是 Weftik HAL 组件注册表的组织参考 |
+| **halscope/halmeter** | **ADOPT** | 实时信号示波器 + 万用表 — 映射 Weftik 工业调试桥的实时观测面板 |
+| **可插拔运动学** | **ADOPT (Phase 3+)** | 运动学模块通过标准接口可插拔 — Weftik G-code 编译器的运动学组件化 |
 
 ---
 
@@ -221,18 +221,18 @@ GRBL 的**16 块环缓冲 + 两遍重计算**是紧凑前瞻规划的经典实�
 
 GRBL 的 9 状态状态机（IDLE → QUEUED → CYCLE → HOLD → HOMING → ALARM → CHECK_MODE → SAFETY_DOOR → SLEEP）是嵌入式 CNC 状态管理的完整参考。所有状态转换通过 volatile 标志位触发，中断（Reset/Safety Door/Feed Hold）优先级高于循环启动。
 
-### 3.5 对 AUDESYS 的采纳判定
+### 3.5 对 Weftik 的采纳判定
 
-| 特征 | 判定 | 理由与 AUDESYS 映射 |
+| 特征 | 判定 | 理由与 Weftik 映射 |
 |------|------|-------------------|
-| **中断驱动步进** | **ADOPT (Phase 1)** | 定时器 ISR 驱动的步进脉冲生成 — 映射 AUDESYS RT 数据面的步进组件 |
+| **中断驱动步进** | **ADOPT (Phase 1)** | 定时器 ISR 驱动的步进脉冲生成 — 映射 Weftik RT 数据面的步进组件 |
 | **16 块规划缓冲** | **ADOPT** | 前瞻规划缓冲概念 — 映射 D10 StreamChannel 有界队列 |
-| **Bresenham/AMASS 算法** | **ADAPT** | 无 FPU 平台用 Bresenham，有 FPU 平台用 DDA。AUDESYS HAL 步进组件库提供算法选项 |
-| **CPU 映射系统 (cpu_map.h)** | **ADOPT** | 硬件无关引脚映射 — AUDESYS HAL 驱动平台适配的参考模式 |
+| **Bresenham/AMASS 算法** | **ADAPT** | 无 FPU 平台用 Bresenham，有 FPU 平台用 DDA。Weftik HAL 步进组件库提供算法选项 |
+| **CPU 映射系统 (cpu_map.h)** | **ADOPT** | 硬件无关引脚映射 — Weftik HAL 驱动平台适配的参考模式 |
 | **实时命令 volatile 标志位** | **ADAPT** | 概念映射到 D10 RPC 原语 — 控制命令通过低延迟 RPC 通道 |
 | **系统状态机** | **ADOPT** | 9 状态模型是 Runtime Engine 运动状态管理的参考 |
 | **直接 GPIO 切换** | **SKIP** | 替换为 D10 Signal 传输 — 步进事件标准化为 HAL 信号 |
-| **8 位 AVR 目标** | **SKIP** | AUDESYS 最低硬件基线为 32 位 ARM（匹配 D19 多语言策略） |
+| **8 位 AVR 目标** | **SKIP** | Weftik 最低硬件基线为 32 位 ARM（匹配 D19 多语言策略） |
 | **EEPROM 配置** | **ADAPT** | 掉电保持的概念保留 — 映射 D17 Config Barrier 的持久化层 |
 
 ---
@@ -241,7 +241,7 @@ GRBL 的 9 状态状态机（IDLE → QUEUED → CYCLE → HOLD → HOMING → A
 
 ### 4.1 架构概览
 
-Klipper 是 AUDESYS Studio ↔ Controller 两层模型最接近的竞品参考。其核心创新是**"上位机计算，下位机执行"**的分布式架构：
+Klipper 是 Weftik Studio ↔ Controller 两层模型最接近的竞品参考。其核心创新是**"上位机计算，下位机执行"**的分布式架构：
 
 ```
 Tier 1: Host (Raspberry Pi, Python + C helpers)
@@ -267,7 +267,7 @@ Tier 3: 生态层
 
 Klipper MCU 协议的核心创新是**动态数据字典**（Data Dictionary）— MCU 构建时自动收集所有 `DECL_COMMAND()` 和 `sendf()` 宏声明的命令/响应描述，zlib 压缩为 JSON 字符串存储在 MCU Flash。Host 连接时通过 `identify` command 分块下载、解压、解析字典，用字典编码所有后续命令。
 
-**映射 D11 (HalDiscovery)**：Data Dictionary 的概念直接映射到 AUDESYS HalDiscovery 的设备类型描述机制。区别在于：Klipper 的字典在编译时生成、MCU Flash 存储；AUDESYS 的 HalDiscovery 可以支持运行时动态发现和注册。
+**映射 D11 (HalDiscovery)**：Data Dictionary 的概念直接映射到 Weftik HalDiscovery 的设备类型描述机制。区别在于：Klipper 的字典在编译时生成、MCU Flash 存储；Weftik 的 HalDiscovery 可以支持运行时动态发现和注册。
 
 ### 4.3 步进压缩 — 10-50x 带宽优化
 
@@ -286,7 +286,7 @@ Klipper 的 Input Shaper 是**开环前馈控制**技术在消费级 3D 打印�
 - ADXL345 加速度计自动测量共振频率（5-133Hz 扫描）
 - `SHAPER_CALIBRATE` 命令自动计算最佳 shaper_type + shaper_freq
 
-**映射 AUDESYS HAL Filter Chain**：Klipper "运动学 → Input Shaper → 步进"的链式滤波架构直接启发了 AUDESYS HAL 的 Filter Chain 设计 — 在 Motion Generator → Actuator 之间串联可配置滤波器（Input Shaper / Low-pass / Dead-band）。
+**映射 Weftik HAL Filter Chain**：Klipper "运动学 → Input Shaper → 步进"的链式滤波架构直接启发了 Weftik HAL 的 Filter Chain 设计 — 在 Motion Generator → Actuator 之间串联可配置滤波器（Input Shaper / Low-pass / Dead-band）。
 
 ### 4.5 多 MCU 时钟同步
 
@@ -299,17 +299,17 @@ Klipper 的 G-code 宏系统支持 Jinja2 模板引擎 + 变量 + 条件判断�
 - 基于 printer 状态变量的条件判断和循环
 - Python 扩展（klippy/extras/）无需 Jinja2 知识即可开发
 
-**映射 AUDESYS Studio IDE 脚本引擎**：D55 CNC 宏系统可参考 Klipper 模式 — 轻量级模板语言 + 预定义控制命令，比完整 IEC 61131-3 更轻量、更易学。
+**映射 Weftik Studio IDE 脚本引擎**：D55 CNC 宏系统可参考 Klipper 模式 — 轻量级模板语言 + 预定义控制命令，比完整 IEC 61131-3 更轻量、更易学。
 
-### 4.7 对 AUDESYS 的采纳判定
+### 4.7 对 Weftik 的采纳判定
 
-| 特征 | 判定 | 理由与 AUDESYS 映射 |
+| 特征 | 判定 | 理由与 Weftik 映射 |
 |------|------|-------------------|
-| **Host/MCU 分布式** | **ADOPT (Phase 2+)** | 直接映射 AUDESYS Studio ↔ Controller 两层项目模型 |
-| **Python Host 代码** | **SKIP** | AUDESYS Host 采用 Rust/C++（D19），Python 不进入 RT 路径 |
+| **Host/MCU 分布式** | **ADOPT (Phase 2+)** | 直接映射 Weftik Studio ↔ Controller 两层项目模型 |
+| **Python Host 代码** | **SKIP** | Weftik Host 采用 Rust/C++（D19），Python 不进入 RT 路径 |
 | **MCU Data Dictionary** | **ADAPT** | 概念映射到 D11 HalDiscovery 的设备类型描述 |
 | **步进压缩算法** | **ADOPT** | D10 StreamChannel 批处理/压缩传输 — Phase 2+ 优化方向 |
-| **Input Shaper** | **ADOPT** | AUDESYS HAL Filter Chain 设计 — 可串联滤波器架构 |
+| **Input Shaper** | **ADOPT** | Weftik HAL Filter Chain 设计 — 可串联滤波器架构 |
 | **Jinja2 宏系统** | **ADOPT** | Studio IDE 轻量级脚本引擎参考 (D55) |
 | **printer.cfg 无编译** | **ADOPT (理念)** | D24 YAML 开发态 + 一次编译 FlatBuffers 的策略内化了此理念 |
 | **多 MCU 时钟同步** | **ADOPT (Phase 3+)** | HalQoS 高级特性 — 分布式时钟同步 |
@@ -332,15 +332,15 @@ Marlin 的 `Configuration.h` 包含 2000+ 配置项，通过条件编译 `#ifdef
 - **优势**：零运行时开销、代码裁剪精确
 - **劣势**：每次参数修改需重新编译烧录（30 分钟迭代周期）、配置复杂度高、新手易出错
 
-**AUDESYS 应对（D24）**：YAML 开发态（人类可读、Git 友好）+ FlatBuffers 运行时（零拷贝加载、零堆分配），避免 Marlin 的"编译即配置"反模式。核心编译时参数（如 PIN 映射）可类似 Marlin 编译时确定，但运行时参数通过 YAML→FlatBuffers 管道配置。
+**Weftik 应对（D24）**：YAML 开发态（人类可读、Git 友好）+ FlatBuffers 运行时（零拷贝加载、零堆分配），避免 Marlin 的"编译即配置"反模式。核心编译时参数（如 PIN 映射）可类似 Marlin 编译时确定，但运行时参数通过 YAML→FlatBuffers 管道配置。
 
-### 5.4 对 AUDESYS 的采纳判定
+### 5.4 对 Weftik 的采纳判定
 
-| 特征 | 判定 | 理由与 AUDESYS 映射 |
+| 特征 | 判定 | 理由与 Weftik 映射 |
 |------|------|-------------------|
 | **紧凑 G-code 解析器** | **ADOPT** | 双遍解析 + 模态组设计的紧凑实现 — G-code 编译器的解析器参考
 | **PID 温度控制** | **ADOPT (参考)** | 积分限幅、热失控保护、多路并行 — 工业验证的 PID 实现
-| **单芯片 MCU 架构** | **SKIP** | AUDESYS D19 分布式平台 — 与单芯片一体式方向不兼容
+| **单芯片 MCU 架构** | **SKIP** | Weftik D19 分布式平台 — 与单芯片一体式方向不兼容
 | **Configuration.h 配置** | **SKIP (教训)** | D24 YAML + FlatBuffers + D17 Config Barrier — 避免"编译即配置" |
 
 ---
@@ -373,7 +373,7 @@ hal_export_funct("my_func", func, ...);  // 导出函数
 // 仅需 3 个函数调用 → 组件启动
 ```
 
-**映射 D11 (amw)**：RTAPI 的"RTOS 无关"理念与 AUDESYS amw 抽象层的"传输/发现/QoS 实现可替换"在哲学上一致。区别在于抽象层次：RTAPI 抽象的是实时内核调度接口；amw 抽象的是通信中间件传输接口。
+**映射 D11 (amw)**：RTAPI 的"RTOS 无关"理念与 Weftik amw 抽象层的"传输/发现/QoS 实现可替换"在哲学上一致。区别在于抽象层次：RTAPI 抽象的是实时内核调度接口；amw 抽象的是通信中间件传输接口。
 
 ### 6.3 instcomp — 运行时动态实例化
 
@@ -399,7 +399,7 @@ Machinetalk 是 Machinekit 引入的 WebSocket + Protocol Buffers 远程通信�
 
 Machinekit 从 155 名贡献者到基本停滞（2024 年最后提交），关键教训：
 
-| 教训 | Machinekit 表现 | AUDESYS 应对 |
+| 教训 | Machinekit 表现 | Weftik 应对 |
 |------|---------------|-------------|
 | **分叉成本** | LinuxCNC 差异 20000+ 提交 | D34: 不依赖分叉，原始设计 |
 | **社区分裂** | 贡献者分散到 3 个仓库 | D34: hal-core 驱动并行，减少分裂风险 |
@@ -407,13 +407,13 @@ Machinekit 从 155 名贡献者到基本停滞（2024 年最后提交），关�
 | **平台绑定** | BeagleBone 深度绑定 | D19: 多语言策略确保跨平台 |
 | **测试不足** | 缺乏 CI 基础设施 | D30: 三层 QA 从 Phase 0 开始 |
 
-### 6.7 对 AUDESYS 的采纳判定
+### 6.7 对 Weftik 的采纳判定
 
-| 特征 | 判定 | 理由与 AUDESYS 映射 |
+| 特征 | 判定 | 理由与 Weftik 映射 |
 |------|------|-------------------|
 | **RTAPI RTOS 抽象** | **ADOPT (理念)** | 与 D11 amw 抽象层哲学一致 — 底层实现可替换 |
 | **instcomp 动态实例化** | **ADOPT** | 运行时动态创建 — 映射 D17 Config Barrier 的动态配置变更 |
-| **Machinetalk 远程 HAL** | **ADAPT** | WebSocket + Protobuf 验证了远程 HAL 可行性。AUDESYS: D19 FlatBuffers + Zenoh |
+| **Machinetalk 远程 HAL** | **ADAPT** | WebSocket + Protobuf 验证了远程 HAL 可行性。Weftik: D19 FlatBuffers + Zenoh |
 | **PRU 异构计算** | **ADOPT (Phase 3+)** | FPGA/MCU 协同的参考架构 |
 | **项目停滞教训** | **ADOPT (治理)** | D34/D30/D43 共同应对社区可持续性风险 |
 
@@ -446,15 +446,15 @@ grblHAL 的 `hal_t` 结构体包含约 50+ 个函数指针，覆盖：
 
 驱动开发者只需实现这些函数指针，即可将 grblHAL 部署到新硬件平台。
 
-**映射 D11 (HalTransport trait)**：grblHAL 的 `hal_t` 结构体与 AUDESYS 的 `HalTransport` trait 在抽象模式上一致 — 都是通过接口/函数指针表实现底层实现的可替换性。区别在于 grblHAL 限制在单 MCU 内的硬件驱动抽象，AUDESYS 扩展到跨进程/跨网络的通信传输抽象。
+**映射 D11 (HalTransport trait)**：grblHAL 的 `hal_t` 结构体与 Weftik 的 `HalTransport` trait 在抽象模式上一致 — 都是通过接口/函数指针表实现底层实现的可替换性。区别在于 grblHAL 限制在单 MCU 内的硬件驱动抽象，Weftik 扩展到跨进程/跨网络的通信传输抽象。
 
-### 7.3 对 AUDESYS 的采纳判定
+### 7.3 对 Weftik 的采纳判定
 
 | 特征 | 判定 | 理由 |
 |------|------|------|
-| **核心-驱动分离** | **ADOPT** | 直接参考 — AUDESYS HAL 核心 trait 定义与硬件实现分离 |
+| **核心-驱动分离** | **ADOPT** | 直接参考 — Weftik HAL 核心 trait 定义与硬件实现分离 |
 | **hal_t 函数指针表** | **ADAPT** | Rust trait 替代 C 函数指针表，类型安全 |
-| **插件框架** | **ADOPT** | AUDESYS HAL 组件的动态加载/注册机制参考 |
+| **插件框架** | **ADOPT** | Weftik HAL 组件的动态加载/注册机制参考 |
 
 ---
 
@@ -493,13 +493,13 @@ G-code 输入
 - V2: FreeRTOS 多任务 + 模块注册表查找 + M-code 类型安全处理器
 - 架构巨大差异导致用户升级困难
 
-**AUDESYS 启示**：D22 分阶段编译器策略（RuSTy → HAL IR → 自研，HAL IR 稳定接口）正是为了避免类似 V1→V2 的破坏性架构变更。保持接口稳定性，内部实现可替换。
+**Weftik 启示**：D22 分阶段编译器策略（RuSTy → HAL IR → 自研，HAL IR 稳定接口）正是为了避免类似 V1→V2 的破坏性架构变更。保持接口稳定性，内部实现可替换。
 
-### 8.4 对 AUDESYS 的采纳判定
+### 8.4 对 Weftik 的采纳判定
 
 | 特征 | 判定 | 理由 |
 |------|------|------|
-| **运动控制管线** | **ADOPT** | G-code → Robot → Planner → Conveyor → Stepper 管线是 AUDESYS Runtime 运动控制的参考 |
+| **运动控制管线** | **ADOPT** | G-code → Robot → Planner → Conveyor → Stepper 管线是 Weftik Runtime 运动控制的参考 |
 | **事件驱动模块** | **ADAPT** | 事件总线 → D10 三原语（Signal/StreamChannel/RPC）替代广播 |
 | **config.txt 配置** | **ADOPT (理念)** | 无编译配置验证了文本配置在工业控制中的可行性 (D24) |
 | **V1→V2 升级教训** | **ADOPT (治理)** | 保持接口稳定，内部演进 — D22 策略验证 |
@@ -544,7 +544,7 @@ TwinCAT 的最大差异点是**在同一 IPC 上使用同一实时 Task 调度�
 
 **以上全部在一个 IPC 上运行，一个项目文件中管理。**
 
-**映射 AUDESYS**: TwinCAT 的多运行时统一模型是 AUDESYS "IEC 61131-3 + G-code 双语言同一 Runtime 调度"的产品愿景参考。TwinCAT 证明了"(PLC 逻辑 + CNC 运动控制) 同平台确定性调度"是可行的，且经过了近 30 年（1996-2025）的商业验证。
+**映射 Weftik**: TwinCAT 的多运行时统一模型是 Weftik "IEC 61131-3 + G-code 双语言同一 Runtime 调度"的产品愿景参考。TwinCAT 证明了"(PLC 逻辑 + CNC 运动控制) 同平台确定性调度"是可行的，且经过了近 30 年（1996-2025）的商业验证。
 
 ### 9.3 ADS 通信协议
 
@@ -554,26 +554,26 @@ ADS 是 TwinCAT 系统的统一通信协议，核心特征：
 - **服务类型**: Read / Write / ReadWrite / Notification（订阅/推送）
 - **传输层**: TCP/IP / UDP / USB / 过程数据映射
 
-**映射 AUDESYS**: ADS 的消息路由 + Read/Write/Notification 模式与 D10 的三原语（Signal=Notification 推送、RPC=Read/Write 请求-响应、StreamChannel=流式传输）有对应关系。AMS Port 的可配置设备标识启发了 HalDiscovery 的地址设计方案。
+**映射 Weftik**: ADS 的消息路由 + Read/Write/Notification 模式与 D10 的三原语（Signal=Notification 推送、RPC=Read/Write 请求-响应、StreamChannel=流式传输）有对应关系。AMS Port 的可配置设备标识启发了 HalDiscovery 的地址设计方案。
 
-### 9.4 对 AUDESYS 的采纳判定
+### 9.4 对 Weftik 的采纳判定
 
-| 特征 | 判定 | 理由与 AUDESYS 映射 |
+| 特征 | 判定 | 理由与 Weftik 映射 |
 |------|------|-------------------|
 | **PLC+CNC 统一** | **ADOPT (产品愿景)** | IEC 61131-3 + G-code 同一 Runtime — 映射 D55 |
 | **多运行时统一调度** | **ADOPT (理念)** | 不同运行时挂载同一 Task 调度器 — D13 四系统混合调度的工业验证 |
 | **ADS 通信协议** | **ADAPT** | 消息路由模式映射 HalDiscovery 地址设计 |
-| **EtherCAT 专有技术** | **SKIP** | AUDESYS 不绑定特定总线协议（D11 amw 传输可替换） |
-| **Visual Studio 集成** | **ADOPT (理念)** | "使用成熟 IDE 而非自研"原则 — AUDESYS Studio IDE 同样选择成熟技术栈 |
-| **TwinCAT/BSD** | **ADOPT (理念)** | 专用实时操作系统的思路 — AUDESYS 可参考 PREEMPT_RT Linux 作为 RT 面 OS |
+| **EtherCAT 专有技术** | **SKIP** | Weftik 不绑定特定总线协议（D11 amw 传输可替换） |
+| **Visual Studio 集成** | **ADOPT (理念)** | "使用成熟 IDE 而非自研"原则 — Weftik Studio IDE 同样选择成熟技术栈 |
+| **TwinCAT/BSD** | **ADOPT (理念)** | 专用实时操作系统的思路 — Weftik 可参考 PREEMPT_RT Linux 作为 RT 面 OS |
 
 ---
 
 ## 10. 架构对比总表
 
-下表从 12 个设计维度横比 8 个 CNC 系统，标注与 AUDESYS 的兼容度：
+下表从 12 个设计维度横比 8 个 CNC 系统，标注与 Weftik 的兼容度：
 
-| 维度 | LinuxCNC | GRBL | Klipper | Marlin | Machinekit | grblHAL | Smoothieware | TwinCAT CNC | **AUDESYS 策略** |
+| 维度 | LinuxCNC | GRBL | Klipper | Marlin | Machinekit | grblHAL | Smoothieware | TwinCAT CNC | **Weftik 策略** |
 |------|---------|------|---------|--------|------------|---------|-------------|-------------|-----------------|
 | **G-code 解析器** | RS274NGC 完整 | 双遍解析子集 | Python 完整 | 双遍解析子集 | RS274NGC 完整 | 双遍解析子集 | 完整解析 | DIN 66025 | ADOPT GRBL 紧凑模式 + 扩展 (D55) |
 | **运动规划器** | 实时 TP 前瞻 | 16 块环缓冲 | Python 前瞻 + C 压缩 | 梯形规划 | 实时 TP 前瞻 | 16 块环缓冲 | 块队列前瞻 | NC 插补器 | ADOPT GRBL 缓冲区 + Klipper 压缩 |
@@ -586,20 +586,20 @@ ADS 是 TwinCAT 系统的统一通信协议，核心特征：
 | **前瞻 (Look-ahead)** | 实时前瞻 | 16 块前瞻 | Python 前瞻队列 | 块队列前瞻 | 实时前瞻 | 16 块前瞻 | 块队列 | NC 内建 | ADOPT GRBL 16 块 + 可扩展 |
 | **源代码许可** | GPL-2.0 | GPL-3.0 | GPL-3.0 | GPL-3.0 | GPL-2.0 | GPL-3.0 | GPL-3.0 | 商业闭源 | Apache 2.0 |
 | **工业部署** | 改造市场 | Maker/DIY | Maker/高级 DIY | Maker/OEM | 研究/教育 | Maker→轻工业 | Maker/DIY | 工业全线 | 目标工业控制 |
-| **AUDESYS 兼容度** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Weftik 兼容度** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 
 > 兼容度评定标准：⭐⭐⭐⭐⭐ = 架构可直接映射，核心模式 ADOPT | ⭐⭐⭐⭐ = 部分映射，重要模式 ADOPT | ⭐⭐⭐ = 概念可参考，需 ADAPT | ⭐⭐ = 仅有单一模块参考价值 | ⭐ = 方向不兼容
 
 ---
 
-## 11. AUDESYS CNC 采纳参考模型
+## 11. Weftik CNC 采纳参考模型
 
-基于 8 个系统的交叉分析，AUDESYS CNC 参考模型从 4 个层次提取关键架构模式：
+基于 8 个系统的交叉分析，Weftik CNC 参考模型从 4 个层次提取关键架构模式：
 
-### 11.1 LinuxCNC → AUDESYS: 四层架构 + HAL 信号
+### 11.1 LinuxCNC → Weftik: 四层架构 + HAL 信号
 
 ```
-LinuxCNC                          AUDESYS CNC
+LinuxCNC                          Weftik CNC
 ─────────                         ───────────
 GUI 层 (多种 GUI)                   Studio IDE (Tauri + React)
 Task 控制器 (G-code 解析+NML)       Runtime Engine (控制面 + HalProgram)
@@ -619,10 +619,10 @@ HAL 硬件抽象层                      amw (HalTransport/HalDiscovery/HalQoS)
 - 本机共享内存 → FlatBuffers 跨进程/跨网络 (D19)
 - 静态 halcmd 配置 → D17 Config Barrier 动态配置
 
-### 11.2 GRBL → AUDESYS Phase 1: 极简步进执行
+### 11.2 GRBL → Weftik Phase 1: 极简步进执行
 
 ```
-GRBL                               AUDESYS Phase 1 CNC
+GRBL                               Weftik Phase 1 CNC
 ────                               ──────────────────
 主循环 G-code 解析+规划              Host Runtime (Rust)
 16 块环缓冲                         StreamChannel 有界队列 (D10)
@@ -634,10 +634,10 @@ Bresenham + AMASS                   可选 Bresenham/DDA 算法库
 
 Phase 1 策略：以最低架构开销建立 G-code 编译 → HAL IR 管道（D55），不追求 5 轴联动。GRBL 的极简步进执行模型作为 MVP CNC 运动控制参考实现。
 
-### 11.3 Klipper → AUDESYS Phase 2+: 分布式 Host/MCU
+### 11.3 Klipper → Weftik Phase 2+: 分布式 Host/MCU
 
 ```
-Klipper                            AUDESYS Phase 2+ CNC
+Klipper                            Weftik Phase 2+ CNC
 ───────                            ──────────────────
 RPi (Python Host)                  Studio IDE + Runtime Engine
   G-code 解析                       IEC 61131-3 编译器 + G-code 组件 (D55)
@@ -648,14 +648,14 @@ MCU (C, 定时执行)                    Controller MCU (HAL RT 面)
   queue_step 执行                   Signal/StreamChannel 步进原语
 ```
 
-Phase 2+ 策略：Klipper 验证了"上位机计算、下位机执行"的分布式架构可行性。AUDESYS Studio ↔ Controller 两层项目模型正是此架构的直接映射。
+Phase 2+ 策略：Klipper 验证了"上位机计算、下位机执行"的分布式架构可行性。Weftik Studio ↔ Controller 两层项目模型正是此架构的直接映射。
 
-### 11.4 TwinCAT CNC → AUDESYS 产品愿景: PLC+CNC 统一
+### 11.4 TwinCAT CNC → Weftik 产品愿景: PLC+CNC 统一
 
 TwinCAT 从 1996 年至今近 30 年的成功验证了 PLC+CNC 统一平台的商业可行性：
 
 ```
-TwinCAT                            AUDESYS 愿景
+TwinCAT                            Weftik 愿景
 ────────                           ────────────
 PLC Runtime                        IEC 61131-3 Runtime (ST/FBD/LD/SFC)
 NC/CNC Runtime                     G-code 运动控制模块 (D55)
@@ -682,11 +682,11 @@ Phase 4 (工业): TwinCAT 统一模式
 
 ---
 
-## 12. AUDESYS 差异化定位
+## 12. Weftik 差异化定位
 
 ### 12.1 核心技术差异
 
-| 维度 | 现有 CNC 系统通病 | AUDESYS 差异化 |
+| 维度 | 现有 CNC 系统通病 | Weftik 差异化 |
 |------|-----------------|---------------|
 | **双语言原生支持** | G-code OR IEC 61131-3 (择一) | **IEC 61131-3 + G-code 双语言原生** — PLC 逻辑用 IEC，运动路径用 G-code，同一 HalProgram 后端 (D55) |
 | **序列化格式** | 无标准化 (共享内存/NML/自定义二进制) | **FlatBuffers 零拷贝** (D19) — 跨语言、跨平台、零堆分配 |
@@ -703,7 +703,7 @@ Phase 4 (工业): TwinCAT 统一模式
 
 ### 12.2 CNC 特有差异化特性
 
-除了以上通用 HAL 差异化，AUDESYS CNC 子系统还具有以下专有特性：
+除了以上通用 HAL 差异化，Weftik CNC 子系统还具有以下专有特性：
 
 1. **G-code 作为第 6 种源码语言** (D55)：与 ST/IL/LD/FBD/SFC 五种 IEC 61131-3 语言并列，共用 HalProgram 后端，零 VM 变更
 2. **HAL IR 作为统一中间表示**：ST 编译器和 G-code 编译器都生成 HAL IR，使 PLC 逻辑和 CNC 运动路径可在同一 Runtime 中无缝交互

@@ -1,26 +1,26 @@
 ---
 name: ref-ignition
-description: "Ignition SCADA 平台参考 — Perspective Web HMI、Vision 客户端、模块化架构、Jython 脚本引擎。用于 AUDESYS Studio HMI 和 Runtime 设计。"
+description: "Ignition SCADA 平台参考 — Perspective Web HMI、Vision 客户端、模块化架构、Jython 脚本引擎。用于 Weftik Studio HMI 和 Runtime 设计。"
 ---
 
 # ref-ignition: Ignition SCADA Platform Reference
 
 > **Domain**: Industrial SCADA / HMI Platform  
 > **Source**: `docs/reference/ignition.md` (801 lines)  
-> **Target**: AUDESYS Studio HMI design, Runtime architecture, commercial strategy  
+> **Target**: Weftik Studio HMI design, Runtime architecture, commercial strategy  
 > **Depth**: Technical study — architecture, patterns, pitfalls, reference value
 
 ## Overview
 
-Ignition SCADA (Inductive Automation) is a web-native industrial application platform known for its unlimited licensing model, Perspective web-first HMI, and deep MQTT Sparkplug integration. This skill extracts the technical architecture, design patterns, commercial strategy, and AUDESYS-relevant lessons from the 7-section reference document.
+Ignition SCADA (Inductive Automation) is a web-native industrial application platform known for its unlimited licensing model, Perspective web-first HMI, and deep MQTT Sparkplug integration. This skill extracts the technical architecture, design patterns, commercial strategy, and Weftik-relevant lessons from the 7-section reference document.
 
 ## When to Use
 
-- Designing AUDESYS Studio HMI editor (Web IDE layout, component model, session management)
-- Architecting AUDESYS Runtime's tag/data point system
-- Planning AUDESYS commercial licensing model
+- Designing Weftik Studio HMI editor (Web IDE layout, component model, session management)
+- Architecting Weftik Runtime's tag/data point system
+- Planning Weftik commercial licensing model
 - Designing protocol adapter architecture (HAL Driver Manager)
-- Evaluating script/extension language strategy for AUDESYS
+- Evaluating script/extension language strategy for Weftik
 - Planning community ecosystem (training, certification, marketplace)
 
 ## Core Frameworks (4 Pillars)
@@ -39,7 +39,7 @@ Perspective is Ignition's next-gen HMI module (HTML5/React, browser-based design
 | **Data Binding** | Bidirectional, transforms, expression bindings |
 | **Scripting** | Python (server-side) + JavaScript (client-side, limited) |
 
-**Key AUDESYS Reference**: Browser-based industrial IDE is proven viable. Perspective Designer proved SCADA engineering can run in a browser.
+**Key Weftik Reference**: Browser-based industrial IDE is proven viable. Perspective Designer proved SCADA engineering can run in a browser.
 
 ### 2. Jython Scripting (and Its Lessons)
 
@@ -90,7 +90,7 @@ The full reference is organized into 7 chapters:
 | 4 | `chapters/ch04.md` | 现状与生态 — Version history, community, platform support, competitive comparison |
 | 5 | `chapters/ch05.md` | 市场定位 — Target industries, market position, pricing tiers, core competencies |
 | 6 | `chapters/ch06.md` | 产品特色 — Unlimited licensing, Web-Launch, Perspective, MQTT-first, Gateway architecture, Inductive University |
-| 7 | `chapters/ch07.md` | 对 AUDESYS 参考价值 — Web IDE, licensing, HAL mapping, protocol adapters, alarm management, script strategy, community |
+| 7 | `chapters/ch07.md` | 对 Weftik 参考价值 — Web IDE, licensing, HAL mapping, protocol adapters, alarm management, script strategy, community |
 
 ## Supporting Files
 
@@ -102,27 +102,27 @@ The full reference is organized into 7 chapters:
 
 ## Key Pitfalls (from Ignition)
 
-1. **Vision ↔ Perspective dual maintenance**: Two HMI product lines double maintenance. AUDESYS should pick ONE tech stack from day one.
+1. **Vision ↔ Perspective dual maintenance**: Two HMI product lines double maintenance. Weftik should pick ONE tech stack from day one.
 2. **Jython (Python 2.7) lock-in**: Script language runtime becomes 10-year debt. Choose embedding strategy carefully.
-3. **Java dependency**: Gateway on JVM is heavy for embedded/RT scenarios. AUDESYS Runtime should use C/Rust for real-time paths.
+3. **Java dependency**: Gateway on JVM is heavy for embedded/RT scenarios. Weftik Runtime should use C/Rust for real-time paths.
 4. **MQTT vendor dependency**: MQTT modules depend on Cirrus Link. Core communication should be in-house or fully open-source.
-5. **Binary format (no Git diff)**: Ignition project files are not easily diffable. AUDESYS should use text-based config formats (YAML).
+5. **Binary format (no Git diff)**: Ignition project files are not easily diffable. Weftik should use text-based config formats (YAML).
 
-## Reference Value for AUDESYS
+## Reference Value for Weftik
 
-| Area | Ignition Lesson | AUDESYS Application |
+| Area | Ignition Lesson | Weftik Application |
 |------|----------------|---------------------|
-| Web IDE | Perspective Designer proved browser-based SCADA engineering works | AUDESYS Studio HMI designer should be Web-first |
+| Web IDE | Perspective Designer proved browser-based SCADA engineering works | Weftik Studio HMI designer should be Web-first |
 | Licensing | Unlimited server licensing eliminates cost anxiety | Consider platform-free + module-paid model |
 | Protocol Adapters | Tag Provider pattern = unified driver interface | HAL Driver Manager trait design |
-| Alarm Pipeline | ISA 18.2 alarm lifecycle management | AUDESYS Runtime alarm pipeline |
+| Alarm Pipeline | ISA 18.2 alarm lifecycle management | Weftik Runtime alarm pipeline |
 | Scripting | Jython lock-in is a 10-year trap | WASM plugins or Lua for embedding |
-| Community | Inductive University + Integrator Program = ecosystem flywheel | AUDESYS Academy + Partner Program |
-| OPC UA | Built-in OPC UA Server + Client is essential | AUDESYS Runtime should embed OPC UA server |
-| Architecture | Gateway-centric (thin client) | AUDESYS Runtime-centric (HAL as core) |
+| Community | Inductive University + Integrator Program = ecosystem flywheel | Weftik Academy + Partner Program |
+| OPC UA | Built-in OPC UA Server + Client is essential | Weftik Runtime should embed OPC UA server |
+| Architecture | Gateway-centric (thin client) | Weftik Runtime-centric (HAL as core) |
 
 ## Related Skills
 
 - `ref-codesys` — CODESYS IDE architecture and IEC 61131-3 compiler strategy
 - `ref-labview` — LabVIEW graphical programming and binary format lessons
-- `design-system` — AUDESYS industrial UI design system
+- `design-system` — Weftik industrial UI design system

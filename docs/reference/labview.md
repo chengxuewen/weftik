@@ -137,13 +137,13 @@ LabVIEW 的最大优势之一是与 NI 硬件平台的深度集成：
 - **LabVIEW Tools Network**：超过 2,000 个第三方工具包和插件，涵盖专业领域（汽车诊断、音频测试、RF 测试等）
 - **NIWeek / NI Connect**：年度开发者大会（被 Emerson 收购后更名为 Emerson Exchange Test & Measurement）
 
-### 1.7 与 AUDESYS 的关系定位
+### 1.7 与 Weftik 的关系定位
 
-LabVIEW 对 AUDESYS 的参考价值主要在于：
-- **图形化编程范式**：LabVIEW 的数据流编程是最成功的工业图形化编程实现。AUDESYS Studio IDE 需要考虑是否支持类似的可视化控制逻辑编排——这对比 IEC 61131-3 的 FBD/LD/SFC 图形化语言有参考价值
-- **硬件抽象模式**：LabVIEW 的 DAQmx 驱动层提供了从物理硬件到编程接口的抽象——"配置通道→读取/写入VI"的模式与 AUDESYS HAL 的"Signal 读写方向"概念一致
-- **实时与 FPGA**：LabVIEW RT/FPGA 模块验证了"统一编程语言 + 不同执行目标"模式的可行性（该模式也是 AUDESYS D19 多语言策略的参考——Rust 核心统一不同层次）
-- **第二系统教训**：LabVIEW NXG 的失败为 AUDESYS 提供了关键警示——重写大型工业软件平台的风险和代价
+LabVIEW 对 Weftik 的参考价值主要在于：
+- **图形化编程范式**：LabVIEW 的数据流编程是最成功的工业图形化编程实现。Weftik Studio IDE 需要考虑是否支持类似的可视化控制逻辑编排——这对比 IEC 61131-3 的 FBD/LD/SFC 图形化语言有参考价值
+- **硬件抽象模式**：LabVIEW 的 DAQmx 驱动层提供了从物理硬件到编程接口的抽象——"配置通道→读取/写入VI"的模式与 Weftik HAL 的"Signal 读写方向"概念一致
+- **实时与 FPGA**：LabVIEW RT/FPGA 模块验证了"统一编程语言 + 不同执行目标"模式的可行性（该模式也是 Weftik D19 多语言策略的参考——Rust 核心统一不同层次）
+- **第二系统教训**：LabVIEW NXG 的失败为 Weftik 提供了关键警示——重写大型工业软件平台的风险和代价
 
 参考价值评分：⭐⭐⭐⭐ (4/5)
 
@@ -304,7 +304,7 @@ DAQmx 是 NI 的硬件驱动和编程 API，定义了从传感器到软件的完
 - **Task（任务）**：采集/输出操作的完整配置（通道选择、采样率、采样模式、触发条件、时钟源）
 - **DAQmx Read/Write VI**：执行实际的数据采集或信号输出。支持 N 采样、单点、连续采集模式
 
-**这种抽象模型与 AUDESYS HAL 的对照**：
+**这种抽象模型与 Weftik HAL 的对照**：
 - Task → 对应 Signal（配置化的 I/O 访问抽象）
 - 虚拟通道 → 对应 component.interface.name（命名通道）
 - 缩放/工程单位 → 对应 HAL 类型系统的类型转换层
@@ -486,20 +486,20 @@ LabVIEW NXG（2017-2021）的失败是工业软件领域的教科书级案例：
 4. **双 IDE 维护成本**：NI 需要同时维护两套 IDE（经典 + NXG），导致两套产品的更新速度都减慢
 5. **Window 37 年的技术债务**：经典 LabVIEW 代码库有 30+ 年历史，NXG 试图从头重写，低估了工程复杂度和功能的隐性依赖
 
-**对 AUDESYS 的启示**：
+**对 Weftik 的启示**：
 - 不要从零重写成熟的工业平台（从 DCS/Runtime 到 Studio IDE，应遵循增量演进而非大爆炸式重写）
 - 向后兼容性是工业软件的命脉（工程师的已有代码和投资必须被保护）
 - 社区和市场采用的惯性远大于技术优势
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 数据流编程与 HAL 通信原语对照 (⭐⭐⭐⭐⭐)
 
-LabVIEW 的数据流编程模型与 AUDESYS HAL 的三原语（Signal/StreamChannel/RPC）存在深刻的哲学对应关系：
+LabVIEW 的数据流编程模型与 Weftik HAL 的三原语（Signal/StreamChannel/RPC）存在深刻的哲学对应关系：
 
-| LabVIEW 概念 | AUDESYS HAL 映射 | 对照分析 |
+| LabVIEW 概念 | Weftik HAL 映射 | 对照分析 |
 |-------------|-----------------|---------|
 | 连线（Wire） | Signal 原语（单写多读，最新值） | 连线传递数据从源到目标——数据一到即触发目标节点执行。这与 Signal 的"最新值覆盖"语义一致。但 LabVIEW 连线是同步的（数据传递不经历时间），而 HAL Signal 可以是异步的（跨进程/跨机器） |
 | 队列（Queue）/通道（Channel Wire） | StreamChannel（多写多读，有缓冲） | LabVIEW 2016 引入的 Channel Wire（通道连线）模拟了 StreamChannel 的缓冲语义——数据在通道中排队等待消费。特别是 Stream Channel（类似 Kafka 分区流），标签 Channel（Tag Channel = 最新值模式，类似 Signal） |
@@ -508,11 +508,11 @@ LabVIEW 的数据流编程模型与 AUDESYS HAL 的三原语（Signal/StreamChan
 | Notifier（通知器） | Signal 的"值变化通知" | Notifier 在值变化时通知所有等待的接收者——对应 Signal 的订阅通知模式 |
 
 **关键洞察**：
-LabVIEW 30+ 年的设计演化验证了 AUDESYS D10 决策的核心正确性——"单向最新值"（Signal 语义）和"缓冲队列"（StreamChannel 语义）是不可合并的两种通信范式。LabVIEW 在 2016 年引入 Channel Wire 时就明确区分了 Tag Channel（类似 Signal = 最新值）和 Stream Channel（类似 StreamChannel = 队列缓冲），与 AUDESYS 的原语划分完全一致。
+LabVIEW 30+ 年的设计演化验证了 Weftik D10 决策的核心正确性——"单向最新值"（Signal 语义）和"缓冲队列"（StreamChannel 语义）是不可合并的两种通信范式。LabVIEW 在 2016 年引入 Channel Wire 时就明确区分了 Tag Channel（类似 Signal = 最新值）和 Stream Channel（类似 StreamChannel = 队列缓冲），与 Weftik 的原语划分完全一致。
 
 ### 7.2 DAQmx 通道模型对 HAL 命名体系的启示 (⭐⭐⭐⭐)
 
-DAQmx 的"物理通道 → 虚拟通道 → Task"模型为 AUDESYS HAL 的命名体系（component.interface.name）提供了直接参考：
+DAQmx 的"物理通道 → 虚拟通道 → Task"模型为 Weftik HAL 的命名体系（component.interface.name）提供了直接参考：
 
 ```
 DAQmx:  Dev1/ai0 (物理通道) → "Temperature Sensor 1" (虚拟通道) → Task (采集任务)
@@ -525,9 +525,9 @@ DAQmx 的关键设计：
 → 对应 HAL 的 Config Barrier：配置变更在周期边界批量提交
 ```
 
-### 7.3 LabVIEW RT 实时模型与 AUDESYS D13 线程调度对照 (⭐⭐⭐⭐)
+### 7.3 LabVIEW RT 实时模型与 Weftik D13 线程调度对照 (⭐⭐⭐⭐)
 
-| LabVIEW RT 调度特性 | AUDESYS D13 四系统混合线程调度 |
+| LabVIEW RT 调度特性 | Weftik D13 四系统混合线程调度 |
 |-------------------|------------------------------|
 | Timed Loop 确定性周期 | RT 线程（LinuxCNC 显式函数列表） |
 | CPU 核心隔离（Core Affinity） | RT 线程独占 CPU 核心 |
@@ -537,33 +537,33 @@ DAQmx 的关键设计：
 | Network Streams（host↔RT 通信） | amw_zenoh transport（跨节点 Signal/StreamChannel） |
 | 非实时循环（While Loop）用于日志/诊断 | I/O 通信线程 + dora-rs 事件驱动线程 |
 
-**LabVIEW RT 验证了 AUDESYS 的关键设计决策**：
+**LabVIEW RT 验证了 Weftik 的关键设计决策**：
 - 确定性实时循环可以与 HTTP 服务器、日志记录器在同一硬件上并行运行（核隔离 + 优先级调度）
 - "硬实时"和"软实时/非实时"任务共存的混合模式在工程上是可行的
 - 跨主机通信（host↔RT target）的延迟在 100μs-1ms 量级是可接受的（与 amw_zenoh 的 ~100μs 目标一致）
 
-### 7.4 图形化编程对 AUDESYS Studio IDE 的启示 (⭐⭐⭐)
+### 7.4 图形化编程对 Weftik Studio IDE 的启示 (⭐⭐⭐)
 
-LabVIEW 的 IDE 设计哲学对 AUDESYS Studio IDE 的参考价值：
+LabVIEW 的 IDE 设计哲学对 Weftik Studio IDE 的参考价值：
 
-| LabVIEW IDE 特性 | AUDESYS Studio 启示 |
+| LabVIEW IDE 特性 | Weftik Studio 启示 |
 |-----------------|-------------------|
 | 前面板 = UI / 框图 = 逻辑（分离但对齐） | Studio 应支持"HMI 布局面板"和"控制逻辑面板"的双视图模式 |
-| 高亮执行（数据流可视化调试） | AUDESYS 调试桥可考虑"数据流可视化"——在调试模式下高亮 Signal/StreamChannel 的数据流路径 |
+| 高亮执行（数据流可视化调试） | Weftik 调试桥可考虑"数据流可视化"——在调试模式下高亮 Signal/StreamChannel 的数据流路径 |
 | 数据探针（连线上悬浮实时值显示） | Studio 调试面板可在连线上显示实时 Signal 值和 StreamChannel 缓冲状态 |
 | 即时编译和运行（修改即运行） | Studio 应支持快速迭代的开发-测试-调试循环 |
 | Express VI（配置向导生成 VI） | Studio 可提供"配置向导"生成标准控制回路（PID 参数化、报警规则配置等），降低入门门槛 |
 | 连线类型颜色编码（蓝=整数、橙=浮点、绿=布尔） | Studio 的类型系统可视化应参考这种直观的类型着色方案 |
 
 **不推荐直接复制 LabVIEW 模式的方面**：
-- LabVIEW 的框图在大项目中会变得极度庞大和难以导航（"意大利面条代码"效应）。AUDESYS Studio 应保留文本编程（Structured Text）作为主要编辑模式，图形化仅作为辅助的概览和调试工具
-- 图形化代码的版本控制是一个长期未解决的问题（二进制 .vi 文件）。AUDESYS Studio 的工程文件应使用文本格式（如 JSON/YAML/Toml），确保 Git DIFF 可用
+- LabVIEW 的框图在大项目中会变得极度庞大和难以导航（"意大利面条代码"效应）。Weftik Studio 应保留文本编程（Structured Text）作为主要编辑模式，图形化仅作为辅助的概览和调试工具
+- 图形化代码的版本控制是一个长期未解决的问题（二进制 .vi 文件）。Weftik Studio 的工程文件应使用文本格式（如 JSON/YAML/Toml），确保 Git DIFF 可用
 
 ### 7.5 硬件抽象层设计对比 (⭐⭐⭐⭐⭐)
 
-LabVIEW 的 DAQmx 是业界最成功的商业 HAL 实现之一。与 AUDESYS HAL 的对比分析：
+LabVIEW 的 DAQmx 是业界最成功的商业 HAL 实现之一。与 Weftik HAL 的对比分析：
 
-| 维度 | DAQmx | AUDESYS HAL | 分析 |
+| 维度 | DAQmx | Weftik HAL | 分析 |
 |------|-------|------------|------|
 | 抽象粒度 | 通道级别（Channel） | 组件接口级别（component.interface.name） | HAL 更细粒度——一个 Signal 连接到一个具体 Pin 而非整个通道 |
 | 配置方式 | 图标配置向导 + MAX 工具 | YAML/JSON 配置文件 + Studio IDE 拓扑视图 | HAL 更直接，驱动层配置在 DAQmx 中过于依赖 GUI 工具（不利于自动化） |
@@ -574,15 +574,15 @@ LabVIEW 的 DAQmx 是业界最成功的商业 HAL 实现之一。与 AUDESYS HAL
 | 类型安全 | 接线颜色 + 编译时类型检查 | Rust 类型系统（编译时保证类型正确） | HAL 的类型安全性更强——Rust 的类型系统在编译时消除类型错误，而非依赖颜色编码 |
 | 多厂商支持 | NI 硬件为主，第三方通过 IVI/VISA | amw transport trait 可插拔任何协议栈 | HAL 的多厂商支持更系统化——通过 trait 接口替换底层实现 |
 
-### 7.6 LabVIEW FPGA 对 AUDESYS 的启发 (⭐⭐⭐)
+### 7.6 LabVIEW FPGA 对 Weftik 的启发 (⭐⭐⭐)
 
-LabVIEW FPGA 的关键设计特征为 AUDESYS Simulator 的未来扩展提供思路：
+LabVIEW FPGA 的关键设计特征为 Weftik Simulator 的未来扩展提供思路：
 
-- **单周期定时循环（SCTL）**：在单个 FPGA 时钟周期内完成整个循环体。对应 AUDESYS Simulator 的加速仿真模式——模拟器的仿真步长可以比实际物理时间更快（如 1ms 物理时间在 1μs 计算机时间内完成）
+- **单周期定时循环（SCTL）**：在单个 FPGA 时钟周期内完成整个循环体。对应 Weftik Simulator 的加速仿真模式——模拟器的仿真步长可以比实际物理时间更快（如 1ms 物理时间在 1μs 计算机时间内完成）
 - **硬件并行 vs 软件模拟**：FPGA 的真正并行（N 个独立循环同时运行）对应 Simulator 中需要通过多核并行模拟的离散设备
 - **FPGA I/O 的直接管脚映射**：对应 Simulator 的 AVD Manager 中设备模型的 I/O 接口——虚拟设备的状态变化直接反映在 Signal 值上
 
-### 7.7 总结：LabVIEW 对 AUDESYS 的关键参考权重
+### 7.7 总结：LabVIEW 对 Weftik 的关键参考权重
 
 | 参考领域 | 重要性 | 适用阶段 | 优先级 |
 |---------|--------|---------|--------|
@@ -600,13 +600,13 @@ LabVIEW FPGA 的关键设计特征为 AUDESYS Simulator 的未来扩展提供思
 
 | LabVIEW 模式 | 不推荐原因 |
 |-------------|-----------|
-| 二进制 .vi 源文件格式 | AUDESYS 工程文件必须为文本格式（JSON/YAML/TOML），确保 Git DIFF 可用 |
-| 专利保护的 G 语言 | AUDESYS 应基于开放标准（IEC 61131-3 + 自定义文本 DSL） |
-| NI 硬件深度绑定 | AUDESYS HAL 通过 amw trait 保持硬件无关性——不对任何特定厂商硬件有特殊优化 |
-| 图形化编程的意大利面条问题 | AUDESYS Studio 应以文本编程（ST）为主，图形化仅作为辅助概览和调试工具 |
+| 二进制 .vi 源文件格式 | Weftik 工程文件必须为文本格式（JSON/YAML/TOML），确保 Git DIFF 可用 |
+| 专利保护的 G 语言 | Weftik 应基于开放标准（IEC 61131-3 + 自定义文本 DSL） |
+| NI 硬件深度绑定 | Weftik HAL 通过 amw trait 保持硬件无关性——不对任何特定厂商硬件有特殊优化 |
+| 图形化编程的意大利面条问题 | Weftik Studio 应以文本编程（ST）为主，图形化仅作为辅助概览和调试工具 |
 | 高度依赖 GUI 的硬件配置（MAX） | HAL 配置应优先支持声明式文本文件（YAML/TOML），GUI 配置作为辅助 |
-| Vendor Lock-in 的商业模式 | AUDESYS 全开源（Apache 2.0），免费可商用，避免平台锁定 |
-| LabVIEW IDE 的单体架构 | AUDESYS Studio IDE 应采用插件化架构（VS Code 模式），而非单体 IDE |
+| Vendor Lock-in 的商业模式 | Weftik 全开源（Apache 2.0），免费可商用，避免平台锁定 |
+| LabVIEW IDE 的单体架构 | Weftik Studio IDE 应采用插件化架构（VS Code 模式），而非单体 IDE |
 
 ---
 
@@ -648,11 +648,11 @@ Python 在测试测量领域的崛起对 LabVIEW 构成最大威胁。PyVISA + P
 | 社区规模 | 全球数百万用户 | 全球 PLC 工程师群体（数量更大，但分散在多种 IDE 中） |
 | 实时性 | 基于 RTOS 确定性执行（< 1μs 抖动） | 基于 PLC 固件扫描（1ms-100ms 典型周期） |
 
-#### LabVIEW 与 AUDESYS 在编程模型上的根本差异
+#### LabVIEW 与 Weftik 在编程模型上的根本差异
 
-LabVIEW 的数据流执行模型与 AUDESYS 基于 IEC 61131-3 的周期扫描执行模型是两种本质上不同的编程范式。理解两者的差异有助于在设计 AUDESYS Studio IDE 时避免错误地借鉴不兼容的模式：
+LabVIEW 的数据流执行模型与 Weftik 基于 IEC 61131-3 的周期扫描执行模型是两种本质上不同的编程范式。理解两者的差异有助于在设计 Weftik Studio IDE 时避免错误地借鉴不兼容的模式：
 
-| 维度 | LabVIEW 数据流 | AUDESYS IEC 61131-3 周期扫描 |
+| 维度 | LabVIEW 数据流 | Weftik IEC 61131-3 周期扫描 |
 |------|-------------|---------------------------|
 | 执行触发 | 数据就绪即触发——所有输入数据到达后节点立即执行 | 固定周期扫描——按任务列表顺序在每个扫描周期执行所有逻辑 |
 | 执行顺序 | 数据依赖定义的隐式顺序（连线流定义） | 任务调度定义的显式顺序（每个周期内按预定义顺序） |
@@ -661,8 +661,8 @@ LabVIEW 的数据流执行模型与 AUDESYS 基于 IEC 61131-3 的周期扫描�
 | 状态管理 | Shift Register（循环结构中显式定义的反馈节点） | 函数块实例的持久化成员变量（函数块实例跨扫描周期存活） |
 | 调试体验 | Highlight Execution 逐节点追踪数据流——直观但慢 | 断点+单步+变量观测——传统调试体验
 
-**对 AUDESYS 的启示**：
-- AUDESYS Runtime 应采用 IEC 61131-3 的周期扫描模型（确定性、可预测），而非 LabVIEW 的数据流模型（不确定的调度顺序）
+**对 Weftik 的启示**：
+- Weftik Runtime 应采用 IEC 61131-3 的周期扫描模型（确定性、可预测），而非 LabVIEW 的数据流模型（不确定的调度顺序）
 - Studio IDE 的调试功能可以借鉴 LabVIEW 的"数据流可视化"——在调试模式下高亮 Signal/StreamChannel 的数据流路径，帮助工程师理解信息流
 - Studio 不应尝试实现完整的图形化数据流编程（那是 LabVIEW 的领域），而应专注于文本编程的智能辅助和可视化调试
 
@@ -690,9 +690,9 @@ Error Cluster 通过连线在框图节点间传播，类似于函数式编程中
    - Case Structure 根据错误状态分支（No Error → 正常执行路径 / Error → 错误处理路径）
    - General Error Handler VI 用于显示用户友好的错误对话框或记录到日志
 
-**与 AUDESYS 错误处理策略的对比**：
+**与 Weftik 错误处理策略的对比**：
 
-| 特征 | LabVIEW Error Cluster | AUDESYS (Rust) 错误处理 |
+| 特征 | LabVIEW Error Cluster | Weftik (Rust) 错误处理 |
 |------|----------------------|-------------------------|
 | 类型 | 动态检查（运行时错误传播） | 编译时检查（Result<T,E> 强制处理） |
 | 短路传播 | VI 跳过执行（隐式） | `?` 运算符（显式短路传播） |
@@ -700,12 +700,12 @@ Error Cluster 通过连线在框图节点间传播，类似于函数式编程中
 | 顺序强制 | Error Cluster 连线强制串行（副作用管理） | 通过 `?` 操作符隐式定义控制流 |
 | 用户通知 | General Error Handler VI（GUI 弹窗） | 日志系统 + HalQoS 告警 |
 
-AUDESYS HAL 的错误处理应该采用 Rust 的 Result<T,E> 模型而非 LabVIEW 的 Error Cluster 模型，因为：
+Weftik HAL 的错误处理应该采用 Rust 的 Result<T,E> 模型而非 LabVIEW 的 Error Cluster 模型，因为：
 - 编译时强制错误处理消除了"忘记检查错误"的一整类 bug（LabVIEW 中如果忘记连接 Error Out 到下游会导致静默吞异常）
 - Rust 的类型系统支持精确的错误类型（而非 I32 错误代码 + 字符串描述）
 - `?` 运算符比 LabVIEW 的连线模式更简洁且不会在复杂框图中造成过度连线混乱
 
-#### LabVIEW 的版本控制困境与 AUDESYS 的教训
+#### LabVIEW 的版本控制困境与 Weftik 的教训
 
 LabVIEW 的 .vi 文件是专有二进制格式，这一设计在长达 30+ 年的时间里造成了严重的版本控制问题：
 
@@ -722,26 +722,26 @@ LabVIEW 的 .vi 文件是专有二进制格式，这一设计在长达 30+ 年�
 - 使用 SCC（Source Code Control）集成，在保存 VI 时自动记录版本（Subversion 集成效果优于 Git）
 - 导出 VI 为文本格式（如 VI Scripting 生成的代码重新加载），但这会丢失框图布局信息
 
-**对 AUDESYS 的直接教训**：
-AUDESYS Studio IDE 的工程文件格式必须从第一天起就是文本格式（JSON/YAML/TOML），确保：
+**对 Weftik 的直接教训**：
+Weftik Studio IDE 的工程文件格式必须从第一天起就是文本格式（JSON/YAML/TOML），确保：
 1. Git DIFF 显示人类可读的变更差异
 2. 合并冲突可以通过标准文本合并工具解决
 3. 代码审查可以直接在 GitLab/GitHub PR 界面完成
 4. CI/CD 流水线可以直接读取/修改工程文件
 5. AI 编程助手（如 LLM）可以直接理解和生成工程文件
 
-**AUDESYS 的工程文件格式设计原则**：
+**Weftik 的工程文件格式设计原则**：
 - 控制逻辑（ST 代码）→ 纯文本文件（.st 文件）
 - HAL 拓扑配置 → YAML 文件（类似 Kubernetes 的声明式配置）
 - Signal/StreamChannel 连接关系 → JSON/YAML 映射表
 - 项目元数据（版本、作者、依赖）→ TOML 文件（类似 Cargo.toml）
 - HMI 布局定义 → JSON 描述结构（可被 Web 前端渲染器解析）
 
-#### LabVIEW Actor Framework 与 AUDESYS Runtime 的并发模型对比
+#### LabVIEW Actor Framework 与 Weftik Runtime 的并发模型对比
 
-LabVIEW Actor Framework（AF，基于消息驱动的 Actor 并发模型）与 AUDESYS Runtime 的线程调度模型代表了两种不同的并发设计哲学：
+LabVIEW Actor Framework（AF，基于消息驱动的 Actor 并发模型）与 Weftik Runtime 的线程调度模型代表了两种不同的并发设计哲学：
 
-| 维度 | LabVIEW Actor Framework | AUDESYS Runtime (D13) |
+| 维度 | LabVIEW Actor Framework | Weftik Runtime (D13) |
 |------|------------------------|----------------------|
 | 并发单位 | Actor = 独立运行的消息处理循环（Launch Actor 启动新 Actor） | 线程组（RT 线程 / I/O 线程 / 流线程） |
 | 通信机制 | 消息队列（Send Message → Actor 的消息处理循环接收） | Signal/StreamChannel/RPC 三原语（跨线程/跨进程） |
@@ -750,9 +750,9 @@ LabVIEW Actor Framework（AF，基于消息驱动的 Actor 并发模型）与 AU
 | 错误处理 | Actor 崩溃传消息给 Caller Actor（错误传播链） | 线程级错误 → HalQoS 告警（不跨线程传播崩溃） |
 | 典型应用 | 大型测试系统（数千个并发测试步骤管理） | 工业控制循环（确定性实时任务调度） |
 
-AF 对 AUDESYS 的部分设计启示：
-- **消息驱动的模块化**：AF 的成功证明消息驱动架构（Actor 独立状态 + 消息通信）适合大规模控制/测试系统。AUDESYS Runtime 的 MachineAct（QiTech 风格）可以借鉴 Actor 的隔离原则
-- **但不要复制 AF 的复杂度**：AF 在 LabVIEW 社区中以"学习曲线极度陡峭"著称——即使是经验丰富的 CLA 也需要数周才能熟练使用 AF。AUDESYS 的并发模型应保持简洁和可理解性
+AF 对 Weftik 的部分设计启示：
+- **消息驱动的模块化**：AF 的成功证明消息驱动架构（Actor 独立状态 + 消息通信）适合大规模控制/测试系统。Weftik Runtime 的 MachineAct（QiTech 风格）可以借鉴 Actor 的隔离原则
+- **但不要复制 AF 的复杂度**：AF 在 LabVIEW 社区中以"学习曲线极度陡峭"著称——即使是经验丰富的 CLA 也需要数周才能熟练使用 AF。Weftik 的并发模型应保持简洁和可理解性
 
 #### LabVIEW 的编译模型详细分析
 
@@ -776,10 +776,10 @@ LabVIEW 的编译过程与文本语言编译器有根本差异：
 **LabVIEW 编译器的关键权衡**：
 - 编译速度 vs 运行性能：LabVIEW 优先编译速度（工程师点击 Run 后 1 秒内必须启动执行），因此优化不如 Rust 的释放编译（release build）激进
 - LLVM 后端的影响：LabVIEW 2017+ 切换到 LLVM 后端后，运行性能有显著提升（特别是数值计算密集型 VI），但编译时间也增加了。这与 Rust 使用 LLVM 作为后端是一致的
-- FPGA 编译的特殊性：LabVIEW FPGA 的编译流程完全不同——G 代码被综合为 VHDL/Verilog，然后经过 Xilinx Vivado / Intel Quartus 的完整 FPGA 综合流程（Place & Route）。FPGA 编译时间从分钟到数小时（取决于设计复杂度），这与 AUDESYS 的代码编译完全不同
+- FPGA 编译的特殊性：LabVIEW FPGA 的编译流程完全不同——G 代码被综合为 VHDL/Verilog，然后经过 Xilinx Vivado / Intel Quartus 的完整 FPGA 综合流程（Place & Route）。FPGA 编译时间从分钟到数小时（取决于设计复杂度），这与 Weftik 的代码编译完全不同
 
-**对 AUDESYS 编译管线的启示**：
-- AUDESYS 的 AST→HIR→IR 编译管线（参考 truST Platform）应采用增量编译策略，优先编译速度（IDE 交互性）而非极限优化
+**对 Weftik 编译管线的启示**：
+- Weftik 的 AST→HIR→IR 编译管线（参考 truST Platform）应采用增量编译策略，优先编译速度（IDE 交互性）而非极限优化
 - 运行时代码执行应支持两种模式：Debug mode（快速编译，含调试信息）和 Release mode（完全优化，用于生产部署）
 - Studio IDE 的"编辑并立即运行"体验应与 truST 的 LSP 增量分析结合——编辑器保存后自动触发 Swift Compile，反馈循环在 1 秒内
 ---
@@ -933,10 +933,10 @@ NI 构建了完整的**硬件-软件一体化生态**:
 
 LabVIEW 最大的护城河是其**硬件抽象层生态**:
 
-| 驱动层 | 功能 | 类比 AUDESYS |
+| 驱动层 | 功能 | 类比 Weftik |
 |--------|------|-------------|
-| **NI-DAQmx** | DAQ 设备统一 API | 类似 AUDESYS HAL 的数据采集抽象 |
-| **NI-VISA** | 仪器控制（GPIB/串口/USB/Ethernet） | 类似 AUDESYS HAL 的协议抽象 |
+| **NI-DAQmx** | DAQ 设备统一 API | 类似 Weftik HAL 的数据采集抽象 |
+| **NI-VISA** | 仪器控制（GPIB/串口/USB/Ethernet） | 类似 Weftik HAL 的协议抽象 |
 | **NI-488.2** | GPIB 控制器 | — |
 | **IDNet** | 第三方仪器驱动库（7,000+） | — |
 | **NI-MAX** | 硬件配置与管理 | — |
@@ -978,13 +978,13 @@ LabVIEW 最大的护城河是其**硬件抽象层生态**:
    - 保证产品质量的严格测试
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 图形化编程 IDE 设计理念参考
 
-**LabVIEW 的 Front Panel + Block Diagram 模式**对 AUDESYS Studio IDE 的启示:
+**LabVIEW 的 Front Panel + Block Diagram 模式**对 Weftik Studio IDE 的启示:
 
-| LabVIEW 概念 | AUDESYS 可借鉴之处 |
+| LabVIEW 概念 | Weftik 可借鉴之处 |
 |-------------|-------------------|
 | **Front Panel**（前面板） | 提供所见即所得的 UI 设计器，适合非程序员 |
 | **Block Diagram**（程序框图） | 图形化数据流编程，隐式表达并行性 |
@@ -995,7 +995,7 @@ LabVIEW 最大的护城河是其**硬件抽象层生态**:
 | **Probe Tool**（探针工具） | 运行时数据调试观察 |
 | **Highlight Execution**（高亮执行） | 动画展示数据流走向，极适合教学和调试 |
 
-**AUDESYS 可考虑的设计**:
+**Weftik 可考虑的设计**:
 - **双视图架构**: 配置视图（类似 Front Panel）+ 逻辑视图（类似 Block Diagram）
 - **数据流可视化**: 以连线而非赋值语句表达数据传递
 - **运行时调试**: 数据流高亮 + 探针点
@@ -1003,7 +1003,7 @@ LabVIEW 最大的护城河是其**硬件抽象层生态**:
 
 ### 7.2 硬件抽象层设计（NI-DAQmx / VISA）
 
-LabVIEW 的硬件抽象层是 AUDESYS HAL 设计的最佳参考之一:
+LabVIEW 的硬件抽象层是 Weftik HAL 设计的最佳参考之一:
 
 **NI-DAQmx 设计特点**:
 - **统一 API**: 无论底层是 USB/cDAQ/PXI，API 接口一致
@@ -1018,11 +1018,11 @@ LabVIEW 的硬件抽象层是 AUDESYS HAL 设计的最佳参考之一:
 - **会话（Session）管理**: 每个连接一个会话
 - **同步/异步 I/O**: 支持阻塞和非阻塞操作
 
-**对 AUDESYS HAL 的具体建议**:
-- AUDESYS 的 amw_transport 层可参考 VISA 的会话管理模式（session-based resource handle）
+**对 Weftik HAL 的具体建议**:
+- Weftik 的 amw_transport 层可参考 VISA 的会话管理模式（session-based resource handle）
 - 可参考 NI-DAQmx 的 Task 概念（配置 + 执行 + 清理的三阶段生命周期）
 - 硬件发现（discovery）机制可参考 NI-MAX + VISA Resource Manager
-- 注意: LabVIEW 的驱动层高度绑定 NI 硬件；AUDESYS 需要设计为**厂商无关**的通用抽象
+- 注意: LabVIEW 的驱动层高度绑定 NI 硬件；Weftik 需要设计为**厂商无关**的通用抽象
 
 ### 7.3 实时模块的 RT 调度参考
 
@@ -1035,17 +1035,17 @@ LabVIEW 的硬件抽象层是 AUDESYS HAL 设计的最佳参考之一:
 - **Watchdog**: 硬件看门狗保护
 - **Deterministic Timing**: 保证时序确定性
 
-**对 AUDESYS Runtime 的启示**:
-- AUDESYS 的四系统混合线程调度（RT / I/O / 事件 / 控制面）可参考 LabVIEW RT 的 Timed Loop 设计
-- RT FIFO 模式对应于 AUDESYS 的 StreamChannel（多写多读有缓冲队列）
-- LabVIEW 的 Host <-> Target 通信模式对应于 AUDESYS 的 Supervisor <-> Runtime 架构
-- 看门狗和系统健康监控机制需要内建在 AUDESYS Runtime 中
+**对 Weftik Runtime 的启示**:
+- Weftik 的四系统混合线程调度（RT / I/O / 事件 / 控制面）可参考 LabVIEW RT 的 Timed Loop 设计
+- RT FIFO 模式对应于 Weftik 的 StreamChannel（多写多读有缓冲队列）
+- LabVIEW 的 Host <-> Target 通信模式对应于 Weftik 的 Supervisor <-> Runtime 架构
+- 看门狗和系统健康监控机制需要内建在 Weftik Runtime 中
 
 ### 7.4 数据流编程模型的启示
 
-LabVIEW 的数据流模型对 AUDESYS 的 **Signal/StreamChannel/RPC 三原语** 的验证:
+LabVIEW 的数据流模型对 Weftik 的 **Signal/StreamChannel/RPC 三原语** 的验证:
 
-| LabVIEW 数据流概念 | AUDESYS 对应 |
+| LabVIEW 数据流概念 | Weftik 对应 |
 |--------------------|-------------|
 | **Wire（连线）** | Signal（单写多读最新值覆盖） |
 | **Queue（队列）** | StreamChannel（多写多读有缓冲队列） |
@@ -1054,11 +1054,11 @@ LabVIEW 的数据流模型对 AUDESYS 的 **Signal/StreamChannel/RPC 三原语**
 | **Functional Global Variable** | Signal（全局最新值） |
 | **Shift Register** | StreamChannel 的环形缓冲区模式 |
 
-**关键洞察**: LabVIEW 证明了数据流模型在测试测量领域的**超强适用性**——它天然适合表达信号采集、处理、显示和控制的流水线。AUDESYS 的三原语（Signal/StreamChannel/RPC）覆盖了 LabVIEW 中除 Event Structure 外的所有通信模式，验证了 D10 决策的正确性。
+**关键洞察**: LabVIEW 证明了数据流模型在测试测量领域的**超强适用性**——它天然适合表达信号采集、处理、显示和控制的流水线。Weftik 的三原语（Signal/StreamChannel/RPC）覆盖了 LabVIEW 中除 Event Structure 外的所有通信模式，验证了 D10 决策的正确性。
 
 ### 7.5 其他值得学习的点
 
-| 主题 | LabVIEW 做法 | AUDESYS 借鉴 |
+| 主题 | LabVIEW 做法 | Weftik 借鉴 |
 |------|-------------|-------------|
 | **版本命名** | 年份+季度（2024 Q3） | 可参考 |
 | **社区策略** | 免费社区版+VIPM 生态 | 开源策略参考 |

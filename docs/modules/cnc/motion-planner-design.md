@@ -1,4 +1,4 @@
-# AUDESYS 运动规划器 (Motion Planner) 设计
+# Weftik 运动规划器 (Motion Planner) 设计
 
 > 生成日期：2026-07-19
 > 依赖决策：D10 (通信原语 Signal/StreamChannel/RPC), D13 (混合线程调度), D17 (Config Barrier + LockLevel), D55 (G-code→HAL IR 编译策略)
@@ -9,15 +9,15 @@
 
 ## 1. 概述
 
-### 1.1 运动规划器在 AUDESYS 中的定位
+### 1.1 运动规划器在 Weftik 中的定位
 
-AUDESYS Runtime 是扫描周期引擎（scan-cycle engine），默认周期 10ms。G-code 编译器将运动指令（G0/G1）编译为 HalProgram 中的 IR 指令流，运动规划器的职责是在这些指令**执行阶段**（而非编译阶段）计算每个周期的目标位置增量。
+Weftik Runtime 是扫描周期引擎（scan-cycle engine），默认周期 10ms。G-code 编译器将运动指令（G0/G1）编译为 HalProgram 中的 IR 指令流，运动规划器的职责是在这些指令**执行阶段**（而非编译阶段）计算每个周期的目标位置增量。
 
 **核心功能**：接收 G-code 编译产生的运动块（motion block），对每个运动块计算梯形速度剖面，在数百个 RT 周期内逐周期输出位置命令 Signal。
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    AUDESYS CNC 数据流                           │
+│                    Weftik CNC 数据流                           │
 │                                                                 │
 │  G-code 文本 → G-code Compiler → HalProgram (IR)                │
 │                                       │                         │
@@ -45,14 +45,14 @@ AUDESYS Runtime 是扫描周期引擎（scan-cycle engine），默认周期 10ms
 
 LinuxCNC 将 CNC 系统分为四层，运动规划器位于 **Motion 控制器 (EMCMOT)**：
 
-| 层 | 名称 | 实时性 | 与 AUDESYS 对应 |
+| 层 | 名称 | 实时性 | 与 Weftik 对应 |
 |----|------|:---:|------|
 | UI 层 | GUI (Axis, Gmoccapy, QtVCP) | 非实时 | Studio IDE |
 | Task 层 | EMCTASK — G-code 解析与任务协调 | 非实时 | G-code Compiler |
 | **Motion 层** | **EMCMOT — 轨迹规划、前瞻、PID** | **RT 线程 (SCHED_FIFO)** | **Motion Planner (本文档)** |
 | HAL 层 | Pins + Signals + Functions | RT + 用户态 | HAL Signal System |
 
-LinuxCNC 的 EMCMOT 是整个系统的计算核心，承担轨迹规划（trapezoidal generator）、前瞻（look-ahead）、PID 闭环三大职责。AUDESYS 将这三者拆分为独立模块——Motion Planner 仅负责轨迹规划与前瞻，PID 作为独立 Component 通过 Signal 与 Planner 通信。
+LinuxCNC 的 EMCMOT 是整个系统的计算核心，承担轨迹规划（trapezoidal generator）、前瞻（look-ahead）、PID 闭环三大职责。Weftik 将这三者拆分为独立模块——Motion Planner 仅负责轨迹规划与前瞻，PID 作为独立 Component 通过 Signal 与 Planner 通信。
 
 ### 1.3 设计约束与假设
 
@@ -66,9 +66,9 @@ LinuxCNC 的 EMCMOT 是整个系统的计算核心，承担轨迹规划（trapez
 
 ### 1.4 Phase 1 实现策略：HalProgram 生成器模式
 
-Phase 1 的运动规划器不以独立 Runtime Component 形式存在，而是作为 **HalProgram 生成器 crate** (`audesys-cnc-motion`) 提供给各类编译器使用。
+Phase 1 的运动规划器不以独立 Runtime Component 形式存在，而是作为 **HalProgram 生成器 crate** (`weftik-cnc-motion`) 提供给各类编译器使用。
 
-**数据流**: G-code/ST/FBD Compiler → audesys-cnc-motion::generate_trapezoidal_program() → HalProgram (IR 指令 + Signal 绑定) → HAL VM → axis.N.pos Signal
+**数据流**: G-code/ST/FBD Compiler → weftik-cnc-motion::generate_trapezoidal_program() → HalProgram (IR 指令 + Signal 绑定) → HAL VM → axis.N.pos Signal
 
 **选择理由**：
 
@@ -153,7 +153,7 @@ entry_v ──────┤─────+                      +────
 
 GRBL 的 `calculate_trapezoid_for_block()` 在步进空间（step count）中计算梯形参数：
 
-| 参数 | GRBL (step 空间) | AUDESYS (距离空间) |
+| 参数 | GRBL (step 空间) | Weftik (距离空间) |
 |------|:---:|:---:|
 | 加速段长度 | `accelerate_steps` | `D_accel` (mm) |
 | 匀速段长度 | `plateau_steps` | `D_cruise` (mm) |
@@ -161,7 +161,7 @@ GRBL 的 `calculate_trapezoid_for_block()` 在步进空间（step count）中计
 | 段总长 | `step_event_count` | `total_distance` (mm) |
 | 速率转换 | steps/min → steps/s | mm/min → mm/s |
 
-AUDESYS 在距离空间计算的优势：避免步进脉冲分辨率（microsteps/mm）变化时需重新烘焙剖面参数。StepGen Component 在获取 `motion.axis.{n}.pos` Signal 后自行完成从 mm 到 step pulse 的转换。
+Weftik 在距离空间计算的优势：避免步进脉冲分辨率（microsteps/mm）变化时需重新烘焙剖面参数。StepGen Component 在获取 `motion.axis.{n}.pos` Signal 后自行完成从 mm 到 step pulse 的转换。
 
 ---
 
@@ -294,7 +294,7 @@ square_corner_velocity: 5.0  # mm/s — 90° 转角的最大通过速度
 
 转角速度 <code>v<sub>corner</sub>(θ) = min( nominal_v × sin(θ/2), square_corner_velocity × f(θ) )</code>
 
-AUDESYS Phase 1 采用此简化模型，Phase 2 引入完整转弯半径计算。
+Weftik Phase 1 采用此简化模型，Phase 2 引入完整转弯半径计算。
 
 ### 4.4 环缓冲 (Ring Buffer) 设计
 
@@ -311,7 +311,7 @@ AUDESYS Phase 1 采用此简化模型，Phase 2 引入完整转弯半径计算�
 
 ### 4.5 与 Klipper Look-ahead 对比
 
-| 特性 | Klipper | AUDESYS Phase 1 |
+| 特性 | Klipper | Weftik Phase 1 |
 |------|------|------|
 | 前瞻位置 | 上位机 (Python/C helpers) | Runtime RT 线程 |
 | 数据队列 | trapq (C, linked list) | Ring Buffer (fixed array) |
@@ -331,7 +331,7 @@ AUDESYS Phase 1 采用此简化模型，Phase 2 引入完整转弯半径计算�
 | **Exact Path (精确路径)** | G61.1 | 路径无偏差，段间连续但速度可能降至 0 |
 | **Continuous Path (连续路径)** | **G64** | 允许路径偏差 δ，段间不减速（或减速到转角速度），最大化吞吐 |
 
-G64 是实际生产中最常用的模式（LinuxCNC 默认模式），也是 AUDESYS 前瞻规划的默认路径模式。
+G64 是实际生产中最常用的模式（LinuxCNC 默认模式），也是 Weftik 前瞻规划的默认路径模式。
 
 ### 5.2 G64 路径混合参数
 
@@ -377,7 +377,7 @@ Path blending 不引入新通信原语——前瞻结果写入运动块的 `entr
 
 ### 6.1 轴协调模型
 
-CNC 运动规划的核心挑战是多轴**同步**——所有参与轴必须在同一时刻到达各自的目标位置。AUDESYS 采用**主时间轴** (master time axis) 模型：
+CNC 运动规划的核心挑战是多轴**同步**——所有参与轴必须在同一时刻到达各自的目标位置。Weftik 采用**主时间轴** (master time axis) 模型：
 
 ```
 所有参与轴共享同一个梯形剖面。
@@ -388,7 +388,7 @@ CNC 运动规划的核心挑战是多轴**同步**——所有参与轴必须在
 
 ### 6.2 3 轴 + 旋转轴协调
 
-AUDESYS Phase 1 支持标准 3 轴 Cartesian 运动 + 1 旋转轴 (A/B/C)：
+Weftik Phase 1 支持标准 3 轴 Cartesian 运动 + 1 旋转轴 (A/B/C)：
 
 | 轴 | 类型 | 坐标单位 | 速度单位 |
 |----|------|------|------|
@@ -634,7 +634,7 @@ Phase 2 将 Motion Planner 从 RT 线程的 `update()` 函数升级为独立 co-
 
 ### 9.3 与参考系统的差异总结
 
-| 特性 | LinuxCNC | GRBL | Klipper | AUDESYS Phase 1 |
+| 特性 | LinuxCNC | GRBL | Klipper | Weftik Phase 1 |
 |------|------|------|------|------|
 | 剖面类型 | 梯形 | 梯形 | 梯形 | 梯形 |
 | 前瞻算法 | T_P (task plane) | Reverse+Forward Pass | Look-ahead Queue | Reverse+Forward Pass |
@@ -659,5 +659,5 @@ Phase 2 将 Motion Planner 从 RT 线程的 `update()` 函数升级为独立 co-
 | **motin-thread 独立于扫描周期** | 运动控制需要更高频率 (1ms vs 10ms)。借鉴 ROS2 control 的独立 RT 线程模式 (D13) |
 | **转角速度使用 square_corner_velocity 简化** | Klipper 验证的实用模型。Phase 2 升级到完整转弯半径计算 |
 | **不引入第 4 种通信原语** | 现有 Signal/StreamChannel/RPC 三原语正交覆盖 (D10)。运动块参数通过 Signal 传递 |
-| **6 轴协调后移至 Phase 2** | Phase 1 集中验证梯形剖面 + 前瞻在 AUDESYS 架构中的正确性。多轴运动学增加正交复杂度 |
+| **6 轴协调后移至 Phase 2** | Phase 1 集中验证梯形剖面 + 前瞻在 Weftik 架构中的正确性。多轴运动学增加正交复杂度 |
 | **Phase 1 HalProgram 生成器模式** | 与现有 6 种编译器架构一致。梯形剖面参数预计算为 IR 指令，零架构变更。独立 crate 供 ST/FBD 编译器复用 (2026-07-19 新增) |

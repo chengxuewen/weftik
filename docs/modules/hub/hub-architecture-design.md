@@ -5,9 +5,9 @@
 
 ## 概述
 
-Hub 是 AUDESYS 的统一管理中台，基于 AUDEBase 平台构建。通过插件化架构支持 Field（场端）、Cloud（云端）、Standalone（单机）三种部署角色。
+Hub 是 Weftik 的统一管理中台，基于 AUDEBase 平台构建。通过插件化架构支持 Field（场端）、Cloud（云端）、Standalone（单机）三种部署角色。
 
-AUDEBase 提供微内核 + 插件热插拔 + Schema 低代码 + ACL + Dashboard 基础能力。Hub 插件实现 AUDESYS 特有的 fleet-manager、opcua-gateway、edge-connector 等功能。
+AUDEBase 提供微内核 + 插件热插拔 + Schema 低代码 + ACL + Dashboard 基础能力。Hub 插件实现 Weftik 特有的 fleet-manager、opcua-gateway、edge-connector 等功能。
 
 ## 三种角色
 
@@ -34,7 +34,7 @@ AUDEBase 提供微内核 + 插件热插拔 + Schema 低代码 + ACL + Dashboard 
 
 ## 与 AUDEBase 的关系
 
-- Hub = AUDEBase + AUDESYS 插件集
+- Hub = AUDEBase + Weftik 插件集
 - AUDEBase 处理: 插件生命周期、认证授权、数据建模、UI 框架
 - Hub 插件处理: 工业调度、OPC UA 网关、Agent 通信、实时监控
 

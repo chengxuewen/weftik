@@ -2,10 +2,10 @@
 //! ponytail: minimal stubs for engine.rs compilation.
 //! 来源: docs/modules/hal/hal-protocol-design.md §2
 
-use weftik_hal_core::types::HalPinType;
-use weftik_hal_core::value::HalValue;
 use std::collections::HashMap;
 use std::sync::RwLock;
+use weftik_hal_core::types::HalPinType;
+use weftik_hal_core::value::HalValue;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum WriteStrategy {

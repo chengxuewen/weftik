@@ -50,6 +50,6 @@ Key licensing characteristics:
 - **Global free technical support**: All customers eligible
 - **License form**: USB dongle or software license bound to hardware ID
 
-## 1.5 AUDESYS Relevance
+## 1.5 Weftik Relevance
 
-Beckhoff's "Engineering free + Runtime licensed" model and "Platform Level by CPU cores" pricing are direct references for AUDESYS Studio (IDE) and Runtime licensing strategy. The open-interface-closed-core model validates AUDESYS's HAL-centric architecture approach.
+Beckhoff's "Engineering free + Runtime licensed" model and "Platform Level by CPU cores" pricing are direct references for Weftik Studio (IDE) and Runtime licensing strategy. The open-interface-closed-core model validates Weftik's HAL-centric architecture approach.

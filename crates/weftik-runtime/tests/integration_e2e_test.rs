@@ -3,9 +3,9 @@
 //! Tests exercise: ST compile → deploy → signal injection → debug → verify.
 //! Uses InprocMiddleware (no real hardware or TCP/UDS).
 
+use weftik_hal_core::{HalPinType, HalValue};
 use weftik_runtime::SimulationHarness;
 use weftik_runtime::WriteStrategy;
-use weftik_hal_core::{HalPinType, HalValue};
 
 /// Full E2E: compile ST → inject inputs → run cycle → verify outputs.
 #[test]

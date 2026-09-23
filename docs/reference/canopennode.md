@@ -383,13 +383,13 @@ CANopenNode 的对象字典采用分层设计：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
-### 7.1 CANopen 协议架构 vs AUDESYS HAL 设计
+### 7.1 CANopen 协议架构 vs Weftik HAL 设计
 
-CANopen 的协议架构与 AUDESYS HAL 的通信原语有诸多相似之处：
+CANopen 的协议架构与 Weftik HAL 的通信原语有诸多相似之处：
 
-| CANopen 概念 | AUDESYS 等价 | 参考价值 |
+| CANopen 概念 | Weftik 等价 | 参考价值 |
 |-------------|-------------|---------|
 | PDO（过程数据对象）| Signal | 高速广播实时数据，无协议开销 |
 | SDO（服务数据对象）| RPC | 参数化访问，按需传输 |
@@ -400,9 +400,9 @@ CANopen 的协议架构与 AUDESYS HAL 的通信原语有诸多相似之处：
 
 ### 7.2 PDO 映射对 Signal 的启示
 
-CANopen 的 PDO 动态映射机制对 AUDESYS 的 Signal 设计有直接参考价值：
+CANopen 的 PDO 动态映射机制对 Weftik 的 Signal 设计有直接参考价值：
 
-| PDO 特性 | AUDESYS Signal 对应设计 |
+| PDO 特性 | Weftik Signal 对应设计 |
 |---------|----------------------|
 | 运行时配置 PDO 映射 | Signal 应支持运行时的发布/订阅绑定 |
 | 事件触发传输 | StreamChannel 支持水位线触发 |
@@ -411,9 +411,9 @@ CANopen 的 PDO 动态映射机制对 AUDESYS 的 Signal 设计有直接参考�
 
 ### 7.3 对象字典 vs HalDiscovery
 
-CANopen 的对象字典提供了设备能力的完整自描述，AUDESYS 的 HalDiscovery 可参考：
+CANopen 的对象字典提供了设备能力的完整自描述，Weftik 的 HalDiscovery 可参考：
 
-| 对象字典特性 | AUDESYS HalDiscovery 对应 |
+| 对象字典特性 | Weftik HalDiscovery 对应 |
 |------------|-------------------------|
 | 0x1000 设备类型 | HalDiscovery 设备类型标识 |
 | 0x1008 设备名 | 字符串标识 |
@@ -421,11 +421,11 @@ CANopen 的对象字典提供了设备能力的完整自描述，AUDESYS 的 Hal
 | 0x1400 PDO 通信参数 | Signal 通信参数 |
 | 0x1600 PDO 映射参数 | Signal 到物理引脚的映射 |
 
-### 7.4 NMT 状态机 vs AUDESYS 设备状态
+### 7.4 NMT 状态机 vs Weftik 设备状态
 
-CANopen 的 NMT 状态机（初始化 → 预操作 → 操作 → 停止）为 AUDESYS 的设备生命周期管理提供了参考模型：
+CANopen 的 NMT 状态机（初始化 → 预操作 → 操作 → 停止）为 Weftik 的设备生命周期管理提供了参考模型：
 
-| NMT 状态 | AUDESYS 对应 | 说明 |
+| NMT 状态 | Weftik 对应 | 说明 |
 |---------|-------------|------|
 | 初始化 | 设备上电/加载 | 加载配置、初始化 HAL |
 | 预操作 | 配置中 | 允许 RPC 配置，禁止实时数据 |
@@ -438,11 +438,11 @@ CANopen 的 NMT 状态机（初始化 → 预操作 → 操作 → 停止）为 
 |------|------|------|
 | 成熟度 | 高 | 10+ 年开发，通过 CiA CTT 测试 |
 | 代码质量 | 高 | 模块化 ANSI C，Doxygen 文档 |
-| AUDESYS 参考 | 高 | 对象字典、PDO/Signal 映射、NMT 状态机 |
+| Weftik 参考 | 高 | 对象字典、PDO/Signal 映射、NMT 状态机 |
 | 学习价值 | 高 | CANopen 协议栈完整实现 |
 | 生产准备 | 高 | Apache 2.0 许可，商业友好 |
 
-CANopenNode 是 AUDESYS 设计 HAL 通信层时最重要的参考实现之一，特别是其对象字典驱动的架构、PDO 映射机制和 NMT 状态机模型。
+CANopenNode 是 Weftik 设计 HAL 通信层时最重要的参考实现之一，特别是其对象字典驱动的架构、PDO 映射机制和 NMT 状态机模型。
 
 ---
 
@@ -647,20 +647,20 @@ CANopenDemo 是学习 CANopenNode 的最佳起点：
 
 ---
 
-## 7. 对 AUDESYS 参考价值 (续)
+## 7. 对 Weftik 参考价值 (续)
 
-### 7.2 SYNC 同步机制 vs AUDESYS StreamChannel
+### 7.2 SYNC 同步机制 vs Weftik StreamChannel
 
-CANopenNode 的 SYNC 同步机制对 AUDESYS 的 StreamChannel 同步设计有直接参考价值：
+CANopenNode 的 SYNC 同步机制对 Weftik 的 StreamChannel 同步设计有直接参考价值：
 
-| SYNC 特性 | 实现 | AUDESYS 对应 |
+| SYNC 特性 | 实现 | Weftik 对应 |
 |-----------|------|-------------|
 | 广播 SYNC 消息 | 生产者发送 0x080 COB-ID | StreamChannel 同步信号 |
 | PDO 同步传输 | 收到 SYNC 后统一发送 | 批处理数据帧 |
 | 非循环同步 | 仅数据变化时更新 | 事件驱动 StreamChannel |
 | 周期同步 | 固定间隔发送 | 定时 StreamChannel |
 
-### 7.3 非阻塞架构对 AUDESYS RT 线程的启示
+### 7.3 非阻塞架构对 Weftik RT 线程的启示
 
 CANopenNode 的所有协议组件采用非阻塞设计，每个组件提供一个 `process()` 函数：
 
@@ -677,11 +677,11 @@ while (1) {
 }
 ```
 
-AUDESYS 的 RT 线程可参考此模式：每个 RT 周期轮询所有 Signal/StreamChannel/RPC 处理函数，确保确定性执行时间。
+Weftik 的 RT 线程可参考此模式：每个 RT 周期轮询所有 Signal/StreamChannel/RPC 处理函数，确保确定性执行时间。
 
-### 7.4 对象字典 vs AUDESYS HalDiscovery
+### 7.4 对象字典 vs Weftik HalDiscovery
 
-| OD 区域 | 用途 | AUDESYS HalDiscovery 对应 |
+| OD 区域 | 用途 | Weftik HalDiscovery 对应 |
 |---------|------|------------------------|
 | 0x1000-0x1FFF | 通信参数 | Signal/StreamChannel 配置 |
 | 0x2000-0x5FFF | 制造商特定 | 设备特有 HAL 参数 |
@@ -694,11 +694,11 @@ AUDESYS 的 RT 线程可参考此模式：每个 RT 周期轮询所有 Signal/St
 |------|------|------|
 | 成熟度 | 高 | 10+ 年，通过 CiA CTT 认证 |
 | 代码质量 | 高 | ANSI C, Doxygen, 模块化 |
-| AUDESYS 参考 | 高 | 对象字典、PDO/Signal、非阻塞架构 |
+| Weftik 参考 | 高 | 对象字典、PDO/Signal、非阻塞架构 |
 | 学习价值 | 高 | CANopen 协议栈完整蓝本 |
 | 生产准备 | 高 | Apache 2.0, 商业友好 |
 
-CANopenNode 的对象字典驱动架构和非阻塞协议处理模式，是 AUDESYS 设计 HalDiscovery 和 RT 线程模型时最重要的参考实现之一。特别是其 PDO 映射机制与 AUDESYS Signal 的运行时绑定设计理念高度一致。
+CANopenNode 的对象字典驱动架构和非阻塞协议处理模式，是 Weftik 设计 HalDiscovery 和 RT 线程模型时最重要的参考实现之一。特别是其 PDO 映射机制与 Weftik Signal 的运行时绑定设计理念高度一致。
 
 ---
 
@@ -833,13 +833,13 @@ cocomm "NMT 启动 0x02"
 
 ---
 
-## 7. 对 AUDESYS 参考价值 (续)
+## 7. 对 Weftik 参考价值 (续)
 
-### 7.6 COB-ID 优先级编码 vs AUDESYS HalQoS
+### 7.6 COB-ID 优先级编码 vs Weftik HalQoS
 
-CANopen 的 COB-ID 编码规则对 AUDESYS 的 HalQoS 优先级标签设计有参考价值：
+CANopen 的 COB-ID 编码规则对 Weftik 的 HalQoS 优先级标签设计有参考价值：
 
-| CANopen COB-ID 范围 | 功能 | 优先级 | AUDESYS HalQoS 对应 |
+| CANopen COB-ID 范围 | 功能 | 优先级 | Weftik HalQoS 对应 |
 |-------------------|------|--------|-------------------|
 | 0x000-0x07F | NMT/同步 | 最高 | 管理 Signal |
 | 0x080-0x0FF | 紧急消息 | 高 | 异常 Signal |
@@ -847,11 +847,11 @@ CANopen 的 COB-ID 编码规则对 AUDESYS 的 HalQoS 优先级标签设计有�
 | 0x200-0x5FF | SDO (配置) | 中 | RPC 调用 |
 | 0x600-0x7FF | 网络管理 | 低 | 管理消息 |
 
-### 7.7 EMCY 消息 vs AUDESYS 异常 Signal
+### 7.7 EMCY 消息 vs Weftik 异常 Signal
 
-CANopenNode 的紧急消息机制对 AUDESYS 的异常 Signal 设计有参考：
+CANopenNode 的紧急消息机制对 Weftik 的异常 Signal 设计有参考：
 
-| EMCY 特性 | 实现 | AUDESYS 对应 |
+| EMCY 特性 | 实现 | Weftik 对应 |
 |-----------|------|-------------|
 | 错误码 | 16 位标准错误码 | 错误类型枚举 |
 | 错误寄存器 | 8 位错误寄存器 | 错误状态位图 |
@@ -864,12 +864,12 @@ CANopenNode 的紧急消息机制对 AUDESYS 的异常 Signal 设计有参考：
 |------|------|------|
 | 成熟度 | 高 | 10+ 年，通过 CiA CTT 认证测试 |
 | 代码质量 | 高 | 模块化 ANSI C，完整的 Doxygen 文档 |
-| AUDESYS HAL 参考 | 高 | 对象字典、PDO/Signal 映射、非阻塞架构 |
+| Weftik HAL 参考 | 高 | 对象字典、PDO/Signal 映射、非阻塞架构 |
 | 学习价值 | 高 | 完整的 CANopen 协议栈实现蓝本 |
 | 生产准备 | 高 | Apache 2.0 许可，商业友好 |
 | 在线文档 | 高 | Doxygen HTML 文档 + 在线手册 |
 
-CANopenNode 的对象字典驱动架构和非阻塞协议处理模式，是 AUDESYS 设计 HalDiscovery 和 RT 线程模型时最重要的参考实现之一。其 PDO 映射机制与 AUDESYS Signal 的运行时绑定设计理念高度一致。
+CANopenNode 的对象字典驱动架构和非阻塞协议处理模式，是 Weftik 设计 HalDiscovery 和 RT 线程模型时最重要的参考实现之一。其 PDO 映射机制与 Weftik Signal 的运行时绑定设计理念高度一致。
 
 ---
 

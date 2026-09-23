@@ -1,4 +1,4 @@
-# AUDESYS Theia Learning Workshop Notes
+# Weftik Theia Learning Workshop Notes
 
 > **Generated:** 2026-07-21 | **Purpose:** Research + documentation — NOT production implementation
 >
@@ -368,9 +368,9 @@ export class MyCreateNodeHandler implements ActionHandler {
 }
 ```
 
-### 3.6 Key Takeaways for AUDESYS
+### 3.6 Key Takeaways for Weftik
 
-1. **GLSP Server = diagram logic.** AUDESYS needs a server-side ActionHandler for each IEC 61131-3 editor operation (add contact in LD, add block in FBD, add step in SFC).
+1. **GLSP Server = diagram logic.** Weftik needs a server-side ActionHandler for each IEC 61131-3 editor operation (add contact in LD, add block in FBD, add step in SFC).
 2. **GModel = intermediate representation.** Not the source code — just visualization data. The semantic model (IEC program AST) lives separately.
 3. **Synchronization is complex.** Changes in the diagram must reflect in the semantic model and vice versa. This is the hardest part.
 4. **ELK Layout.** The Eclipse Layout Kernel can auto-layout diagrams. Useful for auto-arranging FBD blocks.
@@ -421,12 +421,12 @@ type MonarchRuleAction = {
 };
 ```
 
-### 4.4 Complete Example: AUDESYS Config Tokenizer
+### 4.4 Complete Example: Weftik Config Tokenizer
 
 (This is the working tokenizer from `theia-extensions/workshop-playground/`)
 
 ```typescript
-// Highlights .audesys files with these token classes:
+// Highlights .weftik files with these token classes:
 //   keyword: device, signal, channel, controller, hal, bind, ...
 //   type: Bool, S8, U8, S16, U16, S32, U32, F32, F64, String, Blob
 //   comment: # ...    and    ### ... ###
@@ -435,9 +435,9 @@ type MonarchRuleAction = {
 //   delimiter.curly/square/parenthesis: { } [ ] ( )
 import { languages } from 'monaco-editor/esm/vs/editor/editor.api';
 
-export function registerAudESYSConfigLanguage(): void {
-    languages.register({ id: 'audesys-config' });
-    languages.setMonarchTokensProvider('audesys-config', {
+export function registerWeftikConfigLanguage(): void {
+    languages.register({ id: 'weftik-config' });
+    languages.setMonarchTokensProvider('weftik-config', {
         defaultToken: 'invalid',
         keywords: [
             'device', 'signal', 'channel', 'controller', 'hal',
@@ -509,14 +509,14 @@ Monaco is initialized. In a Theia extension, this typically happens in a
 ```typescript
 // Correct way to register a language in Theia (production pattern):
 @injectable()
-export class AudESYSGrammarContribution implements LanguageGrammarDefinitionContribution {
+export class WeftikGrammarContribution implements LanguageGrammarDefinitionContribution {
     registerTextmateLanguage(registry: TextmateRegistry): void {
         // For TextMate grammars (more powerful than Monarch)
     }
 
     // For Monarch (simpler):
     async onStart(): Promise<void> {
-        registerAudESYSConfigLanguage();
+        registerWeftikConfigLanguage();
     }
 }
 ```
@@ -608,8 +608,8 @@ export class AudESYSGrammarContribution implements LanguageGrammarDefinitionCont
 | GLSP Protocol Spec | https://eclipse.dev/glsp/documentation/protocol/ |
 | GLSP GitHub | https://github.com/eclipse-glsp/glsp |
 | Theia Extension Generator | https://github.com/eclipse-theia/generator-theia-extension |
-| AUDESYS Studio Theia | `apps/studio-theia/` |
-| AUDESYS Core Extension | `theia-extensions/audesys-core/` |
+| Weftik Studio Theia | `apps/studio-theia/` |
+| Weftik Core Extension | `theia-extensions/weftik-core/` |
 | Workshop Playground | `theia-extensions/workshop-playground/` |
 
 ---
@@ -625,11 +625,11 @@ theia-extensions/workshop-playground/
         ├── index.ts                      # Entry point (re-exports module)
         ├── workshop-playground-frontend-module.ts  # DI bindings
         ├── workshop-playground-contribution.ts     # Command + Menu contributions
-        └── audesys-config-language.ts     # Monarch tokenizer
+        └── weftik-config-language.ts     # Monarch tokenizer
 ```
 
 The playground extension demonstrates ALL four workshop topics:
 - **DI**: `ContainerModule` + `@injectable()` + `@inject()` in the contribution class
 - **Contributions**: One class implements `CommandContribution` + `MenuContribution`
-- **Monarch**: `audesys-config-language.ts` — working tokenizer for a mini DSL
+- **Monarch**: `weftik-config-language.ts` — working tokenizer for a mini DSL
 - **GLSP**: Documented above (no running server — learning exercise only)

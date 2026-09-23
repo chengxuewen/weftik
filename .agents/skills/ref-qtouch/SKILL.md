@@ -1,6 +1,6 @@
 ---
 name: ref-qtouch
-description: "QiTech Control / QTouch 跨平台组态 SCADA 参考 — NixOS 部署、Tauri IDE、黑盒交付模式。用于 AUDESYS Studio 和 Runtime 设计。"
+description: "QiTech Control / QTouch 跨平台组态 SCADA 参考 — NixOS 部署、Tauri IDE、黑盒交付模式。用于 Weftik Studio 和 Runtime 设计。"
 ---
 
 # ref-qtouch — QiTech Control / QTouch 平台参考
@@ -8,7 +8,7 @@ description: "QiTech Control / QTouch 跨平台组态 SCADA 参考 — NixOS 部
 ## Metadata
 
 - **name**: ref-qtouch
-- **description**: QiTech Control / QTouch 跨平台组态 SCADA 平台参考，用于 AUDESYS Studio IDE 和 Runtime 设计
+- **description**: QiTech Control / QTouch 跨平台组态 SCADA 平台参考，用于 Weftik Studio IDE 和 Runtime 设计
 - **source**: `docs/reference/qtouch.md`（849 行竞品分析）
 - **mode**: 技术参考（Technical Reference）
 - **depth**: 研究级（Study Depth）
@@ -17,7 +17,7 @@ description: "QiTech Control / QTouch 跨平台组态 SCADA 参考 — NixOS 部
 
 QTouch（武汉舜通智能）和 Proficy HMI/SCADA iFIX（GE → Velotic）是工业监控领域的两个代表性产品。QTouch 代表国产化跨平台路线，iFIX 代表传统北美 SCADA 技术路线。两份参考共同覆盖了 SCADA/HMI 平台的完整设计空间。
 
-本技能从两份参考文档中提取核心框架，用于 AUDESYS Studio IDE、Runtime、HAL 的设计决策。
+本技能从两份参考文档中提取核心框架，用于 Weftik Studio IDE、Runtime、HAL 的设计决策。
 
 ## 7 节结构
 
@@ -29,7 +29,7 @@ QTouch（武汉舜通智能）和 Proficy HMI/SCADA iFIX（GE → Velotic）是�
 | ch04 | 现状与生态 | 版本、用户基数、合作伙伴、发展趋势 |
 | ch05 | 市场定位 | 行业覆盖、竞争格局、市场地位 |
 | ch06 | 产品特色 | 高性能 HMI、开放架构、分布式、可靠性 |
-| ch07 | 对 AUDESYS 参考价值 | IDE 设计、HAL 抽象、报警模型、所有权变迁 |
+| ch07 | 对 Weftik 参考价值 | IDE 设计、HAL 抽象、报警模型、所有权变迁 |
 
 ## 核心框架
 
@@ -40,11 +40,11 @@ QiTech Control 在生产环境中使用 NixOS 作为部署平台（10+ 台），
 - **声明式配置**：系统配置可复现，版本控制友好
 - **原子升级**：回滚能力对工业现场至关重要
 - **不可变基础设施**：减少配置漂移
-- **AUDESYS 参考**：D29 决策 — Phase 1 用 Docker + PREEMPT_RT，Phase 2 评估 NixOS
+- **Weftik 参考**：D29 决策 — Phase 1 用 Docker + PREEMPT_RT，Phase 2 评估 NixOS
 
 ### 框架 2：Electron → Tauri 迁移（从 QiTech 趋势）
 
-QiTech 从 Electron 向 Tauri 迁移的趋势验证了 AUDESYS D21 的技术选型：
+QiTech 从 Electron 向 Tauri 迁移的趋势验证了 Weftik D21 的技术选型：
 
 - **包体积对比**：Tauri ~5-10MB vs Electron ~120MB
 - **内存占用**：Tauri ~50MB vs Electron ~150MB
@@ -69,7 +69,7 @@ skill(name="ref-qtouch")
 
 查阅特定章节：
 - `skill(name="ref-qtouch", user_message="ch01")` — 产品画像
-- `skill(name="ref-qtouch", user_message="ch07")` — AUDESYS 参考价值
+- `skill(name="ref-qtouch", user_message="ch07")` — Weftik 参考价值
 - `skill(name="ref-qtouch", user_message="glossary")` — 术语表
 - `skill(name="ref-qtouch", user_message="patterns")` — 设计模式
 - `skill(name="ref-qtouch", user_message="cheatsheet")` — 速查表

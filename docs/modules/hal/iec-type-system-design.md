@@ -1,7 +1,7 @@
-# AUDESYS HAL 类型系统：IEC 61131-3 类型映射
+# Weftik HAL 类型系统：IEC 61131-3 类型映射
 
 > 生成日期：2026-07-09
-> 设计目标：完整映射 IEC 61131-3 类型到 AUDESYS HAL，合理取舍文本/时态类型
+> 设计目标：完整映射 IEC 61131-3 类型到 Weftik HAL，合理取舍文本/时态类型
 
 ---
 
@@ -37,7 +37,7 @@
 
 ### 2.1 数值/位类型（11 种）→ 全部直接映射 ✅
 
-| IEC 类型 | AUDESYS HAL 类型 | 理由 |
+| IEC 类型 | Weftik HAL 类型 | 理由 |
 |----------|-----------------|------|
 | BOOL | `Bool` | 1:1 |
 | SINT | `S8` | 语义等价 |
@@ -51,7 +51,7 @@
 | REAL | `F32` | 语义等价 |
 | LREAL | `F64` | 语义等价 |
 
-**总计：11 IEC 类型 → 11 AUDESYS 标量类型，一个不差。**
+**总计：11 IEC 类型 → 11 Weftik 标量类型，一个不差。**
 
 ---
 
@@ -74,7 +74,7 @@ STRING 和 Blob 的位布局相同（`u32 length + u8[] data`），但**语义�
 
 **为什么不加 WSTRING：**
 
-- AUDESYS 统一用 UTF-8 编码（ASCII 兼容 + 支持中文/日文/韩文）
+- Weftik 统一用 UTF-8 编码（ASCII 兼容 + 支持中文/日文/韩文）
 - 需要 UTF-16 的场景（Windows legacy COM 接口等）由消费端自行转换
 - 减少 FlatBuffers schema / Rust HalType / Thin Client 三层的类型爆炸
 
@@ -84,7 +84,7 @@ STRING 和 Blob 的位布局相同（`u32 length + u8[] data`），但**语义�
 
 **核心洞察**：TIME、DATE、TOD、DT 在运行时都是**编码后的整数**，HAL 传输层不需要感知它们是"时间"。
 
-| IEC 类型 | 内部存储 | AUDESYS 映射 | 精度 | 理由 |
+| IEC 类型 | 内部存储 | Weftik 映射 | 精度 | 理由 |
 |----------|---------|-------------|------|------|
 | TIME | i32 (ms) | `S32` | 1ms | OpenPLC 用 `unsigned long long common_ticktime__` (ns)，TwinCAT 用 100ns ticks。不同运行时表示不同，HAL 不应绑定单一解释 |
 | DATE | u16 (days since 1984-01-01) | `U32` | 1 天 | 足够 |
@@ -146,7 +146,7 @@ HALValue (FlatBuffers union) {
 
 ## 4. 完整映射表
 
-| IEC 61131-3 | AUDESYS HAL |
+| IEC 61131-3 | Weftik HAL |
 |-------------|------------|
 | BOOL | `Bool` |
 | SINT | `S8` |

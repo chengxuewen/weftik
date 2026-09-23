@@ -125,21 +125,13 @@ mod tests {
         let prog = generate_alarm_program(&cfg);
 
         // Verify that any_fault signal is written
-        let any_fault_signal = prog
-            .signals
-            .iter()
-            .find(|s| s.hal_signal_name == "group.0.any_fault");
+        let any_fault_signal =
+            prog.signals.iter().find(|s| s.hal_signal_name == "group.0.any_fault");
         assert!(any_fault_signal.is_some(), "should have any_fault signal");
-        assert_eq!(
-            any_fault_signal.unwrap().direction,
-            weftik_hal_ir::types::Direction::Write
-        );
+        assert_eq!(any_fault_signal.unwrap().direction, weftik_hal_ir::types::Direction::Write);
 
         // alarm_state should be ReadWrite
-        let alarm_signal = prog
-            .signals
-            .iter()
-            .find(|s| s.hal_signal_name == "group.0.alarm_state");
+        let alarm_signal = prog.signals.iter().find(|s| s.hal_signal_name == "group.0.alarm_state");
         assert!(alarm_signal.is_some(), "should have alarm_state signal");
 
         // Verify program structure: constants + fault checks + state compute + halt
@@ -190,14 +182,11 @@ mod tests {
             "group.0.any_fault",
         ];
 
-        let signal_names: Vec<&str> = prog.signals.iter().map(|s| s.hal_signal_name.as_str()).collect();
+        let signal_names: Vec<&str> =
+            prog.signals.iter().map(|s| s.hal_signal_name.as_str()).collect();
 
         for expected in &expected_signals {
-            assert!(
-                signal_names.contains(expected),
-                "missing expected signal: {}",
-                expected
-            );
+            assert!(signal_names.contains(expected), "missing expected signal: {}", expected);
         }
     }
 

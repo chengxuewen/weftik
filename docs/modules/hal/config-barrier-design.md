@@ -1,4 +1,4 @@
-# AUDESYS Config Barrier 与 LockLevel 设计
+# Weftik Config Barrier 与 LockLevel 设计
 
 > 生成日期：2026-07-09
 > 设计目标：在 RT 安全的前提下允许运行时配置变更，不依赖开发者自觉
@@ -7,7 +7,7 @@
 
 ## 设计原则
 
-LinuxCNC 的 LockLevel 假设开发者不会在 RT 线程运行时发起结构性变更——这是信任式安全。AUDESYS 的 Supervisor 随时可能通过 RPC 发配置命令，不能依赖这种信任。
+LinuxCNC 的 LockLevel 假设开发者不会在 RT 线程运行时发起结构性变更——这是信任式安全。Weftik 的 Supervisor 随时可能通过 RPC 发配置命令，不能依赖这种信任。
 
 两个机制配合保证安全：
 
@@ -248,7 +248,7 @@ Supervisor RPC: configureComponent("motion", { "max_vel": 1000 })
 
 **对比 LinuxCNC**：
 
-| | LinuxCNC | AUDESYS |
+| | LinuxCNC | Weftik |
 |---|---|---|
 | `Run` 级别 | 仅禁止结构性变更，允许参数修改 | 拒绝所有 RPC 配置（连参数修改也拒） |
 | 执行时机 | 调用时立即（需开发者自觉） | Config Barrier 边界（强制保证） |
@@ -326,7 +326,7 @@ RT 周期时间线:
 | 决策 | 理由 |
 |------|------|
 | Config Barrier 而非实时应用 | mid-cycle 配置变更 = segfault 风险。队列 + 周期边界批量应用是最小化安全保证 |
-| LockLevel 从运行时锁 → 权限分级 | LinuxCNC 的 LockLevel 依赖开发者自觉在正确时机调用；AUDESYS 作为多进程系统必须强制 |
+| LockLevel 从运行时锁 → 权限分级 | LinuxCNC 的 LockLevel 依赖开发者自觉在正确时机调用；Weftik 作为多进程系统必须强制 |
 | `Run` 级别拒绝所有 RPC（含参数修改） | LinuxCNC 允许 Run 时改参数（hal_set_pin），但那是单进程模型的安全默认。多进程 Supervisor 应显式降级为 `Params` 才允许 |
 | Config Generation 递增 + Signal 确认 | 异步系统必须可观测——Supervisor 不能靠"大概生效了"。G 数递增 + Signal 提供确定性确认 |
 | pending_config 用 bounded channel | 防止 Supervisor 无限堆积配置命令。队列满 → ConfigQueueFull error（Supervisor 自行重试） |

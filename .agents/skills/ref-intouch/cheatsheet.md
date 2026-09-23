@@ -2,7 +2,7 @@
 
 ## Architecture Layers
 
-| Layer | Component | AUDESYS Counterpart |
+| Layer | Component | Weftik Counterpart |
 |-------|-----------|---------------------|
 | 5. Visualization | WindowViewer / OMI / InTouch Access Anywhere | Runtime HMI Engine |
 | 4. Application Server | AppEngine (Alarm/History/Script/I/O Engines) | Runtime Supervisor |
@@ -10,9 +10,9 @@
 | 2. Communication | SuiteLink / DDE / OPC / MQTT / Access Name | amw_transport / amw_discovery / amw_qos |
 | 1. Field Devices | PLC / RTU / DCS / Smart Instruments | HAL Device Layer |
 
-## Tag Types (InTouch) vs Signal Types (AUDESYS)
+## Tag Types (InTouch) vs Signal Types (Weftik)
 
-| InTouch | AUDESYS | Notes |
+| InTouch | Weftik | Notes |
 |---------|---------|-------|
 | Memory Tag | Memory Signal | Internal variable |
 | I/O Tag | I/O Signal | External data source |
@@ -24,7 +24,7 @@
 
 ## QuickScript 7 Script Types
 
-| # | Type | Trigger | AUDESYS Equivalent |
+| # | Type | Trigger | Weftik Equivalent |
 |---|------|---------|-------------------|
 | 1 | Application | On Startup / While Running / On Shutdown | Runtime lifecycle hooks |
 | 2 | Window | On Show / While Showing / On Hide | View lifecycle hooks |
@@ -59,7 +59,7 @@
 
 ## Redundancy Levels
 
-| Level | InTouch | AUDESYS Phase |
+| Level | InTouch | Weftik Phase |
 |-------|---------|---------------|
 | AppEngine | Primary/Backup (~15s failover) | Phase 2 |
 | DB | SQL Server HA | Phase 2 |

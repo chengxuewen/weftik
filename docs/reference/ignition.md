@@ -615,53 +615,53 @@ IU 提供 200+ 小时免费视频培训，含认证考试。这降低了 Ignitio
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 Web 原生 HMI 架构设计
 
-Ignition Perspective 是 AUDESYS Studio IDE 的 Web 化战略**最直接的参考对象**：
+Ignition Perspective 是 Weftik Studio IDE 的 Web 化战略**最直接的参考对象**：
 
-| Ignition Perspective 设计 | AUDESYS Studio 参考点 |
+| Ignition Perspective 设计 | Weftik Studio 参考点 |
 |--------------------------|---------------------|
-| 浏览器内设计器（Browser-Based Designer） | AUDESYS Studio 是否应提供完全在浏览器中运行的 HMI 设计器？ |
-| React + WebSocket 实时通信 | AUDESYS 前端技术栈选择（React/Vue/Svelte + WebSocket） |
-| 响应式布局（Flexbox/CSS Grid） | AUDESYS HMI 编辑器布局引擎设计 |
-| Session 管理 | AUDESYS Runtime 的客户端会话模型 |
-| 离线模式支持 | AUDESYS Runtime 的离线缓存策略 |
+| 浏览器内设计器（Browser-Based Designer） | Weftik Studio 是否应提供完全在浏览器中运行的 HMI 设计器？ |
+| React + WebSocket 实时通信 | Weftik 前端技术栈选择（React/Vue/Svelte + WebSocket） |
+| 响应式布局（Flexbox/CSS Grid） | Weftik HMI 编辑器布局引擎设计 |
+| Session 管理 | Weftik Runtime 的客户端会话模型 |
+| 离线模式支持 | Weftik Runtime 的离线缓存策略 |
 
-**关键设计决策**：AUDESYS Studio 应优先做 **Web 优先** 还是**桌面优先**？
+**关键设计决策**：Weftik Studio 应优先做 **Web 优先** 还是**桌面优先**？
 - Ignition 的经验：Vision（桌面）→ Perspective（Web），两条产品线并存使维护成本翻倍
-- AUDESYS 如果从零开始，应考虑**Web 优先**，桌面版通过 Electron 封装
+- Weftik 如果从零开始，应考虑**Web 优先**，桌面版通过 Electron 封装
 
 ### 7.2 无限许可模型的启示
 
-Ignition 的无限许可模型对 AUDESYS 的商业化路径有直接参考：
+Ignition 的无限许可模型对 Weftik 的商业化路径有直接参考：
 
-| Ignition 策略 | AUDESYS 参考 |
+| Ignition 策略 | Weftik 参考 |
 |-------------|------------|
-| 平台免费 + 模块收费 | AUDESYS Studio 基础版免费，高级模块（仿真、调试、分析）收费 |
-| 按服务器而非按点/客户端 | AUDESYS Runtime 可选择按实例/按 CPU 核授权 |
-| Edge 低价版 | AUDESYS 轻量版 Runtime 面向边缘/Raspberry Pi |
-| 30 天全功能试用 | AUDESYS 提供全功能时间限制试用（30 天或更长） |
+| 平台免费 + 模块收费 | Weftik Studio 基础版免费，高级模块（仿真、调试、分析）收费 |
+| 按服务器而非按点/客户端 | Weftik Runtime 可选择按实例/按 CPU 核授权 |
+| Edge 低价版 | Weftik 轻量版 Runtime 面向边缘/Raspberry Pi |
+| 30 天全功能试用 | Weftik 提供全功能时间限制试用（30 天或更长） |
 
 ### 7.3 Gateway 中心化架构与 HAL 的关系
 
-Ignition 的 Gateway 架构（所有数据采集集中在 Gateway）与 AUDESYS 的 HAL 设计有相似的思维：
+Ignition 的 Gateway 架构（所有数据采集集中在 Gateway）与 Weftik 的 HAL 设计有相似的思维：
 
-- Ignition Gateway Tag Provider ↔ AUDESYS HAL Signal/StreamChannel
-- Ignition Gateway 通过 Tag Provider 统一管理各种协议 ↔ AUDESYS HAL 通过 amw（AUDESYS Middleware）抽象传输层
+- Ignition Gateway Tag Provider ↔ Weftik HAL Signal/StreamChannel
+- Ignition Gateway 通过 Tag Provider 统一管理各种协议 ↔ Weftik HAL 通过 amw（Weftik Middleware）抽象传输层
 
 **关键参考点**：
-- Ignition 的 Tag Provider 插件架构可参考为 AUDESYS HAL 的**设备驱动/协议适配器架构**
+- Ignition 的 Tag Provider 插件架构可参考为 Weftik HAL 的**设备驱动/协议适配器架构**
 - 每个 Tag Provider 实现了统一的接口（start/stop/read/write/subscribe）——这正是 HAL amw 的 trait 定义
-- MQTT Engine 的"自动发现设备并创建 Tag"机制，可参考为 AUDESYS HAL 的自动拓扑发现
+- MQTT Engine 的"自动发现设备并创建 Tag"机制，可参考为 Weftik HAL 的自动拓扑发现
 
 ### 7.4 多协议适配器设计
 
-Ignition 的 Tag Provider 设计为 AUDESYS 的设备驱动/协议适配器架构提供了参考：
+Ignition 的 Tag Provider 设计为 Weftik 的设备驱动/协议适配器架构提供了参考：
 
 ```
-AUDESYS HAL Driver Architecture (参考 Ignition Tag Provider):
+Weftik HAL Driver Architecture (参考 Ignition Tag Provider):
 ┌─────────────────────────────────────────────┐
 │           HAL Driver Manager               │
 │  ┌───────┬────────┬────────┬───────────┐   │
@@ -681,60 +681,60 @@ AUDESYS HAL Driver Architecture (参考 Ignition Tag Provider):
 
 ### 7.5 报警管理（ISA 18.2）
 
-Ignition 的报警管道（Alarm Pipeline）设计是 AUDESYS 报警系统的参考：
+Ignition 的报警管道（Alarm Pipeline）设计是 Weftik 报警系统的参考：
 
 - 报警生命周期管理：Active → Unacknowledged → Acknowledged → Cleared
 - 报警管道：Filter → Split → Notify → Store
 - 报警搁置（Shelving）
 - 电子签名确认
 
-AUDESYS 可在 Runtime 中实现类似的报警处理管线。
+Weftik 可在 Runtime 中实现类似的报警处理管线。
 
 ### 7.6 OPC UA 集成策略
 
-Ignition 内置 OPC UA Server + Client 的模式值得 AUDESYS 参考：
+Ignition 内置 OPC UA Server + Client 的模式值得 Weftik 参考：
 
-- AUDESYS Runtime 是否应内置 OPC UA Server？——是，这对与第三方 SCADA/HMI 的互操作性至关重要
+- Weftik Runtime 是否应内置 OPC UA Server？——是，这对与第三方 SCADA/HMI 的互操作性至关重要
 - OPC UA 与 HAL 信号系统的映射关系：OPC UA Variable ↔ HAL Signal
-- AUDESYS 的 OPC UA Server 可作为 amw 的一个 Transport 实现
+- Weftik 的 OPC UA Server 可作为 amw 的一个 Transport 实现
 
 ### 7.7 脚本语言策略
 
-Ignition 选择 Python (Jython) 作为脚本语言。对 AUDESYS 的参考：
+Ignition 选择 Python (Jython) 作为脚本语言。对 Weftik 的参考：
 
 - **Python 作为扩展语言**：工业工程师熟悉度较高，学习曲线平缓
 - **Jython 的问题**：Python 2.7 已停止维护，Ignition 面临升级到 GraalPy/Python 3 的压力
-- AUDESYS 选择：考虑 **WASM 插件**（不绑死特定语言）或 **Lua**（轻量级嵌入）
+- Weftik 选择：考虑 **WASM 插件**（不绑死特定语言）或 **Lua**（轻量级嵌入）
 
 ### 7.8 社区生态建设
 
-Ignition 的生态建设策略值得 AUDESYS 学习：
+Ignition 的生态建设策略值得 Weftik 学习：
 
-| Ignition 生态组件 | AUDESYS 参考 |
+| Ignition 生态组件 | Weftik 参考 |
 |------------------|------------|
-| Inductive University（免费培训） | AUDESYS Academy（在线文档 + 视频教程 + 认证体系） |
-| Integrator Program（认证集成商） | AUDESYS 合作伙伴生态（集成商 + OEM） |
-| Ignition Exchange（模块共享） | AUDESYS Marketplace（插件/模板/驱动商店） |
-| Forum（技术社区） | AUDESYS Community（论坛 + GitHub Discussions） |
-| ICC（年度大会） | AUDESYS Conference |
+| Inductive University（免费培训） | Weftik Academy（在线文档 + 视频教程 + 认证体系） |
+| Integrator Program（认证集成商） | Weftik 合作伙伴生态（集成商 + OEM） |
+| Ignition Exchange（模块共享） | Weftik Marketplace（插件/模板/驱动商店） |
+| Forum（技术社区） | Weftik Community（论坛 + GitHub Discussions） |
+| ICC（年度大会） | Weftik Conference |
 
 ### 7.9 Web IDE 架构取舍
 
 从 Ignition Perspective Designer 学习：
 
-- **Perspective Designer 完全在浏览器中运行**——这对 AUDESYS Studio 是一个信号
+- **Perspective Designer 完全在浏览器中运行**——这对 Weftik Studio 是一个信号
 - 传统工业 IDE 都是桌面应用（TIA Portal、CODESYS、TwinCAT），Ignition 首次证明了**工业 SCADA 工程可以在浏览器中完成**
-- AUDESYS Studio 应评估：核心功能（PLC 编程、HMI 设计）是否可 Web 化？
+- Weftik Studio 应评估：核心功能（PLC 编程、HMI 设计）是否可 Web 化？
   - **推荐策略**：HMI 设计完全 Web 化，PLC 编程桌面优先（LSP + 语法高亮的 Web 实现在工业 IDE 中仍有限制）
 
 ### 7.10 需警惕的陷阱
 
-从 Ignition 的发展历程中 AUDESYS 应注意：
+从 Ignition 的发展历程中 Weftik 应注意：
 
-1. **Vision ↔ Perspective 双线维护**：两条 HMI 产品线带来维护负担。AUDESYS 应从第一天就选定唯一的技术栈。
+1. **Vision ↔ Perspective 双线维护**：两条 HMI 产品线带来维护负担。Weftik 应从第一天就选定唯一的技术栈。
 2. **Jython (Python 2.7) 的锁定**：依赖特定语言运行时可能在 10 年后成为技术债。选择嵌入脚本引擎时需考虑长期维护性。
-3. **Java 依赖**：Gateway 对 Java 运行时的依赖在某些嵌入式/Linux RT 场景下是负担。AUDESYS Runtime 应考虑 C/Rust 实现以保证实时性和轻量化。
-4. **MQTT 供应商锁定**：Ignition 的 MQTT 模块依赖 Cirrus Link，如果合作破裂可能影响产品线。AUDESYS 的核心通信组件应自研或使用完全开源的实现。
+3. **Java 依赖**：Gateway 对 Java 运行时的依赖在某些嵌入式/Linux RT 场景下是负担。Weftik Runtime 应考虑 C/Rust 实现以保证实时性和轻量化。
+4. **MQTT 供应商锁定**：Ignition 的 MQTT 模块依赖 Cirrus Link，如果合作破裂可能影响产品线。Weftik 的核心通信组件应自研或使用完全开源的实现。
 
 ---
 
@@ -795,7 +795,7 @@ Ignition 的生态建设策略值得 AUDESYS 学习：
 
 - 文档版本: 1.0
 - 生成日期: 2026-07-13
-- 作者: AUDESYS Team
+- 作者: Weftik Team
 - 审核状态: 草稿
 - 信息来源: Inductive Automation 官方网站、Ignition User Manual (8.3)、Ignition Forum、Inductive University、ICC 大会资料、第三方技术博客和分析报告
 - 标注"待确认"的信息需进一步验证

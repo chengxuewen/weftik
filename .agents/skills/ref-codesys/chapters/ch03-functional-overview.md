@@ -143,14 +143,14 @@ TÜV pre-certified safety control extension:
 4. **C Code Integration** — embed C code in IEC 61131-3 apps via plugin
 5. **Device Description Files (DDF)** — XML device parameter description, import into IDE for new device support
 
-## 3.4 AUDESYS Relevance — Functional Design
+## 3.4 Weftik Relevance — Functional Design
 
-| CODESYS Module | AUDESYS Analog |
+| CODESYS Module | Weftik Analog |
 |----------------|---------------|
-| Visualization (TargetVisu/WebVisu) | AUDESYS HMI/SCADA in Studio |
-| SoftMotion | AUDESYS Simulator (virtual devices) |
-| Fieldbus abstraction | AUDESYS HAL protocol adapters |
-| OPC UA Server/Client | AUDESYS Runtime OPC UA integration |
-| Redundancy | AUDESYS StreamChannel redundancy (D28) |
-| Plugin system | AUDESYS Studio plugin/extensibility |
-| DDF device description | AUDESYS device capability model |
+| Visualization (TargetVisu/WebVisu) | Weftik HMI/SCADA in Studio |
+| SoftMotion | Weftik Simulator (virtual devices) |
+| Fieldbus abstraction | Weftik HAL protocol adapters |
+| OPC UA Server/Client | Weftik Runtime OPC UA integration |
+| Redundancy | Weftik StreamChannel redundancy (D28) |
+| Plugin system | Weftik Studio plugin/extensibility |
+| DDF device description | Weftik device capability model |

@@ -15,21 +15,21 @@
 //! | HMI/Config   | 3     | save/load/deploy real |
 
 use napi_derive::napi;
-use weftik_hal_binding_gen::compile;
-use weftik_il_compiler::il_compile;
-use weftik_ld_compiler::ld_compile;
-use weftik_fbd_compiler::fbd_compile;
-use weftik_sfc_compiler::sfc_compile;
-use weftik_gcode_compiler::gcode_compile;
-use weftik_runtime_client::RuntimeClient;
-use weftik_runtime::simulation::SimulationHarness;
-use weftik_runtime_common::types::Role;
 use std::fs;
 use std::os::unix::net::UnixStream;
 use std::process::{Child, Command};
 use std::sync::Mutex;
 use std::time::Instant;
 use std::{thread, time::Duration};
+use weftik_fbd_compiler::fbd_compile;
+use weftik_gcode_compiler::gcode_compile;
+use weftik_hal_binding_gen::compile;
+use weftik_il_compiler::il_compile;
+use weftik_ld_compiler::ld_compile;
+use weftik_runtime::simulation::SimulationHarness;
+use weftik_runtime_client::RuntimeClient;
+use weftik_runtime_common::types::Role;
+use weftik_sfc_compiler::sfc_compile;
 
 // ── Controller process state ────────────────────────────────────────────
 
@@ -52,25 +52,17 @@ fn to_json<T: serde::Serialize>(value: &T) -> napi::Result<String> {
 fn json_to_bincode(json: &str) -> napi::Result<Vec<u8>> {
     let program: weftik_hal_ir::program::HalProgram = serde_json::from_str(json)
         .map_err(|e| napi::Error::from_reason(format!("deserialize: {e}")))?;
-    bincode::serialize(&program)
-        .map_err(|e| napi::Error::from_reason(format!("bincode: {e}")))
+    bincode::serialize(&program).map_err(|e| napi::Error::from_reason(format!("bincode: {e}")))
 }
 /// Create a one-shot controller connection, authenticate, run `f`, disconnect.
 /// `role_str`: "operator" | "engineer" | "supervisor" | "auditor" | "system"
-fn with_controller<F>(
-    socket_path: &str,
-    secret: &str,
-    role: Role,
-    f: F,
-) -> napi::Result<String>
+fn with_controller<F>(socket_path: &str, secret: &str, role: Role, f: F) -> napi::Result<String>
 where
     F: FnOnce(&mut RuntimeClient) -> Result<String, String>,
 {
     let mut client = RuntimeClient::connect(socket_path, secret.as_bytes())
         .map_err(|e| napi::Error::from_reason(format!("connect: {e}")))?;
-    client
-        .authenticate(role)
-        .map_err(|e| napi::Error::from_reason(format!("auth: {e}")))?;
+    client.authenticate(role).map_err(|e| napi::Error::from_reason(format!("auth: {e}")))?;
     let result = f(&mut client).map_err(|e| napi::Error::from_reason(e))?;
     Ok(result)
 }
@@ -90,9 +82,7 @@ fn parse_role(s: &str) -> napi::Result<Role> {
 
 /// Stub helper — signal a "not yet implemented" function.
 fn stub(name: &str) -> napi::Result<String> {
-    Err(napi::Error::from_reason(format!(
-        "not implemented: {name} is a stub for a future phase"
-    )))
+    Err(napi::Error::from_reason(format!("not implemented: {name} is a stub for a future phase")))
 }
 
 // ── PHASE 1 CORE — Compilers ─────────────────────────────────────────────
@@ -208,9 +198,7 @@ pub fn deploy_program(
 /// Returns a health-report JSON string. Timeout: 2s.
 #[napi]
 pub fn health_query(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Operator, |client| {
-        client.health_query()
-    })
+    with_controller(&socket_path, &secret, Role::Operator, |client| client.health_query())
 }
 
 // ── PHASE 1 CORE — Controller Lifecycle ─────────────────────────────────
@@ -280,9 +268,7 @@ pub fn controller_start(socket_path: String, binary_path: String) -> napi::Resul
 #[napi]
 pub fn controller_stop() -> napi::Result<String> {
     let mut guard = CONTROLLER.lock().unwrap();
-    let mut h = guard
-        .take()
-        .ok_or_else(|| napi::Error::from_reason("no controller running"))?;
+    let mut h = guard.take().ok_or_else(|| napi::Error::from_reason("no controller running"))?;
     drop(guard);
 
     // Kill child process
@@ -329,14 +315,9 @@ pub fn controller_health() -> napi::Result<String> {
 
 // ── PHASE 1 AUXILIARY — Deploy ───────────────────────────────────────────
 
-
 /// Load a HAL configuration (YAML) to a running Controller via IPC method 0x08.
 #[napi]
-pub fn load_hal_config(
-    socket_path: String,
-    secret: String,
-    yaml: String,
-    ) -> napi::Result<String> {
+pub fn load_hal_config(socket_path: String, secret: String, yaml: String) -> napi::Result<String> {
     with_controller(&socket_path, &secret, Role::Engineer, |client| {
         client.load_hal_config(yaml.as_bytes())
     })
@@ -347,9 +328,7 @@ pub fn load_hal_config(
 /// Connect to Controller for debugging (authenticate as Engineer).
 #[napi]
 pub fn debug_connect(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |_client| {
-        Ok("connected".to_string())
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |_client| Ok("connected".to_string()))
 }
 
 /// Disconnect — controller connection closed automatically.
@@ -361,57 +340,47 @@ pub fn debug_disconnect() -> napi::Result<String> {
 /// Pause cycle execution.
 #[napi]
 pub fn debug_pause(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.pause()
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.pause())
 }
 
 /// Resume cycle execution.
 #[napi]
 pub fn debug_resume(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.resume()
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.resume())
 }
 
 /// Single-step one cycle.
 #[napi]
 pub fn debug_step(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.step_cycle()
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.step_cycle())
 }
 
 /// Read VM register values (r0–r13).
 #[napi]
 pub fn debug_get_registers(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.debug_state()
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.debug_state())
 }
 
 /// Set a breakpoint at the given instruction pointer.
 #[napi]
 pub fn debug_add_breakpoint(socket_path: String, secret: String, ip: u32) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.set_breakpoint(ip)
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.set_breakpoint(ip))
 }
 
 /// Clear a breakpoint at the given instruction pointer.
 #[napi]
-pub fn debug_remove_breakpoint(socket_path: String, secret: String, ip: u32) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.clear_breakpoint(ip)
-    })
+pub fn debug_remove_breakpoint(
+    socket_path: String,
+    secret: String,
+    ip: u32,
+) -> napi::Result<String> {
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.clear_breakpoint(ip))
 }
 
 /// List all active breakpoints.
 #[napi]
 pub fn debug_get_breakpoints(socket_path: String, secret: String) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.list_breakpoints()
-    })
+    with_controller(&socket_path, &secret, Role::Engineer, |client| client.list_breakpoints())
 }
 
 /// Get full debug state as a JSON string from the Controller.
@@ -448,8 +417,9 @@ pub fn sim_destroy() -> napi::Result<String> {
 #[napi]
 pub fn sim_step() -> napi::Result<String> {
     let mut guard = SIM.lock().unwrap();
-    let sim = guard.as_mut()
-        .ok_or_else(|| napi::Error::from_reason("no simulation active. Call sim_create() first."))?;
+    let sim = guard.as_mut().ok_or_else(|| {
+        napi::Error::from_reason("no simulation active. Call sim_create() first.")
+    })?;
     sim.run_cycles(1);
     let snap = sim.signal_snapshot();
     to_json(&snap)
@@ -468,7 +438,5 @@ pub fn open_project(project_path: String) -> napi::Result<String> {
 /// Read a project source file by path.
 #[napi]
 pub fn read_project_file(file_path: String) -> napi::Result<String> {
-    fs::read_to_string(&file_path)
-        .map_err(|e| napi::Error::from_reason(format!("read file: {e}")))
+    fs::read_to_string(&file_path).map_err(|e| napi::Error::from_reason(format!("read file: {e}")))
 }
-

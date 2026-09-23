@@ -1,4 +1,4 @@
-# AUDESYS HAL 类型系统规范
+# Weftik HAL 类型系统规范
 
 > **来源**: `docs/modules/hal/iec-type-system-design.md` (v1.0, 2026-07-09)
 > **总类型数**: 14 (11 标量 + 3 容器)

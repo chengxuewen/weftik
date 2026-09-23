@@ -1,7 +1,7 @@
 # CODESYS Design Patterns
 
 **Source**: `docs/reference/codesys.md` — extracted design decisions
-**Context**: Patterns AUDESYS Studio/HAL can adopt or learn from
+**Context**: Patterns Weftik Studio/HAL can adopt or learn from
 
 ---
 
@@ -9,8 +9,8 @@
 
 **CODESYS Implementation**: All IEC 61131-3 editors (ST, LD, FBD, SFC, CFC) convert input to a single internal ST representation (Language Model). Compiler processes one IR uniformly.
 
-**AUDESYS Applicability**: 
-- AUDESYS Studio can define a unified "Device Configuration Model" as central IR
+**Weftik Applicability**: 
+- Weftik Studio can define a unified "Device Configuration Model" as central IR
 - YAML config, HMI design, ST programs all map to same IR
 - Enables cross-module features (refactoring, analysis, validation)
 
@@ -22,7 +22,7 @@
 
 **CODESYS Implementation**: One language model → per-CPU optimized machine code generators (15+ architectures). No interpretation at runtime.
 
-**AUDESYS Applicability**:
+**Weftik Applicability**:
 - D19: Rust Core for RT data plane (< 1us) — aligns with native code philosophy
 - HAL IR compilation to native Rust binaries per target
 - Avoid interpretation overhead for real-time paths
@@ -35,12 +35,12 @@
 
 **CODESYS Implementation**: Every IDE feature (editors, compiler backends, fieldbus configurators) is a replaceable plugin. DI framework manages dependencies.
 
-**AUDESYS Applicability**:
-- AUDESYS Studio Tauri app should adopt plugin architecture
+**Weftik Applicability**:
+- Weftik Studio Tauri app should adopt plugin architecture
 - Language editors, visualizers, debuggers as plugins
 - Enables third-party extensions (like CODESYS Store)
 
-**Decision Impact**: Studio plugin system design; AUDESYS Store concept
+**Decision Impact**: Studio plugin system design; Weftik Store concept
 
 ---
 
@@ -48,8 +48,8 @@
 
 **CODESYS Implementation**: XML format describes device capabilities. Import DDF → new device supported in IDE.
 
-**AUDESYS Applicability**:
-- AUDESYS needs device capability description format
+**Weftik Applicability**:
+- Weftik needs device capability description format
 - FlatBuffers-based device model (D19 alignment)
 - Device type definitions auto-generate IDE configuration UI
 
@@ -61,8 +61,8 @@
 
 **CODESYS Implementation**: OS Abstraction Layer decouples runtime from OS/CPU specifics. Runtime runs on Windows, Linux, VxWorks, QNX, RTOS.
 
-**AUDESYS Applicability**:
-- Direct parallel: AUDESYS HAL amw abstraction (D11)
+**Weftik Applicability**:
+- Direct parallel: Weftik HAL amw abstraction (D11)
 - HalTransport, HalDiscovery, HalQoS as amw three-axis traits
 - Swap transport (amw_inproc → amw_zenoh) without code changes
 
@@ -74,9 +74,9 @@
 
 **CODESYS Implementation**: IDE is free (€0). Runtime licensed per device. OEM SDK has annual + royalty model.
 
-**AUDESYS Applicability**:
-- AUDESYS Studio should be free/open source
-- AUDESYS Runtime can be open source or per-device licensed
+**Weftik Applicability**:
+- Weftik Studio should be free/open source
+- Weftik Runtime can be open source or per-device licensed
 - Revenue from enterprise features, support, OEM SDK
 
 **Decision Impact**: Business model; D40 release strategy (v0.1.0 in Phase 2)
@@ -87,8 +87,8 @@
 
 **CODESYS Implementation**: TargetVisu/WebVisu directly accesses PLC variables. No OPC UA configuration needed between IDE and HMI.
 
-**AUDESYS Applicability**:
-- AUDESYS HMI/SCADA should share runtime variable space
+**Weftik Applicability**:
+- Weftik HMI/SCADA should share runtime variable space
 - Direct binding: HMI element ↔ runtime variable (like CODESYS)
 - Reduces configuration complexity
 
@@ -100,8 +100,8 @@
 
 **CODESYS Implementation**: Core runtime + add-on modules (SoftMotion, Safety, OPC UA, Redundancy, Fieldbus). Each module is independently licensable.
 
-**AUDESYS Applicability**:
-- AUDESYS Runtime core + optional modules
+**Weftik Applicability**:
+- Weftik Runtime core + optional modules
 - HAL protocol adapters as modules (Modbus, OPC UA, EtherCAT)
 - Simulator virtual devices as modules (Phase 3/4)
 
@@ -113,7 +113,7 @@
 
 **CODESYS Implementation**: Since SP17, each plugin/module has independent version number (4.x.x.x). Independent updates without waiting for Service Pack.
 
-**AUDESYS Applicability**:
+**Weftik Applicability**:
 - HAL components can have independent versions
 - Runtime core vs HAL vs Studio each version independently
 - Avoids CODESYS's SP17 fragmentation lesson: version ranges must be managed
@@ -126,8 +126,8 @@
 
 **CODESYS Implementation**: Safety runtime (SIL2/SIL3) runs isolated from standard runtime. Separate execution context, TÜV pre-certified.
 
-**AUDESYS Applicability**:
-- AUDESYS Safety domain (D27) should have isolated execution
+**Weftik Applicability**:
+- Weftik Safety domain (D27) should have isolated execution
 - `l1.*` security domain matches all L1 devices (D27)
 - Safety-critical paths separate from standard data paths
 
@@ -137,7 +137,7 @@
 
 ## Patterns to AVOID
 
-| Pattern | CODESYS Lesson | AUDESYS Counter-Strategy |
+| Pattern | CODESYS Lesson | Weftik Counter-Strategy |
 |---------|---------------|------------------------|
 | Unified compiler version | SP17→SP18 forced component-level versioning | Use cargo workspace independent versions from start |
 | IDE/Runtime compatibility | New IDE may not support old runtime | Define stable version compatibility matrix |
@@ -146,4 +146,4 @@
 
 ---
 
-**Reference**: CODESYS patterns are extracted for AUDESYS Studio design decisions (D21-D49). Each pattern maps to one or more AUDESYS design documents in `docs/modules/`.
+**Reference**: CODESYS patterns are extracted for Weftik Studio design decisions (D21-D49). Each pattern maps to one or more Weftik design documents in `docs/modules/`.

@@ -1,4 +1,4 @@
-# AUDESYS 轴组设计
+# Weftik 轴组设计
 
 > 生成日期：2026-07-19
 > 设计目标：为运动规划器层定义轴组概念——逻辑轴分组、坐标系统、回零序列、软限位和反向间隙补偿
@@ -68,8 +68,8 @@
 
 ### 1.3 参考系统
 
-- **LinuxCNC**：HAL pins `axis.N.*` + `motion.axis-group.*` → AUDESYS 映射为 Signal `axis.N.*`
-- **GRBL**：单轴组 3 轴固定（N_AXIS=3），无多轴组概念 → AUDESYS 泛化为多轴组
+- **LinuxCNC**：HAL pins `axis.N.*` + `motion.axis-group.*` → Weftik 映射为 Signal `axis.N.*`
+- **GRBL**：单轴组 3 轴固定（N_AXIS=3），无多轴组概念 → Weftik 泛化为多轴组
 - **Machinekit**：多轴组模型（trivkins + kinematics）→ Phase 3 运动学阶段参考
 
 ---
@@ -104,7 +104,7 @@ axis_groups:
 
 ### 2.2 平面选择 — G17 / G18 / G19
 
-G-code 中 `G17` (XY)、`G18` (ZX)、`G19` (YZ) 选择圆弧插补平面和刀具补偿平面。在 AUDESYS 中，平面选择被解析为轴组内轴索引的绑定：
+G-code 中 `G17` (XY)、`G18` (ZX)、`G19` (YZ) 选择圆弧插补平面和刀具补偿平面。在 Weftik 中，平面选择被解析为轴组内轴索引的绑定：
 
 | G-code | 平面 | 第一轴（弧半径方向） | 第二轴（弧切线方向） | 纵向轴（钻孔/补偿轴） |
 |--------|------|---------------------|---------------------|----------------------|
@@ -128,7 +128,7 @@ G-code 中 `G17` (XY)、`G18` (ZX)、`G19` (YZ) 选择圆弧插补平面和刀�
 
 ### 3.1 坐标系统层级
 
-AUDESYS 坐标系统遵循 RS274/NGC 标准的三层模型：
+Weftik 坐标系统遵循 RS274/NGC 标准的三层模型：
 
 ```
 机床坐标系 (Machine Coordinate System, G53)
@@ -207,7 +207,7 @@ coordinate_systems:
 
 回零（Homing）是建立机床坐标系的必要步骤。物理限位开关（或编码器索引脉冲）的位置是机床唯一的绝对参考点。回零后，轴的位置被设置为已知的机械零位（或 HOME_OFFSET 指定的偏移位置），后续所有运动均基于此参考。
 
-AUDESYS 回零使用 **Signal 驱动的状态机**——不引入新的 RPC 或通信原语，完全通过现有 Signal 读/写实现。
+Weftik 回零使用 **Signal 驱动的状态机**——不引入新的 RPC 或通信原语，完全通过现有 Signal 读/写实现。
 
 ### 4.2 回零状态机
 
@@ -299,7 +299,7 @@ FAULT:
 当轴组包含多个轴时，回零可按配置顺序执行：
 
 - **顺序回零**（默认）：`axis.0`→`axis.1`→`axis.2`，每个轴独立完成四个阶段后再开始下一个。Z 轴通常最后回零（避免刀具碰撞）。
-- **并行回零**：多轴同时回零（Phase 2，需要独立的限位开关）。LinuxCNC 的 `HOME_SEQUENCE` 参数映射为 AUDESYS 的 `homing.parallel` 标志。
+- **并行回零**：多轴同时回零（Phase 2，需要独立的限位开关）。LinuxCNC 的 `HOME_SEQUENCE` 参数映射为 Weftik 的 `homing.parallel` 标志。
 
 ---
 
@@ -714,4 +714,4 @@ group.N.alarm_state = ESTOP   if system.estop (overrides all)
 - `docs/modules/cnc/gcode-compiler-design.md` — G-code 编译器设计，Signal 命名范式
 - `docs/reference/linuxcnc.md` — LinuxCNC HAL pins, `HOME_SEQUENCE`, 回零参数模型
 - `docs/reference/grbl.md` — GRBL 限位系统、软限位、归位状态机、9 态系统状态机
-- `docs/architecture.md` — AUDESYS 系统架构，RT 线程调度，LinuxCNC HAL 适配
+- `docs/architecture.md` — Weftik 系统架构，RT 线程调度，LinuxCNC HAL 适配

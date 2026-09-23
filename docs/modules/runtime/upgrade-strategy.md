@@ -1,4 +1,4 @@
-# AUDESYS Runtime 升级策略
+# Weftik Runtime 升级策略
 
 > 生成日期：2026-07-15
 > 设计目标：在不中断生产运行的前提下，定义 Runtime 全链路升级机制——从 FlatBuffers schema 变更、YAML 配置迁移、Runtime 热替换、Agent 降级模式、设备固件 OTA 到回滚策略。全链路统一 SemVer 合约。

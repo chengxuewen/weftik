@@ -1,4 +1,4 @@
-# AUDESYS I/O 映射设计
+# Weftik I/O 映射设计
 
 > 生成日期：2026-07-09
 > 设计目标：逻辑-物理分离的 I/O 映射系统，支持 MODBUS / EtherCAT / PROFINET / CANopen 等多种现场总线
@@ -365,7 +365,7 @@ HAL Protocol 层面:
 
 ## 7. 与 OpenPLC image table 的对比
 
-| | OpenPLC image table | AUDESYS IoImageTable |
+| | OpenPLC image table | Weftik IoImageTable |
 |---|---|---|
 | 寻址 | 仅数字索引 `%IW0` | 逻辑名 "conveyor_start" + 数字索引 |
 | 总线支持 | 隐式（驱动内部处理）| 显式 domain + channel + address_space |

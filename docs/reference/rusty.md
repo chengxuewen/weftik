@@ -1,6 +1,6 @@
 # RuSTy — Rust 实现的 IEC 61131-3 结构化文本编译器
 
-> 文档定位：为 AUDESYS 未来可能的 IEC 61131-3 ST 支持提供编译器后端参考。
+> 文档定位：为 Weftik 未来可能的 IEC 61131-3 ST 支持提供编译器后端参考。
 
 ---
 
@@ -12,7 +12,7 @@
 4. [现状与生态](#四现状与生态)
 5. [市场定位](#五市场定位)
 6. [产品特色](#六产品特色)
-7. [对 AUDESYS 参考价值](#七对-audesys-参考价值)
+7. [对 Weftik 参考价值](#七对-weftik-参考价值)
 
 ---
 
@@ -164,7 +164,7 @@ RuSTy 维护者在 GitHub Discussion #1556 中分享了关于编译器架构的�
 - **不要从一开始就过度设计**："在开始时让系统先编译通过，然后再优化它。如果在设计之初就能容纳 MIR，那很好——它会更容易维护……但请记住你仍然在做同样的步骤，只是更早而已"
 - RuSTy **计划将来引入 MIR**，这已在核心团队的路线图中
 
-这个经验直接适用于 AUDESYS 如果将来实现自己的 ST 编译器前端——可以先快速出原型（直接生成 HAL API 调用），再逐步引入优化层。
+这个经验直接适用于 Weftik 如果将来实现自己的 ST 编译器前端——可以先快速出原型（直接生成 HAL API 调用），再逐步引入优化层。
 
 ### 2.3 类型系统
 
@@ -457,7 +457,7 @@ gcc my_runtime.c -L. -lmy_program -o controller
 ./controller
 ```
 
-这种设计类似于 LLVM/Clang 在 C 世界中的角色——它不是操作系统，而是一个工具，可以被更上层的系统（如 AUDESYS Runtime）编排和使用。
+这种设计类似于 LLVM/Clang 在 C 世界中的角色——它不是操作系统，而是一个工具，可以被更上层的系统（如 Weftik Runtime）编排和使用。
 
 ### 6.5 活跃且务实的社区
 
@@ -468,15 +468,15 @@ gcc my_runtime.c -L. -lmy_program -o controller
 
 ---
 
-## 七、对 AUDESYS 参考价值
+## 七、对 Weftik 参考价值
 
 ### 7.1 编译器后端集成架构
 
-如果 AUDESYS 将来支持 IEC 61131-3 ST 语言，RuSTy 可以作为**编译器后端**直接集成：
+如果 Weftik 将来支持 IEC 61131-3 ST 语言，RuSTy 可以作为**编译器后端**直接集成：
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│              AUDESYS Studio IDE                             │
+│              Weftik Studio IDE                             │
 │  ┌────────────────────────────────────────────────────────┐ │
 │  │  ST Editor (IEC 61131-3 编辑器)                        │ │
 │  │  • 语法高亮、自动补全、诊断                             │ │
@@ -505,7 +505,7 @@ gcc my_runtime.c -L. -lmy_program -o controller
 │                          │                                  │
 │                          ▼                                  │
 │  ┌────────────────────────────────────────────────────────┐ │
-│  │  AUDESYS Runtime                                        │ │
+│  │  Weftik Runtime                                        │ │
 │  │  • 加载 .so 到 RT 线程的执行周期中                       │ │
 │  │  • 周期调用 ST 程序入口点                               │ │
 │  │  • 在调用前后执行 Signal 输入/输出刷新                   │ │
@@ -515,7 +515,7 @@ gcc my_runtime.c -L. -lmy_program -o controller
 
 ### 7.2 ST 程序到 HAL 的映射模式
 
-利用 RuSTy 编译的 ST 程序与 AUDESYS HAL 的集成可以采用以下模式：
+利用 RuSTy 编译的 ST 程序与 Weftik HAL 的集成可以采用以下模式：
 
 #### 7.2.1 编译期集成（推荐方式）
 
@@ -627,11 +627,11 @@ RT 线程的调度循环：
 └────────────────────────────────────────────────┘
 ```
 
-### 7.3 RuSTy 的"无运行时"哲学与 AUDESYS 的契合度
+### 7.3 RuSTy 的"无运行时"哲学与 Weftik 的契合度
 
-RuSTy 选择不提供运行时，正是 AUDESYS 可以补充的价值：
+RuSTy 选择不提供运行时，正是 Weftik 可以补充的价值：
 
-| RuSTy 缺失 | AUDESYS 提供 | 结合效果 |
+| RuSTy 缺失 | Weftik 提供 | 结合效果 |
 |-----------|-------------|---------|
 | 周期调度循环 | HAL RT 线程 + Signal 周期刷新 | RuSTy 编译的 ST 程序被挂载到 RT 线程中执行 |
 | I/O 硬件抽象 | HAL 14 种类型 + amw | ST 程序的 `AT %IW0` 等绑定通过 HAL Signal 实现 |
@@ -641,20 +641,20 @@ RuSTy 选择不提供运行时，正是 AUDESYS 可以补充的价值：
 
 ### 7.4 编译器集成层级选择
 
-AUDESYS 在不同阶段可以选择不同深度的 RuSTy 集成：
+Weftik 在不同阶段可以选择不同深度的 RuSTy 集成：
 
 | 集成层级 | 方式 | 优点 | 缺点 | 推荐阶段 |
 |---------|------|------|------|---------|
-| **Level 0：独立使用** | RuSTy 单独编译 .so，AUDESYS 手动加载 | 零集成成本 | 手动映射 HAL 接口，无 IDE 集成 | 原型验证 |
+| **Level 0：独立使用** | RuSTy 单独编译 .so，Weftik 手动加载 | 零集成成本 | 手动映射 HAL 接口，无 IDE 集成 | 原型验证 |
 | **Level 1：HAL Binding Generator** | RuSTy 编译 + 后处理生成 HAL 清单 | 自动生成 Signal/RPC 映射 | 需要维护生成器代码 | Phase 2-3 |
-| **Level 2：嵌入为库** | 通过 Rust FFI 在 AUDESYS 进程中调用 RuSTy 编译器 API | 实时编译、IDE 集成 | RuSTy API 可能不稳定（v1.0 刚开始） | Phase 3-4 |
+| **Level 2：嵌入为库** | 通过 Rust FFI 在 Weftik 进程中调用 RuSTy 编译器 API | 实时编译、IDE 集成 | RuSTy API 可能不稳定（v1.0 刚开始） | Phase 3-4 |
 | **Level 3：定制后端** | 为 RuSTy 编写自定义代码生成后端，直接输出 HAL API 调用 | 零开销集成 | 巨大的维护成本 | Phase 4+（不推荐） |
 
 **推荐路径**：Phase 2 实现 Level 1（HAL Binding Generator），Phase 3 根据需要推向 Level 2。
 
 ### 7.5 仿真器中的 ST 执行
 
-AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 后端）：
+Weftik Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 后端）：
 
 ```
 ┌────────────────────────────────────────────────────┐
@@ -680,7 +680,7 @@ AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 
 
 ### 7.6 安全关键系统的编译器认证考虑
 
-如果 AUDESYS 将来需要支持安全关键系统（如 SIL3 功能安全），编译器认证是一个绕不开的话题：
+如果 Weftik 将来需要支持安全关键系统（如 SIL3 功能安全），编译器认证是一个绕不开的话题：
 
 **RuSTy 与认证**：
 - LGPL 开源代码便于**审计和验证**（相较于闭源的 CODESYS 编译器）
@@ -688,7 +688,7 @@ AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 
 - 但 RuSTy 目前**尚未经过任何安全认证**（IEC 61508 SIL3 编译器认证，如 TÜV SÜD）
 - LLVM 本身也未经过安全认证——这是所有 LLVM 后端编译器的共同挑战
 
-**AUDESYS 的路径**：
+**Weftik 的路径**：
 - 非安全应用：RuSTy 直接作为编译后端
 - 安全关键应用：RuSTy 编译后的 .so 文件可以经过**独立的二进制验证**（反汇编 → 控制流图验证 → 确认符合预期）
 - 或者使用"多样化编译"（Diverse Compilation）：同一 ST 程序用 RuSTy 和另一个编译器分别编译，运行时比较输出
@@ -712,14 +712,14 @@ AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 
 
 > 注意：IEC 61131-3 的 STRUCT 类型可能需要展开为多个 HAL Signal，因为 HAL 的类型系统中每个 Signal 是单一类型的值，不支持嵌套结构（除非使用 Blob 序列化）。
 
-### 7.8 总结：RuSTy 对 AUDESYS 的战略价值
+### 7.8 总结：RuSTy 对 Weftik 的战略价值
 
 1. **最直接的 ST 编译器后端**：无需从零开发 IEC 61131-3 编译器，直接集成 RuSTy 编译生成的 .so
 2. **跨架构部署**：同一份 ST 逻辑可以在 x86_64 仿真器上运行，也可以在 ARM64/RISC-V 现场设备上运行
-3. **WASM 赋能**：WASM 目标使得浏览器端运行 ST 逻辑成为可能，这对于 AUDESYS Studio 的在线仿真功能极具价值
+3. **WASM 赋能**：WASM 目标使得浏览器端运行 ST 逻辑成为可能，这对于 Weftik Studio 的在线仿真功能极具价值
 4. **类型安全 + 内存安全**：Rust 编写的编译器在可信计算基（TCB）中相比 C/C++ 编译器具备天然安全优势
-5. **社区对接**：可以通过贡献 RuSTy 项目（特别是 AUDESYS HAL 绑定生成器方向）来影响 IEC 61131-3 开源编译器生态的发展方向
-6. **阶段适配**：从 Level 0（独立使用）到 Level 2（嵌入为库），AUDESYS 可以根据自身发展阶段选择不同深度的集成
+5. **社区对接**：可以通过贡献 RuSTy 项目（特别是 Weftik HAL 绑定生成器方向）来影响 IEC 61131-3 开源编译器生态的发展方向
+6. **阶段适配**：从 Level 0（独立使用）到 Level 2（嵌入为库），Weftik 可以根据自身发展阶段选择不同深度的集成
 
 ---
 
@@ -738,29 +738,29 @@ AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 
 | **TCB（可信计算基）** | 闭源二进制不可审计 | 源码可见，但 LLVM 本身量大 |
 | **形式化验证** | 极少（成本极高） | 理论上 Rust 的形式化验证工具链更成熟（如 Kani, Creusot） |
 | **多样化编译** | 通常使用单一编译器 | 可与 MatIEC 搭配形成双编译器验证 |
-| **运行时确定性** | 专有 Runtime 保证调度确定性 | 无 Runtime → 确定性由集成者（如 AUDESYS）保证 |
+| **运行时确定性** | 专有 Runtime 保证调度确定性 | 无 Runtime → 确定性由集成者（如 Weftik）保证 |
 | **测试覆盖** | 内部测试套件，覆盖度不公开 | 开源测试套件可见（lit tests + unit tests），社区可贡献 |
 
-**对 AUDESYS 的影响**：
+**对 Weftik 的影响**：
 - **非安全应用**：RuSTy 直接使用，无认证负担
-- **安全应用 (SIL2)**：RuSTy + AUDESYS RT 线程调度保证 + 独立二进制验证
+- **安全应用 (SIL2)**：RuSTy + Weftik RT 线程调度保证 + 独立二进制验证
 - **安全应用 (SIL3)**：建议 RuSTy + MatIEC 双编译 + 运行时输出比对
 
 ### 7.10 从 RuSTy 学到的编译器工程经验
 
-对于 AUDESYS 团队，RuSTy 的开发过程提供了几个关键的工程启示：
+对于 Weftik 团队，RuSTy 的开发过程提供了几个关键的工程启示：
 
-1. **"让系统先编译通过"哲学**：RuSTy 维护者强调不要从一开始就过度设计（如 MIR）。这与 AUDESYS 的 Phase 1-2-3-4 渐进式策略高度一致——先跑通最关键路径（Phase 1 InProc 单机），再逐层优化
+1. **"让系统先编译通过"哲学**：RuSTy 维护者强调不要从一开始就过度设计（如 MIR）。这与 Weftik 的 Phase 1-2-3-4 渐进式策略高度一致——先跑通最关键路径（Phase 1 InProc 单机），再逐层优化
 
-2. **C ABI 作为通用接口**：RuSTy 通过 C ABI 绑定硬件，而非定制 FFI。C ABI 是跨越 Rust/C++/ST 的"通用语言"——AUDESYS 也可以将 C ABI 作为 HAL API 的可选接口（除了 amw 原生 API 之外）
+2. **C ABI 作为通用接口**：RuSTy 通过 C ABI 绑定硬件，而非定制 FFI。C ABI 是跨越 Rust/C++/ST 的"通用语言"——Weftik 也可以将 C ABI 作为 HAL API 的可选接口（除了 amw 原生 API 之外）
 
-3. **DWARF 调试符号的价值**：RuSTy 通过 DWARF 暴露 ST 变量符号供 Modbus 等外部协议访问。AUDESYS 的 HalDiscovery 可以利用 DWARF 自动发现 .so 文件中暴露的 IEC 61131-3 变量
+3. **DWARF 调试符号的价值**：RuSTy 通过 DWARF 暴露 ST 变量符号供 Modbus 等外部协议访问。Weftik 的 HalDiscovery 可以利用 DWARF 自动发现 .so 文件中暴露的 IEC 61131-3 变量
 
-4. **社区贡献的切入点**：RuSTy 维护者明确指出"文档"是最需要社区贡献的领域（特别是硬件绑定文档）。AUDESYS 可以通过贡献 HAL 绑定文档来回馈开源社区
+4. **社区贡献的切入点**：RuSTy 维护者明确指出"文档"是最需要社区贡献的领域（特别是硬件绑定文档）。Weftik 可以通过贡献 HAL 绑定文档来回馈开源社区
 
 5. **IEC 61131-3:2025 的先行者优势**：RuSTy 的 2025 Edition Property 语法迁移（#1688）展示了如何在保持向后兼容的同时推进标准适配——内部保留 PropertyBlock 聚合是一个务实的过渡方案
 
-6. **LGPL 许可的商业友好性**：RuSTy 的 LGPL 许可允许 AUDESYS 在商业产品中动态链接使用——这比 GPL 更灵活，比 MIT/Apache 更有"贡献回馈"的社区粘性
+6. **LGPL 许可的商业友好性**：RuSTy 的 LGPL 许可允许 Weftik 在商业产品中动态链接使用——这比 GPL 更灵活，比 MIT/Apache 更有"贡献回馈"的社区粘性
 
 ### 7.11 附录：RuSTy 相关资源索引
 
@@ -776,7 +776,7 @@ AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 
 | **学术论文** | https://repositorio-aberto.up.pt/bitstream/10216/132765/2/411556.pdf | LLVM-based IEC 61131-3 Compiler 论文 |
 
 
-### 7.12 与 AUDESYS 其他参考文档中编译器相关的交叉引用
+### 7.12 与 Weftik 其他参考文档中编译器相关的交叉引用
 
 | 本文档 (RuSTy) | 其他参考文档 | 交叉参考点 |
 |----------------|------------|-----------|
@@ -790,10 +790,10 @@ AUDESYS Simulator 可以在 WASM 目标执行 ST 逻辑（利用 RuSTy 的 WASM 
 
 ### 7.13 结论
 
-RuSTy 代表了 IEC 61131-3 编译器技术的一次代际升级——从 1990 年代的 C/C++ 闭源编译器栈跃迁到 2020 年代的 Rust+LLVM 开源架构。对 AUDESYS 而言，RuSTy 提供了一个"够用且现代"的 ST 编译后端，其 LGPL 许可和活跃社区使得集成风险可控。
+RuSTy 代表了 IEC 61131-3 编译器技术的一次代际升级——从 1990 年代的 C/C++ 闭源编译器栈跃迁到 2020 年代的 Rust+LLVM 开源架构。对 Weftik 而言，RuSTy 提供了一个"够用且现代"的 ST 编译后端，其 LGPL 许可和活跃社区使得集成风险可控。
 
-AUDESYS 的集成策略应当遵循"渐进式采纳"：
+Weftik 的集成策略应当遵循"渐进式采纳"：
 - Phase 1-2：Level 0/1 集成（独立编译 + HAL 清单生成）
 - Phase 3-4：Level 2 集成（嵌入式编译 + IDE 深度集成）
 
-这种渐进式策略既能在早期快速验证 ST 控制逻辑在 AUDESYS Runtime 上的可行性，又能在后期提供完整的 IDE 编程体验。
+这种渐进式策略既能在早期快速验证 ST 控制逻辑在 Weftik Runtime 上的可行性，又能在后期提供完整的 IDE 编程体验。

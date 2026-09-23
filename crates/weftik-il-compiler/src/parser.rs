@@ -47,7 +47,6 @@ pub enum ILStatement {
     Label { name: String },
 }
 
-
 pub fn parse(tokens: &[Token]) -> Vec<ILStatement> {
     let mut stmts = Vec::new();
     let mut i = 0;

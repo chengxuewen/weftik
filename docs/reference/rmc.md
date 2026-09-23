@@ -411,29 +411,29 @@ FlexiHAL 2350 是唯一专门针对 EMI 环境设计的 RMC 方案：
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
 ### 7.1 实时任务卸载架构
 
-RMC 方案的核心架构—将实时任务从主机卸载到 MCU—对 AUDESYS 的 HAL 设计有直接参考意义。
+RMC 方案的核心架构—将实时任务从主机卸载到 MCU—对 Weftik 的 HAL 设计有直接参考意义。
 
-AUDESYS 的 HAL 设计包含三种线程（RT、I/O、事件驱动）。RMC 方案提供了一个已验证的参考：**非 RT 主机 + MCU 实时从站** 的分布式架构。
+Weftik 的 HAL 设计包含三种线程（RT、I/O、事件驱动）。RMC 方案提供了一个已验证的参考：**非 RT 主机 + MCU 实时从站** 的分布式架构。
 
-| 层面 | RMC 方案 | AUDESYS HAL 对应 |
+| 层面 | RMC 方案 | Weftik HAL 对应 |
 |------|---------|-----------------|
-| 主机端 | LinuxCNC + PREEMPT_RT | AUDESYS Runtime |
+| 主机端 | LinuxCNC + PREEMPT_RT | Weftik Runtime |
 | 实时任务 | MCU 固件（Step/Dir/PWM） | HalTransport RT 线程 |
 | 通信层 | SPI 总线 | HalTransport（UDS/Zenoh）|
 | 通信协议 | 自定义 UDP/SPI 协议 | Signal / StreamChannel |
 | I/O 抽象 | HAL 驱动 | HalDiscovery / HalQoS |
 
-### 7.2 SPI 通信层对 AUDESYS 的启示
+### 7.2 SPI 通信层对 Weftik 的启示
 
-RMC 方案的 SPI 通信层设计简单而高效，对 AUDESYS 的 HalTransport 设计有参考价值：
+RMC 方案的 SPI 通信层设计简单而高效，对 Weftik 的 HalTransport 设计有参考价值：
 
-| RMC SPI 通信设计 | AUDESYS 启示 |
+| RMC SPI 通信设计 | Weftik 启示 |
 |-----------------|-------------|
-| 固定 SPI 时钟 + 确定性延迟 | AUDESYS HalTransport 应提供确定性延迟保证 |
+| 固定 SPI 时钟 + 确定性延迟 | Weftik HalTransport 应提供确定性延迟保证 |
 | 主机发送位置/速度命令，MCU 执行 | Signal/StreamChannel 的单写多读模型 |
 | SPI 总线无 OS 调度干扰 | RT 线程应直接操作共享内存 |
 | 通过 SPI 片选线多通道扩展 | 多 StreamChannel 复用单一总线 |
@@ -454,14 +454,14 @@ MCU 固件内部结构：
 +-------------------------------+
 ```
 
-这对应 AUDESYS HAL 的三层设计：
+这对应 Weftik HAL 的三层设计：
 1. **通信层** - HalTransport（对应 SPI 协议层）
 2. **控制层** - Signal/StreamChannel 处理（对应运动控制层）
 3. **物理层** - 硬件抽象（对应物理 I/O 层）
 
 ### 7.4 多轴同步方案
 
-RMC 方案的多轴同步通过 MCU 固件实现（单 MCU 控制多轴），这为 AUDESYS 的多轴同步提供了参考：
+RMC 方案的多轴同步通过 MCU 固件实现（单 MCU 控制多轴），这为 Weftik 的多轴同步提供了参考：
 
 | 实现 | 同步方式 | 精度 | 适合场景 |
 |------|---------|------|---------|
@@ -472,7 +472,7 @@ RMC 方案的多轴同步通过 MCU 固件实现（单 MCU 控制多轴），这
 
 ### 7.5 SPI vs Ethernet 的选择
 
-RMC 方案的 SPI + Ethernet（Remora W5500）双路径选择对 AUDESYS 的 HalTransport 设计有直接参考意义：
+RMC 方案的 SPI + Ethernet（Remora W5500）双路径选择对 Weftik 的 HalTransport 设计有直接参考意义：
 
 | 维度 | SPI | Ethernet（W5500）|
 |------|-----|-----------------|
@@ -481,9 +481,9 @@ RMC 方案的 SPI + Ethernet（Remora W5500）双路径选择对 AUDESYS 的 Hal
 | 距离 | < 30cm | 100m+ |
 | 电气隔离 | 需光耦 | Ethernet 变压器 |
 | 多设备 | 点对点 | 网络拓扑 |
-| AUDESYS 适用场景 | 同机柜短距 | 分布式 I/O |
+| Weftik 适用场景 | 同机柜短距 | 分布式 I/O |
 
-AUDESYS 可根据物理部署距离选择通信方式，RMC 方案证明了 SPI 和 Ethernet 的物理 I/O 可行性。
+Weftik 可根据物理部署距离选择通信方式，RMC 方案证明了 SPI 和 Ethernet 的物理 I/O 可行性。
 
 ### 7.6 综合评价
 
@@ -491,11 +491,11 @@ AUDESYS 可根据物理部署距离选择通信方式，RMC 方案证明了 SPI 
 |------|------|------|
 | 成熟度 | 中 | Remora 经社区验证，FlexiHAL 较新 |
 | 性价比 | 很高 | $35-50 实现全功能 CNC 控制 |
-| AUDESYS HAL 参考 | 高 | 实时卸载 + SPI 通信 + HAL 抽象层 |
+| Weftik HAL 参考 | 高 | 实时卸载 + SPI 通信 + HAL 抽象层 |
 | 学习价值 | 高 | 嵌入式运动控制固件设计 |
 | 生产准备 | 低 | 适合原型和爱好者，工业级需 Mesa |
 
-RMC 方案展示了 **分布式实时控制** 的基本模式 — 主机（非实时）+ 从站（实时）的分离架构。AUDESYS 在设计和实现自己的 HAL 层时，可直接借鉴 RMC 方案中经过社区验证的 SPI 通信协议、任务隔离模式和 MCU 固件 HAL 架构。
+RMC 方案展示了 **分布式实时控制** 的基本模式 — 主机（非实时）+ 从站（实时）的分离架构。Weftik 在设计和实现自己的 HAL 层时，可直接借鉴 RMC 方案中经过社区验证的 SPI 通信协议、任务隔离模式和 MCU 固件 HAL 架构。
 
 ---
 
@@ -606,15 +606,15 @@ RMC 架构：
 
 ---
 
-## 7. 对 AUDESYS 参考价值 (续)
+## 7. 对 Weftik 参考价值 (续)
 
 ### 7.1 实时任务卸载架构
 
-RMC 方案的核心架构—将实时任务从主机卸载到 MCU—对 AUDESYS 的 HAL 设计有直接参考意义：
+RMC 方案的核心架构—将实时任务从主机卸载到 MCU—对 Weftik 的 HAL 设计有直接参考意义：
 
-| 层面 | RMC 方案 | AUDESYS HAL 对应 |
+| 层面 | RMC 方案 | Weftik HAL 对应 |
 |------|---------|-----------------|
-| 主机端 | LinuxCNC + PREEMPT_RT | AUDESYS Runtime |
+| 主机端 | LinuxCNC + PREEMPT_RT | Weftik Runtime |
 | 实时任务 | MCU 固件 | HalTransport RT 线程 |
 | 通信层 | SPI 总线 | HalTransport (UDS/Zenoh) |
 | 通信协议 | 自定义 SPI 协议 | Signal / StreamChannel |
@@ -622,7 +622,7 @@ RMC 方案的核心架构—将实时任务从主机卸载到 MCU—对 AUDESYS 
 
 ### 7.2 SPI 通信层启示
 
-| RMC SPI 设计 | AUDESYS 启示 |
+| RMC SPI 设计 | Weftik 启示 |
 |-------------|-------------|
 | 固定时钟 + 确定性延迟 | HalTransport 应提供确定性延迟保证 |
 | 主机发命令，MCU 执行 | Signal 单写多读模型 |
@@ -648,11 +648,11 @@ MCU 固件（实时 HAL）：
 |------|------|------|
 | 成熟度 | 中 | Remora 社区验证，FlexiHAL 较新 |
 | 性价比 | 很高 | $35-50 全功能 CNC 控制 |
-| AUDESYS HAL 参考 | 高 | 实时卸载 + SPI + HAL 抽象 |
+| Weftik HAL 参考 | 高 | 实时卸载 + SPI + HAL 抽象 |
 | 学习价值 | 高 | 嵌入式运动控制固件 |
 | 生产准备 | 低 | 原型/爱好者，工业级需 Mesa |
 
-RMC 方案的 **分布式实时控制模式** 直接映射到 AUDESYS 的 HAL 设计——主机非实时 + 从站实时分离架构。AUDESYS 可借鉴 SPI 通信协议、任务隔离和 MCU 固件 HAL 架构。
+RMC 方案的 **分布式实时控制模式** 直接映射到 Weftik 的 HAL 设计——主机非实时 + 从站实时分离架构。Weftik 可借鉴 SPI 通信协议、任务隔离和 MCU 固件 HAL 架构。
 
 ---
 
@@ -661,9 +661,9 @@ RMC 方案的 **分布式实时控制模式** 直接映射到 AUDESYS 的 HAL �
 
 ### 7.5 SPI 实时通信协议设计
 
-RMC 方案的 SPI 通信协议为 AUDESYS 的实时数据传输提供了参考模型：
+RMC 方案的 SPI 通信协议为 Weftik 的实时数据传输提供了参考模型：
 
-| 协议要素 | RMC 方案 | AUDESYS 对应设计 |
+| 协议要素 | RMC 方案 | Weftik 对应设计 |
 |---------|---------|----------------|
 | 数据帧格式 | 固定长度（位置/速度命令）| StreamChannel 数据包格式 |
 | 传输频率 | 伺服线程周期（如 1kHz）| RT 线程周期 |
@@ -673,7 +673,7 @@ RMC 方案的 SPI 通信协议为 AUDESYS 的实时数据传输提供了参考�
 
 ### 7.6 平台选择建议
 
-| AUDESYS 原型阶段 | 推荐 RMC 参考方案 | 理由 |
+| Weftik 原型阶段 | 推荐 RMC 参考方案 | 理由 |
 |----------------|-----------------|------|
 | 概念验证 | weenyPRU (STM32F103) | 成本最低、社区支持好 |
 | 功能原型 | Remora (STM32F4) | 轴数多、成熟度高 |
@@ -682,9 +682,9 @@ RMC 方案的 SPI 通信协议为 AUDESYS 的实时数据传输提供了参考�
 
 ### 7.7 HAL 驱动设计参考
 
-RMC 方案的 HAL 驱动（remora.c、weeny.c）是 AUDESYS 设计 HAL 驱动的直接参考：
+RMC 方案的 HAL 驱动（remora.c、weeny.c）是 Weftik 设计 HAL 驱动的直接参考：
 
-| HAL 驱动特征 | RMC | AUDESYS |
+| HAL 驱动特征 | RMC | Weftik |
 |-------------|-----|---------|
 | 驱动语言 | C（LinuxCNC HAL 组件）| Rust |
 | 模块注册 | halcompile | Cargo 模块 |
@@ -830,11 +830,11 @@ echo -n 1200000 | sudo tee /sys/devices/system/cpu/cpufreq/policy0/scaling_min_f
 
 ---
 
-## 7. 对 AUDESYS 参考价值 (续)
+## 7. 对 Weftik 参考价值 (续)
 
 ### 7.8 LinuxCNC HAL 组件架构映射
 
-| LinuxCNC HAL 概念 | RMC 实现 | AUDESYS HAL 对应 |
+| LinuxCNC HAL 概念 | RMC 实现 | Weftik HAL 对应 |
 |-----------------|---------|-----------------|
 | HAL 引脚 (pin) | hal_pin_float_new | Signal 定义 |
 | HAL 信号 (signal) | net 命令 | Signal 路由 |
@@ -844,9 +844,9 @@ echo -n 1200000 | sudo tee /sys/devices/system/cpu/cpufreq/policy0/scaling_min_f
 
 ### 7.9 物理 I/O 架构参考
 
-RMC 方案的物理 I/O 层设计对 AUDESYS 的物理 HAL 实现有直接参考价值：
+RMC 方案的物理 I/O 层设计对 Weftik 的物理 HAL 实现有直接参考价值：
 
-| 物理 I/O 层级 | RMC 实现 | AUDESYS 设计建议 |
+| 物理 I/O 层级 | RMC 实现 | Weftik 设计建议 |
 |-------------|---------|----------------|
 | 物理接口 | DB25 / 排针 | 可插拔 I/O 模块 |
 | 信号隔离 | 光耦 (weeny) | 隔离 HAL 设备 |
@@ -859,11 +859,11 @@ RMC 方案的物理 I/O 层设计对 AUDESYS 的物理 HAL 实现有直接参考
 |------|------|------|
 | 成熟度 | 中 | Remora 社区验证，FlexiHAL 较新 |
 | 性价比 | 很高 | $35-50 全功能 CNC |
-| AUDESYS HAL 参考 | 高 | 实时卸载 + SPI + HAL 抽象 |
+| Weftik HAL 参考 | 高 | 实时卸载 + SPI + HAL 抽象 |
 | 学习价值 | 高 | 嵌入式运动控制固件架构 |
 | 生产准备 | 低 | 原型和爱好者，工业级需 Mesa |
 
-RMC 方案的分布式实时控制模式 — 主机非实时 + 从站实时分离 — 展示了 AUDESYS HAL 设计中 RT/I/O 线程隔离的核心模式。其 SPI 通信协议、MCU 固件 HAL 架构和 LinuxCNC 集成方式为 AUDESYS 的物理 HAL 实现提供了经过社区验证的参考路径。
+RMC 方案的分布式实时控制模式 — 主机非实时 + 从站实时分离 — 展示了 Weftik HAL 设计中 RT/I/O 线程隔离的核心模式。其 SPI 通信协议、MCU 固件 HAL 架构和 LinuxCNC 集成方式为 Weftik 的物理 HAL 实现提供了经过社区验证的参考路径。
 
 ---
 

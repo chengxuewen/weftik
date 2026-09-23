@@ -85,12 +85,12 @@ April 2026 Web-tech next-gen IDE:
 - Signed libraries
 - CodeMeter license protection
 
-## 4.5 AUDESYS Relevance — Ecosystem Strategy
+## 4.5 Weftik Relevance — Ecosystem Strategy
 
-| CODESYS Ecosystem Pattern | AUDESYS Application |
+| CODESYS Ecosystem Pattern | Weftik Application |
 |--------------------------|---------------------|
-| CODESYS Store (app marketplace) | AUDESYS plugin/library marketplace |
-| OSCAT (open-source community library) | AUDESYS open-source library ecosystem |
-| OEM hardware neutrality | AUDESYS HAL hardware abstraction |
-| CODESYS Installer (multi-version) | AUDESYS version management |
-| Text-based Git-friendly projects (go!) | AUDESYS YAML + FlatBuffers config strategy (D24) |
+| CODESYS Store (app marketplace) | Weftik plugin/library marketplace |
+| OSCAT (open-source community library) | Weftik open-source library ecosystem |
+| OEM hardware neutrality | Weftik HAL hardware abstraction |
+| CODESYS Installer (multi-version) | Weftik version management |
+| Text-based Git-friendly projects (go!) | Weftik YAML + FlatBuffers config strategy (D24) |

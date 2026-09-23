@@ -1,24 +1,24 @@
 ---
 name: design-system
 description: >-
-  为 AUDESYS 工业控制平台生成一致的 UI。引导 AI 代理创建符合 AUDESYS 工业设计系统的前端界面。
+  为 Weftik 工业控制平台生成一致的 UI。引导 AI 代理创建符合 Weftik 工业设计系统的前端界面。
 compatibility: >-
   Designed for Claude Code, GitHub Copilot, 和类似 AI 编码代理。
 disable-model-invocation: false
 metadata:
-  author: audesys-team
+  author: weftik-team
   version: "1.0"
   category: design-system
   changelog: "Initial release"
 ---
 
-# AUDESYS 设计系统技能
+# Weftik 设计系统技能
 
 ## 1. 使命 (Mission)
 
-为 AUDESYS 工业自动化控制平台生成一致、安全、高效的用户界面。
+为 Weftik 工业自动化控制平台生成一致、安全、高效的用户界面。
 
-**用途**：引导 AI 代理在前端开发中遵循 AUDESYS 工业设计系统，确保所有 UI 输出在色彩、字体、间距、组件和交互行为上与平台规范一致。
+**用途**：引导 AI 代理在前端开发中遵循 Weftik 工业设计系统，确保所有 UI 输出在色彩、字体、间距、组件和交互行为上与平台规范一致。
 
 **适用范围**：`apps/debug/` 中所有前端工作，以及未来 `apps/frontend/` 中的开发任务。
 
@@ -26,7 +26,7 @@ metadata:
 
 ## 2. 品牌 (Brand)
 
-AUDESYS 的品牌形象由工业控制场景的根本需求决定：
+Weftik 的品牌形象由工业控制场景的根本需求决定：
 
 - **工业自动化控制平台** — 面向机器人控制与生产线监控，非消费级产品
 - **安全优先** — 错误状态必须醒目，运行状态必须清晰。视觉设计直接服务于操作安全
@@ -254,7 +254,7 @@ AUDESYS 的品牌形象由工业控制场景的根本需求决定：
 
 ## 10. 响应式策略
 
-AUDESYS 采用桌面优先的固定面板布局：
+Weftik 采用桌面优先的固定面板布局：
 
 | 面板类型 | 宽度 | 说明 |
 | --- | --- | --- |

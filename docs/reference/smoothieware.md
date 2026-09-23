@@ -1110,13 +1110,13 @@ private:
 
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 可借鉴的架构设计/理念
 
 #### 1. 模块化架构遗产
 
-Smoothieware 的模块化架构是开源数控固件中最成熟的之一。其核心设计理念对 AUDESYS 的模块系统设计有直接参考价值：
+Smoothieware 的模块化架构是开源数控固件中最成熟的之一。其核心设计理念对 Weftik 的模块系统设计有直接参考价值：
 
 **事件驱动模块通信（V1）**：
 - 模块通过事件总线通信，无需知道其他模块的存在
@@ -1128,9 +1128,9 @@ Smoothieware 的模块化架构是开源数控固件中最成熟的之一。其�
 - 配置文件中控制哪些模块启用/禁用
 - 启动时根据配置动态实例化模块
 
-**AUDESYS 参考**：AUDESYS 的 Runtime 和 HAL 模块系统可借鉴：
+**Weftik 参考**：Weftik 的 Runtime 和 HAL 模块系统可借鉴：
 
-| Smoothieware 特性 | AUDESYS 对应设计 | 参考价值 |
+| Smoothieware 特性 | Weftik 对应设计 | 参考价值 |
 |-------------------|-----------------|---------|
 | 事件总线 (V1) | HAL 通信原语（Signal/StreamChannel/RPC） | 直接 — 事件总线类似 Signal 的单写多读模式 |
 | REGISTER_MODULE (V2) | HalTransport trait 注册机制 | 高 — 自动注册机制可减少配置代码 |
@@ -1152,12 +1152,12 @@ Smoothieware 的 config.txt 配置系统是"无需编译即可配置"理念的�
 # Smoothieware 用户只需要编辑 config.txt，重启即可
 ```
 
-**AUDESYS 参考**：AUDESYS 的配置策略（D24：开发 YAML + 运行时 FlatBuffers）可借鉴：
+**Weftik 参考**：Weftik 的配置策略（D24：开发 YAML + 运行时 FlatBuffers）可借鉴：
 
 - Smoothieware 证明了纯文本配置在工业控制中的可行性（用户友好）
 - 配置的模块化组织（按模块分节）是良好的实践
 - 但纯文本配置在运行时性能上不如二进制格式（FlatBuffers 的优势）
-- **建议**：AUDESYS 可以保留 YAML 开发的友好性，同时通过编译步骤生成 FlatBuffers 二进制
+- **建议**：Weftik 可以保留 YAML 开发的友好性，同时通过编译步骤生成 FlatBuffers 二进制
 
 #### 3. 运动控制管线
 
@@ -1171,7 +1171,7 @@ G-code 输入
   → Stepper（步进信号生成）
 ```
 
-**AUDESYS 参考**：AUDESYS Runtime 的运动控制模块：
+**Weftik 参考**：Weftik Runtime 的运动控制模块：
 
 - 如果需要支持 G-code 运动控制，可直接参考此管线
 - 管线各阶段的职责划分清晰，便于模块化实现
@@ -1181,17 +1181,17 @@ G-code 输入
 
 | 技术模块 | 描述 | 移植价值 |
 |---------|------|---------|
-| **事件驱动模块系统** | 基于事件总线（V1）或注册表（V2）的模块通信 | 高 — 可直接参考 AUDESYS Runtime 的模块系统 |
+| **事件驱动模块系统** | 基于事件总线（V1）或注册表（V2）的模块通信 | 高 — 可直接参考 Weftik Runtime 的模块系统 |
 | **ArmSolution 运动学抽象** | 支持 6+ 种运动学模型的接口层 | 中 — 如果需要运动学支持 |
 | **Config checksum 机制** | 编译时计算 CRC32，运行时快速查找 | 中 — 对嵌入式环境有参考价值 |
 | **梯型加速度曲线** | 基于 GRBL 的加速度控制算法 | 中 — 标准运动控制算法 |
 | **G-code 解析器** | 完整的 G-code 词法/语法解析 | 中 — 如果需要 G-code 支持 |
 | **PID 温度控制** | 加热器 PID 调节算法 | 中 — 标准控制算法 |
-| **复合 USB 设备** | 同时提供 Serial + Mass Storage | 低 — 取决于 AUDESYS 硬件形态 |
+| **复合 USB 设备** | 同时提供 Serial + Mass Storage | 低 — 取决于 Weftik 硬件形态 |
 
-### 7.3 与 AUDESYS 定位的差异与互补
+### 7.3 与 Weftik 定位的差异与互补
 
-| 维度 | Smoothieware | AUDESYS |
+| 维度 | Smoothieware | Weftik |
 |------|-------------|---------|
 | 核心定位 | 3D 打印/CNC 数控固件 | 工业控制系统模拟平台 |
 | 目标用户 | 创客、3D 打印爱好者、CNC 用户 | 控制工程师、系统集成商、开发者 |
@@ -1204,14 +1204,14 @@ G-code 输入
 | 安全认证 | 无 | 无（仿真平台不要求 SIL） |
 
 **互补关系**：
-- Smoothieware 的 **运动控制管线** 可作为 AUDESYS Runtime 运动控制的参考实现
-- Smoothieware 的 **事件驱动模块系统** 与 AUDESYS 的 HAL 通信原语在概念上互补
-- AUDESYS 的 **HAL 设计** 比 Smoothieware 的硬件抽象更完整（Smoothieware 直接操作 GPIO/Pin，无中间抽象层）
-- Smoothieware 的 **维护教训** 对 AUDESYS 的长期发展策略有重要参考价值
+- Smoothieware 的 **运动控制管线** 可作为 Weftik Runtime 运动控制的参考实现
+- Smoothieware 的 **事件驱动模块系统** 与 Weftik 的 HAL 通信原语在概念上互补
+- Weftik 的 **HAL 设计** 比 Smoothieware 的硬件抽象更完整（Smoothieware 直接操作 GPIO/Pin，无中间抽象层）
+- Smoothieware 的 **维护教训** 对 Weftik 的长期发展策略有重要参考价值
 
 ### 7.4 详细对比分析：模块化架构
 
-| 维度 | Smoothieware V1 | Smoothieware V2 | AUDESYS（设计） |
+| 维度 | Smoothieware V1 | Smoothieware V2 | Weftik（设计） |
 |------|----------------|----------------|----------------|
 | 模块通信 | 事件总线广播 | 注册表查找 + 直接调用 | HAL 原语（Signal/StreamChannel/RPC） |
 | 模块注册 | 构造函数注册 | REGISTER_MODULE 宏 | HalTransport trait 实现 |
@@ -1223,32 +1223,32 @@ G-code 输入
 
 ### 7.5 维护教训总结
 
-Smoothieware 的维护停滞为 AUDESYS 提供了以下关键启示：
+Smoothieware 的维护停滞为 Weftik 提供了以下关键启示：
 
 #### 1. 架构设计需考虑长期可扩展性
 
 - Smoothieware V1 的 LPC1769（64KB RAM）在 2012 年足够强大，但到 2020 年已严重不足
-- **AUDESYS 启示**：HAL 和 Runtime 的架构设计应考虑未来 5-10 年的性能需求，采用分层可扩展设计
+- **Weftik 启示**：HAL 和 Runtime 的架构设计应考虑未来 5-10 年的性能需求，采用分层可扩展设计
 
 #### 2. 降低硬件依赖
 
 - Smoothieware 深度绑定 LPC17xx 系列，芯片短缺导致 V2 延迟 3 年
-- **AUDESYS 启示**：HAL 设计中的 `HalTransport` 抽象层确保传输实现可替换，不绑死特定硬件
+- **Weftik 启示**：HAL 设计中的 `HalTransport` 抽象层确保传输实现可替换，不绑死特定硬件
 
 #### 3. 可持续的社区治理
 
 - Smoothieware 的志愿者模型导致核心贡献者 burnout 后项目停滞
-- **AUDESYS 启示**：考虑建立可持续的治理模式，可能是商业实体 + 开源社区的组合
+- **Weftik 启示**：考虑建立可持续的治理模式，可能是商业实体 + 开源社区的组合
 
 #### 4. 渐进式升级路径
 
 - Smoothieware V1 → V2 的架构巨大差异（裸机 → FreeRTOS，事件总线 → 注册表）导致用户升级困难
-- **AUDESYS 启示**：D22 的编译器分阶段策略（RuSTy → HAL IR → 自研）是正确的方向，保持接口稳定
+- **Weftik 启示**：D22 的编译器分阶段策略（RuSTy → HAL IR → 自研）是正确的方向，保持接口稳定
 
 #### 5. 竞争意识
 
 - Klipper 的分布式架构在 2018-2020 年迅速取代 Smoothieware 的市场地位
-- **AUDESYS 启示**：持续关注竞品架构演进，特别是分布式实时控制方向
+- **Weftik 启示**：持续关注竞品架构演进，特别是分布式实时控制方向
 
 ---
 

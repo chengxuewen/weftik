@@ -1,4 +1,4 @@
-# AUDESYS Runtime 审计日志持久化设计
+# Weftik Runtime 审计日志持久化设计
 
 > 生成日期：2026-07-20
 > 设计目标：在现有 InMemoryAuditLog 基础上建立持久化审计日志系统，满足 IEC 62443 防篡改要求
@@ -17,7 +17,7 @@
 
 ## 1. 现有基础设施
 
-### 1.1 AuditLog trait（`crates/audesys-runtime-common/src/types.rs`）
+### 1.1 AuditLog trait（`crates/weftik-runtime-common/src/types.rs`）
 
 ```rust
 /// Persistent audit log for security events.
@@ -57,7 +57,7 @@ pub enum AuditResult {
 - 攻击者可通过重启进程抹除入侵痕迹
 - 违反 IEC 62443-3-3 SR 2.8（审计日志不可篡改、不可删除）
 
-### 1.3 hal-core 中的 AuditLog（`crates/audesys-hal-core/src/middleware.rs`）
+### 1.3 hal-core 中的 AuditLog（`crates/weftik-hal-core/src/middleware.rs`）
 
 hal-core 中有另一套更精简的 AuditLog trait：
 
@@ -79,7 +79,7 @@ pub trait AuditLog: Send + Sync {
 Phase 1 选择 JSONL（JSON Lines）作为持久化格式：
 
 ```
-/var/log/audesys/
+/var/log/weftik/
 ├── audit/
 │   ├── audit-2026-07-20.jsonl        # 当前日志文件
 │   ├── audit-2026-07-20.jsonl.hash   # 哈希链尾（上次写入后的最后一个 hash）
@@ -95,7 +95,7 @@ Phase 1 选择 JSONL（JSON Lines）作为持久化格式：
 
 **JSONL 的局限**（Phase 2 解决）：
 - 全量查询 O(n)，无索引——大规模历史审计时性能差
-- 无并发写入支持（但 AUDESYS 审计日志为单写者模式——仅 Agent 写入）
+- 无并发写入支持（但 Weftik 审计日志为单写者模式——仅 Agent 写入）
 
 ### 2.2 Phase 2：SQLite + WAL 模式
 
@@ -403,7 +403,7 @@ Phase 1 默认使用**批量 fsync（每 100ms）**——平衡可靠性与性�
 清理由 Agent 内的定时任务触发（cron 风格，每小时执行）：
 
 ```
-1. 扫描 /var/log/audesys/audit/*.gz
+1. 扫描 /var/log/weftik/audit/*.gz
 2. 解析文件名中的日期 → 计算文件年龄
 3. 年龄 > retention_days → 删除
 4. 记录 "system.audit_cleanup" 事件：删除了哪些文件
@@ -413,8 +413,8 @@ Phase 1 默认使用**批量 fsync（每 100ms）**——平衡可靠性与性�
 
 Phase 2 支持通过 RFC 5424 syslog 协议将审计事件实时转发到外部 syslog 服务器：
 
-- 格式：`{timestamp} {hostname} audesys-audit[{pid}]: {structured_data} {msg}`
-- 结构化数据使用 `SD-ID` = `audesys@32473`（AUDESYS 私有企业编号）
+- 格式：`{timestamp} {hostname} weftik-audit[{pid}]: {structured_data} {msg}`
+- 结构化数据使用 `SD-ID` = `weftik@32473`（Weftik 私有企业编号）
 - 敏感字段（如 token 哈希）在导出前脱敏
 
 ### 8.4 手动导出
@@ -517,5 +517,5 @@ self.audit.log(AuditEvent {
 1. **不修改现有 `AuditLog` trait 的 3 方法签名** — 持久化实现作为新 struct 实现相同 trait
 2. **不引入新 crate 为 Phase 1 必需** — JSONL 使用 `std::fs::File` + `serde_json`（已有依赖）
 3. **单写者模型** — 只有 Agent 进程写入审计日志（Runtime/HMI 通过 RPC 间接触发审计事件）
-4. **审计日志路径可配置** — 默认为 `/var/log/audesys/audit/`，通过环境变量 `AUDESYS_AUDIT_DIR` 覆盖
+4. **审计日志路径可配置** — 默认为 `/var/log/weftik/audit/`，通过环境变量 `WEFTIK_AUDIT_DIR` 覆盖
 5. **审计日志不可删除** — 不提供 API 或 CLI 命令删除审计日志（仅自动轮转清理，保留 90 天）

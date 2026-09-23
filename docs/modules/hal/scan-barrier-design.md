@@ -1,4 +1,4 @@
-# AUDESYS 扫描屏障与实时同步设计
+# Weftik 扫描屏障与实时同步设计
 
 > 生成日期：2026-07-09
 > 设计目标：工业级 I/O 一致性——借鉴 OpenPLC 扫描屏障，内置在线程模型中，不暴露为 HAL 协议原语
@@ -171,7 +171,7 @@ threads:
 
 ## 4. 与其他系统的对照
 
-| | LinuxCNC | OpenPLC | ROS2 control | AUDESYS |
+| | LinuxCNC | OpenPLC | ROS2 control | Weftik |
 |---|---|---|---|---|
 | 信号一致性 | 无保证（信号随时可读/写） | ✅ bufferLock | ❌ 无（DDS topic 独立） | ✅ Signal 快照 |
 | I/O 映像一致性 | ❌ 无 I/O 映像概念 | ✅ bufferLock | ✅ read/write 阶段分离 | ✅ IoImageTable lock |

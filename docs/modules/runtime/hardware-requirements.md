@@ -1,4 +1,4 @@
-# AUDESYS Runtime 硬件需求
+# Weftik Runtime 硬件需求
 
 > 生成日期：2026-07-15
 > 设计目标：定义 Runtime 套件各模块的硬件需求规格——三级配置（最低/推荐/认证）、Linux 内核版本约束、PREEMPT_RT 启用清单、以及硬件选型指南
@@ -140,7 +140,7 @@ cat /proc/meminfo | grep -q "HugePages_Total:.*[1-9]" && echo "OK" || \
 ### 3.4 内核参数
 
 ```ini
-# /etc/sysctl.d/99-audesys.conf — 推荐配置内核参数
+# /etc/sysctl.d/99-weftik.conf — 推荐配置内核参数
 
 # 减少中断合并延迟
 net.core.rps_sock_flow_entries = 32768

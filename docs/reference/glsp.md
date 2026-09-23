@@ -23,7 +23,7 @@
 
 GLSP（Graphics, Layout, Styling, and Presentation）是 Eclipse 基金会下的**完整图形编辑器框架**，提供从底层图形引擎到 IDE 集成、从协议定义到代码生成 CLI 的全栈解决方案。
 
-**AUDESYS 调研重点**：GLSP 是 AUDESYS LD/FBD GLSP 编辑器迁移（D92）的核心框架。本文档重点覆盖仓库结构、Theia 集成模式、sprotty fork 差异、模板结构，以及 AUDESYS 实际迁移中遇到的陷阱。
+**Weftik 调研重点**：GLSP 是 Weftik LD/FBD GLSP 编辑器迁移（D92）的核心框架。本文档重点覆盖仓库结构、Theia 集成模式、sprotty fork 差异、模板结构，以及 Weftik 实际迁移中遇到的陷阱。
 
 ---
 
@@ -83,10 +83,10 @@ GLSP（Graphics, Layout, Styling, and Presentation）是 Eclipse 基金会下的
 
 ### 2.3 仓库定位说明
 
-- **glsp-client**：唯一的客户端核心。包含 `@eclipse-glsp/client`（DiagramEngine、ModelManager、FeatureRegistry）、`@eclipse-glsp/protocol`（JSONRPC 协议定义）、以及基于 `@eclipse-glsp/sprotty` fork 的渲染层。是 AUDESYS GLSP 扩展的**唯一客户端依赖**。
-- **glsp-server-node**：TypeScript 服务端，提供 `@eclipse-glsp/server`、`@eclipse-glsp/server-protocol`、`@eclipse-glsp/server-api` 等。AUDESYS 场景（napi-rs bridge）对应的参考模板。
+- **glsp-client**：唯一的客户端核心。包含 `@eclipse-glsp/client`（DiagramEngine、ModelManager、FeatureRegistry）、`@eclipse-glsp/protocol`（JSONRPC 协议定义）、以及基于 `@eclipse-glsp/sprotty` fork 的渲染层。是 Weftik GLSP 扩展的**唯一客户端依赖**。
+- **glsp-server-node**：TypeScript 服务端，提供 `@eclipse-glsp/server`、`@eclipse-glsp/server-protocol`、`@eclipse-glsp/server-api` 等。Weftik 场景（napi-rs bridge）对应的参考模板。
 - **glsp-server（Java）**：Java 服务端，提供 `DiagramService`、`CommandStack`、`ActionManager`、`ModelState`。工业场景中大型项目常用。
-- **glsp-theia-integration**：Theia 集成的核心仓库。提供 `@eclipse-glsp/theia-integration`（前端 widget）、Theia 后端贡献（启动 GLSP server）。AUDESYS 通过此包集成。
+- **glsp-theia-integration**：Theia 集成的核心仓库。提供 `@eclipse-glsp/theia-integration`（前端 widget）、Theia 后端贡献（启动 GLSP server）。Weftik 通过此包集成。
 - **glsp-tools**：代码生成工具，`glsp-cli`（Yeoman 生成器）和 `glsp-maven-plugin`（Maven 集成），可生成模板项目。
 
 ---
@@ -218,7 +218,7 @@ GLSP（Graphics, Layout, Styling, and Presentation）是 Eclipse 基金会下的
 
 GLSP 提供从**底层图形渲染**到**IDE 集成**的全栈方案，是工业领域最完整的开源图形编辑器框架：
 
-| 层级 | GLSP 提供 | AUDESYS 当前缺失 |
+| 层级 | GLSP 提供 | Weftik 当前缺失 |
 |------|-----------|-----------------|
 | 图形引擎 | DiagramEngine（事件驱动渲染） | 手动 SVG 状态管理 |
 | 模型管理 | ModelManager（GModel 生命周期） | 无统一模型 |
@@ -236,11 +236,11 @@ GLSP 提供从**底层图形渲染**到**IDE 集成**的全栈方案，是工业
 
 ### 4.3 命令框架
 
-`CommandStack`（服务端）提供基于 Command 模式的 undo/redo，支持 `CommandStackAccessor.execute(...)` 执行任意命令，`commandStack.undo()` / `redo()` 反向执行。AUDESYS 当前手动维护 JSON 快照，GLSP 命令框架是**开箱即用的替代方案**。
+`CommandStack`（服务端）提供基于 Command 模式的 undo/redo，支持 `CommandStackAccessor.execute(...)` 执行任意命令，`commandStack.undo()` / `redo()` 反向执行。Weftik 当前手动维护 JSON 快照，GLSP 命令框架是**开箱即用的替代方案**。
 
 ### 4.4 多传输支持
 
-客户端与服务器之间支持多种传输协议：WebSocket、Socket.IO、Server-Sent Events (SSE)、JSONRPC，以及 MCP（Model Context Protocol）连接器。AUDESYS 使用 Socket.IO（通过 `@eclipse-glsp/server-socketio`）。
+客户端与服务器之间支持多种传输协议：WebSocket、Socket.IO、Server-Sent Events (SSE)、JSONRPC，以及 MCP（Model Context Protocol）连接器。Weftik 使用 Socket.IO（通过 `@eclipse-glsp/server-socketio`）。
 
 ### 4.5 代码生成
 
@@ -252,7 +252,7 @@ GLSP 提供从**底层图形渲染**到**IDE 集成**的全栈方案，是工业
 
 ### 4.6 调试工具
 
-`@eclipse-glsp/sprotty-debug` 提供 Model Explorer（树状模型浏览）和 Log Viewer（action/response 日志），内置于所有示例项目。AUDESYS 迁移后可以直接使用此工具调试 LD/FBD 图模型。
+`@eclipse-glsp/sprotty-debug` 提供 Model Explorer（树状模型浏览）和 Log Viewer（action/response 日志），内置于所有示例项目。Weftik 迁移后可以直接使用此工具调试 LD/FBD 图模型。
 
 ---
 
@@ -266,7 +266,7 @@ GLSP 团队 fork 了 [eclipse-sirius/sirius-web](https://github.com/eclipse-siri
 2. **DI 注入系统**：fork 后引入 Inversify DI，每个 view 通过 `@injectable()` 注册到 `ViewRegistry`，原生 sprotty 无 DI 支持。
 3. **与 GLSP server 集成**：fork 提供 `GLSPDiagramEngine`（原生 sprotty 无此概念），自动处理 action→server→response→modelUpdate→reconfigure 的完整循环。
 
-**关键事实**：原生 `sprotty`（eclipse/sprotty）和 `@eclipse-glsp/sprotty` 是两个独立包，**不兼容**。D99 决策正是基于此——mix 导入 sprotty（features）和 @eclipse-glsp/sprotty（views）是 AUDESYS 的折衷方案。
+**关键事实**：原生 `sprotty`（eclipse/sprotty）和 `@eclipse-glsp/sprotty` 是两个独立包，**不兼容**。D99 决策正是基于此——mix 导入 sprotty（features）和 @eclipse-glsp/sprotty（views）是 Weftik 的折衷方案。
 
 ### 5.2 sprotty fork 差异详解
 
@@ -281,9 +281,9 @@ GLSP 团队 fork 了 [eclipse-sirius/sirius-web](https://github.com/eclipse-siri
 | 维护者 | eclipse-sirius 团队 | GLSP 团队 |
 | Stars | 329 | 内置于 glsp-client 仓库 |
 
-### 5.3 AUDESYS 实际混合导入方案
+### 5.3 Weftik 实际混合导入方案
 
-由于 D99 决策，AUDESYS 采用混合导入策略：
+由于 D99 决策，Weftik 采用混合导入策略：
 
 ```typescript
 // FROM @eclipse-glsp/sprotty（views + DI）
@@ -373,7 +373,7 @@ GLSP Theia 集成通过以下流程工作：
   → 加载 .ld 文件 → 生成 GModel → 发送 modelUpdate → 客户端渲染
 ```
 
-**集成点（AUDESYS 参考）**：
+**集成点（Weftik 参考）**：
 
 1. **Frontend Module**：DI 绑定（`DISymbol`、`GLSPDiagramWidget`、`GlspEditorContribution`）
 2. **Backend Module**：`GLSPSocketServerContribution` 注册（指定 server 入口路径、子进程配置）
@@ -447,11 +447,11 @@ GLSP 是 Eclipse 基金会下唯一提供完整图形编辑器全栈的框架。
 
 ---
 
-## 8. AUDESYS 迁移分析
+## 8. Weftik 迁移分析
 
-### 8.1 AUDESYS 当前状态
+### 8.1 Weftik 当前状态
 
-| 组件 | AUDESYS 当前 | GLSP 提供 |
+| 组件 | Weftik 当前 | GLSP 提供 |
 |------|-------------|----------|
 | 前端编辑器 | LdEditorWidget（929 行，React+SVG） | GLSPDiagramWidget（自动集成） |
 | 图模型管理 | 手动 JSON 状态管理 | ModelManager（GModel 生命周期） |
@@ -467,12 +467,12 @@ GLSP 是 Eclipse 基金会下唯一提供完整图形编辑器全栈的框架。
 
 | 死代码/缺失 | 文件 | 说明 |
 |------------|------|------|
-| LdSprottyDiagramWidget | audesys-ld-glsp/src/ | 导出但从未被 DI 容器实例化 |
+| LdSprottyDiagramWidget | weftik-ld-glsp/src/ | 导出但从未被 DI 容器实例化 |
 | sprotty-theia | package.json | 依赖 sprotty-theia ^0.12.0，GLSP 2.x 已废弃 |
 | @eclipse-glsp/client | package.json | 包在 node_modules 中不存在 |
 | @eclipse-glsp/protocol | package.json | 同上 |
 | @eclipse-glsp/server-node | package.json | 同上 |
-| server/index.ts | audesys-ld-glsp/src/server/ | 定义 launchLdServer() 但从未被调用 |
+| server/index.ts | weftik-ld-glsp/src/server/ | 定义 launchLdServer() 但从未被调用 |
 | theiaExtensions | package.json | 未注册 backend 入口 |
 
 ### 8.3 迁移收益
@@ -504,40 +504,40 @@ GLSP 是 Eclipse 基金会下唯一提供完整图形编辑器全栈的框架。
 
 | 步骤 | 说明 | 文件 |
 |------|------|------|
-| P0.1 | 删除 sprotty-theia，安装 @eclipse-glsp/theia-integration | audesys-ld-glsp/package.json |
-| P0.2 | 安装 @eclipse-glsp/client、@eclipse-glsp/protocol、@eclipse-glsp/server | audesys-ld-glsp/package.json |
-| P0.3 | 创建 server 目录结构（diagram-service.ts、actions/） | audesys-ld-glsp/src/server/ |
-| P0.4 | 注册 Theia backend 入口（theiaExtensions） | audesys-ld-glsp/package.json |
+| P0.1 | 删除 sprotty-theia，安装 @eclipse-glsp/theia-integration | weftik-ld-glsp/package.json |
+| P0.2 | 安装 @eclipse-glsp/client、@eclipse-glsp/protocol、@eclipse-glsp/server | weftik-ld-glsp/package.json |
+| P0.3 | 创建 server 目录结构（diagram-service.ts、actions/） | weftik-ld-glsp/src/server/ |
+| P0.4 | 注册 Theia backend 入口（theiaExtensions） | weftik-ld-glsp/package.json |
 | P0.5 | 验证 tsc --noEmit 无错误 | — |
 
 ### 9.2 Phase 1：客户端实现
 
 | 步骤 | 说明 | 文件 |
 |------|------|------|
-| P1.1 | 实现 LdDiagramEngine（DiagramEngine + ModelManager + FeatureRegistry） | audesys-ld-glsp/src/client/ |
-| P1.2 | 实现 LD views（configureModelElement，复用 ld-views.tsx SVG 组件） | audesys-ld-glsp/src/client/ld-views.ts |
-| P1.3 | 实现 LdPaletteWidget（通过 DI 容器） | audesys-ld-glsp/src/client/ |
-| P1.4 | 实现 Theia frontend module（DI 绑定） | audesys-ld-glsp/src/client/frontend-module.ts |
-| P1.5 | 实现 GlspEditorContribution（.ld 文件关联） | audesys-ld-glsp/src/client/ |
+| P1.1 | 实现 LdDiagramEngine（DiagramEngine + ModelManager + FeatureRegistry） | weftik-ld-glsp/src/client/ |
+| P1.2 | 实现 LD views（configureModelElement，复用 ld-views.tsx SVG 组件） | weftik-ld-glsp/src/client/ld-views.ts |
+| P1.3 | 实现 LdPaletteWidget（通过 DI 容器） | weftik-ld-glsp/src/client/ |
+| P1.4 | 实现 Theia frontend module（DI 绑定） | weftik-ld-glsp/src/client/frontend-module.ts |
+| P1.5 | 实现 GlspEditorContribution（.ld 文件关联） | weftik-ld-glsp/src/client/ |
 
 ### 9.3 Phase 2：服务端实现
 
 | 步骤 | 说明 | 文件 |
 |------|------|------|
-| P2.1 | 实现 LdDiagramService | audesys-ld-glsp/src/server/ |
-| P2.2 | 实现 RequestModelHandler（.ld → GModel） | audesys-ld-glsp/src/server/actions/ |
-| P2.3 | 实现 ModelState | audesys-ld-glsp/src/server/ |
-| P2.4 | 实现 WorkerPool（编译在 worker 中执行） | audesys-ld-glsp/src/server/ |
-| P2.5 | 实现 napi-rs bridge | audesys-ld-glsp/src/server/ |
-| P2.6 | 注册 StatusActionNoOpHandler | audesys-ld-glsp/src/server/ |
+| P2.1 | 实现 LdDiagramService | weftik-ld-glsp/src/server/ |
+| P2.2 | 实现 RequestModelHandler（.ld → GModel） | weftik-ld-glsp/src/server/actions/ |
+| P2.3 | 实现 ModelState | weftik-ld-glsp/src/server/ |
+| P2.4 | 实现 WorkerPool（编译在 worker 中执行） | weftik-ld-glsp/src/server/ |
+| P2.5 | 实现 napi-rs bridge | weftik-ld-glsp/src/server/ |
+| P2.6 | 注册 StatusActionNoOpHandler | weftik-ld-glsp/src/server/ |
 
 ### 9.4 Phase 3：FBD 复制
 
 | 步骤 | 说明 | 文件 |
 |------|------|------|
-| P3.1 | 复制 LD client 到 FBD，修改 views（功能块） | audesys-fbd-glsp/src/client/ |
-| P3.2 | 复制 LD server 到 FBD | audesys-fbd-glsp/src/server/ |
-| P3.3 | 修改 GlspEditorContribution 支持 .fbd 扩展 | audesys-fbd-glsp/src/client/ |
+| P3.1 | 复制 LD client 到 FBD，修改 views（功能块） | weftik-fbd-glsp/src/client/ |
+| P3.2 | 复制 LD server 到 FBD | weftik-fbd-glsp/src/server/ |
+| P3.3 | 修改 GlspEditorContribution 支持 .fbd 扩展 | weftik-fbd-glsp/src/client/ |
 
 **总工期**：预计 10-15 天（含测试重写）
 
@@ -609,14 +609,14 @@ GLSP 是 Eclipse 基金会下唯一提供完整图形编辑器全栈的框架。
 
 ---
 
-## 13. 对 AUDESYS 的参考价值
+## 13. 对 Weftik 的参考价值
 
-GLSP 是 AUDESYS LD/FBD GLSP 编辑器迁移（D92）的直接技术基础。
+GLSP 是 Weftik LD/FBD GLSP 编辑器迁移（D92）的直接技术基础。
 
 ### 13.1 架构参考
 
-- 全栈架构（§3.1）：AUDESYS 迁移需覆盖 client（DiagramEngine + ViewRegistry）、server（DiagramService + CommandStack）、Theia 集成（GLSPSocketServerContribution）三层
-- 模板结构（§6.1）：tasklist 模板是 AUDESYS 迁移的最小可运行参考，full 模板提供完整 Feature 集合
+- 全栈架构（§3.1）：Weftik 迁移需覆盖 client（DiagramEngine + ViewRegistry）、server（DiagramService + CommandStack）、Theia 集成（GLSPSocketServerContribution）三层
+- 模板结构（§6.1）：tasklist 模板是 Weftik 迁移的最小可运行参考，full 模板提供完整 Feature 集合
 - Theia 集成模式（§6.2）：注册 GlspEditorContribution（.ld 文件关联）和 GLSPSocketServerContribution（服务端启动）
 
 ### 13.2 实现参考
@@ -629,11 +629,11 @@ GLSP 是 AUDESYS LD/FBD GLSP 编辑器迁移（D92）的直接技术基础。
 - 已发现 6 个陷阱（stdout 消费、StatusAction、边缘 type、CJS 导出、@injectable、进程 kill），需在正式迁移前全部解决
 - D99 决策（§5.4）：混合导入是已被验证的方案
 
-### 13.4 AUDESYS 迁移收益
+### 13.4 Weftik 迁移收益
 
 - 减少约 1047 行（929 行 LdEditorWidget + 118 行 LdGModelState）
 - 获得 undo/redo、脏状态、文件关联、调试工具等开箱即用功能
-- GLSP 框架更新自动升级，AUDESYS 只需更新依赖版本
+- GLSP 框架更新自动升级，Weftik 只需更新依赖版本
 
 ---
 

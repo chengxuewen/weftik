@@ -4,7 +4,7 @@
 
 ## 概述
 
-AUDESYS 工程采用三级可组合模型：Device → Cell → Factory。每一层可独立开发、版本化、部署。
+Weftik 工程采用三级可组合模型：Device → Cell → Factory。每一层可独立开发、版本化、部署。
 
 ## 三级模型
 

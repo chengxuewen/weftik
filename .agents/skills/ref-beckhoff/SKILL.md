@@ -1,27 +1,27 @@
 ---
 name: ref-beckhoff
-description: "Beckhoff TwinCAT 3 平台参考 — 工业自动化架构、ADS 协议、TwinCAT IDE 设计模式。用于 AUDESYS Studio 和 Runtime 设计。"
+description: "Beckhoff TwinCAT 3 平台参考 — 工业自动化架构、ADS 协议、TwinCAT IDE 设计模式。用于 Weftik Studio 和 Runtime 设计。"
 ---
 
 # ref-beckhoff
 
-**Beckhoff TwinCAT 3 Platform Reference for AUDESYS Studio Design**
+**Beckhoff TwinCAT 3 Platform Reference for Weftik Studio Design**
 
-> Study-depth reference skill extracted from `docs/reference/beckhoff.md`. Focuses on design decisions, architectural patterns, and reference value that AUDESYS Studio and Runtime can learn from.
+> Study-depth reference skill extracted from `docs/reference/beckhoff.md`. Focuses on design decisions, architectural patterns, and reference value that Weftik Studio and Runtime can learn from.
 
 ## Overview
 
-Beckhoff is the inventor of PC-based Control and the EtherCAT real-time Ethernet protocol. TwinCAT 3 transforms any industrial PC into a real-time PLC + NC + CNC + Safety controller. This skill captures its architecture, multi-runtime integration, ADS communication protocol, real-time scheduling model, and business strategy — distilled for AUDESYS design decisions.
+Beckhoff is the inventor of PC-based Control and the EtherCAT real-time Ethernet protocol. TwinCAT 3 transforms any industrial PC into a real-time PLC + NC + CNC + Safety controller. This skill captures its architecture, multi-runtime integration, ADS communication protocol, real-time scheduling model, and business strategy — distilled for Weftik design decisions.
 
 ## When to Use
 
-- Designing AUDESYS Runtime's multi-runtime architecture (PLC/NC/CNC/Safety)
+- Designing Weftik Runtime's multi-runtime architecture (PLC/NC/CNC/Safety)
 - Deciding HAL communication protocol design (Signal / StreamChannel / RPC vs ADS)
 - Planning real-time scheduling strategy (dual-tick, core isolation, rate-monotonic)
 - Evaluating Studio IDE Shell strategy (use VS Code / Theia vs self-build)
 - Designing hardware abstraction layer and device description formats
 - Benchmarking business model (IDE free, runtime licensed, platform-level pricing)
-- Comparing AUDESYS's approach against the PC-based Control industry leader
+- Comparing Weftik's approach against the PC-based Control industry leader
 
 ## Chapters
 
@@ -33,13 +33,13 @@ Beckhoff is the inventor of PC-based Control and the EtherCAT real-time Ethernet
 | `chapters/ch04-status-ecosystem.md` | SS4 现状与生态 | Version history, user base, ETG ecosystem, third-party integrations, TwinCAT/BSD, TwinCAT PLC++, MX-System |
 | `chapters/ch05-market-positioning.md` | SS5 市场定位 | Industries, competitive analysis (Siemens/Rockwell/B&R), regional market depth, competitive strategy |
 | `chapters/ch06-product-characteristics.md` | SS6 产品特色 | PC-based Control philosophy, EtherCAT benchmark, multi-runtime integration, VS Shell strategy, open-source strategy, ADS vs HAL comparison |
-| `chapters/ch07-reference-value.md` | SS7 对AUDESYS的参考价值 | Multi-runtime architecture, ADS protocol lessons, real-time scheduling, IDE design, licensing model, 10 specific reference points |
+| `chapters/ch07-reference-value.md` | SS7 对Weftik的参考价值 | Multi-runtime architecture, ADS protocol lessons, real-time scheduling, IDE design, licensing model, 10 specific reference points |
 
 ## Companion Files
 
 - `glossary.md` — Term definitions (EtherCAT, ADS, XAE, XAR, TcCOM, FSoE, AMS, RMS, TwinCAT/BSD, etc.)
-- `patterns.md` — Design patterns extracted from Beckhoff TwinCAT, mapped to AUDESYS applicability
-- `cheatsheet.md` — Quick-reference: architecture diagram, key numbers, protocol comparison, AUDESYS mapping
+- `patterns.md` — Design patterns extracted from Beckhoff TwinCAT, mapped to Weftik applicability
+- `cheatsheet.md` — Quick-reference: architecture diagram, key numbers, protocol comparison, Weftik mapping
 
 ## Core Design Decisions (Quick Reference)
 

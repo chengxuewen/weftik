@@ -1,22 +1,22 @@
-# AUDESYS 项目约定
+# Weftik 项目约定
 
 ## 命名规范
-- **项目标识**: `AUDESYS`（全大写）
-- **npm scope**: `@audesys/`（全小写，npm 规范）
-- **代码中引用**: `AUDESYS`
-- **文档标题**: AUDESYS 项目
+- **项目标识**: `Weftik`（首字母大写，唯一大写层；仓库/npm/crates/目录全小写 `weftik`）
+- **npm scope**: `@weftik/`（全小写，npm 规范）
+- **代码中引用**: `Weftik`
+- **文档标题**: Weftik 项目
 
 ## 项目身份
-- AUDESYS 是从 MODACS（模块化自动化与控制系统）分离出的独立项目
-- AUDESYS 聚焦：Studio IDE、Runtime 运行时、Simulator 仿真器、HAL 硬件抽象层
+- Weftik 是从 MODACS（模块化自动化与控制系统）分离出的独立项目
+- Weftik 聚焦：Studio IDE、Runtime 运行时、Simulator 仿真器、HAL 硬件抽象层
 - 与 MODACS 通过 JSON-RPC/REST API 契约通信，不共享代码
 - architecture.md 中无 MODACS 历史引用（完全去 MODACS 化）
 
 ## 文档原则
 - 技能文件（SKILL.md）需自包含，不依赖外部设计文档
-- 架构文档中删除 MODACS 部分用 `TODO: 为 AUDESYS 重写此节` 占位
-- 不自动替换 `@modacs/*` 为 `@audesys/*`（移除即可）
-- 不全局 MODACS→AUDESYS 替换，使用精确的手术式编辑
+- 架构文档中删除 MODACS 部分用 `TODO: 为 Weftik 重写此节` 占位
+- 不自动替换 `@modacs/*` 为 `@weftik/*`（移除即可）
+- 不全局 MODACS→Weftik 替换，使用精确的手术式编辑
 
 ## 文档组织
 - 架构概览：`docs/architecture.md`（系统级，各模块均衡）
@@ -24,8 +24,8 @@
 - 子文档归档：`docs/modules/{module}/`（独立设计文档、审核输出、对比分析）
 - 参考文档：`docs/reference/{产品名}.md`（竞品分析，独立文件）
 - 跨引用模式：architecture.md §X 内用 `详见 docs/modules/hal/<子文档>.md` 一行指向
-- crate 命名：Cargo.toml `name` 字段统一 `audesys-<module>` 前缀，hyphen 分隔（如 `audesys-hal-core`、`audesys-amw-inproc`、`audesys-hal-flatbuffers`）。非正式/速记语境可用 `hal-core`、`amw-inproc` 短名
-- 目录名：`crates/audesys-<module>/`，与 Cargo.toml name 完全一致
+- crate 命名：Cargo.toml `name` 字段统一 `weftik-<module>` 前缀，hyphen 分隔（如 `weftik-hal-core`、`weftik-amw-inproc`、`weftik-hal-flatbuffers`）。非正式/速记语境可用 `hal-core`、`amw-inproc` 短名
+- 目录名：`crates/weftik-<module>/`，与 Cargo.toml name 完全一致
 
 ## 提交规范
 - 格式：遵循 conventional commits 规范（feat/fix/docs/chore/refactor）
@@ -57,7 +57,7 @@
 ## HAL 协议设计约定
 - 命名规范：Signal = `component.interface.name`，StreamChannel = `domain.stream_name`，RPC = `action.{id}.{status|feedback}`（命名模式，非第四原语）
 - 组件名：kebab-case，Pin 名：snake_case
-- 禁止桥接外部协议 — AUDESYS HAL 是原生协议，被移植代码改造后以 HAL 为原生通信层
+- 禁止桥接外部协议 — Weftik HAL 是原生协议，被移植代码改造后以 HAL 为原生通信层
 - 端口/功能：移植自 LinuxCNC/OpenPLC/ROS2/dora-rs 功能以 HAL 原语对接，非协议桥接
 - 延迟声明必须带前提条件（内核、消息大小、硬件）和典型范围，必须配套验证方法
 
@@ -97,7 +97,7 @@
 - **Hub**: 统一插件化平台 (原 Field+Cloud) — 场端·云端可部署
 - **Studio**: 集成开发环境 — Desktop (Theia) + Web (Hub 插件) 双形态
 - **Panel**: 操作员 HMI 界面 — PWA + Tauri + Docker 三形态
-- **crate 命名**: Cargo.toml `name` 统一 `audesys-<module>` 前缀，hyphen 分隔
+- **crate 命名**: Cargo.toml `name` 统一 `weftik-<module>` 前缀，hyphen 分隔
 
 ## Studio IDE 技术栈约定 (更新)
 - **Desktop**: Eclipse Theia + Monaco Editor + GLSP + napi-rs (Rust bridge) — 已替代 Tauri+React (D71)
@@ -204,12 +204,12 @@ done
 
 ### 工作区依赖
 - workspace 内扩展用 semver 版本（`"0.1.0"`），**禁止** file: 引用（会创建物理副本）
-- `@audesys/theia-bridge`（crates/ 下）不在 workspaces，保留 file:
+- `@weftik/theia-bridge`（crates/ 下）不在 workspaces，保留 file:
 
 ### 验证流程
 - 修改扩展源码 → `npx tsc -b`（扩展）→ `npx theia build`（apps/studio）
 - 修改 GLSP 服务器代码 → 杀 GLSP 进程 + 重启 Theia 后端
-- **验证**: `require.resolve('audesys-ld-glsp/package.json', {paths:[...apps/studio]})` 指向 theia-extensions/
+- **验证**: `require.resolve('weftik-ld-glsp/package.json', {paths:[...apps/studio]})` 指向 theia-extensions/
 
 ## Studio 构建门禁 (2026-08-03)
 
@@ -235,3 +235,10 @@ done
 - **工具放置交互**: 工具激活后点击 rung 容器内部等效于点击画布（CODESYS/OpenPLC 风格，D111）。onNodeClick 对非 branch 工具 + rung 容器必须转发到创建逻辑（screenToFlowPosition + createWithTool）
 - **E2E 断言**: 禁止 `.nth()` 定位可能排序变化的节点（React Flow 按位置排序渲染子节点）— 用属性/文本值匹配（如 stroke 含 `nc-fill`）
 - **flaky 排查**: 单次 E2E 失败先 `--repeat-each=3` 复跑区分 flaky 与回归，再用 stash 对比确认，不要立即归因新改动
+
+
+## 品牌改名后约定 (D118, 2026-09-23)
+- **类型名永不加 Weftik 前缀**（Rust/C++/FlatBuffers 有语言级命名空间，加前缀 = stuttering）；验证 `grep -c 'Weftik[A-Z]' crates/` 应稳定
+- **品牌显示名唯一大写层** = `Weftik`；环境变量 `WEFTIK_*`；Prometheus 指标 `weftik_runtime_*`；C ABI `weftik_`；npm scope `@weftik/`；crate `weftik-<module>`（kebab）
+- **yarn install 必须带 `--ignore-optional`**（开发依赖的可选平台二进制在本环境缓存/网络双坏）；命令：`yarn install --frozen-lockfile --ignore-optional`
+- **品牌 sed 前先审长度耦合**：`grep -n 'b"weftik"\|\[7\.\.1\|len()' crates/`；BSD sed 不支持 `\b`，用显式后缀规则集 + 收尾 `git ls-files | xargs grep -ci weftik` 审计

@@ -8,8 +8,8 @@
 //! 5. `layout_rails` — position power rails
 
 use super::{
-    LayoutNode, Point, RungDef, Size, DEFAULT_ELEMENT_HEIGHT, ELEMENT_SPACING_X, ELEMENT_START_X,
-    RAIL_LEFT_X, RAIL_RIGHT_X, RAIL_WIDTH, RUNG_SPACING_Y, RUNG_START_Y,
+    DEFAULT_ELEMENT_HEIGHT, ELEMENT_SPACING_X, ELEMENT_START_X, LayoutNode, Point, RAIL_LEFT_X,
+    RAIL_RIGHT_X, RAIL_WIDTH, RUNG_SPACING_Y, RUNG_START_Y, RungDef, Size,
 };
 use std::collections::HashMap;
 
@@ -43,10 +43,7 @@ pub fn layout_rungs(
     _node_map: &HashMap<String, usize>,
 ) -> (Vec<RungRow>, f64, f64, f64, f64) {
     // Determine the width needed: find the widest element or use default
-    let max_element_width = nodes
-        .iter()
-        .map(|n| n.size.width)
-        .fold(0.0_f64, f64::max);
+    let max_element_width = nodes.iter().map(|n| n.size.width).fold(0.0_f64, f64::max);
 
     // ponytail: in Phase 1, right rail is at a fixed position.
     // Phase 2 can compute it from max contact chain length.
@@ -89,9 +86,7 @@ pub fn layout_contacts(
     rung_rows: &[RungRow],
 ) -> Vec<LayoutNode> {
     for rung in rungs {
-        let row = rung_rows
-            .iter()
-            .find(|r| r.index == (rung.rung_number as usize - 1));
+        let row = rung_rows.iter().find(|r| r.index == (rung.rung_number as usize - 1));
         let Some(row) = row else {
             continue;
         };
@@ -117,16 +112,15 @@ pub fn layout_contacts(
                             + ELEMENT_SPACING_X
                             + (contact_count as f64) * (node_w + ELEMENT_SPACING_X)
                     } else {
-                        ELEMENT_START_X
-                            + (contact_count as f64) * (node_w + ELEMENT_SPACING_X)
+                        ELEMENT_START_X + (contact_count as f64) * (node_w + ELEMENT_SPACING_X)
                     };
                     nodes[idx].position = Point::new(x, row.y);
                     contact_count += 1;
                 }
                 "node:fb" => {
                     // Position FB after contacts, if any
-                    let fb_x = ELEMENT_START_X
-                        + (contact_count as f64) * (node_w + ELEMENT_SPACING_X);
+                    let fb_x =
+                        ELEMENT_START_X + (contact_count as f64) * (node_w + ELEMENT_SPACING_X);
                     nodes[idx].position = Point::new(fb_x, row.y);
                     fb_seen = true;
                     fb_width_offset = node_w;
@@ -152,9 +146,7 @@ pub fn layout_coils(
     coil_x: f64,
 ) -> Vec<LayoutNode> {
     for rung in rungs {
-        let row = rung_rows
-            .iter()
-            .find(|r| r.index == (rung.rung_number as usize - 1));
+        let row = rung_rows.iter().find(|r| r.index == (rung.rung_number as usize - 1));
         let Some(row) = row else {
             continue;
         };
@@ -190,11 +182,7 @@ pub fn layout_rails(
 ) -> Vec<LayoutNode> {
     for node in nodes.iter_mut() {
         if node.kind == "node:powerrail" {
-            let side = node
-                .extra
-                .get("side")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Left");
+            let side = node.extra.get("side").and_then(|v| v.as_str()).unwrap_or("Left");
             match side {
                 "Right" => {
                     node.position = Point::new(rail_right_x, rail_y);
@@ -259,8 +247,7 @@ mod tests {
             make_rung("r2", 2, vec!["c1"]),
             make_rung("r3", 3, vec!["c1"]),
         ];
-        let node_map: HashMap<String, usize> =
-            [("c1".into(), 0usize)].into_iter().collect();
+        let node_map: HashMap<String, usize> = [("c1".into(), 0usize)].into_iter().collect();
         let (rows, _, _, _, _) = layout_rungs(&nodes, &rungs, &node_map);
 
         assert_eq!(rows.len(), 3);
@@ -280,13 +267,8 @@ mod tests {
             make_node("c3", "node:contact"),
         ];
         let rungs = vec![make_rung("r1", 1, vec!["c1", "c2", "c3"])];
-        let node_map: HashMap<String, usize> = [
-            ("c1".into(), 0),
-            ("c2".into(), 1),
-            ("c3".into(), 2),
-        ]
-        .into_iter()
-        .collect();
+        let node_map: HashMap<String, usize> =
+            [("c1".into(), 0), ("c2".into(), 1), ("c3".into(), 2)].into_iter().collect();
         let (rows, _, _, _, _) = layout_rungs(&nodes, &rungs, &node_map);
 
         let result = layout_contacts(nodes, &rungs, &node_map, &rows);
@@ -321,13 +303,9 @@ mod tests {
     #[test]
     fn power_rails_positioned_at_sides() {
         let mut left = make_node("rl", "node:powerrail");
-        left
-            .extra
-            .insert("side".into(), serde_json::Value::String("Left".into()));
+        left.extra.insert("side".into(), serde_json::Value::String("Left".into()));
         let mut right = make_node("rr", "node:powerrail");
-        right
-            .extra
-            .insert("side".into(), serde_json::Value::String("Right".into()));
+        right.extra.insert("side".into(), serde_json::Value::String("Right".into()));
 
         let nodes = vec![left, right];
         let node_map: HashMap<String, usize> =
@@ -349,18 +327,12 @@ mod tests {
             make_node("c2", "node:contact"),
             make_node("o2", "node:coil"),
         ];
-        let rungs = vec![
-            make_rung("r1", 1, vec!["c1", "o1"]),
-            make_rung("r2", 2, vec!["c2", "o2"]),
-        ];
-        let node_map: HashMap<String, usize> = [
-            ("c1".into(), 0),
-            ("o1".into(), 1),
-            ("c2".into(), 2),
-            ("o2".into(), 3),
-        ]
-        .into_iter()
-        .collect();
+        let rungs =
+            vec![make_rung("r1", 1, vec!["c1", "o1"]), make_rung("r2", 2, vec!["c2", "o2"])];
+        let node_map: HashMap<String, usize> =
+            [("c1".into(), 0), ("o1".into(), 1), ("c2".into(), 2), ("o2".into(), 3)]
+                .into_iter()
+                .collect();
         let (rows, _, _, coil_x, _) = layout_rungs(&nodes, &rungs, &node_map);
 
         let intermediate = layout_contacts(nodes, &rungs, &node_map, &rows);
@@ -369,7 +341,9 @@ mod tests {
         // c1 and o1 should be on same y, c2 and o2 on a different y
         assert!((result[0].position.y - result[1].position.y).abs() < 0.01);
         assert!((result[2].position.y - result[3].position.y).abs() < 0.01);
-        assert!((result[0].position.y - result[2].position.y).abs() > 10.0,
-            "rungs should be on different rows");
+        assert!(
+            (result[0].position.y - result[2].position.y).abs() > 10.0,
+            "rungs should be on different rows"
+        );
     }
 }

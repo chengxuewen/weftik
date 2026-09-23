@@ -6,7 +6,7 @@
 
 **Solution**: Architecturally separate the development environment (WindowMaker) from the runtime execution engine (WindowViewer). Shared application file format bridges the two.
 
-**AUDESYS Application**: Studio IDE ↔ Runtime Engine separation with Hot Reload (Fast Switch equivalent).
+**Weftik Application**: Studio IDE ↔ Runtime Engine separation with Hot Reload (Fast Switch equivalent).
 
 ## 2. Provider-Consumer Distributed Alarm
 
@@ -14,7 +14,7 @@
 
 **Solution**: Decouple alarm generation (Provider) from alarm consumption (Consumer) via a network protocol. Each Provider generates millisecond-precision UTC timestamps. Consumers aggregate alarms from multiple Providers into a unified view.
 
-**AUDESYS Application**: Runtime alarm pipeline with distributed alarm memory and failover sync.
+**Weftik Application**: Runtime alarm pipeline with distributed alarm memory and failover sync.
 
 ## 3. Communication Abstraction Layer (Access Name)
 
@@ -22,7 +22,7 @@
 
 **Solution**: Define a logical connection name (Access Name) that encapsulates protocol + node name + application name + topic. I/O Tags reference Access Name + Item Name only. Runtime resolves the connection transparently.
 
-**AUDESYS Application**: amw_transport trait + Connection abstraction. Transport implementations (inproc/zenoh/UDS/OPC UA) are invisible to Signal consumers.
+**Weftik Application**: amw_transport trait + Connection abstraction. Transport implementations (inproc/zenoh/UDS/OPC UA) are invisible to Signal consumers.
 
 ## 4. Template → Instance Object Model (ArchestrA)
 
@@ -30,7 +30,7 @@
 
 **Solution**: Class-based object model. Template (Class) defines attributes, scripts, graphics. Derived Template (Subclass) extends parent. Instance (Object) binds to physical I/O. Containment (Composition) creates hierarchy.
 
-**AUDESYS Application**: HAL Device Model template hierarchy. MotorBase → ServoMotor → instance_Pump001.
+**Weftik Application**: HAL Device Model template hierarchy. MotorBase → ServoMotor → instance_Pump001.
 
 ## 5. Single Source of Truth (Galaxy Repository)
 
@@ -38,7 +38,7 @@
 
 **Solution**: Centralized database (SQL Server) containing all configuration. Check-out/check-in for multi-user editing. Deploy workflow pushes changes to runtime nodes.
 
-**AUDESYS Application**: Studio project as single source of truth (YAML/SQLite). Git-based version control instead of Galaxy's SQL Server dependency.
+**Weftik Application**: Studio project as single source of truth (YAML/SQLite). Git-based version control instead of Galaxy's SQL Server dependency.
 
 ## 6. Event-Driven Script Triggers (7 Script Types)
 
@@ -46,7 +46,7 @@
 
 **Solution**: Define orthogonal script trigger types covering the entire lifecycle of an HMI session. Each type has a clear trigger condition and execution scope (application-level, window-level, Tag-level).
 
-**AUDESYS Application**: Not directly for HAL (no scripting needed), but for Studio scripting strategy — define clear trigger types instead of a generic event system.
+**Weftik Application**: Not directly for HAL (no scripting needed), but for Studio scripting strategy — define clear trigger types instead of a generic event system.
 
 ## 7. Progressive Complexity (Standalone → Managed)
 
@@ -54,7 +54,7 @@
 
 **Solution**: Offer multiple application types: Standalone (simple, file-based) for small projects, Managed (Galaxy, multi-user) for large projects. Upgrade path from Standalone to Managed.
 
-**AUDESYS Application**: "Progressive complexity" — simplified config for small projects, full object model for large ones. Avoid Galaxy's "all or nothing" approach.
+**Weftik Application**: "Progressive complexity" — simplified config for small projects, full object model for large ones. Avoid Galaxy's "all or nothing" approach.
 
 ## 8. Visual + Logic + Data Binding (Animation Links)
 
@@ -62,4 +62,4 @@
 
 **Solution**: Declarative animation links bind Tag values to visual properties (color, position, size, visibility, rotation) without scripting. Engine evaluates bindings at runtime.
 
-**AUDESYS Application**: Signal → UI control bidirectional binding in Studio HMI designer. Drop template → auto-generated binding.
+**Weftik Application**: Signal → UI control bidirectional binding in Studio HMI designer. Drop template → auto-generated binding.

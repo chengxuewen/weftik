@@ -1,19 +1,19 @@
-# AUDESYS G-code 编译器设计
+# Weftik G-code 编译器设计
 
 > 生成日期：2026-07-19
 > 依赖决策：D10 (通信原语 Signal/StreamChannel/RPC), D12 (14 类型系统), D19 (FlatBuffers), D22 (编译器策略), D55 (G-code→HAL IR 编译策略)
-> 设计目标：将 ISO 6983 / RS274 / DIN 66025 G-code 编译为 HAL IR (HalProgram)，使 AUDESYS Runtime 原生支持 CNC 运动控制
+> 设计目标：将 ISO 6983 / RS274 / DIN 66025 G-code 编译为 HAL IR (HalProgram)，使 Weftik Runtime 原生支持 CNC 运动控制
 > 参考项目：GRBL (双遍解析 + 模态组), LinuxCNC (RS274NGC 解释器 + HAL Signal)
 
 ---
 
 ## 概述
 
-### G-code 在 AUDESYS 中的定位
+### G-code 在 Weftik 中的定位
 
-AUDESYS Runtime 是一个扫描周期引擎（scan-cycle engine），每个周期顺序执行 HalProgram 指令流，读写 Signal。这与传统 CNC 控制器（如 GRBL 的中断驱动步进 ISR 或 LinuxCNC 的 RT 线程）有本质区别：
+Weftik Runtime 是一个扫描周期引擎（scan-cycle engine），每个周期顺序执行 HalProgram 指令流，读写 Signal。这与传统 CNC 控制器（如 GRBL 的中断驱动步进 ISR 或 LinuxCNC 的 RT 线程）有本质区别：
 
-| 特性 | 传统 CNC 控制器 | AUDESYS Runtime |
+| 特性 | 传统 CNC 控制器 | Weftik Runtime |
 |------|:---:|:---:|
 | 执行模型 | 中断驱动步进脉冲 | 周期扫描（默认 10ms） |
 | 时间精度 | μs 级（定时器 ISR） | ms 级（周期边界） |
@@ -22,9 +22,9 @@ AUDESYS Runtime 是一个扫描周期引擎（scan-cycle engine），每个周�
 
 **核心设计决策**：运动指令跨越数百个扫描周期，G-code 编译器将每条运动指令分解为逐周期递进的 IR 指令序列，而非将运动规划交由 VM 运行时处理。G0 在一个周期内完成（直接写入目标位置），G1 生成带计步循环的 IR 指令流。
 
-### G-code 是 AUDESYS 的第 6 种源语言
+### G-code 是 Weftik 的第 6 种源语言
 
-AUDESYS 编译器管线统一将多种源语言编译为 HalProgram：
+Weftik 编译器管线统一将多种源语言编译为 HalProgram：
 
 ```
 ST 源文件  ──→  ST Compiler  ──┐
@@ -35,7 +35,7 @@ SFC 源文件 ──→  SFC Compiler ──┤
 G-code 源  ──→  G-code Compiler┘
 ```
 
-所有编译器输出相同的 `HalProgram` 结构——VM 和 Runtime 不感知源码语言。G-code 编译器作为独立 crate (`audesys-gcode-compiler`)，输入 G-code 文本，输出 `HalProgram`。零现有模块变更。
+所有编译器输出相同的 `HalProgram` 结构——VM 和 Runtime 不感知源码语言。G-code 编译器作为独立 crate (`weftik-gcode-compiler`)，输入 G-code 文本，输出 `HalProgram`。零现有模块变更。
 
 ---
 
@@ -43,7 +43,7 @@ G-code 源  ──→  G-code Compiler┘
 
 ### RS274/NGC 标准子集
 
-AUDESYS Phase 1 覆盖 RS274/NGC (NIST RS274NGC) 的核心子集，参考 GRBL v1.1 的命令覆盖范围。选取 G-code 方言间交集的最小功能集，确保跨方言兼容性。
+Weftik Phase 1 覆盖 RS274/NGC (NIST RS274NGC) 的核心子集，参考 GRBL v1.1 的命令覆盖范围。选取 G-code 方言间交集的最小功能集，确保跨方言兼容性。
 
 ### 模态组 (Modal Groups)
 
@@ -111,7 +111,7 @@ AUDESYS Phase 1 覆盖 RS274/NGC (NIST RS274NGC) 的核心子集，参考 GRBL v
           │
           ▼
 ┌─────────────────────────────────────────┐
-│  G-code Compiler (audesys-gcode-compiler) │
+│  G-code Compiler (weftik-gcode-compiler) │
 │                                         │
 │  ┌─ Lexer (token.rs) ─────────────────┐ │
 │  │  Token 枚举：G(u32), M(u32),       │ │
@@ -232,7 +232,7 @@ pub enum Token {
 
 ### 两遍解析器 (Two-pass Parser)
 
-参照 GRBL 的 `gcode.c` 架构，AUDESYS G-code 解析器采用两遍设计：
+参照 GRBL 的 `gcode.c` 架构，Weftik G-code 解析器采用两遍设计：
 
 **第一遍：行词法分析** — 将一行 G-code 文本转换为 token 流，识别 G/M-code 并更新模态状态。各行独立 tokenize，彼此无依赖。
 
@@ -752,11 +752,11 @@ Phase 1 采用 **fail-fast** 策略：遇到第一个错误立即返回 `Err(GCo
 
 ---
 
-## 对 AUDESYS 参考价值
+## 对 Weftik 参考价值
 
 ### 架构验证
 
-G-code 编译器的设计直接验证了 AUDESYS 架构的核心假设：
+G-code 编译器的设计直接验证了 Weftik 架构的核心假设：
 
 1. **HAL IR 作为通用编译器目标**：现有 30+ 操作码无需新增即可覆盖 G-code 运动语义。Load/Store/Add/Sub/Jump/Eq/Halt 组合足以表达逐周期增量运动模型——验证了 D22 "编译器前端可独立替换"的设计目标。
 
@@ -768,7 +768,7 @@ G-code 编译器的设计直接验证了 AUDESYS 架构的核心假设：
 
 ### 竞品对标
 
-| 特性 | GRBL | LinuxCNC | AUDESYS G-code |
+| 特性 | GRBL | LinuxCNC | Weftik G-code |
 |------|------|----------|:---:|
 | G-code 解析架构 | 双遍解析 (gcode.c) | RS274NGC 解释器 | 双遍解析 + 模态合并 |
 | 输出格式 | 运动块 → 规划器缓冲 | NML 消息 | HalProgram (统一 IR) |
@@ -799,7 +799,7 @@ G-code 编译器的设计直接验证了 AUDESYS 架构的核心假设：
 - `docs/reference/klipper.md` — G-code 宏系统参考
 - `docs/modules/hal/hal-protocol-design.md` — Signal 命名约定 `motion.axis.N.pos`
 - `docs/modules/compiler/hal-ir-design.md` — HAL IR 格式、HalProgram 结构
-- `crates/audesys-hal-ir/src/instruction.rs` — 完整操作码定义（30+ opcodes）
-- `crates/audesys-hal-ir/src/program.rs` — HalProgram + SignalBinding 结构
+- `crates/weftik-hal-ir/src/instruction.rs` — 完整操作码定义（30+ opcodes）
+- `crates/weftik-hal-ir/src/program.rs` — HalProgram + SignalBinding 结构
 - `.sisyphus/plans/add-gcode-compiler/proposal.md` — 本变更提案
 - `.sisyphus/plans/add-gcode-compiler/design.md` — 详细设计文档

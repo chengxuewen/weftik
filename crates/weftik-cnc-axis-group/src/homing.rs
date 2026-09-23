@@ -54,10 +54,7 @@ pub fn generate_homing_program(cfg: &AxisGroupConfig) -> HalProgram {
         // ── Load current homing state from signal ──
         instructions.push(Instruction::new(
             Opcode::Load,
-            vec![
-                Operand::Register(R_STATE),
-                Operand::SignalName(format!("{}.homing_state", pfx)),
-            ],
+            vec![Operand::Register(R_STATE), Operand::SignalName(format!("{}.homing_state", pfx))],
         ));
 
         // ── State dispatch ──
@@ -81,18 +78,12 @@ pub fn generate_homing_program(cfg: &AxisGroupConfig) -> HalProgram {
         // enable axis
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.enable", pfx)),
-                Operand::Register(R_ONE),
-            ],
+            vec![Operand::SignalName(format!("{}.enable", pfx)), Operand::Register(R_ONE)],
         ));
         // save pos_cmd = 0 to start position tracking
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.pos_cmd", pfx)),
-                Operand::Register(R_ZERO),
-            ],
+            vec![Operand::SignalName(format!("{}.pos_cmd", pfx)), Operand::Register(R_ZERO)],
         ));
         let idle_end = instructions.len();
         // Patch the skip jump
@@ -149,18 +140,12 @@ pub fn generate_homing_program(cfg: &AxisGroupConfig) -> HalProgram {
         instructions.push(Instruction::load_imm(R_SCRATCH, HalValue::F64(axis.home_offset)));
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.pos_cmd", pfx)),
-                Operand::Register(R_SCRATCH),
-            ],
+            vec![Operand::SignalName(format!("{}.pos_cmd", pfx)), Operand::Register(R_SCRATCH)],
         ));
         // zero velocity
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.vel_cmd", pfx)),
-                Operand::Register(R_ZERO),
-            ],
+            vec![Operand::SignalName(format!("{}.vel_cmd", pfx)), Operand::Register(R_ZERO)],
         ));
         let latch_cleared_end = instructions.len();
         patch_jump(&mut instructions, keep_latching_jump, latch_cleared_end);
@@ -177,18 +162,12 @@ pub fn generate_homing_program(cfg: &AxisGroupConfig) -> HalProgram {
         // set axis.N.homed = true
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.homed", pfx)),
-                Operand::Register(R_ONE),
-            ],
+            vec![Operand::SignalName(format!("{}.homed", pfx)), Operand::Register(R_ONE)],
         ));
         // disable axis
         instructions.push(Instruction::new(
             Opcode::Store,
-            vec![
-                Operand::SignalName(format!("{}.enable", pfx)),
-                Operand::Register(R_ZERO),
-            ],
+            vec![Operand::SignalName(format!("{}.enable", pfx)), Operand::Register(R_ZERO)],
         ));
         let backoff_end = instructions.len();
         patch_jump(&mut instructions, skip_backoff_jump, backoff_end);
@@ -243,16 +222,10 @@ fn limit_signal_name(prefix: &str, dir: HomeDirection) -> String {
 /// Emit: set homing_state signal to `state`
 fn emit_set_state(instructions: &mut Vec<Instruction>, prefix: &str, state: u8) {
     let state_reg = R_SCRATCH;
-    instructions.push(Instruction::load_imm(
-        state_reg,
-        HalValue::U8(state),
-    ));
+    instructions.push(Instruction::load_imm(state_reg, HalValue::U8(state)));
     instructions.push(Instruction::new(
         Opcode::Store,
-        vec![
-            Operand::SignalName(format!("{}.homing_state", prefix)),
-            Operand::Register(state_reg),
-        ],
+        vec![Operand::SignalName(format!("{}.homing_state", prefix)), Operand::Register(state_reg)],
     ));
 }
 
@@ -263,10 +236,7 @@ fn emit_write_vel(instructions: &mut Vec<Instruction>, prefix: &str, vel_reg: u8
     instructions.push(Instruction::arith(Opcode::Mul, vel_reg, R_DIR, R_SCRATCH));
     instructions.push(Instruction::new(
         Opcode::Store,
-        vec![
-            Operand::SignalName(format!("{}.vel_cmd", prefix)),
-            Operand::Register(R_SCRATCH),
-        ],
+        vec![Operand::SignalName(format!("{}.vel_cmd", prefix)), Operand::Register(R_SCRATCH)],
     ));
 }
 
@@ -283,10 +253,8 @@ fn emit_cmp_eq_imm(instructions: &mut Vec<Instruction>, reg: u8, imm: f64) {
     // Load imm → R_VEL (borrow it temporarily), then Eq(reg, R_VEL)
     let temp = R_VEL;
     instructions.push(Instruction::load_imm(temp, HalValue::F64(imm)));
-    instructions.push(Instruction::new(
-        Opcode::Eq,
-        vec![Operand::Register(reg), Operand::Register(temp)],
-    ));
+    instructions
+        .push(Instruction::new(Opcode::Eq, vec![Operand::Register(reg), Operand::Register(temp)]));
 }
 
 /// Emit a JumpIf that skips when condition is false (reg == 0).
@@ -324,11 +292,7 @@ fn emit_jump_if_not(instructions: &mut Vec<Instruction>, cond_reg: u8, _placehol
 }
 
 /// Patch a JumpIf instruction's target to point to the given instruction index.
-fn patch_jump(
-    instructions: &mut Vec<Instruction>,
-    jump_idx: usize,
-    target: usize,
-) {
+fn patch_jump(instructions: &mut Vec<Instruction>, jump_idx: usize, target: usize) {
     if let Some(inst) = instructions.get_mut(jump_idx) {
         if inst.opcode == Opcode::JumpIf && inst.operands.len() >= 2 {
             inst.operands[1] = Operand::Immediate(HalValue::U32(target as u32));
@@ -355,10 +319,7 @@ mod tests {
 
     #[test]
     fn test_single_axis_homing() {
-        let cfg = AxisGroupConfig::new(
-            "group.0",
-            vec![crate::config::AxisConfig::linear(0, "X")],
-        );
+        let cfg = AxisGroupConfig::new("group.0", vec![crate::config::AxisConfig::linear(0, "X")]);
         let prog = generate_homing_program(&cfg);
         assert!(!prog.instructions.is_empty());
         assert_eq!(prog.signals.len(), 7);
@@ -368,7 +329,8 @@ mod tests {
     fn test_homing_signal_names() {
         let cfg = AxisGroupConfig::default_xyz();
         let prog = generate_homing_program(&cfg);
-        let signal_names: Vec<&str> = prog.signals.iter().map(|s| s.hal_signal_name.as_str()).collect();
+        let signal_names: Vec<&str> =
+            prog.signals.iter().map(|s| s.hal_signal_name.as_str()).collect();
         assert!(signal_names.contains(&"group.group.0.axis.0.homing_state"));
         assert!(signal_names.contains(&"group.group.0.axis.0.homed"));
         assert!(signal_names.contains(&"group.group.0.axis.1.limit_pos"));
@@ -391,11 +353,8 @@ mod tests {
     fn test_all_axes_get_vel_cmd() {
         let cfg = AxisGroupConfig::default_xyz();
         let prog = generate_homing_program(&cfg);
-        let vel_signals: Vec<_> = prog
-            .signals
-            .iter()
-            .filter(|s| s.hal_signal_name.ends_with(".vel_cmd"))
-            .collect();
+        let vel_signals: Vec<_> =
+            prog.signals.iter().filter(|s| s.hal_signal_name.ends_with(".vel_cmd")).collect();
         assert_eq!(vel_signals.len(), 3);
     }
 }

@@ -172,11 +172,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$SCRIPT_DIR/../.."
 
-echo "=== AUDESYS smoke ==="
+echo "=== Weftik smoke ==="
 
 # S1: Rust core fast tests
 echo "[S1] cargo test core crates"
-cargo test -p audesys-hal-core -p audesys-hal-vm -p audesys-runtime-engine -p audesys-ipc-server -- --test-threads=4 -q
+cargo test -p weftik-hal-core -p weftik-hal-vm -p weftik-runtime-engine -p weftik-ipc-server -- --test-threads=4 -q
 
 # S2: napi-rs smoke (Phase 1 完成后激活)
 # echo "[S2] napi-rs compile_st smoke" ...
@@ -319,7 +319,7 @@ AI 生成 PR
 ```bash
 # 检查 PR diff 是否包含 AI 高风险区域
 if git diff origin/main...HEAD --name-only | grep -qE \
-  'crates/audesys-theia-bridge|apps/studio-theia.*glsp|apps/studio-theia.*ipc'; then
+  'crates/weftik-theia-bridge|apps/studio-theia.*glsp|apps/studio-theia.*ipc'; then
   echo "⚠️ AI 高风险区域变更 — 建议触发 review-work"
 fi
 ```

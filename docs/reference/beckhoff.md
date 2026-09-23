@@ -163,7 +163,7 @@ Frame: [EtherType 0x88A0 | SyncManager | Data Area | CoE/SoE | CRC]
 
 #### 2.2.2 ADS（Automation Device Specification）通信协议
 
-ADS 是 TwinCAT 系统的**统一通信协议**，类似于 AUDESYS 的 HAL 通信原语。ADS 的架构特点是：
+ADS 是 TwinCAT 系统的**统一通信协议**，类似于 Weftik 的 HAL 通信原语。ADS 的架构特点是：
 
 **消息路由器（Message Router）**：每个 TwinCAT 设备上运行一个 ADS Message Router，它负责管理所有消息的路由和分发。ADS 设备在消息路由器中用唯一的 **AMS Port（AMS 端口号）** 标识：
 
@@ -181,16 +181,16 @@ ADS 是 TwinCAT 系统的**统一通信协议**，类似于 AUDESYS 的 HAL 通�
 
 ### 2.2.3.1 实时调度的深入分析
 
-TwinCAT 3 的实时调度除了 RMS 策略外，还有以下设计细节值得 AUDESYS 参考：
+TwinCAT 3 的实时调度除了 RMS 策略外，还有以下设计细节值得 Weftik 参考：
 
-| 调度特性 | 说明 | AUDESYS 参考点 |
+| 调度特性 | 说明 | Weftik 参考点 |
 |---------|------|---------------|
-| 周期抖动控制 | TwinCAT 3 通过核心隔离和双 Tick 机制将周期抖动控制在微秒级 | AUDESYS RT 线程的周期抖动控制 |
-| Task 依赖管理 | TwinCAT 3 支持 Task 之间的依赖关系（如 A 执行完后 B 才能执行） | AUDESYS 四系统混合调度的依赖管理 |
-| 运行时优先级 | TwinCAT 3 支持运行时优先级（RT > 非 RT），且可在运行时动态调整 | AUDESYS 运行时优先级管理 |
-| 安全运行时隔离 | TwinSAFE 作为独立运行时，在安全 Task 中执行，与普通 Task 隔离 | AUDESYS Safety 模块的隔离设计 |
+| 周期抖动控制 | TwinCAT 3 通过核心隔离和双 Tick 机制将周期抖动控制在微秒级 | Weftik RT 线程的周期抖动控制 |
+| Task 依赖管理 | TwinCAT 3 支持 Task 之间的依赖关系（如 A 执行完后 B 才能执行） | Weftik 四系统混合调度的依赖管理 |
+| 运行时优先级 | TwinCAT 3 支持运行时优先级（RT > 非 RT），且可在运行时动态调整 | Weftik 运行时优先级管理 |
+| 安全运行时隔离 | TwinSAFE 作为独立运行时，在安全 Task 中执行，与普通 Task 隔离 | Weftik Safety 模块的隔离设计 |
 
-> TwinCAT 3 的调度设计展示了如何在共享硬件上实现多个实时运行时的确定性执行。这是 AUDESYS 运行时架构设计的重要参考。
+> TwinCAT 3 的调度设计展示了如何在共享硬件上实现多个实时运行时的确定性执行。这是 Weftik 运行时架构设计的重要参考。
 | 11500 | NC Interpreter |
 
 ADS 通信的核心概念：
@@ -674,27 +674,27 @@ TwinCAT 3 选择 Microsoft Visual Studio 作为 IDE Shell，带来了 IT 世界�
 TwinCAT/BSD 的 IDE 支持：TwinCAT 3 XAE（基于 Visual Studio）可在 TwinCAT/BSD 目标系统上进行离线编程和在线调试。调试器通过 ADS 协议与运行在 TwinCAT/BSD 上的运行时通信，与 Windows 上的调试体验完全一致。TwinCAT/BSD 还支持通过 SSH 进行远程命令行管理、通过 FTP 进行文件传输、通过 System Manager 进行硬件配置。这确保了工程师不需要学习两套工具链。
 ---
 
-## 7. 对 AUDESYS 的参考价值
+## 7. 对 Weftik 的参考价值
 
 ### 7.1 多运行时架构（PLC/NC/CNC/Safety）的模块化设计
 
-Beckhoff TwinCAT 的**多运行时架构**对 AUDESYS 的 Runtime 模块化设计有直接参考价值：
+Beckhoff TwinCAT 的**多运行时架构**对 Weftik 的 Runtime 模块化设计有直接参考价值：
 
-| 设计特征 | TwinCAT 实现 | AUDESYS 参考点 |
+| 设计特征 | TwinCAT 实现 | Weftik 参考点 |
 |---------|-------------|---------------|
-| 运行时类型 | PLC Runtime / NC Runtime / CNC Runtime / Safety Runtime 等 | AUDESYS Runtime 模块化分离（PLC / NC / CNC / Safety） |
-| 调度统一 | 所有运行时挂载到同一 Task 调度器 | AUDESYS 四系统混合线程调度（D13）的实践验证 |
-| 数据通道 | 共享过程映像 / Task 内统一输入输出更新 | AUDESYS HAL Signal 原语的周期刷新机制 |
-| 安全集成 | TwinSAFE 作为独立运行时，与 PLC 运行时通过安全协议（FSoE）通信 | AUDESYS Safety 模块的隔离设计思路 |
-| 模块注册 | TcCOM 模块注册到 Task 的 "log on" 机制 | 可参考设计 AUDESYS 运行时模块注册/发现机制 |
+| 运行时类型 | PLC Runtime / NC Runtime / CNC Runtime / Safety Runtime 等 | Weftik Runtime 模块化分离（PLC / NC / CNC / Safety） |
+| 调度统一 | 所有运行时挂载到同一 Task 调度器 | Weftik 四系统混合线程调度（D13）的实践验证 |
+| 数据通道 | 共享过程映像 / Task 内统一输入输出更新 | Weftik HAL Signal 原语的周期刷新机制 |
+| 安全集成 | TwinSAFE 作为独立运行时，与 PLC 运行时通过安全协议（FSoE）通信 | Weftik Safety 模块的隔离设计思路 |
+| 模块注册 | TcCOM 模块注册到 Task 的 "log on" 机制 | 可参考设计 Weftik 运行时模块注册/发现机制 |
 
 **关键学到**：TwinCAT 展示了一种**不牺牲确定性**的多运行时集成方式。所有运行时共享同一 Task 调度，通过固定的执行顺序和过程映像同步，避免多运行时间的竞态条件。
 
-### 7.2 ADS 通信协议 vs AUDESYS HAL 通信原语对比
+### 7.2 ADS 通信协议 vs Weftik HAL 通信原语对比
 
-ADS 和 AUDESYS HAL 在通信设计上有许多有趣的对照：
+ADS 和 Weftik HAL 在通信设计上有许多有趣的对照：
 
-| 维度 | ADS (Beckhoff) | AUDESYS HAL |
+| 维度 | ADS (Beckhoff) | Weftik HAL |
 |------|---------------|-------------|
 | 核心原语 | 消息路由 + Read/Write/Notification | Signal / StreamChannel / RPC 三分法 |
 | 寻址方式 | (AMS Port, IndexGroup, IndexOffset) 三元组 | (component.interface.name) Signal 命名 |
@@ -721,78 +721,78 @@ Beckhoff 在开源和生态开放性方面有独特策略：
 | 安全性 | Secure ADS（Build 4026+），ADS-over-MQTT | HalQoS Security Domain 隔离 |
 | 协议开放度 | 完全公开（Beckhoff 提供完整规范的 PDF） | HAL 详细设计中（docs/modules/hal/） |
 
-**AUDESYS 借鉴点**：
-1. ADS 的 **Index Group / Index Offset 寻址**展示了用数值对替代字符串命名的性能优势。AUDESYS 的 Signal 命名（component.interface.name）可考虑在内部表示中编译为数值对以提高运行时效率
-2. ADS **Notification（订阅/推送）** 提供了服务器主动推送数据的模式，与 AUDESYS Signal 的最新值覆盖 + 订阅通知机制类似，但 ADS 支持注册周期性或边沿触发的通知
-3. **ADS 消息路由器**负责同机/跨机消息路由，与 AUDESYS amw 抽象层的定位一致
+**Weftik 借鉴点**：
+1. ADS 的 **Index Group / Index Offset 寻址**展示了用数值对替代字符串命名的性能优势。Weftik 的 Signal 命名（component.interface.name）可考虑在内部表示中编译为数值对以提高运行时效率
+2. ADS **Notification（订阅/推送）** 提供了服务器主动推送数据的模式，与 Weftik Signal 的最新值覆盖 + 订阅通知机制类似，但 ADS 支持注册周期性或边沿触发的通知
+3. **ADS 消息路由器**负责同机/跨机消息路由，与 Weftik amw 抽象层的定位一致
 
 ### 7.3 TwinCAT 的实时调度模型参考
 
-TwinCAT 的**双 Tick + 速率单调调度**模型对 AUDESYS 的 RT（Real-Time）线程设计提供了工程实践参考：
+TwinCAT 的**双 Tick + 速率单调调度**模型对 Weftik 的 RT（Real-Time）线程设计提供了工程实践参考：
 
-- **限制条件重要性**：TwinCAT 文档明确指出延迟声明需要条件（核心隔离、硬件性能、消息大小），这正是 AUDESYS 审核中发现并修正的（pitfalls.md 中"延迟声明不可验证"问题）
+- **限制条件重要性**：TwinCAT 文档明确指出延迟声明需要条件（核心隔离、硬件性能、消息大小），这正是 Weftik 审核中发现并修正的（pitfalls.md 中"延迟声明不可验证"问题）
 - **核心隔离**：TwinCAT 的 isolated core 概念展示了如何在不依赖 hypervisor 的 RTOS 中保障实时质量
-- **Task 周期与优先级自动管理**：AUDESYS 可参考 TwinCAT 的 Rate-Monotonic Scheduling 策略，为不同运行时分配固定优先级
-- **PLC Runtime 的输入/输出更新差异**：TwinCAT 2 兼容性导致 PLC Runtime 的行为与标准 TcCOM 模块不同，这提醒 AUDESYS 在设计向后兼容时需要注意此类架构不一致
+- **Task 周期与优先级自动管理**：Weftik 可参考 TwinCAT 的 Rate-Monotonic Scheduling 策略，为不同运行时分配固定优先级
+- **PLC Runtime 的输入/输出更新差异**：TwinCAT 2 兼容性导致 PLC Runtime 的行为与标准 TcCOM 模块不同，这提醒 Weftik 在设计向后兼容时需要注意此类架构不一致
 
-### 7.6 TwinCAT 的模块化架构对 AUDESYS 架构设计的其他参考
+### 7.6 TwinCAT 的模块化架构对 Weftik 架构设计的其他参考
 
-除了前面讨论的多运行时、ADS 通信和实时调度之外，TwinCAT 还有以下架构设计对 AUDESYS 有参考价值：
+除了前面讨论的多运行时、ADS 通信和实时调度之外，TwinCAT 还有以下架构设计对 Weftik 有参考价值：
 
-1. **TcCOM 模块架构**：所有运行时模块（PLC、NC、CNC、Safety、Vision）都实现标准化的 TcCOM 接口，这类似于 AUDESYS 的 amw（AUDESYS Middleware）抽象层。TcCOM 定义了模块的生命周期（初始化/启动/停止/销毁）、配置接口（参数设置）、和事件通知机制（Task 注册/注销）。AUDESYS 可参考 TcCOM 的接口设计模式来定义自己的运行时模块抽象层。
-2. **TwinCAT 3 的功能模块许可**：TwinCAT 3 的 TFxxxx 功能模块按独立许可销售，这展示了软件许可如何与模块化架构结合。AUDESYS 可参考这一模式，设计自己的 Runtime 许可体系——按功能模块许可，而非按总功能许可。
-3. **TwinCAT 3 的多用户工程（Multiuser Engineering）**：TwinCAT 3 支持多个工程师同时编辑同一项目（通过 TIA Project Server 管理版本）。AUDESYS Studio 可参考这一模式，设计自己的多用户协作机制。
-4. **TwinCAT 3 的远程部署**：TwinCAT 3 支持通过网络将项目部署到远程目标系统（无需物理连接）。AUDESYS Studio 可参考这一模式，设计自己的远程部署功能。
-5. **TwinCAT 3 的诊断系统**：TwinCAT 3 提供了从硬件（EtherCAT 总线诊断）到软件（PLC 程序诊断）的完整诊断链。AUDESYS 可参考这一模式，设计自己的诊断基础设施。
+1. **TcCOM 模块架构**：所有运行时模块（PLC、NC、CNC、Safety、Vision）都实现标准化的 TcCOM 接口，这类似于 Weftik 的 amw（Weftik Middleware）抽象层。TcCOM 定义了模块的生命周期（初始化/启动/停止/销毁）、配置接口（参数设置）、和事件通知机制（Task 注册/注销）。Weftik 可参考 TcCOM 的接口设计模式来定义自己的运行时模块抽象层。
+2. **TwinCAT 3 的功能模块许可**：TwinCAT 3 的 TFxxxx 功能模块按独立许可销售，这展示了软件许可如何与模块化架构结合。Weftik 可参考这一模式，设计自己的 Runtime 许可体系——按功能模块许可，而非按总功能许可。
+3. **TwinCAT 3 的多用户工程（Multiuser Engineering）**：TwinCAT 3 支持多个工程师同时编辑同一项目（通过 TIA Project Server 管理版本）。Weftik Studio 可参考这一模式，设计自己的多用户协作机制。
+4. **TwinCAT 3 的远程部署**：TwinCAT 3 支持通过网络将项目部署到远程目标系统（无需物理连接）。Weftik Studio 可参考这一模式，设计自己的远程部署功能。
+5. **TwinCAT 3 的诊断系统**：TwinCAT 3 提供了从硬件（EtherCAT 总线诊断）到软件（PLC 程序诊断）的完整诊断链。Weftik 可参考这一模式，设计自己的诊断基础设施。
 
 > 以上参考点基于 Beckhoff TwinCAT 3 的实际架构和设计理念。详见 Beckhoff InfoSys 文档 TE1000 TwinCAT 3 Basics。
 ### 7.4 Visual Studio 集成的 IDE 设计理念
 
-TwinCAT 选择 Visual Studio 作为 IDE Shell 的决策，对 AUDESYS Studio IDE 的设计有重要启示：
+TwinCAT 选择 Visual Studio 作为 IDE Shell 的决策，对 Weftik Studio IDE 的设计有重要启示：
 
-| TwinCAT XAE 设计 | AUDESYS Studio 参考价值 |
+| TwinCAT XAE 设计 | Weftik Studio 参考价值 |
 
-### 7.7 TwinCAT 的许可模型对 AUDESYS 商业模式的参考
+### 7.7 TwinCAT 的许可模型对 Weftik 商业模式的参考
 
-Beckhoff 的许可模型对 AUDESYS 的商业模式设计有直接参考价值：
+Beckhoff 的许可模型对 Weftik 的商业模式设计有直接参考价值：
 
-1. **按硬件性能分级**（Platform Level）：许可价格与硬件 CPU 核心数挂钩，而非功能数量。这意味着用户可以在不增加软件许可成本的情况下升级硬件，激励用户投资更强大的硬件。AUDESYS 可参考这一模式设计自己的许可分级。
-2. **开发环境免费 + 运行时付费**：TwinCAT XAE（开发环境）基础功能免费，运行时按平台级别收费。这降低了用户的使用门槛，同时保证了商业可持续性。AUDESYS Studio 可参考这一模式。
-3. **功能模块独立许可**：超过 100 个 TFxxxx 功能模块按独立许可销售，用户按需购买。AUDESYS Runtime 可参考这一模式设计自己的功能模块许可体系。
-4. **试用许可**：7 天可续期试用许可降低了用户的评估成本。AUDESYS 可考虑提供类似的试用方案。
+1. **按硬件性能分级**（Platform Level）：许可价格与硬件 CPU 核心数挂钩，而非功能数量。这意味着用户可以在不增加软件许可成本的情况下升级硬件，激励用户投资更强大的硬件。Weftik 可参考这一模式设计自己的许可分级。
+2. **开发环境免费 + 运行时付费**：TwinCAT XAE（开发环境）基础功能免费，运行时按平台级别收费。这降低了用户的使用门槛，同时保证了商业可持续性。Weftik Studio 可参考这一模式。
+3. **功能模块独立许可**：超过 100 个 TFxxxx 功能模块按独立许可销售，用户按需购买。Weftik Runtime 可参考这一模式设计自己的功能模块许可体系。
+4. **试用许可**：7 天可续期试用许可降低了用户的评估成本。Weftik 可考虑提供类似的试用方案。
 |-----------------|----------------------|
-| 不是自研 IDE，而是嵌入成熟 Shell | AUDESYS Studio 是否使用 VS Code / Theia 等现有 IDE Shell？ |
-| 利用已经存在的编辑器、调试器、版本控制功能 | AUDESYS Studio 应集中资源开发 PLC 编辑器（IEC 61131-3）和 可视化配置器 |
-| C++模块使用原生 VS 项目系统 | AUDESYS Studio 应考虑如何支持多语言混合项目 |
-| 工程文件格式与 VS 项目兼容 | AUDESYS Studio 应定义清晰的项目格式（Xml / JSON / 数据库） |
-| TcCOM 模块在系统管理器中可视化配置 | AUDESYS Studio 的硬件配置器参考 System Manager 的 UX {
-| Git 集成用于团队协作 | AUDESYS Studio 应原生支持 Git 工作流 |
+| 不是自研 IDE，而是嵌入成熟 Shell | Weftik Studio 是否使用 VS Code / Theia 等现有 IDE Shell？ |
+| 利用已经存在的编辑器、调试器、版本控制功能 | Weftik Studio 应集中资源开发 PLC 编辑器（IEC 61131-3）和 可视化配置器 |
+| C++模块使用原生 VS 项目系统 | Weftik Studio 应考虑如何支持多语言混合项目 |
+| 工程文件格式与 VS 项目兼容 | Weftik Studio 应定义清晰的项目格式（Xml / JSON / 数据库） |
+| TcCOM 模块在系统管理器中可视化配置 | Weftik Studio 的硬件配置器参考 System Manager 的 UX {
+| Git 集成用于团队协作 | Weftik Studio 应原生支持 Git 工作流 |
 
 **核心启示**：TwinCAT 证明了**不做自研 IDE 是一个有效的工程决策**——将资源集中到自动化领域特有的编辑器和运行时调试功能，基础 IDE 功能由成熟工具提供。
 
 ### 7.5 其他参考点
 
-1. **平台级别许可模型**：AUDESYS 可参考 Beckhoff 的 Platform Level 许可模式设计 Runtime 许可分级（按 CPU 核心数或功能集）
-2. **Package Manager（包管理器）**：TwinCAT 3.1 Build 4026 引入的包管理器是 AUDESYS Studio 扩展生态的参考模型
+1. **平台级别许可模型**：Weftik 可参考 Beckhoff 的 Platform Level 许可模式设计 Runtime 许可分级（按 CPU 核心数或功能集）
+2. **Package Manager（包管理器）**：TwinCAT 3.1 Build 4026 引入的包管理器是 Weftik Studio 扩展生态的参考模型
 3. **TwinCAT PLC++**：新一代 PLC 运行时的架构变化（2024）展示了如何在保持 API 兼容性的同时革新运行时引擎
-4. **TwinCAT/BSD**：展示了从 Windows 依赖向专用 RTOS 的迁移路径，AUDESYS 可考虑是否在 future phases 中支持类似方案
-5. **功能模块分层**：TFxxxx 编号系统展示了清晰的功能分类法（基础 → 测量 → 运动 → 连接性 → 视觉 → 行业），AUDESYS 可参考设计自己的功能模块体系
+4. **TwinCAT/BSD**：展示了从 Windows 依赖向专用 RTOS 的迁移路径，Weftik 可考虑是否在 future phases 中支持类似方案
+5. **功能模块分层**：TFxxxx 编号系统展示了清晰的功能分类法（基础 → 测量 → 运动 → 连接性 → 视觉 → 行业），Weftik 可参考设计自己的功能模块体系
 
-6. **ADS 协议的开放性**：ADS 协议的完全公开使得任何第三方都可以实现 ADS 客户端，这为 AUDESYS 提供了"开放协议"的参考价值。AUDESYS 的 HAL 通信原语也应考虑公开协议规范。
-7. **TwinCAT 3 的调试能力**：TwinCAT 3 提供了从硬件（示波器）到软件（PLC 代码调试）的完整调试链，包括断点、监视窗口、调用堆栈、值监视等。AUDESYS Studio 的调试器可参考这一模式。
-8. **TwinCAT 3 的项目管理**：TwinCAT 3 的项目管理基于 Visual Studio 的项目系统（.sln/.vcxproj），支持多项目解决方案。AUDESYS Studio 可参考这一模式设计自己的项目管理系统。
-9. **EtherCAT 主从架构**：EtherCAT 的主从架构（一个主站，多个从站）与 AUDESYS 的分布式 Runtime 架构有相似之处。AUDESYS 在设计分布式运行时可参考 EtherCAT 的主从通信模式。
-10. **TwinCAT 3 的版本控制集成**：TwinCAT 3 与 Visual Studio 的原生 Git 集成使得团队可以方便地管理项目版本。AUDESYS Studio 应提供类似的版本控制支持。
-6. **EtherCAT 性能声明的依赖条件**：EtherCAT 的 50μs 周期和 < 1μs 抖动是行业共识，但实际应用中需考虑从站数量、EtherCAT 主干带宽和核心隔离等因素。AUDESYS 在设计实时通信时应参考这一设计思路——在性能声明中明确标注依赖条件（硬件平台、核心数、消息大小、拓扑结构），这正是 AUDESYS 审核中发现并修正的"延迟声明不可验证"问题的解决方案。
+6. **ADS 协议的开放性**：ADS 协议的完全公开使得任何第三方都可以实现 ADS 客户端，这为 Weftik 提供了"开放协议"的参考价值。Weftik 的 HAL 通信原语也应考虑公开协议规范。
+7. **TwinCAT 3 的调试能力**：TwinCAT 3 提供了从硬件（示波器）到软件（PLC 代码调试）的完整调试链，包括断点、监视窗口、调用堆栈、值监视等。Weftik Studio 的调试器可参考这一模式。
+8. **TwinCAT 3 的项目管理**：TwinCAT 3 的项目管理基于 Visual Studio 的项目系统（.sln/.vcxproj），支持多项目解决方案。Weftik Studio 可参考这一模式设计自己的项目管理系统。
+9. **EtherCAT 主从架构**：EtherCAT 的主从架构（一个主站，多个从站）与 Weftik 的分布式 Runtime 架构有相似之处。Weftik 在设计分布式运行时可参考 EtherCAT 的主从通信模式。
+10. **TwinCAT 3 的版本控制集成**：TwinCAT 3 与 Visual Studio 的原生 Git 集成使得团队可以方便地管理项目版本。Weftik Studio 应提供类似的版本控制支持。
+6. **EtherCAT 性能声明的依赖条件**：EtherCAT 的 50μs 周期和 < 1μs 抖动是行业共识，但实际应用中需考虑从站数量、EtherCAT 主干带宽和核心隔离等因素。Weftik 在设计实时通信时应参考这一设计思路——在性能声明中明确标注依赖条件（硬件平台、核心数、消息大小、拓扑结构），这正是 Weftik 审核中发现并修正的"延迟声明不可验证"问题的解决方案。
 ---
 
-### 7.8 Beckhoff TwinCAT 对 AUDESYS 的整体启示
+### 7.8 Beckhoff TwinCAT 对 Weftik 的整体启示
 
-综合以上所有分析，Beckhoff TwinCAT 对 AUDESYS 的整体启示可以概括为以下三点：
+综合以上所有分析，Beckhoff TwinCAT 对 Weftik 的整体启示可以概括为以下三点：
 
-1. **模块化架构是工业软件的核心竞争力**：TwinCAT 的多运行时架构（PLC/NC/CNC/Safety/Vision/Analytics）展示了如何在同一平台上集成多种控制范式，同时保持确定性和可扩展性。AUDESYS 的 Runtime 模块化设计应以此为标杆。
-2. **开放接口驱动生态繁荣**：TwinCAT 的 ADS 协议和 TcCOM 接口是开放的，这使得第三方可以开发集成方案，形成了庞大的生态。AUDESYS 的 HAL 通信原语和 amw 抽象层也应采用开放接口策略。
-3. **不做自研 IDE 是有效的工程决策**：TwinCAT 选择嵌入 Visual Studio 而非自研 IDE，将资源集中到自动化领域特有的功能上。AUDESYS Studio 可参考这一策略，使用 VS Code 或 Theia 等成熟 IDE Shell。
+1. **模块化架构是工业软件的核心竞争力**：TwinCAT 的多运行时架构（PLC/NC/CNC/Safety/Vision/Analytics）展示了如何在同一平台上集成多种控制范式，同时保持确定性和可扩展性。Weftik 的 Runtime 模块化设计应以此为标杆。
+2. **开放接口驱动生态繁荣**：TwinCAT 的 ADS 协议和 TcCOM 接口是开放的，这使得第三方可以开发集成方案，形成了庞大的生态。Weftik 的 HAL 通信原语和 amw 抽象层也应采用开放接口策略。
+3. **不做自研 IDE 是有效的工程决策**：TwinCAT 选择嵌入 Visual Studio 而非自研 IDE，将资源集中到自动化领域特有的功能上。Weftik Studio 可参考这一策略，使用 VS Code 或 Theia 等成熟 IDE Shell。
 
 > 以上分析综合了 Beckhoff TwinCAT 的产品架构、技术特性和市场策略。文档信息来源包括 Beckhoff 官方网站、InfoSys 技术文档、CTB Engineering 技术分析和市场调研报告。
 

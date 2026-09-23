@@ -95,7 +95,8 @@ fn signal_binding(name: &str, signal: &str) -> weftik_hal_ir::types::SignalBindi
 /// Three-phase motion: acceleration ramp → cruise → deceleration ramp.
 /// Uses register-based velocity computation with VM Mul/Add/Sub/Cmp/JumpIf.
 fn emit_g1(profile: &TrapezoidalProfile, instructions: &mut Vec<Instruction>) {
-    let distance = (profile.dx * profile.dx + profile.dy * profile.dy + profile.dz * profile.dz).sqrt();
+    let distance =
+        (profile.dx * profile.dx + profile.dy * profile.dy + profile.dz * profile.dz).sqrt();
     if distance < 1e-9 {
         return;
     }
@@ -139,39 +140,15 @@ fn emit_g1(profile: &TrapezoidalProfile, instructions: &mut Vec<Instruction>) {
 
     // Phase 1: Acceleration
     if cycles_accel > 0 {
-        emit_profile_phase(
-            instructions,
-            profile,
-            cycles_accel,
-            v_target,
-            a,
-            true,
-            false,
-        );
+        emit_profile_phase(instructions, profile, cycles_accel, v_target, a, true, false);
     }
     // Phase 2: Cruise
     if cycles_cruise > 0 {
-        emit_profile_phase(
-            instructions,
-            profile,
-            cycles_cruise,
-            v_target,
-            a,
-            false,
-            false,
-        );
+        emit_profile_phase(instructions, profile, cycles_cruise, v_target, a, false, false);
     }
     // Phase 3: Deceleration
     if cycles_decel > 0 {
-        emit_profile_phase(
-            instructions,
-            profile,
-            cycles_decel,
-            v_target,
-            a,
-            false,
-            true,
-        );
+        emit_profile_phase(instructions, profile, cycles_decel, v_target, a, false, true);
     }
 }
 
@@ -189,7 +166,8 @@ fn emit_profile_phase(
         return;
     }
 
-    let distance = (profile.dx * profile.dx + profile.dy * profile.dy + profile.dz * profile.dz).sqrt();
+    let distance =
+        (profile.dx * profile.dx + profile.dy * profile.dy + profile.dz * profile.dz).sqrt();
 
     // Load velocity step dv = a * dt
     let dv = a * profile.dt;
@@ -241,10 +219,7 @@ fn emit_axis_step(instructions: &mut Vec<Instruction>, ratio: f64, pos_reg: u8, 
     // Store signal
     instructions.push(Instruction::new(
         Opcode::Store,
-        vec![
-            Operand::SignalName(signal.into()),
-            Operand::Register(pos_reg),
-        ],
+        vec![Operand::SignalName(signal.into()), Operand::Register(pos_reg)],
     ));
 }
 
@@ -261,7 +236,8 @@ fn emit_triangular_motion(
         instructions.push(Instruction::load_imm(REG_POS_Z, HalValue::F64(profile.start_z)));
     }
 
-    let distance = (profile.dx * profile.dx + profile.dy * profile.dy + profile.dz * profile.dz).sqrt();
+    let distance =
+        (profile.dx * profile.dx + profile.dy * profile.dy + profile.dz * profile.dz).sqrt();
 
     let total = cycles_half * 2;
     instructions.push(Instruction::load_imm(REG_COUNTER, HalValue::F64(total as f64)));
@@ -345,10 +321,7 @@ mod tests {
         let program = generate_trapezoidal_program(&profile);
         assert!(program.instructions.len() > 20);
         // Should contain velocity/position loops with JumpIf
-        let has_jump_if = program
-            .instructions
-            .iter()
-            .any(|inst| inst.opcode == Opcode::JumpIf);
+        let has_jump_if = program.instructions.iter().any(|inst| inst.opcode == Opcode::JumpIf);
         assert!(has_jump_if);
     }
 
@@ -367,10 +340,7 @@ mod tests {
         };
         let program = generate_trapezoidal_program(&profile);
         assert!(program.instructions.len() > 0);
-        let has_jump_if = program
-            .instructions
-            .iter()
-            .any(|inst| inst.opcode == Opcode::JumpIf);
+        let has_jump_if = program.instructions.iter().any(|inst| inst.opcode == Opcode::JumpIf);
         assert!(has_jump_if);
     }
 
@@ -407,10 +377,7 @@ mod tests {
         };
         let program = generate_trapezoidal_program(&profile);
         assert!(program.instructions.len() > 0);
-        let has_jump_if = program
-            .instructions
-            .iter()
-            .any(|inst| inst.opcode == Opcode::JumpIf);
+        let has_jump_if = program.instructions.iter().any(|inst| inst.opcode == Opcode::JumpIf);
         assert!(has_jump_if);
     }
 

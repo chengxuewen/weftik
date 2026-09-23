@@ -2,8 +2,8 @@
 //! 来源: docs/modules/hal/hal-protocol-design.md §D23, D24
 
 use crate::error::ModbusError;
-use weftik_hal_core::HalPinDirection;
 use std::fs;
+use weftik_hal_core::HalPinDirection;
 
 fn default_poll_interval_ms() -> u64 {
     100

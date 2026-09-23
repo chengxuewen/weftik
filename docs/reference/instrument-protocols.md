@@ -1,6 +1,6 @@
 # 工业仪器仪表通讯标准：HART / Foundation Fieldbus / PROFIBUS PA / PROFINET
 
-> 文档定位：为 AUDESYS HAL 的协议适配层设计提供工业仪器仪表通讯协议的参考基准。
+> 文档定位：为 Weftik HAL 的协议适配层设计提供工业仪器仪表通讯协议的参考基准。
 
 ---
 
@@ -16,7 +16,7 @@
 4. [现状与生态](#四现状与生态)
 5. [市场定位](#五市场定位)
 6. [产品特色](#六产品特色)
-7. [对 AUDESYS 参考价值](#七对-audesys-参考价值)
+7. [对 Weftik 参考价值](#七对-weftik-参考价值)
 
 ---
 
@@ -586,15 +586,15 @@ PROFINET 目前是工业以太网增长最快的协议之一（仅次于 EtherNe
 
 ---
 
-## 七、对 AUDESYS 参考价值
+## 七、对 Weftik 参考价值
 
-### 7.1 AUDESYS HAL 协议适配架构
+### 7.1 Weftik HAL 协议适配架构
 
-AUDESYS HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需要设计协议适配层来对接各种工业仪器仪表协议。建议架构如下：
+Weftik HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需要设计协议适配层来对接各种工业仪器仪表协议。建议架构如下：
 
 ```
 ┌───────────────────────────────────────────────────────┐
-│              AUDESYS Protocol Adapter Layer            │
+│              Weftik Protocol Adapter Layer            │
 │                                                        │
 │  ┌─────────────┐ ┌──────────────┐ ┌────────────────┐  │
 │  │ HART        │ │ FF/Fieldbus  │ │ PROFINET/PA    │  │
@@ -614,12 +614,12 @@ AUDESYS HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需�
 │  └─────────────────────────────────────────────────┘   │
 │                                                        │
 ├─────────────────────────────────────────────────────────┤
-│                AUDESYS HAL Core                          │
+│                Weftik HAL Core                          │
 │  ┌──────────┐  ┌──────────────┐  ┌───────────────────┐  │
 │  │  Signal  │  │ StreamChannel │  │        RPC        │  │
 │  └──────────┘  └──────────────┘  └───────────────────┘  │
 │                        │                                │
-│              amw (AUDESYS Middleware)                    │
+│              amw (Weftik Middleware)                    │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -635,11 +635,11 @@ AUDESYS HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需�
 | **WirelessHART Mesh 数据流** | **HAL StreamChannel**（高吞吐 + 网状路由） | 网状网络中每个设备可能转发邻居数据；节点间通信 → StreamChannel 有缓冲队列 |
 | **HART-IP 网关通信** | **amw_zenoh**（Phase 2+） | HART-IP 是基于 TCP/UDP 的，天然由 amw_zenoh 的网络层承载 |
 
-**AUDESYS 特有的 HART 适配器设计要点**：
-1. **命令映射表**：HART 适配器需要维护 HART Command → RPC method 的映射表，保证通用命令（0-30）在 AUDESYS 侧有统一的接口签名
+**Weftik 特有的 HART 适配器设计要点**：
+1. **命令映射表**：HART 适配器需要维护 HART Command → RPC method 的映射表，保证通用命令（0-30）在 Weftik 侧有统一的接口签名
 2. **变量映射**：HART PV/SV/TV/QV → HAL Signal(component.pv) / Signal(component.sv) 等命名规则
 3. **HART DD/EDDL 解析器**：读取 EDDL 文件生成 HAL Signal 的类型定义（14 种类型映射）
-4. **WirelessHART 网络管理**：网络管理器作为 AUDESYS 组件运行，使用 RPC 配置设备和路由
+4. **WirelessHART 网络管理**：网络管理器作为 Weftik 组件运行，使用 RPC 配置设备和路由
 
 #### 7.2.2 Foundation Fieldbus → HAL 映射
 
@@ -652,11 +652,11 @@ AUDESYS HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需�
 | **HSE 骨干网数据重发布** | amw_zenoh | HSE Linking Device 间的重发布由 amw_zenoh 的网络层处理 |
 | **设备发现与地址分配** | **HalDiscovery** | FF 系统管理（SM）的地址分配和 Tag 查找 → HalDiscovery 服务 |
 
-**AUDESYS 特有的 FF 适配器设计要点**：
-1. **LAS 模拟**：AUDESYS 仿真器中需要模拟 LAS 的行为——按照 Macrocycle 调度表在确定的时刻向虚拟 FF 设备发 CD Token，触发 Signal publish
-2. **功能块映射**：FF 功能块被建模为 AUDESYS 组件，功能块的输入/输出参数作为 HAL Signal
+**Weftik 特有的 FF 适配器设计要点**：
+1. **LAS 模拟**：Weftik 仿真器中需要模拟 LAS 的行为——按照 Macrocycle 调度表在确定的时刻向虚拟 FF 设备发 CD Token，触发 Signal publish
+2. **功能块映射**：FF 功能块被建模为 Weftik 组件，功能块的输入/输出参数作为 HAL Signal
 3. **DD/CFF 解析器**：解析 FF 的 Device Description 和 Capability File，生成 HAL 组件和 Signal 定义
-4. **宏周期与 RT 线程对齐**：FF Macrocycle（典型 100ms-1s）应与 AUDESYS RT 线程周期保持整数倍关系
+4. **宏周期与 RT 线程对齐**：FF Macrocycle（典型 100ms-1s）应与 Weftik RT 线程周期保持整数倍关系
 
 #### 7.2.3 PROFIBUS PA → HAL 映射
 
@@ -672,7 +672,7 @@ AUDESYS HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需�
 | PROFINET 通信模式 | HAL 映射 | 理由 |
 |-------------------|----------|------|
 | **RT 周期 IO 数据** | **HAL Signal** | 典型的 IO 控制器写入 → IO 设备读取的模式；周期数据 → Signal（push 模式，RT 线程内同步回调） |
-| **IRT 等时同步数据** | **HAL Signal**（高优先级 RT 线程） | 高速、确定性数据交换（31.25µs-4ms）；严格的时序要求 → AUDESYS D13 混合调度中 RT 线程驱动 |
+| **IRT 等时同步数据** | **HAL Signal**（高优先级 RT 线程） | 高速、确定性数据交换（31.25µs-4ms）；严格的时序要求 → Weftik D13 混合调度中 RT 线程驱动 |
 | **NRT 非实时服务**（配置、诊断、拓扑发现） | **HAL RPC** | 请求-回复语义；Record Data Read/Write → RPC call |
 | **PROFIsafe 安全信号** | **HAL Signal**（独立 Security Domain + HalQoS deadline） | 安全信号有时序约束（Watchdog 超时 = 安全停车），HalQoS deadline 强制执行 |
 | **报警** | **HAL StreamChannel** | PROFINET 诊断报警（通道级、模块级）→ StreamChannel 事件缓冲 |
@@ -681,7 +681,7 @@ AUDESYS HAL 定义了三种通信原语（Signal / StreamChannel / RPC），需�
 
 ### 7.3 设备描述注册器（DDR）设计
 
-AUDESYS 需要一个统一的设备描述注册器来处理不同协议的设备描述文件：
+Weftik 需要一个统一的设备描述注册器来处理不同协议的设备描述文件：
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -713,13 +713,13 @@ AUDESYS 需要一个统一的设备描述注册器来处理不同协议的设备
 ```
 
 **DDR 的关键设计原则**：
-1. **协议无关的统一模型**：解析后的设备模型不依赖原始协议（HART/FF/PROFIBUS），而是转换为 AUDESYS 的 Component + Signal + RPC 模型
+1. **协议无关的统一模型**：解析后的设备模型不依赖原始协议（HART/FF/PROFIBUS），而是转换为 Weftik 的 Component + Signal + RPC 模型
 2. **静态生成 + 动态查询**：设备描述文件通常在工程阶段（编译时/配置时）解析生成 HAL 工件，但 DDR 也保留运行时查询能力（用于在线参数化）
-3. **14 种类型映射**：各协议的设备参数类型映射到 AUDESYS 的 14 种类型系统（Bool/S8-S64/U8-U64/F32/F64/String/Blob/Array<T>）
+3. **14 种类型映射**：各协议的设备参数类型映射到 Weftik 的 14 种类型系统（Bool/S8-S64/U8-U64/F32/F64/String/Blob/Array<T>）
 
 ### 7.4 仿真器中的协议模拟架构
 
-AUDESYS Simulator 需要能够模拟各种仪器仪表设备的行为：
+Weftik Simulator 需要能够模拟各种仪器仪表设备的行为：
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -743,7 +743,7 @@ AUDESYS Simulator 需要能够模拟各种仪器仪表设备的行为：
 │                          │                               │
 │                          ▼                               │
 │  ┌─────────────────────────────────────────────────────┐ │
-│  │              AUDESYS HAL                             │ │
+│  │              Weftik HAL                             │ │
 │  │  Signal ←→ Process Variables (PV/SV/TV/QV)          │ │
 │  │  RPC ←→ Configuration Commands                      │ │
 │  │  StreamChannel ←→ Alarms/Events/Diagnostics         │ │
@@ -762,23 +762,23 @@ AUDESYS Simulator 需要能够模拟各种仪器仪表设备的行为：
 
 ### 7.6 关键设计洞察
 
-1. **HART 的混合模拟/数字设计启示**：AUDESYS 的 HAL 也可以在内部使用"高性能路径"（Signal，类似 4-20mA）和"功能路径"（RPC，类似 HART FSK）的双通道设计——关键变量走 Signal（低延迟），非关键参数走 RPC（灵活性）
-2. **FF LAS 的确定性调度**：对 AUDESYS RT 线程的 Macrocycle 调度设计有直接参考价值——在一个宏周期内为所有 Signal 的 push 分配确定的时间槽
-3. **PROFINET IRT 的时间分片**：RED/GREEN Phase 概念可应用于 AUDESYS 的混合调度（D13）——RT 线程 = RED Phase（严格实时），I/O 线程 = GREEN Phase（非实时但需低延迟）
-4. **HART 命令三层分层**：AUDESYS 的 RPC 接口设计可以参考 HART 的命令分层——一层通用接口（所有组件都有）、一层行业通用接口（类似 FF 功能块）、一层设备特定接口
-5. **GSD/EDDL 解析与代码生成**：DDR 可以在编译时从设备描述文件生成 AUDESYS 组件代码和 Signal 定义，保证运行时的类型安全和零开销
+1. **HART 的混合模拟/数字设计启示**：Weftik 的 HAL 也可以在内部使用"高性能路径"（Signal，类似 4-20mA）和"功能路径"（RPC，类似 HART FSK）的双通道设计——关键变量走 Signal（低延迟），非关键参数走 RPC（灵活性）
+2. **FF LAS 的确定性调度**：对 Weftik RT 线程的 Macrocycle 调度设计有直接参考价值——在一个宏周期内为所有 Signal 的 push 分配确定的时间槽
+3. **PROFINET IRT 的时间分片**：RED/GREEN Phase 概念可应用于 Weftik 的混合调度（D13）——RT 线程 = RED Phase（严格实时），I/O 线程 = GREEN Phase（非实时但需低延迟）
+4. **HART 命令三层分层**：Weftik 的 RPC 接口设计可以参考 HART 的命令分层——一层通用接口（所有组件都有）、一层行业通用接口（类似 FF 功能块）、一层设备特定接口
+5. **GSD/EDDL 解析与代码生成**：DDR 可以在编译时从设备描述文件生成 Weftik 组件代码和 Signal 定义，保证运行时的类型安全和零开销
 
 ### 7.7 与现有协议的区别定位
 
-AUDESYS HAL 不是另一个现场总线协议——它是运行在更上层（RTOS/通用 OS）的抽象层。具体的现场总线协议（HART/FF/PROFIBUS/PROFINET）通过协议适配层接入 HAL。这一定位类似于：
+Weftik HAL 不是另一个现场总线协议——它是运行在更上层（RTOS/通用 OS）的抽象层。具体的现场总线协议（HART/FF/PROFIBUS/PROFINET）通过协议适配层接入 HAL。这一定位类似于：
 - **Linux 内核的 VFS（Virtual File System）**：ext4/NTFS/btrfs 是不同的文件系统实现，但上层应用通过统一的 open/read/write 系统调用操作文件
-- **AUDESYS 的 amw**：HART/FF/PROFINET 是不同的协议实现，但上层组件通过统一的 Signal/StreamChannel/RPC 原语进行通信
+- **Weftik 的 amw**：HART/FF/PROFINET 是不同的协议实现，但上层组件通过统一的 Signal/StreamChannel/RPC 原语进行通信
 
 ### 7.8 深度技术讨论：周期时间与确定性分析
 
-不同协议对实时性的要求各不相同，AUDESYS 的 RT 线程调度（D13）需要协调这些差异：
+不同协议对实时性的要求各不相同，Weftik 的 RT 线程调度（D13）需要协调这些差异：
 
-| 协议 | 最小周期 | 典型周期 | 确定性保证机制 | AUDESYS 对应 |
+| 协议 | 最小周期 | 典型周期 | 确定性保证机制 | Weftik 对应 |
 |------|---------|---------|---------------|-------------|
 | **HART 有线** | 500ms（单变量轮询） | 1-2s（多点模式） | 主从轮询，无冲突 | I/O 线程或低优先级 RT 线程即可满足 |
 | **WirelessHART** | 1s（快速模式） | 8-64s（电池供电模式） | TDMA 时隙 + Mesh 自愈 | I/O 线程或 Supervisor 线程即可满足 |
@@ -788,7 +788,7 @@ AUDESYS HAL 不是另一个现场总线协议——它是运行在更上层（RT
 | **PROFINET RT** | 1ms | 2-10ms | VLAN 优先级 + RT 跳过 TCP/IP | I/O 线程或低优先级 RT |
 | **PROFINET IRT** | 31.25us | 250us-4ms | 硬件时间槽分片 + 全网时钟同步（<1us 精度） | 高优先级 RT 线程（需硬件支持） |
 
-**AUDESYS 的调度策略**：
+**Weftik 的调度策略**：
 
 ```
 ┌───────────────── RT Macrocycle (1ms-100ms) ────────────────┐
@@ -812,7 +812,7 @@ AUDESYS HAL 不是另一个现场总线协议——它是运行在更上层（RT
 
 ### 7.9 多协议共存的统一数据模型
 
-当 AUDESYS 需要同时管理 HART、FF 和 PROFINET 设备时，统一的内部数据模型至关重要：
+当 Weftik 需要同时管理 HART、FF 和 PROFINET 设备时，统一的内部数据模型至关重要：
 
 ```yaml
 # 统一设备模型示例
@@ -877,7 +877,7 @@ devices:
                 qos: { deadline: 20ms, security_domain: "safety" }
 ```
 
-### 7.10 产业趋势与 AUDESYS 策略建议
+### 7.10 产业趋势与 Weftik 策略建议
 
 **当前趋势**：
 1. **Ethernet-APL (Advanced Physical Layer)**：将以太网通过 2 线电缆延伸到现场（10 Mbps, 1,000m），直接取代传统 4-20mA。PROFINET over APL 是最积极的推动者
@@ -886,11 +886,11 @@ devices:
 4. **NAMUR Open Architecture (NOA)**：过程工业的第二通道数据访问（通过 OPC UA 旁路 DCS 直接读取仪表数据），用于监测和优化而不影响控制回路
 5. **TSN (Time-Sensitive Networking) 集成**：PROFINET V2.4+ 和 OPC UA FX 都在拥抱 TSN
 
-**AUDESYS 应对策略**：
+**Weftik 应对策略**：
 1. **协议适配层抽象**确保可以接入任何新协议，无需改动核心 HAL
 2. **FDI 兼容的 DDR**：设备描述注册器应能解析 FDI Device Package，这是工业仪表描述的未来统一格式
-3. **OPC UA PubSub 集成**：amw 抽象层可以考虑 amw_opcua 实现，使 AUDESYS 可以直接参与 OPC UA FX 网络
-4. **NAMUR NOA 第二通道**：AUDESYS 的 StreamChannel 天然适合承载"非侵入式"的第二通道数据流，从既有 DCS 旁路读取仪表诊断数据
+3. **OPC UA PubSub 集成**：amw 抽象层可以考虑 amw_opcua 实现，使 Weftik 可以直接参与 OPC UA FX 网络
+4. **NAMUR NOA 第二通道**：Weftik 的 StreamChannel 天然适合承载"非侵入式"的第二通道数据流，从既有 DCS 旁路读取仪表诊断数据
 5. **TSN 就绪的 RT 调度**：D13 调度模型中应为 TSN 时间感知留出接口，确保未来与 IEEE 802.1Qbv 兼容
 
 ### 7.11 典型设备类别的 HAL 建模
@@ -908,9 +908,9 @@ devices:
 | **伺服驱动器** | PROFINET IRT | servo_drive | pos_actual (S64), vel_actual (S32), torque_actual (S16), status_word (U16) | set_position_target, enable_drive, reset_fault |
 | **安全光幕** | PROFINET + PROFIsafe | safety_light_curtain | osdd_status (BOOL), muted (BOOL), reset_req (BOOL) | — (安全设备通常不暴露参数化 RPC) |
 
-### 7.12 与 AUDESYS 现有参考文档的呼应
+### 7.12 与 Weftik 现有参考文档的呼应
 
-本文档与 AUDESYS 其他参考文档的关系：
+本文档与 Weftik 其他参考文档的关系：
 
 | 本文档（仪器仪表协议） | 其他参考文档 | 交叉参考点 |
 |----------------------|------------|-----------|
@@ -929,7 +929,7 @@ devices:
 
 ### 7.13 协议适配器集成测试策略
 
-AUDESYS 的协议适配器需要通过系统化的集成测试来验证多协议互操作性：
+Weftik 的协议适配器需要通过系统化的集成测试来验证多协议互操作性：
 
 | 测试类别 | 测试内容 | 验证方法 |
 |---------|---------|---------|
@@ -1018,4 +1018,4 @@ AUDESYS 的协议适配器需要通过系统化的集成测试来验证多协议
 └────────────────────────────────────────────────────────┘
 ```
 
-这五个共同模式验证了 AUDESYS HAL 的三原语（Signal/StreamChannel/RPC）设计决策的正确性——三种正交原语足以覆盖三个协议族的所有核心通信模式，无需引入第四种原语（如 Action）。
+这五个共同模式验证了 Weftik HAL 的三原语（Signal/StreamChannel/RPC）设计决策的正确性——三种正交原语足以覆盖三个协议族的所有核心通信模式，无需引入第四种原语（如 Action）。

@@ -1,7 +1,7 @@
 # CODESYS Glossary
 
 **Source**: `docs/reference/codesys.md` — Appendix B
-**Context**: Key terms for AUDESYS Studio/HAL/Runtime design
+**Context**: Key terms for Weftik Studio/HAL/Runtime design
 
 ---
 
@@ -83,9 +83,9 @@
 
 ---
 
-**AUDESYS Mapping Notes**:
-- **OSAL** → AUDESYS HAL amw abstraction layer (D11)
-- **DDF** → AUDESYS device capability model (TBD)
-- **Language Model** → AUDESYS device configuration model (TBD)
-- **SoftMotion** → AUDESYS Simulator virtual devices (Phase 3/4)
-- **CODESYS Store** → AUDESYS plugin/library marketplace concept
+**Weftik Mapping Notes**:
+- **OSAL** → Weftik HAL amw abstraction layer (D11)
+- **DDF** → Weftik device capability model (TBD)
+- **Language Model** → Weftik device configuration model (TBD)
+- **SoftMotion** → Weftik Simulator virtual devices (Phase 3/4)
+- **CODESYS Store** → Weftik plugin/library marketplace concept

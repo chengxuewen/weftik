@@ -1,7 +1,7 @@
+use std::sync::Arc;
 use weftik_amw_inproc::{
     InprocAuditLog, InprocMiddleware, InprocQoS, InprocTransport, StaticDiscovery,
 };
-use std::sync::Arc;
 
 pub fn build_inproc_stack() -> (Arc<InprocTransport>, InprocMiddleware) {
     let transport = Arc::new(InprocTransport::new());

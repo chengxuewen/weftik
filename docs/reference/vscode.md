@@ -1,7 +1,7 @@
 # VS Code — 插件化 IDE 与 Web/Desktop 双模式参考
 
 > 生成日期：2026-07-19
-> 研究目的：为 AUDESYS Studio 插件架构和 PC/Web 双平台部署策略提供架构参考
+> 研究目的：为 Weftik Studio 插件架构和 PC/Web 双平台部署策略提供架构参考
 > 参考价值维度：插件系统设计、命令体系、Web/Desktop 适配层、扩展市场、进程隔离模型
 > 数据来源：GitHub 仓库 microsoft/vscode（165K+ stars）、官方 API 文档、coder/code-server（76K+ stars）、Eclipse Theia
 > 活跃参考 — 项目持续活跃，月度发布
@@ -267,7 +267,7 @@ export function deactivate() {
 
 扩展通过 `package.json` 的 `contributes` 字段声明功能。以下是 VS Code 支持的完整贡献点列表：
 
-| 贡献点 | 用途 | AUDESYS 对应 | 优先级 |
+| 贡献点 | 用途 | Weftik 对应 | 优先级 |
 |--------|------|-------------|:---:|
 | `commands` | 注册命令（快捷键绑定） | Tauri commands → Command Registry | P1 |
 | `languages` | 语言定义（语法高亮、括号匹配、自动缩进） | 6 语言编译器注册 | P1 |
@@ -295,11 +295,11 @@ export function deactivate() {
 
 扩展按需激活，减少启动时间。VS Code 1.74+ 自动从 `contributes` 推断激活事件。
 
-| 激活事件 | 触发条件 | AUDESYS 应用 |
+| 激活事件 | 触发条件 | Weftik 应用 |
 |---------|---------|-------------|
 | `onLanguage:st` | 打开 ST 文件 | 延迟加载 ST 编译器/编辑器 |
 | `onLanguage:gcode` | 打开 G-code 文件 | 延迟加载 CNC 面板 |
-| `onCommand:audesys.deploy` | 执行部署命令 | 延迟加载部署流程 |
+| `onCommand:weftik.deploy` | 执行部署命令 | 延迟加载部署流程 |
 | `onView:signalWatch` | 展开信号监视面板 | 延迟加载信号绑定 |
 | `onView:hmiCanvas` | 展开 HMI 设计面板 | 延迟加载 HMI Builder |
 | `onDebug` | 启动调试会话 | 延迟加载 DAP 面板 |
@@ -391,7 +391,7 @@ export interface ICommandService {
 
 **多层触发**: 同一命令可从 6+ 种 UI 入口或编程接口触发，handler 只需注册一次。
 
-**AUDESYS 应用**: 33 个 Tauri 命令可重构为统一的 Command Registry。Web 模式下通过 HTTP API 调用相同的 command ID。
+**Weftik 应用**: 33 个 Tauri 命令可重构为统一的 Command Registry。Web 模式下通过 HTTP API 调用相同的 command ID。
 
 ---
 
@@ -440,7 +440,7 @@ export interface ICommandService {
 
 **DAP 核心消息**: `initialize`, `launch`, `attach`, `setBreakpoints`, `continue`, `next`, `stepIn`, `stepOut`, `threads`, `stackTrace`, `scopes`, `variables`, `evaluate`
 
-AUDESYS 当前已实现 DAP（12 命令），可与 VS Code 生态完全互操作。LSP Server 可通过 `audesys-hal-binding-gen` 等编译器扩展实现。
+Weftik 当前已实现 DAP（12 命令），可与 VS Code 生态完全互操作。LSP Server 可通过 `weftik-hal-binding-gen` 等编译器扩展实现。
 
 ---
 
@@ -462,7 +462,7 @@ AUDESYS 当前已实现 DAP（12 命令），可与 VS Code 生态完全互操�
 
 ### 5.2 Tauri vs Electron — 插件化 IDE 场景对比
 
-| 维度 | Tauri (AUDESYS 当前) | Electron (VS Code) |
+| 维度 | Tauri (Weftik 当前) | Electron (VS Code) |
 |------|----------------------|-------------------|
 | 包体积 | ~5-10 MB | ~120 MB+ |
 | 内存占用 | ~50 MB | ~150 MB+ |
@@ -475,7 +475,7 @@ AUDESYS 当前已实现 DAP（12 命令），可与 VS Code 生态完全互操�
 | 生态成熟度 | 年轻（v2 稳定） | 成熟（10年+ 百万级应用） |
 | 工业环境 | ✅ 小体积适合嵌入工控 | ⚠️ 体积大 |
 
-**核心差异**: Electron 的 Node.js 运行时允许动态加载扩展代码，天然匹配 VS Code Extension Host 模型。Tauri 插件是编译时集成的 Rust crate，无法实现运行时动态安装/卸载。对于 AUDESYS 若需要动态扩展市场，需自定义 IPC 扩展协议（类似 LSP 式的独立进程通信）或评估 Electron。
+**核心差异**: Electron 的 Node.js 运行时允许动态加载扩展代码，天然匹配 VS Code Extension Host 模型。Tauri 插件是编译时集成的 Rust crate，无法实现运行时动态安装/卸载。对于 Weftik 若需要动态扩展市场，需自定义 IPC 扩展协议（类似 LSP 式的独立进程通信）或评估 Electron。
 
 ---
 
@@ -485,29 +485,29 @@ AUDESYS 当前已实现 DAP（12 命令），可与 VS Code 生态完全互操�
 
 每个功能注册为命令，通过 `commandService.executeCommand('workbench.action.files.save')` 调用。天然支持可扩展性——新扩展只需注册新命令。
 
-**AUDESYS 应用**: 将 33 个 Tauri 命令重构为统一的 Command Registry接口。Web 模式下通过 HTTP API 调用相同的 command ID。
+**Weftik 应用**: 将 33 个 Tauri 命令重构为统一的 Command Registry接口。Web 模式下通过 HTTP API 调用相同的 command ID。
 
 ### 6.2 Monaco Editor 关系 — 编辑器即核心
 
-VS Code 的编辑器源码 (`src/vs/editor/`) 就是 Monaco Editor 核心。Monaco 的 standalone npm 包是从同一个 monorepo 构建的。CodeMirror 6 是 AUDESYS 的 Monaco 等价物。
+VS Code 的编辑器源码 (`src/vs/editor/`) 就是 Monaco Editor 核心。Monaco 的 standalone npm 包是从同一个 monorepo 构建的。CodeMirror 6 是 Weftik 的 Monaco 等价物。
 
 ### 6.3 扩展沙箱 (Extension Sandbox)
 
 Extension Host 独立进程确保：扩展崩溃不影响编辑器核心、扩展通过 Workspace API 间接访问文件系统（非直接 fs）、安全边界清晰。
 
-**AUDESYS 应用**: 第三方 HMI Widget 可在沙箱中运行，通过 PlatformAdapter 受限访问 HAL 信号。
+**Weftik 应用**: 第三方 HMI Widget 可在沙箱中运行，通过 PlatformAdapter 受限访问 HAL 信号。
 
 ### 6.4 DI 容器 — 服务注册与发现
 
 VS Code 使用依赖注入容器管理 100+ 内部服务。每个服务通过 `I*Service` 接口定义契约。
 
-**AUDESYS 应用**: PluginRegistry 可作为轻量 DI 容器，管理面板、命令、文件系统提供者等。
+**Weftik 应用**: PluginRegistry 可作为轻量 DI 容器，管理面板、命令、文件系统提供者等。
 
 ### 6.5 远程开发扩展模式
 
 Remote SSH / Containers / WSL 扩展将 Extension Host 分流到远程机器。本地仅运行 UI Shell，扩展和语言服务在远程运行。
 
-**AUDESYS 应用**: Studio 可通过 Remote 模式连接到 Controller（Runtime）上的 Extension Host，实现远程调试和部署。
+**Weftik 应用**: Studio 可通过 Remote 模式连接到 Controller（Runtime）上的 Extension Host，实现远程调试和部署。
 
 ### 6.6 渐进式 Web 迁移策略
 
@@ -519,11 +519,11 @@ VS Code Web 通过以下策略实现:
 
 ---
 
-## 7. 对 AUDESYS 参考价值
+## 7. 对 Weftik 参考价值
 
 ### 7.1 插件架构映射
 
-| VS Code 模式 | AUDESYS 映射 | 优先级 | 关键文件/路径 |
+| VS Code 模式 | Weftik 映射 | 优先级 | 关键文件/路径 |
 |-------------|-------------|:---:|------|
 | Extension Host 进程隔离 | PluginRegistry + 独立 Web Worker | P1 | `src/vs/workbench/api/common/extensionHostMain.ts` |
 | Command System | Unified Command Registry | P1 | `src/vs/platform/commands/common/commands.ts` |
@@ -539,7 +539,7 @@ VS Code Web 通过以下策略实现:
 
 ### 7.2 双平台适配映射
 
-| VS Code Web 策略 | AUDESYS 策略 |
+| VS Code Web 策略 | Weftik 策略 |
 |------------------|-------------|
 | `IFileService` 抽象层 | `PlatformAdapter.fs` trait |
 | `ICommandService` 统一入口 | `PlatformAdapter.invoke()` |
@@ -552,7 +552,7 @@ VS Code Web 通过以下策略实现:
 
 ### 7.3 关键教训矩阵
 
-| VS Code 成功经验 | AUDESYS 应采纳 | AUDESYS 应避免的陷阱 |
+| VS Code 成功经验 | Weftik 应采纳 | Weftik 应避免的陷阱 |
 |-----------------|---------------|-------------------|
 | ✅ 核心极简，功能全插件 | ✅ PluginRegistry 驱动面板 | ❌ 不要过度设计 Plugin API v1 |
 | ✅ LSP/DAP 成为行业标准 | ✅ 继续推进 DAP 兼容 + LSP | — |

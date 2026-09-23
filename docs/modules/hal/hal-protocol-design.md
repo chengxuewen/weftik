@@ -1,4 +1,4 @@
-# AUDESYS HAL 协议设计
+# Weftik HAL 协议设计
 
 > 生成日期：2026-07-09
 > 设计目标：统一原生 HAL 协议，支持后续移植 LinuxCNC / OpenPLC / ROS2 / dora-rs 功能时原生对接
@@ -7,7 +7,7 @@
 
 ## 设计原则
 
-AUDESYS HAL 协议不桥接外部协议——它本身是一个足够表达力的原生协议。移植 LinuxCNC、OpenPLC、ROS2、dora-rs 功能时，被移植的代码改造后以 AUDESYS HAL 为原生通信层。
+Weftik HAL 协议不桥接外部协议——它本身是一个足够表达力的原生协议。移植 LinuxCNC、OpenPLC、ROS2、dora-rs 功能时，被移植的代码改造后以 Weftik HAL 为原生通信层。
 
 **核心理念：用最少数量的正交原语，覆盖四种系统的全部通信模式。**
 
@@ -17,7 +17,7 @@ AUDESYS HAL 协议不桥接外部协议——它本身是一个足够表达力�
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              AUDESYS HAL Protocol               │
+│              Weftik HAL Protocol               │
 │                                                 │
 │  ┌──────────┐  ┌──────────────┐  ┌───────────┐ │
 │  │  Signal  │  │ StreamChannel│  │    RPC    │ │
@@ -34,7 +34,7 @@ AUDESYS HAL 协议不桥接外部协议——它本身是一个足够表达力�
 │  └──────────────────────┬────────────────────┘  │
 │                         │                       │
 │  ┌──────────────────────┴────────────────────┐  │
-│  │         amw (AUDESYS Middleware)           │  │
+│  │         amw (Weftik Middleware)           │  │
 │  │    HalTransport  +  HalDiscovery          │  │
 │  └──────────────────────┬────────────────────┘  │
 │                         │                       │
@@ -158,7 +158,7 @@ ROS2 社区花了十年验证的教训：控制信号和流数据是**两类不�
 
 ### 设计目标
 
-参考 ROS2 `rmw`（ROS Middleware）的设计哲学，AUDESYS 定义 `amw`（AUDESYS Middleware）抽象层，将 HAL 的三种通信原语和发现机制与具体传输实现解耦。换实现不换 API，为未来替换 Zenoh（如 DDS、MQTT）预留空间。
+参考 ROS2 `rmw`（ROS Middleware）的设计哲学，Weftik 定义 `amw`（Weftik Middleware）抽象层，将 HAL 的三种通信原语和发现机制与具体传输实现解耦。换实现不换 API，为未来替换 Zenoh（如 DDS、MQTT）预留空间。
 
 ```
         ┌──────────────────────────────────┐
@@ -394,33 +394,33 @@ dora-rs 的 Arrow IPC buffer 同理——格式由上游协商，HAL 不解析�
 
 ## 4. 移植对接方案
 
-每个被移植的系统功能根据自己的通信特征选择最合适的原语。下面描述"移植后的功能如何对接 AUDESYS HAL"——不是桥接外部协议。
+每个被移植的系统功能根据自己的通信特征选择最合适的原语。下面描述"移植后的功能如何对接 Weftik HAL"——不是桥接外部协议。
 
 ### 移植 LinuxCNC 功能
 
-LinuxCNC 的 HAL 和 AUDESYS HAL 高度同构（都是单写多读 Signal + 线程函数调度）。
+LinuxCNC 的 HAL 和 Weftik HAL 高度同构（都是单写多读 Signal + 线程函数调度）。
 
 ```
-LinuxCNC motion planner (移植为 AUDESYS Component)
+LinuxCNC motion planner (移植为 Weftik Component)
   │
-  │  pin: axis.0.position  (F64, OUT)  →  AUDESYS Signal "motion.axis.0.pos"
-  │  pin: axis.0.enable    (Bool, IN)  →  AUDESYS Signal "motion.axis.0.enable"
-  │  pin: axis.0.velocity  (F64, OUT)  →  AUDESYS Signal "motion.axis.0.vel"
+  │  pin: axis.0.position  (F64, OUT)  →  Weftik Signal "motion.axis.0.pos"
+  │  pin: axis.0.enable    (Bool, IN)  →  Weftik Signal "motion.axis.0.enable"
+  │  pin: axis.0.velocity  (F64, OUT)  →  Weftik Signal "motion.axis.0.vel"
   │
-  │  function: servo-thread.update()   →  AUDESYS RT thread 调度表
+  │  function: servo-thread.update()   →  Weftik RT thread 调度表
   │    ┌─ read IN pins
   │    ├─ compute
   │    └─ write OUT pins
   │
   │  halcmd commands (load/unload/link/...)
-  │    →  AUDESYS RPC: loadComponent / linkPin / addThread
+  │    →  Weftik RPC: loadComponent / linkPin / addThread
 ```
 
-- Signal 1:1 映射（LinuxCNC pin → AUDESYS Signal）
-- LinuxCNC function list → AUDESYS RT 线程 `update()` 调度表
-- LinuxCNC halcmd → AUDESYS RPC
+- Signal 1:1 映射（LinuxCNC pin → Weftik Signal）
+- LinuxCNC function list → Weftik RT 线程 `update()` 调度表
+- LinuxCNC halcmd → Weftik RPC
 
-| LinuxCNC halcmd | AUDESYS HAL | 说明 |
+| LinuxCNC halcmd | Weftik HAL | 说明 |
 |---|---|---|
 | `halcmd loadrt comp` | RPC `loadComponent(name, type, config)` | 加载实时组件 |
 | `halcmd addf comp.func thread` | RPC `addFunction(component, func, thread)` | 函数加入 RT 线程 |
@@ -438,7 +438,7 @@ LinuxCNC motion planner (移植为 AUDESYS Component)
 OpenPLC 以扫描周期为单位运行，不适合逐 pin 映射。
 
 ```
-OpenPLC IEC runtime (移植为 AUDESYS Component)
+OpenPLC IEC runtime (移植为 Weftik Component)
   │
   │  Task Main: 周期 10ms
   │
@@ -464,7 +464,7 @@ OpenPLC IEC runtime (移植为 AUDESYS Component)
 
 ### 移植 ROS2 功能
 
-ROS2 有三种通信模式，分别映射到 AUDESYS 的三种原语：
+ROS2 有三种通信模式，分别映射到 Weftik 的三种原语：
 
 ```
 ROS2 移植节点
@@ -495,7 +495,7 @@ ROS2 移植节点
 dora-rs 的数据流模型直接映射：
 
 ```
-dora 风格 operator (移植为 AUDESYS Component)
+dora 风格 operator (移植为 Weftik Component)
   │
   ├── 输入 stream: camera/image (Arrow IPC buffer, ~2MB/frame, 30Hz)
   │     →  StreamChannel<Blob> "camera.image"
@@ -526,7 +526,7 @@ dora 风格 operator (移植为 AUDESYS Component)
 | **Phase 4** | RPC 原语实现（timeout, idempotency） | loadComponent → configureComponent → activateComponent 流程 |
 | **Phase 5** | 移植 LinuxCNC motion planner 验证 Signal 模型 | 6 轴轨迹通过 Signal 发布，RT 周期内完成 |
 | **Phase 6** | 移植 OpenPLC IEC runtime 验证 Array + Blob | 梯形图扫描周期 I/O 通过 Array<S32> 传输 |
-| **Phase 7** | 移植 ROS2 节点验证三种原语协同 | topic + service 全部通过 AUDESYS HAL 通信 |
+| **Phase 7** | 移植 ROS2 节点验证三种原语协同 | topic + service 全部通过 Weftik HAL 通信 |
 | **Phase 8** | 移植 dora-rs operator 验证 StreamChannel 高吞吐 | 2MB/frame 摄像头流零拷贝传输 |
 
 ---

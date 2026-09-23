@@ -92,11 +92,14 @@ fn eno_false_when_en_true_with_error() {
 
 #[test]
 fn eno_chain_propagates_false_downstream() {
-    let results = evaluate_eno_chain(true, &[
-        FnBlock { name: "A".into(), error: true, outputs: vec![] },
-        FnBlock { name: "B".into(), error: false, outputs: vec![] },
-        FnBlock { name: "C".into(), error: false, outputs: vec![] },
-    ]);
+    let results = evaluate_eno_chain(
+        true,
+        &[
+            FnBlock { name: "A".into(), error: true, outputs: vec![] },
+            FnBlock { name: "B".into(), error: false, outputs: vec![] },
+            FnBlock { name: "C".into(), error: false, outputs: vec![] },
+        ],
+    );
     assert!(results[0].en, "Block A receives EN=T");
     assert!(!results[0].eno, "Block A error → ENO=F");
     assert!(!results[1].en, "Block B receives EN=F from A's ENO");
@@ -126,7 +129,14 @@ fn out_coil_follows_power() {
     vars.set_bool("X1", true);
     let mut es = EdgeState::new();
     let snapshot = vars.snapshot();
-    let state = evaluate_rung("r1", &[Contact::No("X1".into())], &[Coil { var: "Y1".into(), kind: CoilKind::Out }], &snapshot, &mut es, &vars);
+    let state = evaluate_rung(
+        "r1",
+        &[Contact::No("X1".into())],
+        &[Coil { var: "Y1".into(), kind: CoilKind::Out }],
+        &snapshot,
+        &mut es,
+        &vars,
+    );
     assert!(state.coil_states[0].energized);
 }
 
@@ -136,7 +146,14 @@ fn negated_coil_inverts_power() {
     vars.set_bool("X1", false); // no power
     let mut es = EdgeState::new();
     let snapshot = vars.snapshot();
-    let state = evaluate_rung("r1", &[Contact::No("X1".into())], &[Coil { var: "Y1".into(), kind: CoilKind::Negated }], &snapshot, &mut es, &vars);
+    let state = evaluate_rung(
+        "r1",
+        &[Contact::No("X1".into())],
+        &[Coil { var: "Y1".into(), kind: CoilKind::Negated }],
+        &snapshot,
+        &mut es,
+        &vars,
+    );
     assert!(state.coil_states[0].energized, "No power → negated coil is energized");
 }
 
@@ -164,8 +181,16 @@ fn power_flow_result_serde_roundtrip() {
     let result = PowerFlowResult {
         rung_states: vec![RungState {
             rung_id: "r1".into(),
-            contact_states: vec![ContactState { contact_id: "X1".into(), contact_type: ContactType::No, is_closed: true }],
-            coil_states: vec![CoilState { coil_id: "Y1".into(), coil_type: CoilType::Normal, energized: true }],
+            contact_states: vec![ContactState {
+                contact_id: "X1".into(),
+                contact_type: ContactType::No,
+                is_closed: true,
+            }],
+            coil_states: vec![CoilState {
+                coil_id: "Y1".into(),
+                coil_type: CoilType::Normal,
+                energized: true,
+            }],
         }],
         powered_coils: vec!["Y1".into()],
     };

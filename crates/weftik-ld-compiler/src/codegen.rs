@@ -11,8 +11,8 @@
 #[derive(Debug, Clone, PartialEq)]
 pub enum LdElement {
     Contact { normally_open: bool, var: String },
-    ParallelContact { normally_open: bool, var: String },  // Parallel branch (OR/ORN)
-    EdgeContact { rising: bool, var: String },  // P (rising) / N (falling) edge contact
+    ParallelContact { normally_open: bool, var: String }, // Parallel branch (OR/ORN)
+    EdgeContact { rising: bool, var: String },            // P (rising) / N (falling) edge contact
     Coil { kind: CoilKind, var: String },
 }
 
@@ -62,10 +62,20 @@ pub fn parse_networks(tokens: &[super::lexer::Token]) -> Vec<Vec<LdElement>> {
                 // Parallel branch: spec is "NO var" or "NC var"
                 let parts: Vec<&str> = spec.split_whitespace().collect();
                 match parts.as_slice() {
-                    ["NO", var] => current.push(LdElement::ParallelContact { normally_open: true, var: var.to_string() }),
-                    ["NC", var] => current.push(LdElement::ParallelContact { normally_open: false, var: var.to_string() }),
-                    ["P", var] => current.push(LdElement::EdgeContact { rising: true, var: var.to_string() }),
-                    ["N", var] => current.push(LdElement::EdgeContact { rising: false, var: var.to_string() }),
+                    ["NO", var] => current.push(LdElement::ParallelContact {
+                        normally_open: true,
+                        var: var.to_string(),
+                    }),
+                    ["NC", var] => current.push(LdElement::ParallelContact {
+                        normally_open: false,
+                        var: var.to_string(),
+                    }),
+                    ["P", var] => {
+                        current.push(LdElement::EdgeContact { rising: true, var: var.to_string() })
+                    }
+                    ["N", var] => {
+                        current.push(LdElement::EdgeContact { rising: false, var: var.to_string() })
+                    }
                     _ => {}
                 }
             }
