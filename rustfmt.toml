@@ -1,0 +1,2 @@
+# flatc regenerates these on every build (build.rs) — keep them out of rustfmt scope
+ignore = ["crates/weftik-hal-flatbuffers/src/generated"]
