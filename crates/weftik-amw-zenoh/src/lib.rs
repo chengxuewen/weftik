@@ -4,8 +4,8 @@
 //! prepared for future Eclipse Zenoh pub/sub + query integration.
 //!
 //! # Key expressions (future)
-//! - Signal: `audeys/{namespace}/signal/{name}`
-//! - RPC: `audeys/{namespace}/rpc/{method}`
+//! - Signal: `weftik/{namespace}/signal/{name}`
+//! - RPC: `weftik/{namespace}/rpc/{method}`
 //!
 //! # Usage
 //! ```ignore

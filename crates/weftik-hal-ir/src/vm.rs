@@ -4,8 +4,6 @@
 use std::collections::HashMap;
 use weftik_hal_core::HalValue;
 
-/// Number of general-purpose registers (r0–r15).
-
 /// Timer kind: TON (on-delay), TOF (off-delay), TP (pulse).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimerKind {
@@ -85,6 +83,7 @@ pub struct EdgeState {
     pub q: bool,
 }
 
+/// Number of general-purpose registers (r0–r15).
 pub const REGISTER_COUNT: usize = 16;
 
 /// Virtual machine state — 16 registers + comparison flags + instruction pointer.
@@ -414,7 +413,7 @@ mod tests {
     #[test]
     fn test_vm_full_reset() {
         let mut vm = Vm::new();
-        vm.write_register(3, HalValue::F64(3.14));
+        vm.write_register(3, HalValue::F64(7.5));
         vm.set_flags_zero(true);
         vm.set_ip(10);
         vm.reset();

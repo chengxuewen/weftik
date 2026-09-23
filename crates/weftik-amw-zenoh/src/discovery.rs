@@ -9,7 +9,7 @@
 //! - `find_by_pattern` → Zenoh query with wildcard key expression
 //! - `watch` → Zenoh liveliness subscriber
 
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 
 use weftik_hal_core::{
     HalError, HalResult, Metadata, Timestamp,

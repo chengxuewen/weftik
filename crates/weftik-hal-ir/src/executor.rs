@@ -670,7 +670,7 @@ impl Executor {
                 if cd_bool && !prev_cd {
                     counter.cv = counter.cv.saturating_sub(1);
                 }
-                counter.q = counter.cv <= 0;
+                counter.q = counter.cv == 0;
             }
             crate::vm::CounterKind::Ctud => {
                 // CU rising edge: increment
@@ -682,7 +682,7 @@ impl Executor {
                     counter.cv = counter.cv.saturating_sub(1);
                 }
                 counter.qu = counter.cv >= counter.pv;
-                counter.qd = counter.cv <= 0;
+                counter.qd = counter.cv == 0;
                 counter.q = counter.qu;
             }
         }

@@ -28,7 +28,6 @@
     "**/@theia/cli": "1.73.0"
   },
   "devDependencies": {
-    "@colbymchenry/codegraph": "^1.3.0",
     "@playwright/mcp": "^0.0.78"
   }
 }

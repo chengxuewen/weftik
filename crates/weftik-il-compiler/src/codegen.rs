@@ -324,7 +324,7 @@ impl Codegen {
         for (idx, name) in &self.label_refs {
             let target = self.labels.get(name).copied().unwrap_or(halt_ip as usize);
             let inst = &result[*idx];
-            if inst.operands.len() >= 1 {
+            if !inst.operands.is_empty() {
                 result[*idx] = match inst.opcode {
                     Opcode::Jump => Instruction::jump(target as u32),
                     Opcode::JumpIf => Instruction::jump_if(target as u32),

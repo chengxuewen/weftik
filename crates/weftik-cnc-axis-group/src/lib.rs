@@ -40,7 +40,7 @@ pub fn generate_combined_program(cfg: &AxisGroupConfig) -> HalProgram {
     let mut instructions: Vec<weftik_hal_ir::instruction::Instruction> = Vec::new();
 
     // Merge all instructions, removing Halt terminators from intermediate programs
-    for (_i, prog) in [&homing, &limits, &backlash, &alarm].iter().enumerate() {
+    for prog in [&homing, &limits, &backlash, &alarm].iter() {
         for inst in &prog.instructions {
             if inst.opcode == weftik_hal_ir::instruction::Opcode::Halt {
                 continue; // skip intermediate halts

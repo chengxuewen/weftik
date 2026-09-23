@@ -395,7 +395,7 @@
 - **日期**: 2026-07-19
 - **决定**: Panel Transport 层定义统一接口 `IPanelTransport`（connect/readSignal/writeSignal/snapshot/subscribe），三种实现：UdsTransport（本地 UDS ~10μs）、WsTransport（远程 WebSocket ~5ms LAN）、SimTransport（SimulationHarness 进程内）。部署时根据配置自动选择。
 - **理由**: UDS/WS/Sim 三种模式接口一致，Panel 业务代码零变更。自动选择避免操作员手动配置传输模式。
-- **参考**: docs/modules/runtime/panel-architecture-design.md §5, crates/audeys-controller-client/src/lib.rs
+- **参考**: docs/modules/runtime/panel-architecture-design.md §5, crates/weftik-controller-client/src/lib.rs
 
 ## D69: HMI 布局版本管理 = YAML 文本 + Git diff 友好
 > ✅ 契约保留 (D117) — Controller 侧 YAML 持久化不变；布局创作工具（原 Studio 设计器）已移除
@@ -408,14 +408,14 @@
 - **日期**: 2026-07-19
 - **决定**: HMI 布局部署使用与 `deploy_program` (IPC method 0x10) 相同的模式：Studio 通过 ControllerClient 发送 HmiLayout → Controller 写入 Config Barrier → 下周期边界 Panel 获取新布局。新增 IPC method 0x17 (DEPLOY_HMI_LAYOUT)，不修改现有 0x10 语义。
 - **理由**: Config Barrier (D17) 已在周期边界批量应用变更，HMI 布局变更适用相同机制。0x10 的 HMAC 认证+RBAC (Role::Engineer) 可直接复用。新建 0x17 保持方法语义单一职责——0x10=程序部署，0x17=HMI 布局部署。
-- **参考**: `crates/audeys-ipc-server/src/`, `docs/modules/hal/config-barrier-design.md`, `docs/modules/runtime/panel-architecture-design.md`
+- **参考**: `crates/weftik-ipc-server/src/`, `docs/modules/hal/config-barrier-design.md`, `docs/modules/runtime/panel-architecture-design.md`
 
 ## D67: HMI 调试信号注入 = sim_set_signal Tauri 命令复用
 > ⛔ **失效 by D117 (2026-09)** — HMI Builder/Preview 模式随设计器移除；SimHarness 本体保留
 - **日期**: 2026-07-19
 - **决定**: HMI Builder 的 Preview 模式信号注入复用现有 `sim_set_signal` Tauri 命令（第 331 行），通过 SimulationHarness 注入模拟信号值。不新建独立的 HMI 信号模拟系统。
 - **理由**: SimulationHarness 已有完整的信号写入/读取/步进能力，新建独立系统会重复建设。HMI Preview 本质上就是"注入信号 → 观察 widget 渲染"的测试循环，与 SimHarness 的 step/read 模式完全等价。
-- **参考**: `apps/studio/src-tauri/src/lib.rs:331`, `crates/audeys-runtime-engine/src/simulation.rs`
+- **参考**: `apps/studio/src-tauri/src/lib.rs:331`, `crates/weftik-runtime-engine/src/simulation.rs`
 
 ## D70: Studio 响应式布局 = CSS flexbox + min-height:0 + 去白边
 - **日期**: 2026-07-20

@@ -273,7 +273,7 @@ fn emit_triangular_motion(
 
     // Patch placeholders
     instructions[jif_idx] = Instruction::jump_if(decel_start);
-    instructions[jump_idx] = Instruction::jump((decel_start + 1) as u32);
+    instructions[jump_idx] = Instruction::jump(decel_start + 1);
 
     // Loop control
     instructions.push(Instruction::arith(Opcode::Sub, REG_COUNTER, REG_ONE, REG_COUNTER));
@@ -302,7 +302,7 @@ mod tests {
         };
         let program = generate_trapezoidal_program(&profile);
         // Zero-distance move should produce a minimal program (constants only, no motion loop)
-        assert!(program.instructions.len() > 0);
+        assert!(!program.instructions.is_empty());
     }
 
     #[test]
@@ -339,7 +339,7 @@ mod tests {
             start_z: 0.0,
         };
         let program = generate_trapezoidal_program(&profile);
-        assert!(program.instructions.len() > 0);
+        assert!(!program.instructions.is_empty());
         let has_jump_if = program.instructions.iter().any(|inst| inst.opcode == Opcode::JumpIf);
         assert!(has_jump_if);
     }
@@ -376,7 +376,7 @@ mod tests {
             start_z: 0.0,
         };
         let program = generate_trapezoidal_program(&profile);
-        assert!(program.instructions.len() > 0);
+        assert!(!program.instructions.is_empty());
         let has_jump_if = program.instructions.iter().any(|inst| inst.opcode == Opcode::JumpIf);
         assert!(has_jump_if);
     }
@@ -396,7 +396,7 @@ mod tests {
             start_z: 0.0,
         };
         let program = generate_trapezoidal_program(&profile);
-        assert!(program.instructions.len() > 0);
+        assert!(!program.instructions.is_empty());
     }
 
     #[test]
@@ -414,6 +414,6 @@ mod tests {
             start_z: 0.0,
         };
         let program = generate_trapezoidal_program(&profile);
-        assert!(program.instructions.len() > 0);
+        assert!(!program.instructions.is_empty());
     }
 }

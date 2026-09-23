@@ -239,7 +239,7 @@ impl VirtualModbusTcpDevice {
             return Self::exception_response(mbap, 0x01, exception::ILLEGAL_DATA_VALUE);
         }
 
-        let byte_count = ((count + 7) / 8) as usize;
+        let byte_count = count.div_ceil(8) as usize;
         let mut result = vec![0u8; byte_count];
         for i in 0..count {
             let addr = start + i;
@@ -267,7 +267,7 @@ impl VirtualModbusTcpDevice {
             return Self::exception_response(mbap, 0x02, exception::ILLEGAL_DATA_VALUE);
         }
 
-        let byte_count = ((count + 7) / 8) as usize;
+        let byte_count = count.div_ceil(8) as usize;
         let mut result = vec![0u8; byte_count];
         for i in 0..count {
             let addr = start + i;
@@ -402,7 +402,7 @@ impl VirtualModbusTcpDevice {
         let mut mbap_buf = vec![0u8; MBAP_HEADER_LEN];
 
         loop {
-            if self.running.load(Ordering::Relaxed) == false {
+            if !self.running.load(Ordering::Relaxed) {
                 break;
             }
 
@@ -631,7 +631,7 @@ impl ThreadDevice {
         if count == 0 || count > 2000 {
             return exception_response(mbap, 0x01, exception::ILLEGAL_DATA_VALUE);
         }
-        let byte_count = ((count + 7) / 8) as usize;
+        let byte_count = count.div_ceil(8) as usize;
         let mut result = vec![0u8; byte_count];
         for i in 0..count {
             let addr = start + i;
@@ -656,7 +656,7 @@ impl ThreadDevice {
         if count == 0 || count > 2000 {
             return exception_response(mbap, 0x02, exception::ILLEGAL_DATA_VALUE);
         }
-        let byte_count = ((count + 7) / 8) as usize;
+        let byte_count = count.div_ceil(8) as usize;
         let mut result = vec![0u8; byte_count];
         for i in 0..count {
             let addr = start + i;
@@ -822,8 +822,7 @@ fn echo_response(mbap: &[u8], fc: u8, data: &[u8]) -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::net::TcpStream;
-    use std::time::Duration;
+
     use weftik_amw_inproc::InprocTransport;
 
     fn dummy_ts() -> Timestamp {

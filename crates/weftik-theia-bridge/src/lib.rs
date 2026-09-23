@@ -63,7 +63,7 @@ where
     let mut client = RuntimeClient::connect(socket_path, secret.as_bytes())
         .map_err(|e| napi::Error::from_reason(format!("connect: {e}")))?;
     client.authenticate(role).map_err(|e| napi::Error::from_reason(format!("auth: {e}")))?;
-    let result = f(&mut client).map_err(|e| napi::Error::from_reason(e))?;
+    let result = f(&mut client).map_err(napi::Error::from_reason)?;
     Ok(result)
 }
 
@@ -100,7 +100,7 @@ pub fn compile_st(source: String) -> napi::Result<String> {
 /// Compile IEC 61131-3 Instruction List source into a HalProgram JSON string.
 #[napi]
 pub fn compile_il(source: String) -> napi::Result<String> {
-    let program = il_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
+    let program = il_compile(&source).map_err(napi::Error::from_reason)?;
     to_json(&program)
 }
 
@@ -109,8 +109,8 @@ pub fn compile_il(source: String) -> napi::Result<String> {
 /// LD is compiled via IL: LD source → IL text → HalProgram.
 #[napi]
 pub fn compile_ld(source: String) -> napi::Result<String> {
-    let il = ld_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
-    let program = il_compile(&il).map_err(|e| napi::Error::from_reason(e))?;
+    let il = ld_compile(&source).map_err(napi::Error::from_reason)?;
+    let program = il_compile(&il).map_err(napi::Error::from_reason)?;
     to_json(&program)
 }
 
@@ -119,8 +119,8 @@ pub fn compile_ld(source: String) -> napi::Result<String> {
 /// Compiles FBD text (CFC format) via IL: FBD source → IL text → HalProgram.
 #[napi]
 pub fn compile_fbd(source: String) -> napi::Result<String> {
-    let il = fbd_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
-    let program = il_compile(&il).map_err(|e| napi::Error::from_reason(e))?;
+    let il = fbd_compile(&source).map_err(napi::Error::from_reason)?;
+    let program = il_compile(&il).map_err(napi::Error::from_reason)?;
     to_json(&program)
 }
 
@@ -129,8 +129,8 @@ pub fn compile_fbd(source: String) -> napi::Result<String> {
 /// Compiles SFC text via IL: SFC source → IL text → HalProgram.
 #[napi]
 pub fn compile_sfc(source: String) -> napi::Result<String> {
-    let il = sfc_compile(&source).map_err(|e| napi::Error::from_reason(e))?;
-    let program = il_compile(&il).map_err(|e| napi::Error::from_reason(e))?;
+    let il = sfc_compile(&source).map_err(napi::Error::from_reason)?;
+    let program = il_compile(&il).map_err(napi::Error::from_reason)?;
     to_json(&program)
 }
 

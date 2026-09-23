@@ -6,9 +6,6 @@ use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
-use weftik_amw_inproc::{
-    InprocAuditLog, InprocMiddleware, InprocQoS, InprocTransport, StaticDiscovery,
-};
 use weftik_runtime::lifecycle::ProcessState;
 use weftik_runtime::{Engine, LifecycleManager};
 

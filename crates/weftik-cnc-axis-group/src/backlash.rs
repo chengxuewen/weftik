@@ -198,10 +198,8 @@ fn patch_jump(instructions: &mut Vec<Instruction>, jump_idx: usize, target: usiz
                     inst.operands[0] = Operand::Immediate(HalValue::U32(target as u32));
                 }
             }
-            Opcode::JumpIf => {
-                if inst.operands.len() >= 2 {
-                    inst.operands[1] = Operand::Immediate(HalValue::U32(target as u32));
-                }
+            Opcode::JumpIf if inst.operands.len() >= 2 => {
+                inst.operands[1] = Operand::Immediate(HalValue::U32(target as u32));
             }
             _ => {}
         }

@@ -226,7 +226,7 @@ interface PanelPluginContext {
 
 ```typescript
 interface PanelPluginManifest {
-  id: string;                       // "audeys.panel.operator-login"
+  id: string;                       // "weftik.panel.operator-login"
   displayName: string;              // "Operator Login"
   version: string;                  // SemVer
   type: "builtin" | "external";    // 内置 vs 外部
@@ -440,7 +440,7 @@ Transport 层不再暴露为独立接口 — 各 SignalProvider 实现内部封�
 
 | SignalProvider | 内部 Transport | 认证 |
 |---------------|---------------|------|
-| LocalSignalProvider | RuntimeClient (UDS) via `crates/audeys-controller-client` | HMAC Role::HMI, TTL 1h |
+| LocalSignalProvider | RuntimeClient (UDS) via `crates/weftik-controller-client` | HMAC Role::HMI, TTL 1h |
 | WsSignalProvider | WebSocket `ws://host:9080/signals` | WS 握手时 HMAC 令牌验证 |
 | SimSignalProvider | SimulationHarness (进程内函数调用) | 无需认证 |
 
@@ -469,7 +469,7 @@ Transport 层不再暴露为独立接口 — 各 SignalProvider 实现内部封�
 │  │       │            │             │  │  Modbus/HART      │  │
 │  │       └────────────┼─────────────┼──┤  Adapters         │  │
 │  │                    │             │  │                   │  │
-│  │              UdsTransport ───────┼──┤ UDS: /tmp/audeys- │  │
+│  │              UdsTransport ───────┼──┤ UDS: /tmp/weftik- │  │
 │  │              (HMAC Role::HMI)    │  │ controller.sock   │  │
 │  └──────────────────────────────────┘  └────────┬─────────┘  │
 │                                                 │             │
@@ -552,7 +552,7 @@ Transport 层不再暴露为独立接口 — 各 SignalProvider 实现内部封�
 
 **特点**：
 - Panel + Runtime Engine + SimulationHarness 全部同进程运行
-- 零网络开销，一鍵启动：`cargo run --bin audeys-panel -- --sim`
+- 零网络开销，一鍵启动：`cargo run --bin weftik-panel -- --sim`
 - 支持场景录制回放 — 操作员 UI 可用录制的数据流离线验证
 - 主要用途：HMI 布局验证、操作员培训、报警逻辑测试
 
@@ -645,7 +645,7 @@ Frame (unsolicited, server → client):
 ### 7.3 Runtime 端订阅实现要点
 
 ```rust
-// crates/audeys-controller/src/ipc.rs 新增
+// crates/weftik-controller/src/ipc.rs 新增
 
 /// Per-connection subscription state
 struct ConnectionSubs {
@@ -848,7 +848,7 @@ interface ScreenDescriptor {
 - `packages/studio-core/src/types/hmi.ts` — HmiLayout 类型定义 (已就绪)
 - `docs/modules/studio/plugin-architecture-design.md` — Studio PluginRegistry 参考模型
 - `docs/modules/runtime/ipc-security-design.md` — IPC 安全设计 (HMAC, 角色权限)
-- `crates/audeys-controller/src/ipc.rs` — IPC Server 现有 19 方法实现
-- `crates/audeys-controller-client/src/lib.rs` — RuntimeClient (UDS 客户端, LocalSignalProvider 封装)
+- `crates/weftik-controller/src/ipc.rs` — IPC Server 现有 19 方法实现
+- `crates/weftik-controller-client/src/lib.rs` — RuntimeClient (UDS 客户端, LocalSignalProvider 封装)
 - `docs/reference/ignition.md` — Ignition Perspective (Web-first HMI 参考)
 - `docs/reference/intouch.md` — InTouch (传统 SCADA HMI 参考)

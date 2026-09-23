@@ -49,7 +49,9 @@
     "weftik-ld-editor": "0.1.0",
     "weftik-fbd-editor": "0.1.0",
     "weftik-st-editor": "0.1.0",
-    "@weftik/theia-bridge": "file:../../crates/weftik-theia-bridge"
+    "@weftik/theia-bridge": "file:../../crates/weftik-theia-bridge",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

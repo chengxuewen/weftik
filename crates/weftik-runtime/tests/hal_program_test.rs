@@ -7,9 +7,6 @@ use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
-use weftik_amw_inproc::{
-    InprocAuditLog, InprocMiddleware, InprocQoS, InprocTransport, StaticDiscovery,
-};
 use weftik_hal_core::HalPinType;
 use weftik_hal_core::HalValue;
 use weftik_hal_ir::instruction::{Instruction, Opcode};

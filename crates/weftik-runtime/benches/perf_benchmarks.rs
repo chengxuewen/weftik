@@ -78,7 +78,7 @@ fn bench_signal_registry(c: &mut Criterion) {
                 let reg = SignalRegistry::new();
                 for i in 0..n {
                     reg.register(SignalDef::new(
-                        &format!("s{i}"),
+                        format!("s{i}"),
                         HalPinType::F64,
                         HalValue::F64(0.0),
                         WriteStrategy::Own,
@@ -92,7 +92,7 @@ fn bench_signal_registry(c: &mut Criterion) {
         let reg = SignalRegistry::new();
         for i in 0..n {
             reg.register(SignalDef::new(
-                &format!("s{i}"),
+                format!("s{i}"),
                 HalPinType::F64,
                 HalValue::F64(0.0),
                 WriteStrategy::Own,

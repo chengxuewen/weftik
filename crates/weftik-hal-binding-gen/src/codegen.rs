@@ -702,14 +702,12 @@ impl Codegen {
                 if is_cmp_op(*op) || matches!(op, BinOp::And | BinOp::Or) {
                     // comparisons → Bool result; logic → both Bool
                     let is_logic = matches!(op, BinOp::And | BinOp::Or);
-                    if is_logic {
-                        if lt != VarType::Bool || rt != VarType::Bool {
-                            return Err(CodegenError::TypeMismatch {
-                                expected: VarType::Bool,
-                                got: if lt != VarType::Bool { lt } else { rt },
-                                context: format!("logic '{:?}'", op),
-                            });
-                        }
+                    if is_logic && (lt != VarType::Bool || rt != VarType::Bool) {
+                        return Err(CodegenError::TypeMismatch {
+                            expected: VarType::Bool,
+                            got: if lt != VarType::Bool { lt } else { rt },
+                            context: format!("logic '{:?}'", op),
+                        });
                     }
                     Ok(VarType::Bool)
                 } else if matches!(op, BinOp::Xor) {

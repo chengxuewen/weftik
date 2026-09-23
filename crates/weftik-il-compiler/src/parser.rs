@@ -248,11 +248,11 @@ pub fn parse(tokens: &[Token]) -> Vec<ILStatement> {
 }
 
 fn expect_ident(tokens: &[Token], i: &mut usize) -> String {
-    if *i < tokens.len() {
-        if let Token::Ident(name) = &tokens[*i] {
-            *i += 1;
-            return name.clone();
-        }
+    if *i < tokens.len()
+        && let Token::Ident(name) = &tokens[*i]
+    {
+        *i += 1;
+        return name.clone();
     }
     "?".to_string()
 }

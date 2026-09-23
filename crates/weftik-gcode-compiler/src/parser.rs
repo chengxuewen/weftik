@@ -82,8 +82,8 @@ impl GCodeCommand {
     /// Classify this command based on its G/M code.
     fn classify(&mut self) {
         self.kind = match (self.g_code, self.m_code) {
-            (Some(0 | 1 | 2 | 3), _) => CommandKind::Motion,
-            (_, Some(3 | 4 | 5)) => CommandKind::Spindle,
+            (Some(0..=3), _) => CommandKind::Motion,
+            (_, Some(3..=5)) => CommandKind::Spindle,
             (Some(17 | 18 | 19 | 20 | 21 | 80 | 90 | 91), _) => CommandKind::Modal,
             (_, Some(2 | 30)) => CommandKind::ProgramControl,
             _ => CommandKind::Unknown,

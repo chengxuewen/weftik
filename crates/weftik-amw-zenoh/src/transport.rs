@@ -11,8 +11,8 @@
 //! - `register_rpc_handler` → `session.declare_queryable(key).callback(...)`
 //!
 //! # Key expression namespace
-//! - Signal: `audeys/{namespace}/signal/{name}`
-//! - RPC: `audeys/{namespace}/rpc/{method}`
+//! - Signal: `weftik/{namespace}/signal/{name}`
+//! - RPC: `weftik/{namespace}/rpc/{method}`
 
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -49,8 +49,10 @@ impl ZenohTransport {
         }
     }
 
+    // ponytail: only wired to tests + the Phase-2 TODO below; keep until publish_signal goes real
+    #[allow(dead_code)]
     fn signal_key(&self, name: &str) -> String {
-        format!("audeys/{}/signal/{}", self.namespace, name)
+        format!("weftik/{}/signal/{}", self.namespace, name)
     }
 }
 
@@ -171,6 +173,6 @@ mod tests {
     #[test]
     fn test_signal_key_format() {
         let t = ZenohTransport::new("site-a");
-        assert_eq!(t.signal_key("axis.0.pos"), "audeys/site-a/signal/axis.0.pos");
+        assert_eq!(t.signal_key("axis.0.pos"), "weftik/site-a/signal/axis.0.pos");
     }
 }

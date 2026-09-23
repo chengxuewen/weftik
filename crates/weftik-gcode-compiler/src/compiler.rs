@@ -72,10 +72,10 @@ impl ModalState {
         match cmd.kind {
             CommandKind::Motion => {
                 // Update motion mode from G-code
-                if let Some(g) = cmd.g_code {
-                    if (0..=3).contains(&g) {
-                        next.motion_mode = g;
-                    }
+                if let Some(g) = cmd.g_code
+                    && (0..=3).contains(&g)
+                {
+                    next.motion_mode = g;
                 }
                 // Update position (absolute or incremental)
                 next = next.update_position(cmd);
@@ -92,7 +92,7 @@ impl ModalState {
             CommandKind::Modal => {
                 if let Some(g) = cmd.g_code {
                     match g {
-                        17 | 18 | 19 => next.plane = g,
+                        17..=19 => next.plane = g,
                         20 | 21 => next.unit_mode = g,
                         90 | 91 => next.coord_mode = g,
                         80 => {

@@ -15,6 +15,12 @@ pub struct RingBuffer<const N: usize> {
     cursor: AtomicUsize,
 }
 
+impl<const N: usize> Default for RingBuffer<N> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<const N: usize> RingBuffer<N> {
     pub fn new() -> Self {
         Self { buf: std::array::from_fn(|_| AtomicU64::new(0)), cursor: AtomicUsize::new(0) }

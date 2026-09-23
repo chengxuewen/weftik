@@ -1,6 +1,6 @@
 # Weftik Studio CODESYS 工作流 SDD 规范
 
-> **来源**: `theia-extensions/weftik-core/src/browser/iec-new-file-contribution.ts` + `.sisyphus/plans/glsp-migration/plan.md` + `crates/audeys-theia-bridge/` + `docs/modules/runtime/panel-architecture-design.md`
+> **来源**: `theia-extensions/weftik-core/src/browser/iec-new-file-contribution.ts` + `.sisyphus/plans/glsp-migration/plan.md` + `crates/weftik-theia-bridge/` + `docs/modules/runtime/panel-architecture-design.md`
 > **总项数**: 30
 > **工作流**: 工程创建 → 文件创建 → LD 编辑 → 编译 → 部署 → 调试 → HMI 绑定
 > **关联决策**: D22, D25, D55, D56, D57, D68, D71
@@ -462,7 +462,7 @@ Phase 2 支持同一程序部署到多个 Controller（冗余热备拓扑）。
   - Controller 未连接 → 断点仅在本地标记（灰色），连接后同步
 - **测试**: `test_set_clear_breakpoint` (vitest, mock DAP)
 
-> **参考**: DAP Debug Adapter (crates/audeys-dap-adapter/), STH-038 (快速修复)
+> **参考**: DAP Debug Adapter (crates/weftik-dap-adapter/), STH-038 (快速修复)
 
 ### WF-DEBUG-002: 步进执行
 

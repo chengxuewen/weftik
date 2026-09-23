@@ -1,9 +1,6 @@
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
-use weftik_amw_inproc::{
-    InprocAuditLog, InprocMiddleware, InprocQoS, InprocTransport, StaticDiscovery,
-};
 use weftik_hal_binding_gen::compile;
 use weftik_hal_core::{HalPinType, HalValue};
 use weftik_hal_ir::{self, Executor};
@@ -140,9 +137,7 @@ fn test_ld_deploy_and_execute() {
     use std::sync::Arc;
     use std::thread;
     use std::time::Duration;
-    use weftik_amw_inproc::{
-        InprocAuditLog, InprocMiddleware, InprocQoS, InprocTransport, StaticDiscovery,
-    };
+
     use weftik_hal_core::{HalPinType, HalValue};
     use weftik_runtime::{Engine, LifecycleManager, SignalDef, WriteStrategy};
 

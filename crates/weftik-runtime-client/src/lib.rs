@@ -7,7 +7,7 @@
 //!
 //! # Usage
 //! ```ignore
-//! let mut client = RuntimeClient::connect("/tmp/audeys-controller.sock", secret)?;
+//! let mut client = RuntimeClient::connect("/tmp/weftik-controller.sock", secret)?;
 //! client.authenticate(Role::Engineer)?;
 //! let val = client.read_signal("counter.value")?;
 //! ```

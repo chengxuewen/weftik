@@ -495,7 +495,7 @@ pub fn evaluate_rung(
             let energized = match coil.kind {
                 CoilKind::Out => power,
                 CoilKind::Negated => !power,
-                CoilKind::Set => power || (var_store.get_bool(&coil.var) && !power),
+                CoilKind::Set => power || var_store.get_bool(&coil.var),
                 CoilKind::Reset => !power && var_store.get_bool(&coil.var),
             };
             let coil_type = match coil.kind {
@@ -584,7 +584,7 @@ pub fn evaluate_eno_chain(first_en: bool, blocks: &[FnBlock]) -> Vec<FnBlockResu
     let mut results = Vec::new();
     let mut en = first_en;
     for block in blocks {
-        let eno = if en && !block.error { true } else { false };
+        let eno = en && !block.error;
         results.push(FnBlockResult {
             name: block.name.clone(),
             en,

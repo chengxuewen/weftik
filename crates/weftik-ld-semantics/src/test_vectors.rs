@@ -430,8 +430,8 @@ fn tv14_en_eno_chain() {
             },
         ],
     );
-    assert_eq!(results[0].eno, false);
-    assert_eq!(results[1].eno, false);
+    assert!(!results[0].eno);
+    assert!(!results[1].eno);
 
     // Row: X1=T, no error, X2=F → TON passes, CTU doesn't execute
     let results = evaluate_eno_chain(
@@ -442,11 +442,11 @@ fn tv14_en_eno_chain() {
         ],
     );
     assert!(results[0].eno);
-    assert_eq!(results[1].en, true); // CTU would receive EN=T if directly connected
+    assert!(results[1].en); // CTU would receive EN=T if directly connected
     // Actually in the test: X2 contact is between TON and CTU.
     // The chain correctly passes EN=TRUE through TON, but X2 contact
     // is external to the blocks. Here we test the chain pass-through.
-    assert_eq!(results[0].eno, true);
+    assert!(results[0].eno);
     assert_eq!(results[1].en, results[0].eno);
 
     // Row: X1=T, TON error → ENO1=F, Y1=F
@@ -461,9 +461,9 @@ fn tv14_en_eno_chain() {
             },
         ],
     );
-    assert_eq!(results[0].eno, false);
-    assert_eq!(results[1].en, false);
-    assert_eq!(results[1].eno, false);
+    assert!(!results[0].eno);
+    assert!(!results[1].en);
+    assert!(!results[1].eno);
 
     // Row: X1=T, TON ok, CTU error → ENO2=F
     let results = evaluate_eno_chain(
@@ -474,7 +474,7 @@ fn tv14_en_eno_chain() {
         ],
     );
     assert!(results[0].eno);
-    assert_eq!(results[1].eno, false);
+    assert!(!results[1].eno);
 }
 
 // ---------------------------------------------------------------------------
