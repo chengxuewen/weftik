@@ -1,114 +1,24 @@
-# AUDESYS HMI 管道规范
+# HMI 契约规范（Runtime 侧通道）
 
-> **来源**: `apps/studio/src/types/hmi.ts` + `docs/modules/runtime/panel-architecture-design.md` + D62-D69
-> **总项数**: 22 (布局验证 9 + 部署管道 7 + SignalBridge 6)
+> **来源**: `docs/modules/runtime/panel-architecture-design.md` + D62-D69
+> **总项数**: 13 (部署管道 7 + SignalBridge 6)
 > **传输格式**: YAML (开发期) / FlatBuffers (运行时, D24)
-> **相关决策**: D62, D63, D64, D67, D68, D69
+> **相关决策**: D62, D63, D64, D68, D69, D117
+
+> **⚠️ 范围声明（D117, 2026-09-23）**: Studio 侧 HMI 设计器与布局验证器（原 HMI-VAL-001~009）已移除——
+> 布局验证职责移交外部 Panel/UI 项目。本文件仅规范 **Runtime 对外契约**：
+> IPC 0x16/0x17/0x18、Config Barrier 布局应用、信号推送语义。Panel 端实现（SignalBridge/Transport）
+> 由外部项目维护，此处条款作为其对接验收依据。
 
 ---
 
-## 1. HMI 布局验证 (HMI-VAL)
-
-### HMI-VAL-001: Widget 数量上限
-
-布局中 widget 总数不得超过 50 个。超过 30 时应产生警告。
-
-- **前置条件**: 用户保存 HMI 布局
-- **操作**: 调用 `validateLayout(layout: HmiLayout)`
-- **期望**: `result.warnings` 包含 `"widget count 35 exceeds recommended limit of 30"`（超过 30 时）
-- **期望**: `result.errors` 包含 `"widget count 55 exceeds maximum of 50"`（超过 50 时）
-- **边界**: 空布局（0 widget）无效，返回 `result.errors` 含 `"layout must contain at least 1 widget"`
-- **测试**: `hmi_validation_test.rs` — `test_widget_count_limit`
-
-### HMI-VAL-002: widget 位置非负
-
-所有 widget 的 `x`, `y` 坐标必须 ≥ 0。负值拒绝。
-
-- **前置条件**: widget 的 `x < 0` 或 `y < 0`
-- **操作**: 调用 `validateLayout(layout)`
-- **期望**: `result.errors` 包含 `"widget 'gauge-1' has negative position x=-10"`
-- **边界**: 坐标 0 合法（左上角锚点）
-- **测试**: `test_negative_position_rejected`
-
-### HMI-VAL-003: widget 位置不越界
-
-所有 widget 的 `x + width` 和 `y + height` 不得超出画布边界（默认 1920×1080）。
-
-- **前置条件**: widget 的 `x + width > canvasMaxWidth` 或 `y + height > canvasMaxHeight`
-- **操作**: 调用 `validateLayout(layout, { canvasWidth: 1920, canvasHeight: 1080 })`
-- **期望**: `result.errors` 包含 `"widget 'tank-1' exceeds canvas boundary"`
-- **边界**: 画布大小可配置（通过 `ValidationOptions`）
-- **测试**: `test_widget_out_of_bounds`
-
-### HMI-VAL-004: widget 尺寸合法
-
-`width` 和 `height` 必须 > 0。必须 ≥ 最小尺寸（Gauge 40×40, Trend 80×80, 其他 20×20）。
-
-- **前置条件**: widget `width` 或 `height` ≤ 0
-- **操作**: 调用 `validateLayout(layout)`
-- **期望**: `result.errors` 包含 `"widget 'btn-1' has invalid dimensions: width=0, height=30"`
-- **边界**: 最大尺寸不超过画布大小（1920×1080）
-- **测试**: `test_invalid_widget_dimensions`
-
-### HMI-VAL-005: widget ID 唯一
-
-布局中不得存在重复的 widget ID。
-
-- **前置条件**: 两个或多个 widget 使用相同的 `id`
-- **操作**: 调用 `validateLayout(layout)`
-- **期望**: `result.errors` 包含 `"duplicate widget id 'gauge-1' found at indices [0, 5]"`
-- **边界**: 大小写敏感比较
-- **测试**: `test_duplicate_widget_id`
-
-### HMI-VAL-006: 信号名有效性
-
-每个 widget 的 `signal` 字段（若不为空）必须存在于当前信号注册表中。
-
-- **前置条件**: widget 绑定了不存在的信号 `"axis.99.pos"`
-- **操作**: 调用 `validateLayout(layout, { signalNames: ["axis.0.pos", "axis.1.pos"] })`
-- **期望**: `result.warnings` 包含 `"widget 'indicator-2' bound to unknown signal 'axis.99.pos'"`
-- **边界**: `signal` 为空字符串或 `null` 时跳过检查（允许未绑定的占位 widget）
-- **测试**: `test_unknown_signal_binding_warns`
-
-### HMI-VAL-007: 必填字段完整性
-
-每个 widget 必须包含 `id`, `type`, `x`, `y`, `width`, `height`。缺失任一项 → 错误。
-
-- **前置条件**: widget 缺少 `type` 字段
-- **操作**: 调用 `validateLayout(layout)`
-- **期望**: `result.errors` 包含 `"widget at index 3 missing required field 'type'"`
-- **边界**: 额外字段（如 `zIndex`）允许，不会报错
-- **测试**: `test_missing_required_field`
-
-### HMI-VAL-008: Widget 类型专属配置
-
-Gauge widget 必须有 `min < max`。Trend widget 必须有 `timespan > 0`。
-
-- **前置条件**: Gauge widget 配置 `min=100, max=0`
-- **操作**: 调用 `validateLayout(layout)`
-- **期望**: `result.errors` 包含 `"gauge 'gauge-3': min (100) must be less than max (0)"`
-- **边界**: Trend timespan 单位秒，最小 1 秒
-- **测试**: `test_gauge_min_max_validation`
-
-### HMI-VAL-009: 重叠检测 (P2)
-
-Phase 2 可选启用 widget 重叠检测。Phase 1 允许重叠（方便布局调整）。
-
-- **前置条件**: P2 启用重叠检测 + 两个 widget 边界重叠
-- **操作**: 调用 `validateLayout(layout, { detectOverlap: true })`
-- **期望**: `result.warnings` 包含 `"widgets 'gauge-1' and 'tank-2' overlap"`
-- **边界**: 边框接触（touching）不算重叠
-- **测试**: `test_overlap_detection_p2` (标记 `#[ignore]` 至 Phase 2)
-
----
-
-## 2. HMI 部署管道 (HMI-DPL)
+## 1. HMI 部署管道 (HMI-DPL)
 
 ### HMI-DPL-001: DEPLOY_HMI_LAYOUT 消息格式
 
 IPC method `0x17` 携带序列化的 HmiLayout。请求结构同 `0x10`（deploy_program）：`<header(8B)> + <hmac(32B)> + <payload>`。payload 为 YAML 字符串（Phase 1）或 FlatBuffers 二进制（Phase 2）。
 
-- **前置条件**: Studio 调用 `controller_client.deploy_hmi_layout(yaml_content)`
+- **前置条件**: 客户端调用 `controller_client.deploy_hmi_layout(yaml_content)`
 - **操作**: Controller 接收 0x17 帧
 - **期望**: 解析成功，payload 提取为 `String`
 - **边界**: payload 最大 1MB（超过拒绝并返回错误）
@@ -141,12 +51,12 @@ Controller 在布局应用成功后发送 `DEPLOY_ACK(0x17, status=0, generation
 
 - **前置条件**: 布局部署成功
 - **操作**: Controller 在周期边界应用新布局
-- **期望**: Studio 接收 `DEPLOY_ACK` 帧，`generation` 递增
+- **期望**: 客户端接收 `DEPLOY_ACK` 帧，`generation` 递增
 - **期望**: `generation` 从 1 开始单调递增（与 D68 一致）
 - **边界**: 部署失败 → `DEPLOY_ACK` 带 `status=1`（错误码）
 - **测试**: `test_deploy_hmi_layout_acknowledgment`
 
-### HMI-DPL-005: Panel 获取新布局
+### HMI-DPL-005: Panel 获取新布局〔外部项目实现〕
 
 Panel 收到 `DEPLOY_ACK` 后通过 SignalBridge 重新加载布局（D68）。
 
@@ -154,8 +64,8 @@ Panel 收到 `DEPLOY_ACK` 后通过 SignalBridge 重新加载布局（D68）。
 - **操作**: Panel 的 `SignalBridge` 接收到 `onLayoutChange(generation)` 回调
 - **期望**: Panel 调用 `snapshot()` 刷新所有绑定的信号值
 - **期望**: Panel 渲染新布局（旧 widget 隐藏、新 widget 显示）
-- **边界**: Panel 与 Controller 断开重连 → Panel 启动时请求当前 generation
-- **测试**: 集成测试（延迟至 P1 — 需 SignalBridge 实现）
+- **边界**: Panel 与 Controller 断开重连 → Panel 启动时请求当前 generation（0x18 GET_HMI_LAYOUT）
+- **测试**: 集成测试（外部 Panel 项目负责）
 
 ### HMI-DPL-006: 布局 YAML 持久化
 
@@ -163,7 +73,7 @@ Panel 收到 `DEPLOY_ACK` 后通过 SignalBridge 重新加载布局（D68）。
 
 - **前置条件**: 布局部署成功（`DEPLOY_ACK` status=0）
 - **操作**: Controller 将 YAML 内容写入磁盘
-- **期望**: 文件存在且内容与 Studio 发送的一致
+- **期望**: 文件存在且内容与客户端发送的一致
 - **期望**: 文件通过 Git 纳入版本管理（`{project}/` 目录已在 Git 中）
 - **边界**: 磁盘满 → 部署失败，DEPLOY_ACK 带 status=2（磁盘错误）
 - **测试**: `test_hmi_layout_persistence_to_disk`（使用 tempdir）
@@ -181,7 +91,7 @@ Controller 启动时从 `{project}/hmi/layout.yaml` 加载上次部署的布局�
 
 ---
 
-## 3. SignalBridge (HMI-SIG)
+## 2. SignalBridge (HMI-SIG)
 
 ### HMI-SIG-001: Hybrid 模式推送优先
 
@@ -226,7 +136,7 @@ F64 信号值变化 < Deadband 阈值时不推送（避免网络洪水）。默�
 - **边界**: 布尔值始终推送（无 deadband）
 - **测试**: `test_deadband_filter_filters_small_changes`
 
-### HMI-SIG-005: 信号订阅生命周期
+### HMI-SIG-005: 信号订阅生命周期〔外部项目实现〕
 
 Panel 通过 `subscribe(signalNames: string[])` 注册订阅，`unsubscribe(signalNames)` 取消。Controller 仅向已订阅 Panel 推送。
 
@@ -238,9 +148,9 @@ Panel 通过 `subscribe(signalNames: string[])` 注册订阅，`unsubscribe(sign
 - **边界**: Panel 断开连接 → 自动取消所有订阅
 - **测试**: `test_signal_subscription_lifecycle`
 
-### HMI-SIG-006: IPanelTransport 接口
+### HMI-SIG-006: IPanelTransport 接口〔外部项目实现〕
 
-所有 Panel 传输实现遵循统一接口。Phase 1 实现 `UdsTransport`（D66）。
+所有 Panel 传输实现遵循统一接口。本仓库侧唯一实现为 `RuntimeClient`（Rust，UDS，D66）。
 
 ```typescript
 interface IPanelTransport {
@@ -253,11 +163,11 @@ interface IPanelTransport {
 }
 ```
 
-- **前置条件**: `UdsTransport` 已实现 `IPanelTransport`
+- **前置条件**: 外部 Panel 实现 `IPanelTransport`（如 `UdsTransport`）
 - **操作**: 调用 `transport.connect()` 后调用 `transport.snapshot()`
 - **期望**: 返回所有已发布信号的当前值快照
 - **边界**: 未连接时调用 → 抛出 `TransportError("not connected")`
-- **测试**: 集成测试（延迟至 P1 — 需完整 Transport 实现）
+- **测试**: 集成测试（外部 Panel 项目负责）
 
 ---
 
@@ -269,12 +179,12 @@ interface IPanelTransport {
 | D63 | HMI-SIG-002（周期边界批量推送） |
 | D64 | HMI-SIG-003（writeSignal 权限） |
 | D66 | HMI-SIG-006（IPanelTransport） |
-| D67 | HMI-DPL-001（sim_set_signal 复用——Preview 信号注入） |
 | D68 | HMI-DPL-001~007（0x17 DEPLOY_HMI_LAYOUT 全流程） |
 | D69 | HMI-DPL-006~007（YAML 持久化） |
+| D117 | 本文件范围声明（HMI-VAL 移交外部项目） |
 
 ## Phase 边界
 
-- **P1 实现**: HMI-VAL-001~008（验证逻辑），HMI-DPL-001~004,006,007（部署核心），HMI-SIG-001~004,006（SignalBridge 核心）
-- **P2 实现**: HMI-VAL-009（重叠检测），HMI-DPL-005（Panel 集成），HMI-SIG-005（订阅生命周期）
-- **P1 延迟**: 集成测试标记 `#[ignore]`，需完整 SignalBridge + Panel 实现后再激活
+- **本仓库实现**: HMI-DPL-001~004,006,007（部署核心），HMI-SIG-001~004（推送核心）
+- **外部 Panel 项目实现**: HMI-DPL-005、HMI-SIG-005~006、原 HMI-VAL 全部
+- **P2 候选**: deadband 可配置化、订阅模式服务化
