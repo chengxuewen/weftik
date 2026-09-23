@@ -225,6 +225,12 @@ find theia-extensions -path "*/node_modules/@theia*" 2>/dev/null
 - unspecified-high: +reasoningEffort: "medium"
 - explore: temperature 0.0 → 0.1
 - timeout_seconds: 30 → 60
+### Agent 模型上下文核实 (2026-09-23) — 修正 2026-07-29 分层的隐含假设
+- `~/.config/opencode/opencode.json` → `provider.new-api.models.premium.limit.context = **1024000**`；**premium-max 同为 1M** ⇒ 两者均 1M，**无需修订**（14 个别名已全部声明 1M；`fast-1`/`vision-1`/`lite` 等短上下文除外）
+- 网关实测：`premium` 接 `prompt_tokens=190,061` 与 `400,061` 均 **HTTP 200** ⇒ 上游 **≥400K**。会话报的 `slot is 200000` 来源 = **OpenCode 对自定义 provider 的回退默认值**（插件/缓存/项目配置均已实测排除）
+- ⚠️ **结论**：改 `limit.context` **不影响实际可用窗口**。要放开 200K 闸门必须动插件层，或绕开 category 路由直接 `/models` 选模型跑裸会话
+- 待办：OpenCode 侧该回退值能否用 `provider.*.models.*.limit` 之外的方式覆盖，未验证
+
 
 ### 技能 frontmatter 修复
 - 9 个技能添加 name + description: lesson-review, think-before-act, ref-beckhoff, ref-codesys, ref-fuxa, ref-ignition, ref-intouch, ref-labview, ref-qtouch
