@@ -1,7 +1,7 @@
 /// <reference types="playwright" />
 import { test, expect } from '@playwright/test';
 
-const STUDIO_URL = 'http://127.0.0.1:4000';
+const STUDIO_URL = process.env.THEIA_URL || 'http://127.0.0.1:3100';
 
 test.describe('CODESYS Workflow E2E', () => {
 
@@ -37,14 +37,9 @@ test.describe('CODESYS Workflow E2E', () => {
     }
   });
 
-  test('E2E-3: LD editor opens and tool palette is visible', async ({ page }) => {
-    await page.goto(STUDIO_URL);
-    await page.waitForTimeout(8000);
-
-    // Check LD tool palette is in sidebar
-    const palette = page.locator('.lm-TabBar-tabLabel:has-text("LD Tool Palette")');
-    await expect(palette.first()).toBeVisible({ timeout: 5000 });
-  });
+  // E2E-3 (LD editor + palette) retired: asserted a GLSP-era dock palette that
+  // D110 removed by design; editor behavior is covered by the dedicated
+  // ld-editor-reactflow.spec.ts suite (T-series, 68 cases).
 
   test('E2E-5: Workbench has expected widgets and 0 errors', async ({ page }) => {
     const errors: string[] = [];

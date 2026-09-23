@@ -4,7 +4,7 @@
 // workspace (URL points at the new project dir).
 import { test, expect, Page } from '@playwright/test';
 
-const STUDIO_URL = process.env.THEIA_URL || 'http://127.0.0.1:4000';
+const STUDIO_URL = process.env.THEIA_URL || 'http://127.0.0.1:3100';
 const PROJECT_NAME = `e2e_proj_${Date.now()}`;
 const QUICK_ROW = '.quick-input-list .monaco-list-row, .quick-input-list-row';
 
@@ -13,12 +13,15 @@ async function closeWorkspace(page: Page): Promise<void> {
   await page.getByRole('menuitem', { name: 'File' }).click();
   await page.waitForTimeout(400);
   const closeWs = page.getByRole('menuitem', { name: 'Close Workspace' });
-  if (await closeWs.count()) {
+  // fresh server may have no workspace open — the item exists but is
+  // disabled; clicking it would hang. Only act when enabled.
+  if (await closeWs.count() && await closeWs.first().isEnabled()) {
     await closeWs.click();
     await page.waitForTimeout(2000);
+  } else {
+    await page.keyboard.press('Escape');
   }
 }
-
 test.describe('New Weftik Project (no workspace)', () => {
   test('G1a: creates project and auto-opens workspace when none is open', async ({ page }) => {
     await page.goto(STUDIO_URL);
