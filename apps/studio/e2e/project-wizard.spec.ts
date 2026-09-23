@@ -29,9 +29,21 @@ test.describe('New Weftik Project (no workspace)', () => {
     await page.waitForTimeout(3000);
     await closeWorkspace(page);
 
-    await page.keyboard.press('F1');
-    await page.waitForTimeout(800);
     const input = page.locator('.quick-input-field input, .monaco-inputbox input, .quick-input input');
+    // F1 can be swallowed while a prior quick-input/menu tears down (post
+    // closeWorkspace); poll until the command palette is actually live.
+    await expect
+      .poll(async () => {
+        await page.keyboard.press('F1');
+        try {
+          await input.first().waitFor({ state: 'visible', timeout: 1500 });
+          return true;
+        } catch {
+          await page.keyboard.press('Escape');
+          return false;
+        }
+      }, { timeout: 15_000, intervals: [1200] })
+      .toBe(true);
     await input.fill('>New Weftik Project');
     await page.waitForTimeout(500);
     await page.keyboard.press('Enter');
