@@ -290,7 +290,7 @@
 - **日期**: 2026-07-15
 - **决定**: 50 项审计发现采用交互式逐项审核（question() 确认），CHAT/团队模式并行修复（doc-fixers 3人团队 + 2 background agents），12 commits 原子提交。
 - **理由**: 批量自动修复不可靠（文档编辑需人类判断）。交互审核保证每项修复方案经确认。团队 + background 并行最大化吞吐。12 次原子提交确保每项逻辑变更独立可审计。
-- **参考**: 审计报告 b73 区块，提交记录 7d72c90..aadcb3e
+- **参考**: 审计报告 b73 区块，提交记录 273187f..8dd577d
 ## D50: test-harness 技能 = 多语言自动化测试工具架
 - **日期**: 2026-07-15
 - **决定**: 新建 .agents/skills/test-harness/SKILL.md（447行），支持 6 种交互模式：SDD→测试生成 (stubs/AAA骨架/完整填充 三层)、测试→规范反向追溯、用例执行与修复、增量测试 (git diff)、项目测试基础设施初始化、覆盖率报告。覆盖 5 种语言 (Rust/TS/Python/C++/C)。Phase 感知：自动跳过未就绪模块。
@@ -696,7 +696,7 @@
 - **理由**: rung 容器是 React Flow 节点，onNodeClick 原本只处理 branch 工具，其他工具静默忽略 → 用户点击 rung 内部（左轨右侧）无反应，只有点击左轨左侧 pane 空白才创建。CODESYS/OpenPLC 标准交互 = 选元素工具后点击网络行放置
 - **边界**: 点击 rung 内已有触点/线圈（子节点）保持原行为（选择/重命名）；branch 工具仍点击触点开启
 - **验证**: E2E T30（点击 rung 内部创建触点且 x>0）+ 全量 31/31
-- **参考**: 提交 c53a046, apps/studio/e2e/ld-editor-reactflow.spec.ts T30
+- **参考**: 提交 8fb7c9d, apps/studio/e2e/ld-editor-reactflow.spec.ts T30
 
 ## D112: LD 编辑器完全拓扑化（CODESYS 插入点模型）
 - **日期**: 2026-08-05
@@ -725,14 +725,14 @@
 - **理由**: (1) Git/CI 合规——文本 diff/merge/review 免费获得（IEC 62443、21 CFR 11 变更追溯硬需求）；(2) AI 协同——只有纯文本文件 AI agent 能安全读写；(3) 行业演进方向——CODESYS FBS / TwinCAT 每 POU 文本 / Siemens TIA Openness 都在向目录+清单迁移；(4) 关注点分离——逻辑 ⊥ IO ⊥ 任务 ⊥ 硬件四层解耦。
 - **架构要点**: 清单（project.yaml）= 唯一真相源但不含代码；代码 = 独立文本文件；逻辑工程树是派生视图；图形语言用 PLCopen XML 或干净 JSON/YAML，绝不用厂商二进制；lock 文件（iecproj.lock）保证可复现构建。
 - **与 D113 关系**: 现有 A1-A6 目录约定（Programs/FBs/Functions/GVL）是雏形——已有一 POU 一文件 + 目录分组，只缺清单文件 + 更细分层（types/vars/config）。迁移路径平滑：保留现有文件，叠加清单作为工程身份入口。
-- **实现**: A7 New IEC Project wizard + project.yaml manifest（commit 1a63219）；设计文档 docs/modules/studio/iec-project-organization.md（commit adc132f）。
+- **实现**: A7 New IEC Project wizard + project.yaml manifest（commit 61f3963）；设计文档 docs/modules/studio/iec-project-organization.md（commit 38a9560）。
 - **参考**: .sisyphus/plans/text-first-iec-editor/plan.md，docs/modules/studio/iec-project-organization.md
 
 ## D115: New AUDESYS Project 菜单放置 = File 顶层（对齐 CODESYS/TwinCAT）
 - **日期**: 2026-08-10
 - **决定**: 新建工程命令从 File ▸ IEC 61131-3 子菜单上浮到 File 顶层，命名从"New IEC Project"改为"New AUDESYS Project"，category 改为 AUDESYS。保留 IEC 61131-3 子菜单（8 个文件类型 + POU 向导仍在内）。
 - **理由**: (a) 主流工业 IDE 一致用 File 顶层新建工程——CODESYS File ▸ New Project、TwinCAT File ▸ New ▸ Project (New TwinCAT Project)、TIA Portal Project ▸ New；(b) 品牌命名——工程是 AUDESYS 全平台工程（6 种语言 + G-code + CNC），非仅 IEC 61131-3，"IEC Project"过窄；(c) TwinCAT "New TwinCAT Project"先例直接支持 AUDESYS 命名；(d) VS Code/Theia 官方模式（PR #12819/#13344）用 File ▸ New File... quickpick 而非带名子菜单，子菜单只放文件级命令。
-- **参考**: CODESYS helpme New Project command、Beckhoff InfoSys File▸New▸Project、Siemens TIA docs、Theia PR #12819/#13344；commit b9a939f
+- **参考**: CODESYS helpme New Project command、Beckhoff InfoSys File▸New▸Project、Siemens TIA docs、Theia PR #12819/#13344；commit 7392f4a
 
 ## D116: 工程项目管理人工验证 = 预置示例工程 + G1-G6 工作流清单
 - **日期**: 2026-08-10

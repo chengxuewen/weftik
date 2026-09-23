@@ -1048,7 +1048,7 @@
 ### git-filter-repo `--repo` 参数不是“指向目标仓库”——在开发仓目录里跑它直接重写了开发仓
 - **问题**: 测试 publish 管线时，在工作区目录执行 `git-filter-repo --repo=<临时路径>`，实际重写了开发仓：404→396 提交、SHA 全变、origin 被移、reflog 被清、docs/reference 等从历史+磁盘剥离，未提交的当日 memory 编辑被抹。plan V3 铁律（“绝不在开发工作区跑”）被**参数语义误解**绕过：自认为在用 --repo 指向副本，实则目标永远是当前仓
 - **原因**: git-filter-repo 的 `--repo` 仅用于定位 git 目录上下文（常见于在子目录中跑），不是操作目标选择器；非标准用法下行为静默而非报错
-- **方案**: 克隆备份镜像完好 → `mv .git /tmp/…bak` 留档 → 从镜像重 clone `.git` → `checkout -B main 412ed1e` + `reset --hard` → 重设 origin → 手工重放当日未提交编辑。恢复后本地 = 远程 = `412ed1e` 验证一致。**救命因素 = 重写前几分钟刚做了 T-2.5 mirror 备份**（顺序侥幸，下次不会这么好运）
-- **验证**: `git rev-parse HEAD` = 原始 `412ed1e`；`git ls-remote origin HEAD` 一致；`ls docs/reference | wc -l` = 48
+- **方案**: 克隆备份镜像完好 → `mv .git /tmp/…bak` 留档 → 从镜像重 clone `.git` → `checkout -B main ddce814` + `reset --hard` → 重设 origin → 手工重放当日未提交编辑。恢复后本地 = 远程 = `ddce814` 验证一致。**救命因素 = 重写前几分钟刚做了 T-2.5 mirror 备份**（顺序侥幸，下次不会这么好运）
+- **验证**: `git rev-parse HEAD` = 原始 `ddce814`；`git ls-remote origin HEAD` 一致；`ls docs/reference | wc -l` = 48
 - **禁止**: filter-repo 必须 `( cd "$TARGET_CLONE" && git-filter-repo … )` 子 shell 形式，禁止靠 `--repo` 指目标；任何 filter-repo 前先确认仓内 `git remote -v` 指向非开发仓；开发仓操作前强制先有 mirror 备份
 - **代价**: 当日 pitfalls.md 的 12 行未提交编辑无法找回（status.md 段已从会话记录重建）

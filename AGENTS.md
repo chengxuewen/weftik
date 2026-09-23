@@ -1,7 +1,7 @@
 # AGENTS.md — AUDESYS Project Knowledge Base
 
 **Generated:** 2026-07-13
-**Commit:** `ffbf480`
+**Commit:** `dae532d`
 **Branch:** `main`
 **Branch:** `main`
 

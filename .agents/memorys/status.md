@@ -18,7 +18,7 @@
 - **HMI 设计器就绪** — 2026-07-19，可视化拖拽编辑器（react-rnd 自由布局画布）、7 种工业 widget（Gauge/Trend/Tank/Indicator/Button/Display/Text）、信号绑定对话框（controller_signal_snapshot 集成）、属性面板（位置/尺寸/标签/信号/类型专属配置）、Edit/Preview 模式切换、YAML 持久化（save_hmi_layout/load_hmi_layout）
 
 ## 仓库状态
-- **最新提交**: `2b3e668` — `docs(memory): lesson-review — Theia ~/ URI 不解析 + E2E workspace 状态污染`（与 origin/main 同步）
+- **最新提交**: `d050224` — `docs(memory): lesson-review — Theia ~/ URI 不解析 + E2E workspace 状态污染`（与 origin/main 同步）
 - **提交历史**: 220+ commits on main (2026-07-08 至 2026-08-10)
 - **源代码**: 24 crates（crates/）+ 1 Tauri 应用（3rdparty/AUDEDeck/）。apps/studio/ 已弃用（D71 Theia 迁移）
 - **测试**: 799 `#[test]` 标注 + vitest 144 tests (LD React Flow) + 26 tests (FBD React Flow) + Rust (40 LD + 39 IL) + Playwright E2E 31 场景 (LD) + 10 场景 (FBD) |
@@ -279,11 +279,11 @@ find theia-extensions -path "*/node_modules/@theia*" 2>/dev/null
 - **编辑功能**: 还原 `execute()` 模式（`createCommand()` 返回 undefined），GLSP 框架自动触发 GModel 重新生成
 
 ### 提交
-- `5934369` revert to execute() pattern
-- `7984c3c` bypass Symbol duplication via manual OpenHandler + bootstrap
-- `bc45078` bind OpenHandler in plain ContainerModule
-- `446c6db` use commandOf() pattern (已回退)
-- `2e8c04a` configureDefaultModelElements + import unify + ComputedBoundsActionHandler
+- `dd3146d` revert to execute() pattern
+- `b269fbc` bypass Symbol duplication via manual OpenHandler + bootstrap
+- `c79a6b9` bind OpenHandler in plain ContainerModule
+- `4e1bdd0` use commandOf() pattern (已回退)
+- `8067d8d` configureDefaultModelElements + import unify + ComputedBoundsActionHandler
 
 ### 新增决策
 - D103: 构建时移除扩展 node_modules symlink
