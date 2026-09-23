@@ -329,19 +329,6 @@ pub fn controller_health() -> napi::Result<String> {
 
 // ── PHASE 1 AUXILIARY — Deploy ───────────────────────────────────────────
 
-/// Deploy HMI layout YAML to a running Controller via IPC method 0x17.
-///
-/// Stub — DEPLOY_HMI_LAYOUT IPC available in Phase 1 follow-up.
-#[napi]
-pub fn deploy_hmi_layout(
-    socket_path: String,
-    secret: String,
-    yaml: String,
-) -> napi::Result<String> {
-    with_controller(&socket_path, &secret, Role::Engineer, |client| {
-        client.deploy_hmi_layout(yaml.as_bytes()).map(|generation| generation.to_string())
-    })
-}
 
 /// Load a HAL configuration (YAML) to a running Controller via IPC method 0x08.
 #[napi]
@@ -485,20 +472,3 @@ pub fn read_project_file(file_path: String) -> napi::Result<String> {
         .map_err(|e| napi::Error::from_reason(format!("read file: {e}")))
 }
 
-// ── HMI layout ──────────────────────────────────────────────────────────
-
-/// Save HMI layout YAML to a local file.
-#[napi]
-pub fn save_hmi_layout(path: String, yaml: String) -> napi::Result<String> {
-    fs::write(&path, &yaml)
-        .map_err(|e| napi::Error::from_reason(format!("write: {e}")))?;
-    Ok(format!(r#"{{"saved":"{}"}}"#, path))
-}
-
-/// Load HMI layout YAML from a local file.
-#[napi]
-pub fn load_hmi_layout(path: String) -> napi::Result<String> {
-    let yaml = fs::read_to_string(&path)
-        .map_err(|e| napi::Error::from_reason(format!("read: {e}")))?;
-    Ok(yaml)
-}

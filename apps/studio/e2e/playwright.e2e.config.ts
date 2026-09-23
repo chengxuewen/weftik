@@ -8,7 +8,6 @@ export default defineConfig({
     'smoke/startup-browser.spec.ts',
     'expanded/theia-e2e.spec.ts',
     'ld-editor-reactflow.spec.ts',
-    'hmi-designer.spec.ts',
     'codesys-workflow.spec.ts',
     'fbd-editor-reactflow.spec.ts',
     'project-wizard.spec.ts',

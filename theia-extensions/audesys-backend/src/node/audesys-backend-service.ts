@@ -219,12 +219,6 @@ export class AudesysBackendService implements BackendApplicationContribution {
                 validateNonEmptyString(params[2], 'programJson');
                 return fn(params[0], params[1], params[2]);
 
-            case 'deployHmiLayout':
-                validateNonEmptyString(params[0], 'socketPath');
-                validateNonEmptyString(params[1], 'secret');
-                validateNonEmptyString(params[2], 'yaml');
-                return fn(params[0], params[1], params[2]);
-
             case 'loadHalConfig':
                 validateNonEmptyString(params[0], 'socketPath');
                 validateNonEmptyString(params[1], 'secret');
@@ -277,16 +271,6 @@ export class AudesysBackendService implements BackendApplicationContribution {
 
             case 'readProjectFile':
                 validateNonEmptyString(params[0], 'filePath');
-                return fn(params[0]);
-
-            // HMI layout file ops
-            case 'loadHmiLayout':
-            case 'saveHmiLayout':
-                validateNonEmptyString(params[0], 'path');
-                if (method === 'saveHmiLayout') {
-                    validateNonEmptyString(params[1], 'yaml');
-                    return fn(params[0], params[1]);
-                }
                 return fn(params[0]);
 
             // Simulation
@@ -374,7 +358,6 @@ export class AudesysBackendService implements BackendApplicationContribution {
             case 'signalSnapshot':
                 return `pattern="${params[2]}"`;
             case 'deployProgram':
-            case 'deployHmiLayout':
                 return `path="${params[0]}" payload=${String(params[2]).length} chars`;
             case 'debugAddBreakpoint':
             case 'debugRemoveBreakpoint':

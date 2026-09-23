@@ -99,13 +99,6 @@ export declare function debugResume(socketPath: string, secret: string): string
 export declare function debugStep(socketPath: string, secret: string): string
 
 /**
- * Deploy HMI layout YAML to a running Controller via IPC method 0x17.
- *
- * Stub — DEPLOY_HMI_LAYOUT IPC available in Phase 1 follow-up.
- */
-export declare function deployHmiLayout(socketPath: string, secret: string, yaml: string): string
-
-/**
  * Deploy a compiled program (HalProgram JSON) to a running Controller.
  *
  * Merges the old `deploy_program` + `run_program` Tauri commands.
@@ -124,9 +117,6 @@ export declare function healthQuery(socketPath: string, secret: string): string
 /** Load a HAL configuration (YAML) to a running Controller via IPC method 0x08. */
 export declare function loadHalConfig(socketPath: string, secret: string, yaml: string): string
 
-/** Load HMI layout YAML from a local file. */
-export declare function loadHmiLayout(path: string): string
-
 /** Open a project by reading its .audesys-project.yaml file. */
 export declare function openProject(projectPath: string): string
 
@@ -140,9 +130,6 @@ export declare function readProjectFile(filePath: string): string
  * commands. Returns the HalValue as a JSON string.
  */
 export declare function readSignal(socketPath: string, secret: string, signalName: string): string
-
-/** Save HMI layout YAML to a local file. */
-export declare function saveHmiLayout(path: string, yaml: string): string
 
 /**
  * Snapshot all signals matching `pattern` from the Controller.

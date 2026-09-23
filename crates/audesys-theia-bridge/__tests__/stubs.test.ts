@@ -74,20 +74,3 @@ describe('project — real implementations', () => {
     expect(() => bridge.readProjectFile('/nonexistent/file.st')).toThrow();
   });
 });
-
-describe('hmi layout — real implementations', () => {
-  it('saveHmiLayout writes to file', () => {
-    const result = bridge.saveHmiLayout('/tmp/test-hmi.yaml', 'layout: {}');
-    expect(result).toBeDefined();
-  });
-
-  it('loadHmiLayout reads file', () => {
-    bridge.saveHmiLayout('/tmp/test-hmi-read.yaml', 'layout: {}');
-    const result = bridge.loadHmiLayout('/tmp/test-hmi-read.yaml');
-    expect(result).toContain('layout');
-  });
-
-  it('loadHmiLayout throws on nonexistent', () => {
-    expect(() => bridge.loadHmiLayout('/nonexistent.yaml')).toThrow();
-  });
-});

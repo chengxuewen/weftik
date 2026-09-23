@@ -103,13 +103,7 @@ describe('debug — no controller', () => {
   });
 });
 
-describe('hmi layout — real implementations', () => {
-  describe('deployHmiLayout', () => {
-    it('throws on nonexistent socket', () => {
-      expect(() => bridge.deployHmiLayout('/tmp/nonexistent.sock', 'secret', 'yaml: content')).toThrow();
-    });
-  });
-
+describe('hal config — real implementations', () => {
   describe('loadHalConfig', () => {
     it('throws on nonexistent socket', () => {
       expect(() => bridge.loadHalConfig('/tmp/nonexistent.sock', 'secret', 'config: {}')).toThrow();
