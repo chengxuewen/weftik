@@ -61,6 +61,9 @@ Rules 中通过 `See skill: <name>` 引用 Skills，形成 "规则约束 → 技
 | `lesson-review` | `lesson-review/SKILL.md` | 批量会话回顾：系统性提取经验教训，写入项目记忆 |
 | `skill-router` | `skill-router/SKILL.md` | 分析用户意图，推荐最合适的技能组合与执行顺序 |
 | `think-before-act` | `think-before-act/SKILL.md` | 先调研→列方案→用户审批→执行，任何非平凡操作前触发 |
+| `rust-testing` | `rust-testing/SKILL.md` | [vendored ECC@bf70150, MIT] Rust 测试模式：单元/集成/属性/模拟/覆盖率，TDD 方法论 |
+| `rust-patterns` | `rust-patterns/SKILL.md` | [vendored ECC@bf70150, MIT] Rust 开发模式集；与 rules/rust.md 冲突以后者为准 |
+| `archify` | `archify/SKILL.md` | [vendored tt-a1i/archify@9e35d2b, MIT] 架构/数据流/时序/状态图生成，自包含可验证 HTML + 图像导出 |
 
 ## 代理（Agents）
 
