@@ -772,5 +772,5 @@
 - **日期**: 2026-09-23
 - **决定**: 项目整体改名 Weftik（商标检索 0 命中，见 .sisyphus/plans/weftik-rename/plan.md §一）。命名规范：品牌显示名 `Weftik`（唯一大写层）；仓库/npm/crates/目录全小写 `weftik`；Rust crate `weftik-<module>`（kebab）；Rust/C++/FlatBuffers 用语言级命名空间（类型名**永不**加 Weftik 前缀，防 stuttering）；C ABI `weftik_`；npm scope `@weftik/`；环境变量 `WEFTIK_*`；Prometheus 指标 `weftik_runtime_*`；CLI `weftik`。同时采纳**单主线模式**：公开仓 gitee.com/chengxuewen/weftik = 唯一开发主线，双仓脱敏管线退役（历史脱敏已完成；内部残篇留 AUDESYS 工作区）；CI 暂不要（本地 qa-fast 把关）。
 - **理由**: 与 CODESYS 结构同构的商标混淆风险 + 旧展开式自相矛盾；改名同时统一命名空间；管线退役后增量提交天然干净，不再交双仓同步税。
-- **执行**: 代码改名 66e46d4/44f2546（git mv 保 rename 追踪）；25 个既有回归测试隔离待修（见 pitfalls）；历史提交不重写（rebrand 由提交如实记录）。
+- **执行**: 代码改名主体 `1d4341f`（git mv 保 rename 追踪）；25 个既有回归测试隔离待修（见 pitfalls）；历史提交不重写（rebrand 由提交如实记录）。
 - **参考**: .sisyphus/plans/weftik-rename/plan.md（v2 执行差分）+ plan.md（v1 依据）

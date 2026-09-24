@@ -20,7 +20,7 @@
 - **HMI 设计器就绪** — 2026-07-19，可视化拖拽编辑器（react-rnd 自由布局画布）、7 种工业 widget（Gauge/Trend/Tank/Indicator/Button/Display/Text）、信号绑定对话框（controller_signal_snapshot 集成）、属性面板（位置/尺寸/标签/信号/类型专属配置）、Edit/Preview 模式切换、YAML 持久化（save_hmi_layout/load_hmi_layout）
 
 ## 仓库状态
-- **最新提交**: 改名链 — `44f2546` feat(rename)! 代码面 / docs 面随后；本地领先 origin 未 push（门禁全绿后才推）
+- **最新提交**: 改名链 — 代码面主体 `1d4341f` feat(rename)! / 文档面 `5e23949`；本地领先 origin 未 push（门禁全绿后才推）
 - **提交历史**: 399+ commits on main (2026-07-08 起，公开仓自 v0.1.0 发布后继续)
 - **源代码**: 24 crates（crates/）。apps/studio/ 已由 Tauri 应用改建为 Theia 应用（D71）；AUDEDeck 已移除（D117）
 - **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形死循环 8 + ST→IR 控制流 17）；vitest 144 (LD) + 26 (FBD)；Playwright E2E LD/FBD（改名后待重跑验证）
