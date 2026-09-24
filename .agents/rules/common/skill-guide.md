@@ -47,7 +47,7 @@
 | openspec-sync-specs | 同步 delta specs 到主 specs | 低 |
 | doc-audit | 文档变更后、阶段切换前 | 中 |
 | test-harness | 需要从 SDD 生成测试 | 中 |
-| design-system | 创建/修改 UI 组件 | 高 |
+| design-system | 创建/修改 UI 组件（🧊 D119：仅限 VS Code 薄扩展表面 / 外部 Panel 指引） | 中 |
 | skill-creator | 创建新技能 | 低 |
 | ecosystem-scan | 优化 .agents/ 体系 | 低 |
 | lesson-review | 回顾经验教训 | 低 |

@@ -4,7 +4,7 @@
 
 ## 一、架构总览
 
-Weftik（Audio/Industrial Embedded System）是一个工业控制系统运行时模拟平台。项目目前处于早期开发阶段，尚无源代码。
+Weftik 是面向工业自动化与机器人的统一开发与运行时框架：24 个 Rust crates（HAL/Runtime/编译器/amw/协议适配/DAP/CNC）+ 冻结态 Theia Studio + weftik CLI。开发主形态 = **CLI-first + 声明式工程（project.yaml）+ 任意编辑器**（D119）。
 
 本指南说明 AI agent 如何与 Weftik 开发环境交互，以及 OpenCode 工具链的配置使用方法。
 
@@ -322,7 +322,7 @@ Weftik 配置的 MCP 服务器：
 
 ### 6.1 开发工作流概述
 
-Weftik 项目目前处于早期阶段，尚无源代码。具体的工作流将在代码库搭建后确定。
+项目已具备完整 Rust workspace（799+ 测试）与 CLI（weftik.sh / scripts/weftik_cli.py：build/test/qa/run/config/deploy）。现行开发工作流 = CLI + DAP 调试 + SimHarness（D119）；核心任务序见 status.md。
 
 以下为 OpenCode 通用的开发流程参考：
 
@@ -410,7 +410,7 @@ OpenCode 已配置自动加载全部 4 个文件（通过 `opencode.json` 的 `i
 
 ### 8.4 通用开发最佳实践
 
-由于 Weftik 项目尚未确定具体技术栈，以下为通用软件开发原则：
+技术栈已定（Rust 核心 / FlatBuffers / Theia 冻结件 / CLI-first，见 conventions.md）；以下为通用补充原则：
 
 1. **不可变性优先**: 始终使用不可变数据结构，禁止原地修改
 2. **结构化日志**: 使用结构化日志库，避免 `console.log`
@@ -427,7 +427,7 @@ OpenCode 已配置自动加载全部 4 个文件（通过 `opencode.json` 的 `i
 4. **禁止**: AI 自动 git commit 或修改 `version.txt`
 5. **提交前**: 须征得用户同意
 
-> **项目状态**: Weftik 仓库目前尚无提交记录，项目处于早期架构设计阶段。
+> **项目状态**: 399+ commits（v0.1.0 已发布），24 crates；改名完成（D118）、Studio 冻结 / CLI-first（D119）。
 
 ### 8.6 文档编写风格
 

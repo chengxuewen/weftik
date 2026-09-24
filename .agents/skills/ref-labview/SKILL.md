@@ -1,6 +1,6 @@
 ---
 name: ref-labview
-description: "LabVIEW 图形编程参考 — G 语言数据流、.vi 二进制格式教训、硬件集成模式。用于 Weftik 可视化设计器和 HAL 设计。"
+description: "LabVIEW 图形编程参考 — G 语言数据流、.vi 二进制格式教训、硬件集成模式。用于 Weftik HAL 设计与可视化设计器后置参考（🧊 D119）。"
 ---
 
 # ref-labview — LabVIEW Graphical Programming Reference for Weftik

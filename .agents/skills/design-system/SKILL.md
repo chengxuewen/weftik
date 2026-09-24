@@ -1,7 +1,7 @@
 ---
 name: design-system
 description: >-
-  为 Weftik 工业控制平台生成一致的 UI。引导 AI 代理创建符合 Weftik 工业设计系统的前端界面。
+  为 Weftik 工业控制平台生成一致的 UI。🧊 D119 后适用范围收缩：Studio 冻结、Panel 移交外部、可视化买不造——仅用于 (a) VS Code 薄扩展表面与 (b) 给外部 Panel 项目的设计指引，不再引导 Theia 扩展 UI 开发。
 compatibility: >-
   Designed for Claude Code, GitHub Copilot, 和类似 AI 编码代理。
 disable-model-invocation: false
@@ -20,7 +20,7 @@ metadata:
 
 **用途**：引导 AI 代理在前端开发中遵循 Weftik 工业设计系统，确保所有 UI 输出在色彩、字体、间距、组件和交互行为上与平台规范一致。
 
-**适用范围**：`apps/debug/` 中所有前端工作，以及未来 `apps/frontend/` 中的开发任务。
+**适用范围**：(a) VS Code 薄扩展（packages/vscode-weftik，如建立）的表面；(b) 外部 Panel 项目咨询时引用本规范。⛔ 原 `apps/debug/`、`apps/frontend/` 均不存在；Studio UI 开发已随 D119 冻结。
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: ref-codesys
-description: "CODESYS IDE 平台参考 — IEC 61131-3 工业控制开发平台架构、IDE 设计模式、运行时模型。用于 Weftik Studio 设计决策。"
+description: "CODESYS IDE 平台参考 — IEC 61131-3 工业控制开发平台架构、IDE 设计模式、运行时模型。用于 Weftik Studio 设计决策（🧊 D119 后置参考）。"
 ---
 
 # ref-codesys

@@ -1,6 +1,6 @@
 ---
 name: ref-fuxa
-description: "FUXA 开源 Web SCADA/HMI 参考 — SVG 拖拽编辑器、插件化协议适配器、轻量 Node.js 部署、JSON 项目文件。用于 Weftik HMI 设计。"
+description: "FUXA 开源 Web SCADA/HMI 参考 — SVG 拖拽编辑器、插件化协议适配器、轻量 Node.js 部署、JSON 项目文件。用于 HMI 设计（📦 外部 Panel 项目参考；D117 移交/D119 买不造）。"
 ---
 
 # ref-fuxa — FUXA Web SCADA Reference for Weftik Studio HMI Design

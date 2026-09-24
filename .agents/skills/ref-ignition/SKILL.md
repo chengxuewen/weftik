@@ -1,6 +1,6 @@
 ---
 name: ref-ignition
-description: "Ignition SCADA 平台参考 — Perspective Web HMI、Vision 客户端、模块化架构、Jython 脚本引擎。用于 Weftik Studio HMI 和 Runtime 设计。"
+description: "Ignition SCADA 平台参考 — Perspective Web HMI、Vision 客户端、模块化架构、Jython 脚本引擎。用于 Weftik Runtime 设计与 HMI 后置参考（🧊 D117/D119）。"
 ---
 
 # ref-ignition: Ignition SCADA Platform Reference

@@ -59,7 +59,7 @@ Read every spec whose module overlaps. Note if no relevant spec exists.
 | **HAL Core** | `crates/weftik-hal-core/` | New traits, types, primitives, error types |
 | **amw_inproc** | `crates/amw_inproc/` | Transport/Discovery implementation changes |
 | **FlatBuffers** | `crates/hal-flatbuffers/` + `.fbs` schemas | New/changed cross-language types |
-| **Studio** | `apps/studio/` | Tauri+React+TypeScript frontend changes (D21) |
+| **Studio** 🧊 | `apps/studio/` | 🧊 冻结（D119）— 仅 build-green 维护；UI 类提案改投 CLI/VS Code 薄扩展（D21→D71→D119） |
 
 #### d. Assess affected transports
 
@@ -82,7 +82,7 @@ Create `.sisyphus/plans/<change-name>/proposal.md` with these sections:
 - **What** — 2-4 sentences, specific
 - **Why** — problem, use case, gap
 - **Scope** — in scope / out of scope
-- **Layers Affected** — checklist: HAL Core / amw_inproc / FlatBuffers / Studio
+- **Layers Affected** — checklist: HAL Core / amw_inproc / FlatBuffers / Studio（🧊 D119 冻结，默认 out-of-scope）
 - **Transports Affected** — amw_inproc: yes/no/partial, amw_zenoh: yes/no/partial
 - **Existing Specs** — list `openspec/specs/<name>.md` with one-line description each
 - **New Specs Needed** — list or "None"
@@ -96,7 +96,7 @@ Create `.sisyphus/plans/<change-name>/design.md` with these sections:
 - **Architecture** — ASCII diagram or text description showing modules, data flow, ownership
 - **Files to Touch** — Create / Modify / Delete sub-tables with file paths and purpose
 - **Data Flow** — critical path from entry to exit (Signal: write→store→callback; RPC: invoke→dispatch→result)
-- **Integration Points** — HAL trait boundary, amw boundary, FlatBuffers boundary, Studio boundary
+- **Integration Points** — HAL trait boundary, amw boundary, FlatBuffers boundary, CLI/IPC boundary（Studio boundary 🧊 D119）
 - **Rust/HAL Specifics** — new traits/structs, Signal/StreamChannel wiring (D10), thread safety (Send+Sync, Config Barrier D17), YAML→FlatBuffers config (D24)
 - **Error Handling** — HAL 5-layer error model (D46): type/transport/resource/discovery/scheduling
 - **Testing Strategy** — checklist: Rust unit, integration, FlatBuffers round-trip, amw_inproc E2E, qa-fast gate (`./scripts/qa/qa-fast.sh`)
@@ -162,7 +162,7 @@ Display summary — change name, artifact list, line counts. Let user request ch
 | HAL Core | `crates/weftik-hal-core/src/` |
 | amw_inproc | `crates/amw_inproc/src/` |
 | FlatBuffers schemas | `crates/hal-flatbuffers/*.fbs` |
-| Studio | `apps/studio/src/` |
+| Studio 🧊 | `apps/studio/src/` |
 | Specs | `openspec/specs/` |
 | Plans | `.sisyphus/plans/<change-name>/` |
 | Integration tests | `tests/` |
@@ -178,7 +178,7 @@ Display summary — change name, artifact list, line counts. Let user request ch
 | HAL Core | `crates/weftik-hal-core/` | Rust (traits, types, primitives) |
 | amw-inproc | `crates/amw_inproc/` | Rust (HAL Transport/Discovery in-process) |
 | HAL FlatBuffers | `crates/hal-flatbuffers/` | Rust + .fbs schemas |
-| Studio | `apps/studio/` | Tauri + React + TypeScript (D21) |
+| Studio 🧊 | `apps/studio/` | 冻结（D119）；Theia（D71 后，原 D21 Tauri+React 已废） |
 
 ### Build commands
 

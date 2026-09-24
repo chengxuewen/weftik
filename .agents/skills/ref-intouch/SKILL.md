@@ -1,6 +1,6 @@
 ---
 name: ref-intouch
-description: "AVEVA InTouch HMI/SCADA 参考 — WindowViewer/OMI 架构、ISA-101 高密度画面、告警管理。用于 Weftik HMI 设计。"
+description: "AVEVA InTouch HMI/SCADA 参考 — WindowViewer/OMI 架构、ISA-101 高密度画面、告警管理。用于 HMI 设计（📦 外部 Panel 项目参考；D117 移交/D119 买不造）。"
 ---
 
 # ref-intouch: AVEVA InTouch HMI/SCADA Reference

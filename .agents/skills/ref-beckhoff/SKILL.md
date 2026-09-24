@@ -1,6 +1,6 @@
 ---
 name: ref-beckhoff
-description: "Beckhoff TwinCAT 3 平台参考 — 工业自动化架构、ADS 协议、TwinCAT IDE 设计模式。用于 Weftik Studio 和 Runtime 设计。"
+description: "Beckhoff TwinCAT 3 平台参考 — 工业自动化架构、ADS 协议、TwinCAT IDE 设计模式。用于 Weftik Studio（🧊 D119 后置参考）和 Runtime 设计。"
 ---
 
 # ref-beckhoff

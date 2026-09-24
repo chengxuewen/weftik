@@ -1,6 +1,6 @@
 ---
 name: ref-qtouch
-description: "QiTech Control / QTouch 跨平台组态 SCADA 参考 — NixOS 部署、Tauri IDE、黑盒交付模式。用于 Weftik Studio 和 Runtime 设计。"
+description: "QiTech Control / QTouch 跨平台组态 SCADA 参考 — NixOS 部署、Tauri IDE、黑盒交付模式。用于 Weftik Studio（🧊 D119 后置参考）和 Runtime 设计。"
 ---
 
 # ref-qtouch — QiTech Control / QTouch 平台参考
