@@ -16,6 +16,7 @@
 | test-driven-development | 实现功能或修复 bug，写代码前 | **必用** |
 | systematic-debugging | 遇到 bug、测试失败、意外行为 | **必用** |
 | think-before-act | 复杂决策，需要先调研再动手 | 高 |
+| skill-router | 任务复杂、多技能适用或不确定用哪个技能时的主动路由分析 | 中 |
 
 ### 质量类（CHECK quality）
 
@@ -48,6 +49,8 @@
 | doc-audit | 文档变更后、阶段切换前 | 中 |
 | test-harness | 需要从 SDD 生成测试 | 中 |
 | design-system | 创建/修改 UI 组件（🧊 D119：仅限 VS Code 薄扩展表面 / 外部 Panel 指引） | 中 |
+| rust-testing / rust-patterns | 编写/评审 Rust 测试与模式（vendored ECC，项目规则优先） | 中 |
+| archify | 需要架构/数据流/时序/状态图可视化（文档交付物） | 中 |
 | skill-creator | 创建新技能 | 低 |
 | ecosystem-scan | 优化 .agents/ 体系 | 低 |
 | lesson-review | 回顾经验教训 | 低 |

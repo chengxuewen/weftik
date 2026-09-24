@@ -6,7 +6,7 @@ paths:
 # Rust Rules
 
 > This file consolidates Rust-specific rules (previously in `rust/` directory).
-> Common Rust principles also apply from [common/coding-style.md](../common/coding-style.md), [common/hooks.md](../common/hooks.md), [common/patterns.md](../common/patterns.md), [common/security.md](../common/security.md), [common/testing.md](../common/testing.md).
+> Common Rust principles also apply from [common/coding-style.md](common/coding-style.md), [common/hooks.md](common/hooks.md), [common/patterns.md](common/patterns.md), [common/security.md](common/security.md), [common/testing.md](common/testing.md).
 
 ## Formatting
 

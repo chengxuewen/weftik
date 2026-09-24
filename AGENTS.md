@@ -12,12 +12,12 @@ Weftik — 面向工业自动化与机器人的统一开发与运行时框架（
 ```
 Weftik/
 ├── .opencode/          # OpenCode 配置（插件、MCP、LSP、instructions）
-│   ├── opencode.json   # 主配置：模型、插件、44 条 instructions、6 个 MCP、8 个 LSP
+│   ├── opencode.json   # 主配置：模型、插件、21 条 instructions、多 MCP/LSP（见文件 mcp/lsp 字段）
 │   ├── agent-guide.md  # 554 行 — AI 代理使用指南（5 层模型体系、OMO 编排）
 │   └── init-mcp-*.mjs  # 7 个 MCP 自动安装脚本（codegraph/playwright/shadcn/tailwind/lucide/postgres）
 ├── .agents/
-│   ├── rules/          # 89 个编码规则文件（16 语言 × common + 中文副本）
-│   ├── skills/         # 22 个技能（design-system + 11 openspec-* + 4 ref-* + book-to-skill + doc-audit + ecosystem-scan + lesson-review + skill-router + skill-creator + test-harness + think-before-act）
+│   ├── rules/          # 17 个规则文件（common/ 14 + rust.md + typescript.md + README；2026-07-28 已合并去重 89→17）
+│   ├── skills/         # 25 个技能（6 openspec-* + 7 ref-* + 3 vendored[rust-testing/rust-patterns/archify] + design-system + test-harness + skill-creator + skill-router + doc-audit + ecosystem-scan + lesson-review + book-to-skill + think-before-act）
 │   └── memorys/        # 4 个项目记忆文件（status/conventions/decisions/pitfalls）
 ├── docs/
 │   ├── architecture.md           # ~1,700 行 — 系统架构概览（6 主章）
@@ -139,5 +139,5 @@ node lib/backend/main.js --port=3100  # 浏览器模式
 - **.sisyphus/** 被 gitignore 排除 — 计划文件和证据不提交到仓库
 - **双 package.json** — 根目录用 npm，`.opencode/` 用独立包（插件系统）
 - **HAL 设计审核** — 3 专家 × 27 项发现，全部交互式确认，12 份独立文档合并为详细设计
-- **Agent 超配** — 规则（89 个文件）和 MCP 服务器（7 个活动）是为未来开发准备的
+- **Agent 超配** — 规则（17 文件，2026-07-28 合并后）和 MCP 服务器是为未来开发准备的
 - **test 基础设施** — 不存在。要求 80% 覆盖率、TDD、AAA 模式（在规则中声明，但无框架可执行）

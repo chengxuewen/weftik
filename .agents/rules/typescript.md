@@ -8,7 +8,7 @@ paths:
 # TypeScript/JavaScript Rules
 
 > This file consolidates TypeScript/JavaScript-specific rules (previously in `typescript/` directory).
-> Common TS/JS principles also apply from [common/coding-style.md](../common/coding-style.md), [common/hooks.md](../common/hooks.md), [common/patterns.md](../common/patterns.md), [common/security.md](../common/security.md), [common/testing.md](../common/testing.md).
+> Common TS/JS principles also apply from [common/coding-style.md](common/coding-style.md), [common/hooks.md](common/hooks.md), [common/patterns.md](common/patterns.md), [common/security.md](common/security.md), [common/testing.md](common/testing.md).
 
 ## Types and Interfaces
 

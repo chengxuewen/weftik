@@ -121,7 +121,7 @@ theia-plugins/
 
 # Development sandbox (complete ignore)
 apps/studio-theia-test/
-test-*
+/test-*
 
 # napi-rs bridge artifacts
 crates/weftik-theia-bridge/node_modules/

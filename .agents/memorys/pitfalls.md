@@ -205,7 +205,7 @@
 
 ### HMI 布局无运行时验证
 - **问题**: HMI 布局在 Studio 端保存时无验证（无重叠检测、无信号绑定有效性校验、无 widget 数量上限）。错误布局仅在部署到 AUDEDeck 时发现
-- **来源**: `apps/studio/src/types/hmi.ts` — HmiLayout 类型无验证层
+- **来源**: `apps/studio/src/types/hmi.ts` — HmiLayout 类型无验证层（文件已随 D117 设计器删除——历史）
 - **方案**: P1 添加 HmiLayoutVendor 校验函数：widget 少於 50 个、信号名匹配注册表、widget 位置不越界。P2 升级为 Zod schema 验证（遵循 TypeScript 编码约定）
 
 ### app-toolbar unclosed div causes DOM nesting bug
@@ -643,6 +643,8 @@
 ### 并行 edit() 导致重复代码
 - **问题**: 多次 edit() 调用导致重复的 const existing、重复的 .type(edge.type)、重复的 console.error 行
 - **原因**: 每次 edit 替换时未确认目标范围已被前次 edit 修改，产生残留代码
+- **方案**: 每次 edit 后 Read 验证文件内容；同一文件 3 次以上 edit 使用 Write 整体重写
+- **验证**: `grep -c '重复关键字' file.ts` 检查无意外重复计数 > 1
 
 ### 裸 npm run build 跳过 symlink 恢复 → GLSP 服务器静默失败
 - **问题**: 修复 package.json 后用 `npm run build`（非 `npm run build:glsp`），build-glsp.sh 的 '恢复 symlink' 步骤被跳过。GLSP 服务器无法解析 `@eclipse-glsp/server` 模块，`GLSPSocketServerContribution` 捕获错误但仅写日志，不通知用户
@@ -657,8 +659,6 @@
 - **方案**: 暂时禁用 HMI designer（从 apps/studio/package.json 移除），待 vitest 依赖问题解决后重新启用
 - **验证**: `cd theia-extensions/weftik-hmi-designer && npx vitest run` 应全部通过
 - **状态**: ⛔ 已作废（D117：设计器整体删除，本 vitest 问题不再修复；关联 D106 条目已标终态）
-- **方案**: 每次 edit 后 Read 验证文件内容；同一文件 3 次以上 edit 使用 Write 整体重写
-- **验证**: `grep -c '重复关键字' file.ts` 检查无意外重复计数 > 1
 
 ## FBD GLSP 迁移 (2026-07-31)
 
@@ -852,7 +852,8 @@
 ### FBD 编辑器缺 E2E — vitest 通过 ≠ 浏览器可用
 - **问题**: FBD React Flow 编辑器迁移后只有 vitest 26/26，无 Playwright E2E；LD 已有 20 场景
 - **原因**: Phase 3 FBD 迁移时只跑了单元测试，未补 E2E（时间限制）
-- **方案**: 待办 — FBD E2E 补齐（端口连线/FB 拖放/编译路径）
+- **方案**: ✅ 已补齐 — fbd-editor-reactflow.spec.ts（2026-09-24 实测 10 用例）；🧊 D119 后为冻结件保险丝
+- **验证**: `apps/studio/e2e/` 含 fbd-editor spec
 - **验证**: `apps/studio/e2e/` 应含 fbd-editor spec
 - **教训**: 每个编辑器迁移的验收标准必须含 E2E，vitest 无法捕获浏览器集成问题
 
@@ -1017,7 +1018,7 @@
 - **复现**: 正常 Open Folder 打开工程 + New Weftik Project 自动打开 workspace 都复现；pou-tree-model 单测 9/9 通过（模型逻辑正确）→ 是运行时问题（collectFiles 扫不到 或 refresh 未触发）
 - **原因（未定位）**: init() 监听 onWorkspaceChanged/onDidFilesChange → scheduleRefresh，但 workspace 打开后 refresh 未正确扫到文件；可能 reload 时序问题（workspaceService.open 触发整页 reload，reload 后 init 的 refresh 时机早于文件就绪）
 - **影响**: 核心 H1 门禁（无 workspace 创建工程 + 自动打开）已验证通过，POU 树文件扫描是独立 pre-existing bug，不阻塞本次修复
-- **待办**: 单独调查 collectFiles/refresh 为何在 workspace 打开后不刷新；E2E 断言已改为 URL 指向新工程（核心），不依赖 POU 树文件显示
+- **待办**: 🧊 D119 后优先级降为冻结件级——Studio 已冻结，本 bug 不再阻塞任何活跃工作（工程发现走 CLI/文件树）；若 Studio 复活再查 collectFiles/refresh 时序
 - **验证**: `npx vitest run __tests__/pou-tree-model.test.ts` 9/9 pass（模型层）；运行时要单独 debug
 
 ## New Weftik Project 菜单项不可见 (2026-08-10)
@@ -1068,15 +1069,21 @@
 
 ### BSD sed 不支持 \\b 词边界 —— 静默漏改
 - **问题**: macOS `sed -i '' -E 's/\\baudesys\\b/.../g'` 匹配 0 处不报错，裸词/camelCase（`AudesysX`、`createAudESYS..`、`audesys@`）全漏
-- **方案**: 用显式后缀规则集（`audesys-`/`audesys_`/`audesys.`/`audesys([A-Z]`/`audesys@`/`audesys(["' ])`）+ 收尾强制 `git ls-files | xargs grep -ci audesys` 审计为 0
+- **原因**: BSD sed（darwin 默认）不实现 GNU 扩展 \b；替换静默零命中不报错，与 grep 的“无匹配≠错误”叠加后无人察觉
+  - **方案**: 用显式后缀规则集（`audesys-`/`audesys_`/`audesys.`/`audesys([A-Z]`/`audesys@`/`audesys(["' ])`）+ 收尾强制 `git ls-files | xargs grep -ci audesys` 审计为 0
+- **验证**: 收尾审计命令返回 0 命中（本仓已达成）
 - **禁止**: 在 darwin 上依赖 GNU 扩展 \\b/\\w 做批量改名
 
 ### yarn 可选二进制缓存/网络双坏 → 必须 --ignore-optional
 - **问题**: 本仓 `yarn install` 周期性失败于 `@colbymchenry/codegraph-linux-x64` ENOENT（缓存残骸 + 网络重试），`rm -rf` 单项缓存无效
-- **方案**: `yarn install --frozen-lockfile --ignore-optional`（开发依赖的可选平台二进制，非应用必需）
+- **原因**: 可选平台二进制不在关键路径但 yarn 将其纳入安装图；镜像站残骸 + 网络重试双重失败且 rm 单项缓存无效
+- **方案**: `yarn install --frozen-lockfile --ignore-optional`（开发依赖的可选平台二进制，非应用必需）；后续已更优：codegraph devDep 已摘除（MCP 由 init 脚本自愈），常规不再需要该旗标
+- **验证**: 构建链 theia build + check:gates 全绿
+- **禁止**: 不要为可选二进制反复 `rm -rf node_modules` 重装——本仓证明无效且丢缓存
 - **验证**: 构建链 theia build + check:gates 全绿
 
 ### 既有回归隔离清单（非改名引入，修它 = 独立任务）
-- **G1 梯形规划死循环**（8 个）：`weftik-gcode-compiler` compile_test/full_pipeline_test 中含 G1+`run_to_halt` 的用例永不 Halt；根因疑在 `weftik-cnc-motion emit_g1` 的 JumpIf 终止条件；`run_to_halt` 无步数上限
-- **ST→IR 控制流回归**（17 个）：`weftik-hal-binding-gen/tests/pipeline_test.rs` while/repeat/exit/nested 族（10 hang + 7 fail），未改名历史同样复现；疑提交 8d6089a（IL Store/SignalName）引入
+- **G1 梯形规划死循环**（7 个，2026-09-24 实测校正：1 compile_test + 6 full_pipeline）：`weftik-gcode-compiler` 中含 G1+`run_to_halt` 的用例永不 Halt；根因疑在 `weftik-cnc-motion emit_g1` 的 JumpIf 终止条件；`run_to_halt` 无步数上限
+- **ST→IR 代码生成回归**（18 个，含控制流 13 + 运算符 mod/xor 2 + 定时器/计数器 tof/ctu/demo_timer 3）：`weftik-hal-binding-gen/tests/pipeline_test.rs`，未改名历史同样复现；疑提交 8d6089a（IL Store/SignalName）引入
+- **另有 1 个与改名无关的长期 flaky**：`weftik-runtime/tests/ipc_integration_test.rs`（Controller shutdown 非确定性），不计入上述 25，修 shutdown 确定性时一并处理
 - **处置**: 全部 `#[ignore]` 带原因注释；修后去掉 ignore 即可回归门禁；状态见 status.md 待办

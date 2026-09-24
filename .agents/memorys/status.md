@@ -24,7 +24,7 @@
 - **最新提交**: 改名链 — 代码面主体 `1d4341f` feat(rename)! / 文档面 `5e23949`；本地领先 origin 未 push（门禁全绿后才推）
 - **提交历史**: 399+ commits on main (2026-07-08 起，公开仓自 v0.1.0 发布后继续)
 - **源代码**: 24 crates（crates/）。apps/studio/ 已由 Tauri 应用改建为 Theia 应用（D71）；AUDEDeck 已移除（D117）
-- **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形死循环 8 + ST→IR 控制流 17）；vitest 160 (LD) + 26 (FBD)；Playwright E2E 72/72（🧊 D119：冻结件回归保险丝，仅修核心改动引起的失败）
+- **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形 7 + ST→IR 代码生成 18（控制流/运算符/定时器）；另有 1 个无关长期 IPC shutdown flaky 不计入 25）；vitest 160 (LD) + 26 (FBD)；Playwright E2E 72/72（🧊 D119：冻结件回归保险丝，仅修核心改动引起的失败）
 - **SDD 规范**: openspec/specs/：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI 契约(13，设计器段已随 D117 删除) + Studio Theia(54) + 编辑器规范若干（codesys-workflow 30 + ld 系 37）
 - **CI**: 本地 qa-fast 5 门禁（test/clippy/fmt/deny/unwrap）；GitHub workflows 已删（D-c：暂不要 CI，Gitee origin 下从未触发）
 - **依赖**: Rust toolchain stable + yarn workspaces（codegraph devDep 已摘，MCP 由 init 脚本自愈安装）
@@ -296,3 +296,14 @@ find theia-extensions -path "*/node_modules/@theia*" 2>/dev/null
 - pitfalls.md: 新增 5 条（Symbol 重复、toService 不兼容、缓存问题、服务器 node_modules、commandOf 失败）
 - edit-safety.md: 新增 Rule 19 — 构建后 Symbol 唯一性检查
 - conventions.md: 新增 GLSP 构建两步法
+
+
+## Ecosystem Scan (2026-09-24 Full)
+
+- **本地**：14 原始→10 真发现全修（AGENTS 元数据 44→21/89→17/技能构成；rules ../common 断链；skill-router 路由行；ignore 台账实测校正 **G1 7 + ST→IR 18 + 无关 ipc flaky 1**；scripts/qa/qa-fast.sh 死路径×5；conventions 编辑约束收敛 edit-safety 单源；pitfalls 孤儿归位+五段式补齐+3 旧待办关闭；decisions 死路径 D67/D68/D70/D72/D36 + D95 引用漂移）；代理误报剔 4（vitest 160 实为正确、rules 链接非×5、st-compiler 引用系刻意记录等）
+- **引入技能（vendored，LICENSE+出处+安全扫描结论已入各 SKILL.md 头部）**：`rust-testing` + `rust-patterns`（ECC@bf70150 MIT，纯方法论零可执行面）、`archify`@9e35d2b（MIT，4.4MB 含本地渲染器，examples/ 已排除；首次运行前目视 bin 命令）；技能数 22→25
+- **缓/拒**：sickn33 vscode-extension-guide 缓（聚合镜像供应链弱，人工审查后再入）；anthropics/skills 主体、cargo 包装类 MCP、无 LICENSE 项拒
+- **superpowers 同步**：`diagnosing-superpowers` 等上游新增随 oh-my-openagent 包更新自动到位，无手动动作
+- **MCP 里程碑伴生登记**（详见 conventions 硬件 MCP 安全约定）：mcp-grafana→D119§4；modbus-connector-mcp→§5④；OPC 基金会 UA MCP→M2；virtme-ng→§5③(需 Linux 主机)；P2：probe-rs embedded-debugger / zenoh-plugin-mcp(2★，引入需先审后 fork) / mcp-serial / 示波器类
+- **生态真空确认**：MQTT/Grafana-dC/DAP/FlatBuffers/IEC-61131 无任何成熟 skill——自研方向获外部印证，产出可反哺生态
+- **验证命令**：`grep -rn 'scripts/qa/qa-fast.sh|](\.\./common/|weftik-ipc-server|p0-milestone' .agents/ AGENTS.md SKILL.md` 应为 0 命中

@@ -114,7 +114,7 @@ description: "Weftik 项目文档与架构审计。并行检查架构文档、�
 **核心问题**：
 - Rust: `crates/*/tests/` 目录下是否有未被 cargo test 自动发现的孤立测试文件？
 - FlatBuffers: schema 变更后是否有对应的 round-trip 测试？
-- CI: `scripts/qa/qa-fast.sh` 是否覆盖所有测试目标？
+- CI: `scripts/qa-fast.sh` 是否覆盖所有测试目标？
 
 ### 6. 代码→规范追溯 (Phase 1+ 预留)
 当源代码存在时：核查 Rust/TS 代码实现是否与设计文档一致。

@@ -99,7 +99,7 @@ Create `.sisyphus/plans/<change-name>/design.md` with these sections:
 - **Integration Points** — HAL trait boundary, amw boundary, FlatBuffers boundary, CLI/IPC boundary（Studio boundary 🧊 D119）
 - **Rust/HAL Specifics** — new traits/structs, Signal/StreamChannel wiring (D10), thread safety (Send+Sync, Config Barrier D17), YAML→FlatBuffers config (D24)
 - **Error Handling** — HAL 5-layer error model (D46): type/transport/resource/discovery/scheduling
-- **Testing Strategy** — checklist: Rust unit, integration, FlatBuffers round-trip, amw_inproc E2E, qa-fast gate (`./scripts/qa/qa-fast.sh`)
+- **Testing Strategy** — checklist: Rust unit, integration, FlatBuffers round-trip, amw_inproc E2E, qa-fast gate (`./scripts/qa-fast.sh`)
 - **Dependencies** — new cargo deps, FlatBuffers schema changes (or "None")
 
 ### 6. Write tasks.md
@@ -136,7 +136,7 @@ Create `.sisyphus/plans/<change-name>/tasks.md`. Tasks must be **atomic, ordered
   - Verify: `cargo test --test <name>_test`
 
 - [ ] **Run qa-fast gate**
-  - Verify: `./scripts/qa/qa-fast.sh` (5 gates: test/clippy/fmt/deny/unwrap)
+  - Verify: `./scripts/qa-fast.sh` (5 gates: test/clippy/fmt/deny/unwrap)
 
 ## Phase 4: Documentation & Cleanup
 
@@ -186,7 +186,7 @@ Display summary — change name, artifact list, line counts. Let user request ch
 cargo build                                    # Full build
 cargo build --package weftik-hal-core --package amw_inproc  # HAL-only
 cargo test                                     # Debug build + tests
-./scripts/qa/qa-fast.sh                        # QA fast gate (5 checks)
+./scripts/qa-fast.sh                        # QA fast gate (5 checks)
 ```
 
 ### Rust conventions

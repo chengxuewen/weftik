@@ -108,7 +108,7 @@ cargo test -p <crate-name>
 flatc --rust -o crates/<crate>/src/ crates/<crate>/schema/*.fbs
 
 # Gate 6: Full QA gate
-./scripts/qa/qa-fast.sh
+./scripts/qa-fast.sh
 
 # Gate 7: Coverage (Phase 1+ only)
 cargo tarpaulin --workspace --fail-under 80
@@ -191,7 +191,7 @@ cargo fmt --check
 cargo clippy -- -D warnings
 
 # Full QA gate
-./scripts/qa/qa-fast.sh
+./scripts/qa-fast.sh
 ```
 
 ### Rust Implementation Reminders

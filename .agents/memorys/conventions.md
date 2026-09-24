@@ -30,7 +30,6 @@
 ## 提交规范
 - 格式：遵循 conventional commits 规范（feat/fix/docs/chore/refactor）
 - 提交前验证：`grep -ri modacs . --exclude-dir=.git --exclude-dir=.sisyphus`
-- 提交前验证：`grep -ri modacs . --exclude-dir=.git --exclude-dir=.sisyphus`
 
 ## 通用编码约定
 - 不可变性优先（不可变模式）
@@ -47,12 +46,7 @@
 - 禁止 `console.log`（生产代码），禁止 `as any` / `@ts-ignore`
 
 ### 编辑代码约束
-1. 编辑前读取目标区域 ±5 行
-2. 编辑后立即 `tsc --noEmit` 验证语法
-3. 同一文件 3+ 次 edit → 改用 write 整体重写
-4. range replace 的 end 锚点禁止选闭合括号行
-5. 同一文件第 2 次 edit 前必须 re-read
-6. 编辑后 `grep -c '{' file && grep -c '}' file` 验证括号匹配
+> 单一真相源在 `rules/common/edit-safety.md`（规则 1-20）；本节不再维护副本。历史 6 条已全部归入：读区±5（Rule 5）、tsc 验证（Rule 3/9）、3+次改 write（Rule 9）、括号/结构校验（Rule 3/6）、re-read（Rule 5）。
 
 ## HAL 协议设计约定
 - 命名规范：Signal = `component.interface.name`，StreamChannel = `domain.stream_name`，RPC = `action.{id}.{status|feedback}`（命名模式，非第四原语）
@@ -250,3 +244,10 @@ done
 - **品牌显示名唯一大写层** = `Weftik`；环境变量 `WEFTIK_*`；Prometheus 指标 `weftik_runtime_*`；C ABI `weftik_`；npm scope `@weftik/`；crate `weftik-<module>`（kebab）
 - **yarn install 必须带 `--ignore-optional`**（开发依赖的可选平台二进制在本环境缓存/网络双坏）；命令：`yarn install --frozen-lockfile --ignore-optional`
 - **品牌 sed 前先审长度耦合**：`grep -n 'b"weftik"\|\[7\.\.1\|len()' crates/`；BSD sed 不支持 `\b`，用显式后缀规则集 + 收尾 `git ls-files | xargs grep -ci weftik` 审计
+
+## 硬件类 MCP 安全约定（ecosystem-scan 2026-09-24 入规）
+- 任何能写真实设备的 MCP（串口/Modbus/OPC UA/示波器/调试器）默认以**只读档**启动：`modbus-connector-mcp --read-only`、`mcp-serial` 走 `MCP_SERIAL_ALLOWED_PORTS` 白名单、OPC UA 官方 MCP 限 `--profile core`
+- 总线/串口与 Weftik Runtime **独占冲突**：同一 COM 口/总线同时只能有一个持有者，接入前先杀占用进程（GLSP 进程残留同族教训）
+- 写寄存器/SCPI/IO = 向运行中 PLC 下达作动：必须在仿真或台架隔离环境验证后才允许接真机
+- 里程碑伴生登记（见 status.md 生态扫描节）：mcp-grafana→D119 §4 启动时；modbus-connector-mcp→§5④ 真机时；OPC UA 官方 MCP→M2 启动时；virtme-ng→§5③ RT 里程碑且需 Linux 主机；zenoh-plugin-mcp→先审源码后 fork 自维护
+- 验证：安装后 `grep -c 'read-only\|ALLOWED_PORTS\|profile' .opencode/opencode.json` ≥1（只读旗标必须落配置，不靠口头约定）

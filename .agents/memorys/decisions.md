@@ -413,20 +413,20 @@
 - **日期**: 2026-07-19
 - **决定**: HMI 布局部署使用与 `deploy_program` (IPC method 0x10) 相同的模式：Studio 通过 ControllerClient 发送 HmiLayout → Controller 写入 Config Barrier → 下周期边界 Panel 获取新布局。新增 IPC method 0x17 (DEPLOY_HMI_LAYOUT)，不修改现有 0x10 语义。
 - **理由**: Config Barrier (D17) 已在周期边界批量应用变更，HMI 布局变更适用相同机制。0x10 的 HMAC 认证+RBAC (Role::Engineer) 可直接复用。新建 0x17 保持方法语义单一职责——0x10=程序部署，0x17=HMI 布局部署。
-- **参考**: `crates/weftik-ipc-server/src/`, `docs/modules/hal/config-barrier-design.md`, `docs/modules/runtime/panel-architecture-design.md`
+- **参考**: `crates/weftik-runtime/src/ipc.rs`, `docs/modules/hal/config-barrier-design.md`, `docs/modules/runtime/panel-architecture-design.md`
 
 ## D67: HMI 调试信号注入 = sim_set_signal Tauri 命令复用
 > ⛔ **失效 by D117 (2026-09)** — HMI Builder/Preview 模式随设计器移除；SimHarness 本体保留
 - **日期**: 2026-07-19
 - **决定**: HMI Builder 的 Preview 模式信号注入复用现有 `sim_set_signal` Tauri 命令（第 331 行），通过 SimulationHarness 注入模拟信号值。不新建独立的 HMI 信号模拟系统。
 - **理由**: SimulationHarness 已有完整的信号写入/读取/步进能力，新建独立系统会重复建设。HMI Preview 本质上就是"注入信号 → 观察 widget 渲染"的测试循环，与 SimHarness 的 step/read 模式完全等价。
-- **参考**: `apps/studio/src-tauri/src/lib.rs:331`, `crates/weftik-runtime-engine/src/simulation.rs`
+- **参考**: `apps/studio/src-tauri/src/lib.rs:331`（历史路径，随 D71 移除）, `crates/weftik-runtime/src/simulation.rs`
 
 ## D70: Studio 响应式布局 = CSS flexbox + min-height:0 + 去白边
 - **日期**: 2026-07-20
 - **决定**: Studio 采用 `height: 100%` 继承链（html→body→#root→.app-root）替代 `100vh`，`.app-panel` 加 `min-height:0; max-height:100%` 允许 flex 子元素随窗口缩小，html/body 显式设置 `background: var(--color-canvas)` 防止白边。
 - **理由**: Playwright 测试验证（1440×900→1000×450）布局始终填满视口。根因是 flex 子元素默认 `min-height: auto` 阻止缩小，CSS `overflow:hidden` 无法越过此限制。
-- **参考**: `apps/studio/src/index.css`, `apps/studio/src/App.css`, `apps/studio/e2e/studio-responsive-ui.spec.ts`（15 项测试）
+- **参考**: `apps/studio/src/index.css`, `apps/studio/src/App.css`, `apps/studio/e2e/studio-responsive-ui.spec.ts`（15 项测试，文件已随 D71/D117 移除——历史参考）
 
 ## D71: Studio 技术栈迁移 = Tauri+React → Eclipse Theia
 - **日期**: 2026-07-21
@@ -441,7 +441,7 @@
 - **日期**: 2026-07-22
 - **决定**: qa-fast CI 门禁新增 Step 0 Smoke 测试（`cargo test --workspace -- smoke`），独立于 Step 1 full test suite。Smoke 超时 2 分钟，超过则 CI 快速失败。
 - **理由**: 工业控制编译器和运行时测试套件规模大（700+ tests），快速 smoke 门禁在破坏性变更时 2 分钟内给出信号，避免等待 full suite 超时。IEC 61131-3 和 G-code 编译器 smoke 覆盖核心编译路径。
-- **参考**: `qa/smoke-checks.sh`, `.github/workflows/qa-fast.yml`
+- **参考**: `scripts/qa-fast.sh`（本地门禁；原 workflows/smoke-checks 已随 D-c 删除）
 
 ## D73: SDD 追溯率 ≥80% 作为 Phase 退出条件
 - **日期**: 2026-07-22
@@ -569,7 +569,7 @@
 - **决定**: 在 `lib/backend/main.js` 的 `start()` 函数中无条件调用 `defaultServeStatic(app)`，绕过 `BackendApplicationServer` 的 `isBound` 检查。同时使用 `fix-tokens.py`（精确字符串匹配）替代 `token-patch.py`（正则匹配）进行令牌补丁。
 - **理由**: (a) `@eclipse-glsp/theia-integration` 等模块先绑定 `BackendApplicationServer` 但不含 `express.static`，导致浏览器 404；(b) 正则补丁在多层嵌套 JS 中不可靠，多次破坏 main.js 语法
 - **社区先例**: Theia issue #15660 (2025-05) 官方正在开发 `theia build` 自动检测；GLSP theia-integration README 推荐 resolutions/overrides
-- **参考**: `.agents/rules/common/edit-safety.md` Rule 10-12
+- **参考**: `.agents/rules/common/edit-safety.md` Rule 10（11/12 由 D96/D72 各自引用）
 
 ## D96: @theia/* 依赖版本统一策略
 - **日期**: 2026-07-28
@@ -696,7 +696,7 @@
   - GridSnapper 构造显式传 {x:40,y:40} (无 @inject(TYPES.Grid))
   - 共享常量模块 src/gmodel/grid.ts
   - Toggle Grid 命令 + KeybindingContribution (Ctrl+G)
-- 已知问题: 点击创建节点自动化失败 — rung containableElementTypeIds 需含 'node:insert-indicator' + getMinimumMovement 覆写 1px (已修复待验证)
+- 已知问题: 点击创建节点自动化失败 — rung containableElementTypeIds 需含 'node:insert-indicator' + getMinimumMovement 覆写 1px （GLSP 时代条目，D110 移除后失效）
 - 参考: .sisyphus/plans/ld-grid-editing/
 
 ## D110: 完全移除 GLSP + React Flow 迁移

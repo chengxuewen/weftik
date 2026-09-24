@@ -137,7 +137,7 @@ openspec/specs/
 
 #### Step 2: Phase 感知过滤
 
-读取 `docs/plans/p0-milestone-roadmap.md`，判定当前 Phase：
+读取 `.agents/memorys/status.md`「P0-P2 阶段完成状态」表，判定当前 Phase：
 
 | Phase | 可用规范 |
 |-------|---------|
@@ -428,7 +428,7 @@ fn test_halvalue_fbs_roundtrip() {
 
 ## Phase 感知规则
 
-自动读取 `docs/plans/p0-milestone-roadmap.md` 确认当前里程碑。
+自动读取 `.agents/memorys/status.md`「P0-P2 阶段完成状态」表 确认当前里程碑。
 
 | 检查点 | 行为 |
 |--------|------|
