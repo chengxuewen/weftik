@@ -21,7 +21,7 @@
 - **HMI 设计器就绪** — 2026-07-19，可视化拖拽编辑器（react-rnd 自由布局画布）、7 种工业 widget（Gauge/Trend/Tank/Indicator/Button/Display/Text）、信号绑定对话框（controller_signal_snapshot 集成）、属性面板（位置/尺寸/标签/信号/类型专属配置）、Edit/Preview 模式切换、YAML 持久化（save_hmi_layout/load_hmi_layout）
 
 ## 仓库状态
-- **最新提交**: 改名链 — 代码面主体 `1d4341f` feat(rename)! / 文档面 `5e23949`；本地领先 origin 未 push（门禁全绿后才推）
+- **最新提交**: `6434a7c` feat(skills)；D119/审计/扫描链共 **7 笔本地领先 origin**（17601d7）未 push，一句话即推
 - **提交历史**: 399+ commits on main (2026-07-08 起，公开仓自 v0.1.0 发布后继续)
 - **源代码**: 24 crates（crates/）。apps/studio/ 已由 Tauri 应用改建为 Theia 应用（D71）；AUDEDeck 已移除（D117）
 - **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形 7 + ST→IR 代码生成 18（控制流/运算符/定时器）；另有 1 个无关长期 IPC shutdown flaky 不计入 25）；vitest 160 (LD) + 26 (FBD)；Playwright E2E 72/72（🧊 D119：冻结件回归保险丝，仅修核心改动引起的失败）
@@ -307,3 +307,10 @@ find theia-extensions -path "*/node_modules/@theia*" 2>/dev/null
 - **MCP 里程碑伴生登记**（详见 conventions 硬件 MCP 安全约定）：mcp-grafana→D119§4；modbus-connector-mcp→§5④；OPC 基金会 UA MCP→M2；virtme-ng→§5③(需 Linux 主机)；P2：probe-rs embedded-debugger / zenoh-plugin-mcp(2★，引入需先审后 fork) / mcp-serial / 示波器类
 - **生态真空确认**：MQTT/Grafana-dC/DAP/FlatBuffers/IEC-61131 无任何成熟 skill——自研方向获外部印证，产出可反哺生态
 - **验证命令**：`grep -rn 'scripts/qa/qa-fast.sh|](\.\./common/|weftik-ipc-server|p0-milestone' .agents/ AGENTS.md SKILL.md` 应为 0 命中
+
+## 下一步计划（2026-09-24 定案 · 用户拍板：先不修，待命开工）
+
+- **0a push**：7 笔本地提交（D119 决策链 + 两轮审计/扫描修复）——无门禁依赖，待发落
+- **0b Phase B 手工抢占**（改名工程唯一未完项，先到先得不可回收）：npm org `weftik` · crates.io 占名 `weftik` · 域名 weftik.com / weftik.io
+- **1 首开工地 = D119 §5① 修 ST→IR 代码生成 18 回归**。选型理由：唯一已知复现路径且疑点锁定（8d6089a IL Store/SignalName）；编译器正确性是 zenoh/RT/M1 全部后续出口的公共前置；修完 25 红归 0，qa-fast 恢复真绿基线；可直接复用新引入的 rust-testing 技能。打法：单代理按族**串行**修（控制流 13 → 运算符 mod/xor 2 → 定时器 tof/ctu/demo_timer 3；同一测试文件，并行会冲突），每族绿即去 `#[ignore]` 跑 `cargo test -p weftik-hal-binding-gen`，18 全绿一笔 `fix(compiler)` 提交；紧接着 G1 梯形 7（`weftik-cnc-motion emit_g1` 终止条件）
+- **暂缓**：CLI compile/signal 补全（半天，可与①顺路同做）；VS Code 薄扩展搬运（卡 S4：sickn33 vscode-extension-guide 需先人工审查再引入）
