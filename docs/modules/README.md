@@ -11,7 +11,7 @@
 | Hub 统一平台 | `hub/` | 1 份子文档 |
 
 架构主文档: `docs/architecture.md`
-新版架构 spec: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md`
+新版架构 spec: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）`
 参考文档: `docs/reference/`
 
 命名体系: Agent / Runtime / Hub / Studio / Panel (D81)

@@ -85,7 +85,7 @@ Theia 扩展入口，负责：
 - Rate limiting（防止 API 滥用）
 - 审计日志（所有 napi-rs 调用记录）
 
-### GLSP 编辑器 (LD / FBD)
+### GLSP 编辑器 (LD / FBD) —— ⛔ 本小节为 D110 前历史设计（现 *-editor 为 React Flow 实现，保留作 M2 参考底稿）
 每个 GLSP 编辑器包含：
 - **GModel**（`src/gmodel/`）：图形模型类型定义（ContactNode、CoilNode、PowerRail、WireConnection、ANDNode、ORNode、FunctionBlockNode 等）
 - **Server**（`src/server/`）：GLSP 操作处理（CreateContact、DeleteElement、ReconnectWire、MoveRung 等）

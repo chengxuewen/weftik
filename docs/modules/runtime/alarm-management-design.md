@@ -1,6 +1,6 @@
 # 告警管理设计 (ISA-18.2)
 
-**日期**: 2026-07-24 | **来源**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §26
+**日期**: 2026-07-24 | **来源**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §26
 
 ## 概述
 

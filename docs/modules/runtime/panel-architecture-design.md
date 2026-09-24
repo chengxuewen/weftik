@@ -792,6 +792,8 @@ interface ScreenDescriptor {
 
 ## 10. 实现路线图
 
+> 🧊 **本节定性（D117/D119）**：下述 P1/P2 估时为**原 AUDEDeck 的实施路线**，仅供**外部 Panel 项目参考**，非本仓排期；条目中 studio-core/AUDEDeck 为逻辑名，"已就绪/已完成"系当时状态。本仓 M1 操作端走 MQTT/Grafana 标准协议路线（D119）。
+
 ### P1 (MVP — 操作员基本监控)
 
 | 任务 | 估时 | 依赖 |

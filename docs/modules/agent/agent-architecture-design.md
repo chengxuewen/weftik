@@ -1,6 +1,6 @@
 # Agent 架构设计
 
-**日期**: 2026-07-24 | **来源**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §3, §32
+**日期**: 2026-07-24 | **来源**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §3, §32
 
 ## 概述
 

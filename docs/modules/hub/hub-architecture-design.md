@@ -1,6 +1,6 @@
 # Hub 平台架构设计
 
-**日期**: 2026-07-24 | **来源**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §38-§41
+**日期**: 2026-07-24 | **来源**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §38-§41
 **基座**: AUDEBase (微内核+插件热插拔平台)
 
 ## 概述

@@ -4,7 +4,7 @@
 > **状态**: 架构文档 — 反映当前 MVP 实现状态。待重写对齐新版架构设计。
 
 > ⚠️ **命名过时**: 本文档使用旧命名。对应: Supervisor→Agent | Controller→Runtime | Field+Cloud→Hub
-> 📖 **新版架构**: docs/superpowers/specs/2026-07-24-robotics-architecture-design.md (1731行)
+> 📖 **新版架构**: robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91） (1731行)
 > 📋 **实施计划**: .sisyphus/plans/m1-3d-printer-platform/
 
 ---
@@ -128,7 +128,7 @@
 - **LinuxCNC** — 自研实时 HAL 与 G-code 解释器，深耕数控机床
 - **CODESYS / TwinCAT** — 软 PLC 标准（IEC 61131-3），将 PLC 运行时移植到通用 PC
 
-Weftik 借鉴了 Android Studio 的"**IDE + Runtime + Emulator + Debug Bridge**"分层模型，将其应用于工业自动化领域。通过统一的 **HAL 硬件抽象系统**（受 LinuxCNC HAL 和 dora-rs 数据流范式启发）、**Runtime 多进程套件**、**Simulator 设备仿真器**和**工业调试桥**，提供一条龙开发体验——编写软 PLC 梯形图逻辑、搭建机器人控制图、开发测控上位机、调试数控设备 G-code，均在同一平台内完成。
+Weftik 借鉴了 Android Studio 的"**IDE + Runtime + Emulator + Debug Bridge**"分层模型，将其应用于工业自动化领域。通过统一的 **HAL 硬件抽象系统**（受 LinuxCNC HAL 和 dora-rs 数据流范式启发）、**Runtime 多进程套件**、**Simulator 设备仿真器**和**工业调试桥**，提供一条龙开发体验——编写软 PLC 梯形图逻辑、搭建机器人控制图、开发测控上位机、调试数控设备 G-code，均在同一平台内完成。🧊 **D119（2026-09-24）：现执行形态 = weftik CLI + 任意编辑器 + project.yaml；IDE 愿景保留，Studio 功能冻结后置。**
 
 Weftik 的产品线包括：Weftik Studio（统一编辑器/IDE）、Weftik Runtime（PC 应用套件）、Weftik HAL（硬件抽象层协议）、Weftik Simulator（设备模拟器）、Weftik Debug（调试桥）。Runtime 套件包含 Controller、Gateway、Remote、Edge、Supervisor 五个核心组件，HMI UI 由外部 Panel 项目实现（本仓库保留 IPC 契约 0x16/0x17/0x18，D117）。
 
@@ -150,7 +150,7 @@ Weftik 的产品线包括：Weftik Studio（统一编辑器/IDE）、Weftik Runt
 
 | 产品 | 描述 | 技术栈 | 状态 |
 |------|------|--------|------|
-| Weftik Studio | 统一编辑器/IDE | TypeScript + Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + napi-rs | ✅ 已实现（Theia 迁移完成） |
+| Weftik Studio | 统一编辑器/IDE | TypeScript + Eclipse Theia (Electron) + Monaco Editor + React Flow (LD/FBD, D110) + napi-rs | 🧊 冻结（D119，仅保构建绿） |
 | Weftik HAL | 硬件抽象层协议 | Rust + FlatBuffers | 🟡 详细设计完成 |
 | Weftik Simulator | 设备模拟器 | Rust + SimulationHarness | 🟡 Inproc MVP |
 | Weftik Debug | 调试桥 | Rust + DAP | ✅ DAP 已实现 |
@@ -159,7 +159,7 @@ Weftik 的产品线包括：Weftik Studio（统一编辑器/IDE）、Weftik Runt
 
 | 术语 | 说明 |
 |------|------|
-| **Studio** | 统一编辑器/IDE，可视化配置设备模板、流程逻辑和 HMI 界面 |
+| **Studio** | 统一编辑器/IDE；🧊 D119 冻结——现开发形态 = CLI-first，HMI 画面组态属外部项目 + 标准协议 |
 | **Runtime** | PC 应用套件，多进程实时控制系统 |
 | **Runtime Supervisor** | 进程/参数/配置/更新管理器（Node.js） |
 | **Runtime Controller** | 实时控制模块（Rust + HAL Core + amw_inproc），旧名 Act |
@@ -864,11 +864,13 @@ Web 模式:
     └── API Client: 第三方集成
 ```
 
-**代码复用**: Panel React 组件 100% 复用，差异仅在窗口管理（Tauri vs 浏览器 Tab）。
+**代码复用**: Panel React 组件 100% 复用，差异仅在窗口管理（Tauri vs 浏览器 Tab）。—— 🧊 D117/D119：组件共享库已删，本段与下方 Web Client 拓扑为历史设计稿。
 
 ---
 
 ## 三、Studio 套件
+
+> 🧊 **D119（2026-09-24）章状态：冻结** — Studio 新功能、Web 迁移线、§9 部署模式演进、§12 S1-S4 路线图、Scene/Flow/Data/App Designer 族全部冻结或归档：HMI 设计器已随 D117 删除，LD/FBD 图形编辑器挂起（D113）。正文保留作 M2 复活的设计底稿；现行开发形态 = weftik CLI + VS Code 薄扩展 + 可视化买不造。
 
 > ✅ **迁移完成** — Studio 已从 Tauri+React 迁移到 Eclipse Theia（D71, 2026-07-21）。详见 `docs/superpowers/specs/2026-07-21-studio-theia-migration-design.md`
 
@@ -1032,9 +1034,9 @@ RBAC 代码:   ██████████████░░░░░░░�
 
 | 编辑器 | 类型 | 用途 | 技术（迁移后） | 状态 |
 |--------|------|------|------|:----:|
-| **Scene Designer** | scene | 画面组态（HMI/Panel 界面设计） | react-rnd → ReactWidget | ✅ 当前已实现 |
-| **Flow Designer** | flow | DAG 流程编辑（工作流/数据流） | @xyflow/react | 📄 设计 |
-| **Data Designer** | data | 数据模型设计（表结构/字段） | Drizzle schema | 📄 设计 |
+| **Scene Designer** | scene | 画面组态（HMI/Panel 界面设计） | react-rnd → ReactWidget | ⛔ 已删（D117） |
+| **Flow Designer** | flow | DAG 流程编辑（工作流/数据流） | @xyflow/react | 🧊 冻结（D119） |
+| **Data Designer** | data | 数据模型设计（表结构/字段） | Drizzle schema | 🧊 冻结（D119） |
 | **Debug** | debug | MCAP 回放 + RPC 调试 + Topic 监控 | 已有 Debug SPA | ✅ 已实现 |
 | **ST/IL/G-code** | text | 文本编程语言 | **Monaco Editor**（Theia 内置）+ Monarch tokenizer | ✅ Theia 扩展已完成 |
 | **LD** | graph | 梯形图编程 | **React Flow** (@xyflow/react, D110，替代 GLSP) | ✅ React Flow 迁移完成 |
@@ -1390,7 +1392,7 @@ RuntimeClient 提供 `deploy_hmi_layout` / `get_hmi_layout` 方法，`Role::Hmi`
 
 ### 10. 平台集成
 
-> **TODO: 为 Weftik 重写此节** — 平台集成方案依赖 Studio Phase 2 实现细节，当前保留占位
+> **TODO: 为 Weftik 重写此节** — 原依赖 Studio Phase 2（🧊 D119 已冻结）；重写改以 Runtime IPC + 标准协议桥（OPC UA M2）为对接面
 
 ---
 
@@ -1462,7 +1464,7 @@ S3: 运行时编辑           S4: 协同 + 生态
 ---
 
 ### 14. 下一步行动
-> ⚠️ 时点声明（2026-09-23 审计补）：本清单为 2026-07 历史计划，未随后续演进更新——「创建 studio-core 骨架」已完成且已随 D117 删除；工程文件格式已由 D114（project.yaml）定案；Scene/Flow Designer 概念已被 Studio 6 语言编辑器取代。现行行动项以 `.agents/memorys/status.md` 为准。
+> ⚠️ 时点声明（2026-09-23 审计补，09-24 经 D119 更新）：本清单为 2026-07 历史计划——「创建 studio-core 骨架」已完成且已随 D117 删除；工程文件格式已由 D114（project.yaml）定案；🧊 D119 已冻结本章全部 UI 开发线（Designer 族/Web/桌面打包）。现行行动项以 `.agents/memorys/status.md` 为准。
 
 ```
 立即可做:
@@ -1769,6 +1771,8 @@ Debug Bridge 通过 HAL Client 访问 Controller 的 HAL Core：
 ---
 
 ## 六、Web 迁移路径
+
+> 🧊 **D119：整章冻结** — Studio Web 线停摆（VS Code 薄扩展 + 标准协议客户端替代 Web IDE 路线）；下文 PlatformAdapter/Web 架构为历史设计稿（D59 已被 D71 取代）。
 
 > ✅ **已设计**: `docs/modules/studio/plugin-architecture-design.md` — PlatformAdapter 定义了 PC/Web 统一抽象层。
 

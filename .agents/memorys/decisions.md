@@ -470,78 +470,78 @@
 ## D77: 机器人架构扩展 — 分层渐进
 - **日期**: 2026-07-24
 - **决定**: 采用分层渐进架构：Phase 1 桥接 ROS2 → Phase 2 自研关键算法 → Phase 3 全栈 Weftik。功能块粒度替换，FBD 程序零修改。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §1, §5
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §1, §5
 
 ## D78: 容器化部署 — Podman Pod + Quadlet
 - **日期**: 2026-07-24
 - **决定**: 容器化部署使用 Podman Pod，Quadlet 声明式配置。控制器崩溃隔离：ROS2 容器崩溃不影响 RT 控制器。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §2-§3
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §2-§3
 
 ## D79: 功能块模型扩展 IEC 61499
 - **日期**: 2026-07-24
 - **决定**: 功能块模型扩展为多语言算法：Rust/Python/TS/ST。FBD 为编排层，复杂算法在块内实现。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §4, §17
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §4, §17
 
 ## D80: MCAP 通用录包格式
 - **日期**: 2026-07-24
 - **决定**: 诊断层采用 MCAP（原生 FlatBuffers 支持）。Recorder/Replayer 作为 Agent 组件。回放与实时共享同一可视化管线。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §8
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §8
 
 ## D81: 三端命名体系 — Agent / Runtime / Hub
 - **日期**: 2026-07-24
 - **决定**: 全系统四层命名：Agent (车端管理，原 Supervisor)、Runtime (实时执行，原 Controller)、Hub (统一平台，合并 Field+Cloud)、Studio (IDE, Desktop+Web 双形态)。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §3, §20, §40
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §3, §20, §40
 
 ## D82: 安全架构 — E-Gas 三级 + SFF
 - **日期**: 2026-07-24
 - **决定**: 参考 AUTOSAR E-Gas + NVIDIA Safety Force Field + MiR/KUKA 双层。Safety Zone 不通过 ROS2 接收执行指令。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §7.3
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §7.3
 
 ## D83: 仿真四层体系 + 数字孪生
 - **日期**: 2026-07-24
 - **决定**: L1(SimHarness)→L2(虚拟传感器)→L3(Gazebo)→L4(HIL)。数字孪生复用 HalProgram。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §7.2, §30
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §7.2, §30
 
 ## D84: OPC UA + 实时以太网
 - **日期**: 2026-07-24
 - **决定**: OPC UA Gateway 容器实现 OPC 40501。EtherCAT/CANopen 通过 IoDriver trait 扩展。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §7.4, §7.5
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §7.4, §7.5
 
 ## D85: 项目三级模型 + 三层继承
 - **日期**: 2026-07-24
 - **决定**: Device→Cell→Factory 三级工程，Template→Project→Deployment 三层参数继承。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §18, §21
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §18, §21
 
 ## D86: 黑盒交付三种模式
 - **日期**: 2026-07-24
 - **决定**: source/binary/hybrid 三种交付。二进制保护：HalProgram 字节码 + .so strip + PyArmor + 容器隔离。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §23
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §23
 
 ## D87: 告警(ISA-18.2) + 审计(21 CFR 11) + 配方
 - **日期**: 2026-07-24
 - **决定**: ISA-18.2 标准告警, SHA256 链式哈希审计, TOML 配方管理+审批流。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §25-§27
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §25-§27
 
 ## D88: Hot Standby 冗余 + PTP 时间同步
 - **日期**: 2026-07-24
 - **决定**: 每 RT 周期同步, 3ms 切换, I/O 仲裁防分裂脑。GPS+PTP+EtherCAT DC 三级时间同步。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §28-§29
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §28-§29
 
 ## D89: 测试五级 + CI 三级
 - **日期**: 2026-07-24
 - **决定**: L0(单元)→L4(HIL) 五级测试。qa-fast/qa-full/qa-deep 三级 CI。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §42
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §42
 
 ## D90: Open Core 商业模式
 - **日期**: 2026-07-24
 - **决定**: Apache 2.0 核心免费。Cloud SaaS 分层。企业功能额外授权。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §44-§45
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §44-§45
 
 ## D91: M1 — 光固化打印机驱动力
 > 🔧 M1 验收形态由 D119 修订：开发环 = CLI + VS Code 薄扩展（headless），操作端 = 外部 Panel / 标准协议客户端（MQTT→Grafana/Node-RED），不再含 Studio UI 项
 - **日期**: 2026-07-24
 - **决定**: M1 以光固化 3D 打印机为实战项目。7 子任务: Agent→ST→FBD→SFC→HMI→IO→收尾。M2-M6 按 Hub→巡逻车→多机→云端→生态。
-- **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §46, `.sisyphus/plans/m1-3d-printer-platform/`
+- **参考**: `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` §46, `.sisyphus/plans/m1-3d-printer-platform/`
 
 ## D92: LD/FBD GLSP 迁移 = Route C（LD 先行→FBD 跟进）
 > ⛔ **废弃 by D110 (2026-08-03)** — GLSP 已完全移除，LD/FBD 改 React Flow；本条仅作历史参考
@@ -739,7 +739,7 @@
 - **日期**: 2026-08-07
 - **决定**: 转向"文本优先"。图形化设计器（LD/FBD）延后（编译器管线 D108 已支持，后补不阻塞）；初期优先 ST/IL 文本编辑 + 工程管理（多 POU 工程树 + 变量表）+ 开发-调试-部署闭环，以 M1 3D 打印机为实践，干中学。
 - **理由**: 172h 会话实证图形化设计器（LD/FBD 的连线/布局/命中/交互）是 AI 最弱、最易不及预期的域；ST/IL 编辑器（Monaco, D71 ✅）与编译器管线（D108 ✅）已就绪；工程管理是所有语言共底座（gap-analysis P0）；DAP 调试适配器（12 命令）已就绪；M1 是官方 3D 打印机里程碑。
-- **Phase A 逐项定案**: ①A1+A2 工程底座先行；②纯 POU 树（Programs/FBs/Functions/GVL，不含硬件树）；③全局+局部变量表 + 基本 IEC 类型；④ST 优先 IL 基础；⑤全量编译+错误定位；⑥单目标部署+Config Barrier；⑦DAP 断点+单步+变量；⑧控制逻辑 ST 为主+G-code 运动+仿真先行；⑨HMI 集成 AUDEDeck 第三方库（非 Studio 自建 YAML HMI）；⑩落 D113。
+- **Phase A 逐项定案**: ①A1+A2 工程底座先行；②纯 POU 树（Programs/FBs/Functions/GVL，不含硬件树）；③全局+局部变量表 + 基本 IEC 类型；④ST 优先 IL 基础；⑤全量编译+错误定位；⑥单目标部署+Config Barrier；⑦DAP 断点+单步+变量；⑧控制逻辑 ST 为主+G-code 运动+仿真先行；⑨ ~~HMI 集成 AUDEDeck 第三方库~~（⛔ AUDEDeck 已删 D117；D119 改标准协议买不造）；⑩落 D113。
 - **参考**: .sisyphus/plans/text-first-iec-editor/plan.md，docs/modules/ld-editor/gap-analysis.md
 
 ## D114: 工程组织模型 = Cargo 模型 for IEC 61131-3（目录 + 清单文件）
