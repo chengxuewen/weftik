@@ -226,6 +226,7 @@
 - **参考**: Testable Embedded Rust (datenkollektiv.de)、欧洲 XFEL 虚拟 PLC 模式、RTIC SRP
 
 ## D38: Studio 集成时机 = 并行 + 渐进对接
+> 🧊 Studio 并行对接线已由 D119 冻结（Studio 停止新功能，开发主界面改 CLI + VS Code 薄扩展）
 - **日期**: 2026-07-13
 - **决定**: Studio 基础设施与 HAL 并行启动，编辑器按 HAL 阶段逐步对接
 - **理由**: Studio Core/注册表/项目 CRUD 不依赖 HAL。Scene Designer→Phase 2、Panel→Phase 3、Logic Designer→Phase 2
@@ -537,6 +538,7 @@
 - **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §44-§45
 
 ## D91: M1 — 光固化打印机驱动力
+> 🔧 M1 验收形态由 D119 修订：开发环 = CLI + VS Code 薄扩展（headless），操作端 = 外部 Panel / 标准协议客户端（MQTT→Grafana/Node-RED），不再含 Studio UI 项
 - **日期**: 2026-07-24
 - **决定**: M1 以光固化 3D 打印机为实战项目。7 子任务: Agent→ST→FBD→SFC→HMI→IO→收尾。M2-M6 按 Hub→巡逻车→多机→云端→生态。
 - **参考**: `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` §46, `.sisyphus/plans/m1-3d-printer-platform/`
@@ -733,6 +735,7 @@
 - **参考**: .sisyphus/plans/ld-topology-editor/plan.md（3 审核 37 发现整合）
 
 ## D113: 文本优先 IEC 编辑器策略 — 工程底座先行 + M1 实践
+> 🔼 本条由 D119 延伸：文本优先 → CLI/headless 优先全面化，Studio 整体功能冻结
 - **日期**: 2026-08-07
 - **决定**: 转向"文本优先"。图形化设计器（LD/FBD）延后（编译器管线 D108 已支持，后补不阻塞）；初期优先 ST/IL 文本编辑 + 工程管理（多 POU 工程树 + 变量表）+ 开发-调试-部署闭环，以 M1 3D 打印机为实践，干中学。
 - **理由**: 172h 会话实证图形化设计器（LD/FBD 的连线/布局/命中/交互）是 AI 最弱、最易不及预期的域；ST/IL 编辑器（Monaco, D71 ✅）与编译器管线（D108 ✅）已就绪；工程管理是所有语言共底座（gap-analysis P0）；DAP 调试适配器（12 命令）已就绪；M1 是官方 3D 打印机里程碑。
@@ -774,3 +777,12 @@
 - **理由**: 与 CODESYS 结构同构的商标混淆风险 + 旧展开式自相矛盾；改名同时统一命名空间；管线退役后增量提交天然干净，不再交双仓同步税。
 - **执行**: 代码改名主体 `1d4341f`（git mv 保 rename 追踪）；25 个既有回归测试隔离待修（见 pitfalls）；历史提交不重写（rebrand 由提交如实记录）。
 - **参考**: .sisyphus/plans/weftik-rename/plan.md（v2 执行差分）+ plan.md（v1 依据）
+
+## D119: 开发形态切换 = CLI-first + 声明文件 + 可视化买不造；Studio 功能冻结
+
+- **日期**: 2026-09-24
+- **决定**: ① **Studio 冻结不删除**——9 个 Theia 扩展停止新功能，theia build 保绿即止，LD/FBD 图形编辑器（D113 已延后）正式挂起；② **开发主界面切换**：weftik CLI 第一界面（build/test/qa/run/config/deploy 已有，补 new/compile/logs/monitor/signal）+ 任意编辑器（VS Code 薄扩展：语法高亮从 Theia Monaco 抽取 + launch.json 接现成 DAP）+ 工程管理走纯文本 project.yaml；③ **精力按序砸核心**：25 个核心回归修复 → amw-zenoh 生产化 → RT 1ms 周期 + PREEMPT_RT 实机 → Modbus 真设备 → 运动规划器 → OPC UA/MQTT 桥；④ **M1 验收形态改写**：headless 全链路（CLI 开发→仿真→真机），操作端由现成协议客户端/外部 Panel 承担，Studio UI 零参与；⑤ **可视化买不造**：MQTT 桥先行（M1 观测/操作），OPC UA server 列 M2 入口（商业集成前置）；Prometheus/Grafana 已可用，补示例 dashboard。Studio 复活与否放 M2 门：核心全绿 + 出现真实外部用户需求再评估。
+- **理由**: (a) 自家账本实证 UI 是最大时间坑：GLSP 172h + 34 提交 + 82 pitfalls → D110 删 7,370 行，Theia 双端/令牌/Symbol 反复回归，D113→D117→Phase -1 趋势已一路在此方向；(b) 当前 25 个红灯全在编译器/运动核心，UI 面 0 个——真缺陷在核心；(c) M1 关键路径不含 Studio UI，而核心差异化资产单薄（zenoh ~430 行、周期 10ms 玩具值、运动仅仿真、IO 未上真机）；(d) 无头层 70% 已备（编译器纯 Rust lib、DAP 12 命令、IPC 24 方法、SimHarness、CLI 雏形）；(e) ROS/dora 先例：平台无 IDE 存活多年，rviz/foxglove/grafana 均为外部通用工具。
+- **取代/影响**: D38（Studio 并行对接线冻结）；D113（文本优先延伸为全面 CLI-first）；D91（M1 验收形态修订）。无代码删除，Theia 资产原地保留；Studio 长期愿景（CODESYS 级 IDE）不撤销，只是从并行线改后置线。
+- **风险（明记）**: IEC 买家看 IDE 买单（商业化期再评）；Theia 资产随版本折旧（接受）；VS Code 扩展搬运必须一次到位后封版，防成为第三套前端（grammar/DAP 抽独立包，禁在扩展内写业务逻辑）。
+- **参考**: 迁移计划 .sisyphus/plans/cli-first-pivot/plan.md；D110/D113/D117/D118

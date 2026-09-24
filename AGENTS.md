@@ -6,7 +6,7 @@
 **Branch:** `main`
 
 ## OVERVIEW
-Weftik — 面向工业自动化与机器人的统一开发与运行时框架（品牌改名自 AUDESYS，D118）。聚焦 Studio IDE、Runtime、Simulator、HAL。当前 24 crates、6 IEC 61131-3 编译器 + G-code、Theia Studio IDE。Panel/HMI UI 属外部项目，Runtime 保留 IPC 契约（D117）。
+Weftik — 面向工业自动化与机器人的统一开发与运行时框架（品牌改名自 AUDESYS，D118）。聚焦 Runtime、HAL、Simulator；开发主形态 = CLI + 声明式工程（D119，code-first），Studio（Theia）冻结后置。当前 24 crates、6 IEC 61131-3 编译器 + G-code。Panel/HMI UI 属外部项目（D117），可视化买不造（MQTT/Grafana，OPC UA 列 M2）。
 
 ## STRUCTURE
 ```

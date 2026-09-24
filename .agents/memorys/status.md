@@ -1,6 +1,7 @@
 # Weftik 项目状态
 
 ## 当前阶段
+- **开发形态切换 CLI-first（2026-09-24）** — D119：Studio 功能冻结（不删除，theia build 保绿即止）；主开发界面 = weftik CLI + 任意编辑器（VS Code 薄扩展：语法高亮 + DAP）+ 纯文本 project.yaml；可视化买不造（MQTT/Grafana 先行，OPC UA 列 M2）；精力按序砸核心：25 回归修复→zenoh→RT 1ms→Modbus 真机→运动规划器→协议桥；M1 验收改 headless 全链路
 - **Weftik 改名完成（2026-09-23）** — 全栈 AUDESYS→Weftik：24 crates / 9 扩展 / @weftik npm scope / fbs namespace / WEFTIK_* env / weftik_runtime_* 指标 / CLI；单主线 = 公开仓 gitee.com/chengxuewen/weftik（D118）。隔离 25 个既有回归测试待独立修复（见 pitfalls 清单）
 - **Weftik Phase -1 UI 移除完成（2026-09-23）** — AUDEDeck(43 文件)/hmi-designer/studio-core/napi HMI 三函数/设计器规范整块删除（提交 2958f54，-27.5k 行）；Runtime HMI 契约保留（IPC 0x16/0x17/0x18 + Role::Hmi），Panel/UI 由外部项目主导（D117）
 - **工程项目管理（A7 + 无 workspace 创建）完成（2026-08-10）** — New Weftik Project 向导（D114 工程组织模型）：目录约定 + project.yaml 清单 + 一 POU 一文件。修复「无 workspace 无法建工程」：改为从零创建（默认 ~/Weftik-Projects/，EnvVariablesServer 解析 home）+ 自动打开 workspace。菜单上浮 File 顶层（D115）。E2E 门禁通过（15.9s）。详见 D114/D115/D116
@@ -40,7 +41,7 @@
 | Runtime Engine | ✅ 完成 | 5 步周期，Config Barrier，Hot-swap，信号注册表 |
 | Supervisor | ✅ 完成 | 子进程编排，指数退避，3 重试 |
 | IPC Server | ✅ 完成 | UDS 24 方法（0x01-0x18），HMAC 认证，5 角色 RBAC |
-| Studio IDE | ✅ Theia 迁移完成 | D71: Tauri+React → Eclipse Theia+Monaco+React Flow(D110)+napi-rs，迁移完成（2026-07-21） |
+| Studio IDE | 🧊 冻结（D119） | D71 Theia 迁移完成（2026-07-21）；2026-09-24 起停止新功能，资产原地保留，开发主界面改 CLI-first（D119） |
 | Studio Theia 迁移 | ✅ 10/11 扩展集成 (apps/studio/) | 2026-07-23: core, debug, hmi-designer, backend, st-editor, il-editor, gcode-editor, sfc-editor, ld-glsp, fbd-glsp 全部可用。Electron+browser 双端正常（3层token+38API polyfill）。theia-bridge 21/30 函数真实实现（6编译器+7控制器+3模拟+2项目管理）。0测试。待办: 9 debug stub + widget 复用
 || LD 编辑器 | ✅ React Flow（D110） | React Flow 编辑器替换 GLSP，40×40 网格、触点/线圈、rung 容器、E2E 13 场景 |
 || FBD 编辑器 | 🔄 React Flow 迁移（D110） | GLSP 已移除，React Flow 迁移进行中 |

@@ -99,7 +99,9 @@
 - **Panel**: 操作员 HMI 界面 — PWA + Tauri + Docker 三形态
 - **crate 命名**: Cargo.toml `name` 统一 `weftik-<module>` 前缀，hyphen 分隔
 
-## Studio IDE 技术栈约定 (更新)
+## Studio IDE 技术栈约定（更新 · 🧊 Studio 已随 D119 功能冻结）
+- **开发主界面（现状 D119）**: weftik CLI + 任意编辑器（VS Code 薄扩展：Monarch 搬运 + launch.json 接 DAP）+ 纯文本 project.yaml；可视化 = 标准协议 + 外部工具（MQTT/Grafana→OPC UA M2）
+- **Desktop（冻结件）**: Eclipse Theia + Monaco Editor + React Flow (D110) + napi-rs — 停止新功能，保构建绿
 - **Desktop**: Eclipse Theia + Monaco Editor + GLSP + napi-rs (Rust bridge) — 已替代 Tauri+React (D71)
 - **Web**: Hub 插件，Monaco Editor + WASM 编译器
 - **Panel**: Tauri (桌面) + PWA (移动) + Docker (Kiosk)
