@@ -24,10 +24,10 @@
 - **最新提交**: 改名链 — 代码面主体 `1d4341f` feat(rename)! / 文档面 `5e23949`；本地领先 origin 未 push（门禁全绿后才推）
 - **提交历史**: 399+ commits on main (2026-07-08 起，公开仓自 v0.1.0 发布后继续)
 - **源代码**: 24 crates（crates/）。apps/studio/ 已由 Tauri 应用改建为 Theia 应用（D71）；AUDEDeck 已移除（D117）
-- **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形死循环 8 + ST→IR 控制流 17）；vitest 144 (LD) + 26 (FBD)；Playwright E2E LD/FBD（改名后待重跑验证）
+- **测试**: 全 workspace cargo test 绿（25 个既有回归 #[ignore] 隔离：G1 梯形死循环 8 + ST→IR 控制流 17）；vitest 160 (LD) + 26 (FBD)；Playwright E2E 72/72（🧊 D119：冻结件回归保险丝，仅修核心改动引起的失败）
 - **SDD 规范**: openspec/specs/：类型系统(30) + HalQoS(30) + Config Barrier(24) + 协议(37) + CNC(41) + HMI 契约(13，设计器段已随 D117 删除) + Studio Theia(54) + 编辑器规范若干（codesys-workflow 30 + ld 系 37）
 - **CI**: 本地 qa-fast 5 门禁（test/clippy/fmt/deny/unwrap）；GitHub workflows 已删（D-c：暂不要 CI，Gitee origin 下从未触发）
-- **依赖**: `@colbymchenry/codegraph` (devDependency) + Rust toolchain stable
+- **依赖**: Rust toolchain stable + yarn workspaces（codegraph devDep 已摘，MCP 由 init 脚本自愈安装）
 
 ## 模块状态
 
@@ -42,18 +42,18 @@
 | Supervisor | ✅ 完成 | 子进程编排，指数退避，3 重试 |
 | IPC Server | ✅ 完成 | UDS 24 方法（0x01-0x18），HMAC 认证，5 角色 RBAC |
 | Studio IDE | 🧊 冻结（D119） | D71 Theia 迁移完成（2026-07-21）；2026-09-24 起停止新功能，资产原地保留，开发主界面改 CLI-first（D119） |
-| Studio Theia 迁移 | ✅ 10/11 扩展集成 (apps/studio/) | 2026-07-23: core, debug, hmi-designer, backend, st-editor, il-editor, gcode-editor, sfc-editor, ld-glsp, fbd-glsp 全部可用。Electron+browser 双端正常（3层token+38API polyfill）。theia-bridge 21/30 函数真实实现（6编译器+7控制器+3模拟+2项目管理）。0测试。待办: 9 debug stub + widget 复用
-|| LD 编辑器 | ✅ React Flow（D110） | React Flow 编辑器替换 GLSP，40×40 网格、触点/线圈、rung 容器、E2E 13 场景 |
-|| FBD 编辑器 | 🔄 React Flow 迁移（D110） | GLSP 已移除，React Flow 迁移进行中 |
+| Studio Theia 迁移 | 🧊 历史快照（D119 冻结） | 2026-07-23 迁移态：10/11 扩展集成、Electron+browser 双端。后续演进：hmi-designer 已删（D117）、ld/fbd-glsp 已改 *-editor（D110）、Studio 整体冻结（D119）。theia-bridge 21/30 函数实现 |
+| LD 编辑器 | 🧊 React Flow 完成（D110，D119 冻结） | 替换 GLSP，40×40 网格、触点/线圈、rung、E2E；图形编辑器随 D113/D119 挂起 |
+| FBD 编辑器 | 🧊 React Flow 完成（D110，D119 冻结） | GLSP 已移除；vitest 26 |
 | ST Monaco Editor | ✅ 完成 | Monaco Editor 文本编辑器，ST 结构化文本 |
 | IL Monaco Editor | ✅ 完成 | Monaco Editor 文本编辑器，IL 指令表 |
 | G-code Monaco Editor | ✅ 完成 | Monaco Editor 文本编辑器，G-code RS274 |
 | SFC Editor | ✅ 完成 | SFC 顺序功能图编辑器 |
-| Signal Browser | ✅ 完成 | Theia Widget，信号注册表浏览/搜索 |
-| Scope View | ✅ 完成 | Theia Widget，信号实时波形示波器 |
-| Debug Panel (Theia) | ✅ 完成 | Theia Widget，8 源文件/7 测试，DI bindings 完整 |
+| Signal Browser | 🧊（D119 冻结） | Theia Widget；信号浏览改走 weftik monitor CLI / Grafana（D119 买不造） |
+| Scope View | 🧊（D119 冻结） | Theia Widget；波形需求走 Grafana/MCAP 回放（D119） |
+| Debug Panel (Theia) | 🧊（D119 冻结） | Theia 壳；DAP adapter 本体仍活跃（VS Code launch.json 接入，D119） |
 | HMI Designer (Theia) | ⛔ 已移除（D117） | 2026-09 随 UI 移除链删除（曾于 2026-07 完成 Theia Widget 迁移） |
-| Mode System | ✅ 完成 | 编辑器模式切换系统（6 语言 + HMI） |
+| Mode System | 🧊（D119 冻结） | 编辑器模式切换（6 语言；HMI 模式随 D117 删除失效） |
 | 工程管理 (A1-A7) | ✅ 完成 | POU 树 + 变量表 + 类型 + 编译/部署/调试 + New Weftik Project 向导（D114 目录+project.yaml，无 workspace 从零创建 + 自动打开，D115） |
 | RuntimeClient | ✅ 完成 | UDS IPC 客户端（7 方法含 deploy_hmi_layout + 认证）|
 | Studio ↔ Controller 联调 | ✅ 完成 | deploy_program + load_hal_config + read_controller_signal |
@@ -84,10 +84,10 @@
 |------|---------|------|:----:|
 | P0 | CI (qa-fast 5门禁), Workspace 结构, 24 crates 骨架 | 2026-07-15 | ✅ |
 | P1 | 5 IEC 61131-3 编译器 (ST/IL/LD/FBD/SFC), Runtime Engine, IPC Server | 2026-07-20 | ✅ |
-| P1 | Theia 迁移 (D71), 6 语言编辑器, HMI Designer, GLSP 编辑器 | 2026-07-21 | ✅ |
+| P1 | Theia 迁移 (D71), 6 语言编辑器, HMI Designer, GLSP 编辑器 | 2026-07-21 | ✅ → 🧊/⛔（Designer删D117・GLSP换D110・Studio冻结D119） |
 | P1 | Modbus RTU/TCP, HART 适配器, SimHarness | 2026-07-19 | ✅ |
-|| P2 | LD GLSP Editor (Sprotty SVG), FBD GLSP Editor — GLSP 2.7.0 集成完成 | 2026-07-31 | ✅ |
-| P2 | AUDEDeck 打包 (tauri bundle), SignalBridge push/poll, 9 Tauri 命令 | 2026-07-25 | ✅ |
+|| P2 | LD GLSP Editor (Sprotty SVG), FBD GLSP Editor — GLSP 2.7.0 集成完成 | 2026-07-31 | ✅ → ⛔（GLSP 已删 D110） |
+| P2 | AUDEDeck 打包 (tauri bundle), SignalBridge push/poll, 9 Tauri 命令 | 2026-07-25 | ✅ → ⛔（AUDEDeck 删 D117，SignalBridge 为对外契约） |
 | P2 | G-code 编译器 (75 测试), CNC 轴组 (32 测试), 插补设计 | 2026-07-19 | ✅ |
 | P2 | Prometheus metrics, DAP 调试 (12 命令), JSON 日志 | 2026-07-20 | ✅ |
 | P3 | AVD 仿真 (7 虚拟设备), amw-zenoh 网络传输 | 🔮 | 🔮 |
@@ -114,7 +114,7 @@
 
 | 技能 | 状态 | 用途 |
 |------|:----:|------|
-| design-system | ✅ | Weftik 工业 UI 设计系统 |
+| design-system | 🧊 | Weftik 工业 UI 设计系统（D119 后仅适用薄扩展/外部 Panel 指引） |
 | book-to-skill | ✅ | 文档→技能转换 |
 | doc-audit | ✅ | 6 维度文档架构审计 |
 | test-harness | ✅ | 多语言自动化测试工具架（6 模式） |
@@ -133,7 +133,7 @@
 
 ## 架构演进 (2026-07-24)
 
-- **架构重新设计完成** — `docs/superpowers/specs/2026-07-24-robotics-architecture-design.md` (1864 行, 48 章节)，覆盖统一自动化平台全栈架构
+- **架构重新设计完成** — `robotics-architecture-design.md（内部存档未公开，可执行旨见 decisions.md D77-D91）` (1864 行, 48 章节)，覆盖统一自动化平台全栈架构
 - **命名体系重定义**:
   - Supervisor → **Agent** (车端管理代理)
   - Controller → **Runtime** (实时运行时)
@@ -145,8 +145,8 @@
 
 ## M1 里程碑 (3D 打印机控制器)
 
-- **目标**: 以光固化打印机验证 IEC 61131-3 + HMI + 硬件 IO 全链路
-- **子任务**: Agent+Runtime 联调 → ST 端到端 → FBD 端到端 → SFC+G-code → HMI 设计 → 硬件 IO → 收尾
+- **目标**: 以光固化打印机验证 IEC 61131-3 + 硬件 IO 全链路 headless（D119 修订：操作端 = 外部 Panel / 标准协议客户端，Studio UI 零参与）
+- **子任务**: Agent+Runtime 联调 → ST 端到端 → FBD 端到端 → SFC+G-code → 硬件 IO → 收尾（原"HMI 设计"项已随 D119 移除）
 - **计划**: 7-8 周, `.sisyphus/plans/m1-3d-printer-platform/`
 
 

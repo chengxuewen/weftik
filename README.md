@@ -17,5 +17,6 @@ Agent (supervisor), IPC Server, Modbus/HART protocol adapters, Eclipse Theia Stu
 SimulationHarness, Prometheus metrics, DAP debug adapter.
 799+ `#[test]` annotations. 296 SDD specification items (incl. historical-reference sections).
 
-Active development: CNC axis group + interpolation, amw-zenoh network transport,
-HMI push-mode SignalBridge.
+Active development (per D119 CLI-first order): core regression fixes → amw-zenoh
+production → RT 1ms + PREEMPT_RT → Modbus on real hardware → motion planner → MQTT/OPC UA
+bridges (buy visualization, not build it). Studio IDE frozen (D119).

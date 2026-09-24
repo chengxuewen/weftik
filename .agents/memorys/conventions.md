@@ -109,6 +109,8 @@
 
 ## Theia 扩展开发约束 (2026-07-31 修正)
 
+> 🧊 **D119：Theia 扩展已冻结** — 以下规则仅适用于维护冻结件（theia build 保绿）；不再按此开发新扩展，新表面走 CLI + VS Code 薄扩展。
+
 ### 核心架构：Yarn Workspaces monorepo
 
 - **根目录 `package.json`**：`"workspaces": ["theia-extensions/*", "apps/studio"]`
@@ -169,6 +171,8 @@ done
 
 ## GLSP 扩展开发约定 (2026-07-31)
 
+> ⛔ **GLSP 已由 D110 移除** — 本段与下段（GLSP 网格约定）仅作历史参考。
+
 ### snabbdom 变量命名
 - **禁止**: 在使用 snabbdom `h()` 函数的文件中用 `h` 作为变量名
 - **替代**: 使用 `nodeH`/`nodeW` 作为节点尺寸变量名
@@ -223,6 +227,8 @@ done
 - **验证**: 全部门禁通过（2026-08-03）
 
 ## React Flow 编辑器开发约定 (2026-08-03)
+
+> 🧊 **D113/D119：LD/FBD 图形编辑器已挂起** — 以下约定仅供未来恢复图形编辑器时参考。
 
 - **D110**: LD/FBD 编辑器使用 React Flow（@xyflow/react），完全移除 GLSP
 - **架构**: React Flow Widget → LdOperationHandler（前端内存，纯 TS）→ napi-rs → Rust 编译器。无 Theia command 用于 CRUD（LdOperationHandler 前端直跑）
